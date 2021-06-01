@@ -86,7 +86,7 @@
                         <img class="team-img" src=" {{ asset('img/person-placeholder-300x300.jpg') }}"/>
                         <figcaption style="text-align: center;">
                             <p class="lead" style="margin-bottom:0px;"><strong>Contributor Name</strong></p>
-                            <p class="lead">Department</p>
+                            <p class="lead">Department (if needed)</p>
                             <p class="lead"><i>Role in Project</i></p>
                         </figcaption>
 
