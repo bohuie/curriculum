@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\LearningActivity;
 use Illuminate\Http\Request;
+use Throwable;
 
 class LearningActivityController extends Controller
 {
@@ -41,40 +43,46 @@ class LearningActivityController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $this->validate($request, [
-            'l_activity'=> 'required',
-            ]);
-
-        $course_id = $request->input('course_id');
-        $activities = $request->input('l_activity');
-        $existFlag = false;
-
-        //count how many existing learning activities
-        if($activities_id = $request->input('l_activity_id')){
-            $size = count($activities_id);
-            $i = 0;
-            $existFlag = true;
-        }
-
-        foreach($activities as $activity) {
-                if( $existFlag == true && $i < $size) {
-                    LearningActivity::where('l_activity_id', $activities_id[$i])->first()->update(array('l_activity'=>$activity));
-                    $i++;
-                    $request->session()->flash('success', 'Teaching/learning activity modified');
-                }else{
-                    $la = new LearningActivity;
-                    $la->l_activity = $activity;
-                    $la->course_id = $course_id;
-                    if($la->save()){
-                        $request->session()->flash('success', 'New teaching/learning activity added');
-                    }else{
-                        $request->session()->flash('error', 'There was an error adding the teaching/learning activity');
-                    }
+        // try update student assessment methods
+        try {
+            $courseId = $request->input('course_id');
+            $currentActivities = $request->input('current_l_activities');
+            $newActivities = $request->input('new_l_activities');
+            // get the course
+            $course = Course::find($courseId);
+            // get the saved assessment methods for this course
+            $learningActivities = $course->learningActivities;
+            // update current assessment methods
+            foreach ($learningActivities as $learningActivity) {
+                if (array_key_exists($learningActivity->l_activity_id, $currentActivities)) {
+                    // save learning activity
+                    $learningActivity->l_activity = $currentActivities[$learningActivity->l_activity_id];
+                    $learningActivity->save();
+                } else {
+                    // remove learning activity from course
+                    $learningActivity->delete();
                 }
-        }
+            }
+            // add new learning activities 
+            if ($newActivities) {
+                foreach ($newActivities as $index => $newActivity) {
+                    $newLearningActivity = new LearningActivity;
+                    $newLearningActivity->l_activity = $newActivity;
+                    $newLearningActivity->course_id = $courseId;
+                    $newLearningActivity->save();
+                }
+            }
 
-        return redirect()->route('courseWizard.step3', $request->input('course_id'));
+            $request->session()->flash('success','Your teaching and learning activities were updated successfully!');
+
+        } catch (Throwable $exception) {
+            // flash error message if something goes wrong
+            $request->session()->flash('error', 'There was an error updating your teaching and learning activities');
+
+        } finally {
+            // return back to teaching and learning activities step
+            return redirect()->route('courseWizard.step3', $request->input('course_id'));
+        }
     }
 
     /**
