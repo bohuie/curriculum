@@ -119,6 +119,7 @@
                                                                                                         <table class="table table-bordered table-sm">
                                                                                                             <thead class="thead-light">
                                                                                                                 <tr class="table-active">
+                                                                                                                    <th class="text-center">#</th>
                                                                                                                     <th>Program Learning Outcomes or Competencies</th>
                                                                                                                     <!-- Mapping Table Levels -->
                                                                                                                     @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScaleLevel)
@@ -133,9 +134,10 @@
                                                                                                             </thead>
                                                                                                             
                                                                                                             <tbody>
-                                                                                                                @foreach($programsLearningOutcomes[$courseProgram->program_id] as $pl_outcome)
+                                                                                                                @foreach($programsLearningOutcomes[$courseProgram->program_id] as $index => $pl_outcome)
                                                                                                                     <tr>
-                                                                                                                        <td>
+                                                                                                                        <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>
+                                                                                                                        <td>                                                 
                                                                                                                             <b>{{$pl_outcome->plo_shortphrase}}</b>
                                                                                                                             <br>
                                                                                                                             {{$pl_outcome->pl_outcome}}
