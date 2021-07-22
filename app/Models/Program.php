@@ -36,4 +36,8 @@ class Program extends Model
     public function programLearningOutcomes() {
         return $this->hasMany(ProgramLearningOutcome::class, 'program_id', 'program_id');
     }
+
+    public function ploCategories() {
+        return $this->hasMany(PLOCategory::class, 'program_id', 'program_id');
+    }
 }

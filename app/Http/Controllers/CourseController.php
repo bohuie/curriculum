@@ -448,6 +448,15 @@ class CourseController extends Controller
             }
         }
 
+        $coursePrograms->map(function($courseProgram, $key) {
+            $courseProgram->push(0, 'num_plos_categorized');
+            $courseProgram->programLearningOutcomes->each(function($plo, $key) use ($courseProgram) {
+                if (isset($plo->category)) {
+                    $courseProgram->num_plos_categorized++;
+                }
+            });            
+        });
+
         $course =  Course::where('course_id', $course_id)->first();
         $courseStandardCategory = $course->ministryStandardCategory;
         $courseStandards = $courseStandardCategory->standards;
@@ -489,7 +498,9 @@ class CourseController extends Controller
         }
         
         $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseStandardCategory','courseStandardCategory','l_outcomes','l_activities','a_methods','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','courseStandardScales', 'courseStandards', 'assessmentMethodsTotal', 'coursePrograms', 'programsLearningOutcomes', 'programsMappingScales', 'courseProgramsOutcomeMaps', 'optional_PLOs', 'ploCategories')) ;
-        
+
+        // return view('courses.downloadSummary', compact('course','courseStandardCategory','courseStandardCategory','l_outcomes','l_activities','a_methods','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','courseStandardScales', 'courseStandards', 'assessmentMethodsTotal', 'coursePrograms', 'programsLearningOutcomes', 'programsMappingScales', 'courseProgramsOutcomeMaps', 'optional_PLOs', 'ploCategories'));
+
         return $pdf->download('summary.pdf');
     }
 

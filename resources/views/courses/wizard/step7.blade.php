@@ -205,7 +205,7 @@
                                         <div class="mb-4">
                                             <h5 class="card-title">Program Learning Outcomes</h5>
 
-                                            @if($programsLearningOutcomes[$courseProgram->program_id]->count() <1)
+                                            @if($courseProgram->programLearningOutcomes->count() <1)
                                                 <div class="alert alert-warning wizard">
                                                     <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program.                    
                                                 </div>
@@ -215,30 +215,52 @@
                                                     <tr class="table-primary">
                                                         <th class="text-center">#</th>
                                                         <th>Program Learning Outcome</th>
-                                                        @if(count($ploCategories)>0)
-                                                        <th>PLO Category</th>
-                                                        @endif
                                                     </tr>
-                                                
-                                                    @foreach($programsLearningOutcomes[$courseProgram->program_id] as $index => $pl_outcome)
-                                                    <tr>
-                                                        <td style="width:5%" >{{$index + 1}}</td>
-                                                        <td>
-                                                            <b>{{$pl_outcome->plo_shortphrase}}</b><br>
-                                                            {{$pl_outcome->pl_outcome}}
 
-                                                        </td>
-                                                        @if(count($ploCategories)>0)
-                                                            @if(isset($pl_outcome->category->plo_category))
-                                                                <td>{{$pl_outcome->category->plo_category}}</td>
-                                                            @else
-                                                                <td>Uncategorised</td>
+                                                    @if ($courseProgram->ploCategories->count() > 0)
+                                                        @foreach ($courseProgram->ploCategories as $ploCategory) 
+                                                        <tr>
+                                                            <td colspan="2" class="table-active">{{$ploCategory->plo_category}}</td>
+                                                        </tr>
+
+                                                            @foreach ($ploCategory->plos as $index => $plo)
+                                                            <tr>
+                                                                <td style="width:5%" >{{($index++) + 1}}</td>
+                                                                <td>
+                                                                    <b>{{$plo->plo_shortphrase}}</b><br>
+                                                                    {{$plo->pl_outcome}}
+                                                                </td>
+                                                            </tr>
+                                                            @endforeach
+                                                        @endforeach
+                                                        <tr>
+                                                            <td class="table-active" colspan="2">Uncategorized PLOs</td>
+                                                        </tr>
+                                                        @foreach ($courseProgram->programLearningOutcomes as $plo) 
+                                                            @if (!isset($plo->category))
+                                                            <tr>
+                                                                <td>{{($index++) + 1}}</td>
+                                                                <td>
+                                                                    <b>{{$plo->plo_shortphrase}}</b><br>
+                                                                    {{$plo->pl_outcome}}
+                                                                </td>
+                                                            </tr>
                                                             @endif
-                                                        @endif
-                                                    </tr>
-                                                    @endforeach
-                                                </table>
+                                                        @endforeach   
+                                                    @else                                                 
+                                                        @foreach($courseProgram->programLearningOutcomes as $index => $pl_outcome)
 
+                                                        <tr>
+                                                            <td style="width:5%" >{{$index + 1}}</td>
+                                                            <td>
+                                                                <b>{{$pl_outcome->plo_shortphrase}}</b><br>
+                                                                {{$pl_outcome->pl_outcome}}
+
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    @endif
+                                                </table>
                                             @endif
                                         </div>
 
@@ -290,43 +312,47 @@
                                                         <th>Course Learning Outcome</th>
                                                         <th colspan="{{$programsLearningOutcomes[$courseProgram->program_id]->count()}}">Program Learning Outcome</th>
                                                     </tr>
+                                                    @if ($courseProgram->ploCategories->count() > 0)
+                                                        <tr>
+                                                            <td></td>
+                                                            @foreach ($courseProgram->ploCategories as $ploCategory)
+                                                                <td class="table-active w-auto" colspan="{{$ploCategory->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$ploCategory->plo_category}}</td>
+                                                            @endforeach
+                                                            <td colspan="{{$courseProgram->programLearningOutcomes->count() - $courseProgram->numPlosCategorized}}"></td>
+                                                        </tr>
+                                                    @endif
                                                     <tr>
                                                         <td></td>
                                                         @if ($programsLearningOutcomes[$courseProgram->program_id]->count() > 7)
-                                                                @foreach ($programsLearningOutcomes[$courseProgram->program_id] as $index => $programLearningOutcome)
+                                                            @foreach ($programsLearningOutcomes[$courseProgram->program_id] as $index => $programLearningOutcome)
                                                                 <th class="text-center">{{$index + 1}}</th>
-                                                                @endforeach
+                                                            @endforeach
                                                         @else
                                                             @foreach ($programsLearningOutcomes[$courseProgram->program_id] as $index => $programLearningOutcome)
-                                                            <td style="height:0; vertical-align: bottom; text-align: left;">
-                                                                <span style="writing-mode: vertical-rl; transform: rotate(180deg);">
-                                                                    @if(isset($programLearningOutcome->plo_shortphrase))
-                                                                        {{$index+1}}.<br>
-                                                                        {{$programLearningOutcome->plo_shortphrase}}
-                                                                    @else
-                                                                        PLO {{$index+1}}
-                                                                    @endif
+                                                                <td style="height:0; vertical-align: bottom; text-align: left;">
+                                                                    <span style="writing-mode: vertical-rl; transform: rotate(180deg);">
+                                                                        @if(isset($programLearningOutcome->plo_shortphrase))
+                                                                            {{$index+1}}.<br>
+                                                                            {{$programLearningOutcome->plo_shortphrase}}
+                                                                        @else
+                                                                            PLO {{$index+1}}
+                                                                        @endif
 
-                                                                </span>
-                                                            </td>
+                                                                    </span>
+                                                                </td>
                                                             @endforeach
                                                         @endif
                                                     </tr>
 
                                                     @foreach($l_outcomes as $clo_index => $l_outcome)
                                                     <tr>
-                                                        @if ($l_outcomes->count() > 7)
-                                                            <th style="width:10%;">{{$clo_index + 1}}</th>
-                                                        @else 
-                                                            <td class="w-25" style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
-                                                                @if(isset($l_outcome->clo_shortphrase))
-                                                                    {{$clo_index+1}}. {{$l_outcome->clo_shortphrase}}
-                                                                @else
-                                                                    CLO {{$clo_index+1}}
-                                                                @endif
-                                                            </td>
-                                                        @endif
-
+                                                        <td class="w-25" style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
+                                                            @if(isset($l_outcome->clo_shortphrase))
+                                                                {{$clo_index+1}}. {{$l_outcome->clo_shortphrase}}
+                                                            @else
+                                                                CLO {{$clo_index+1}}
+                                                            @endif
+                                                        </td>
                                                         @foreach($programsLearningOutcomes[$courseProgram->program_id] as $pl_outcome)
                                                             <!-- Check if this PLO has been mapped -->
                                                             @if (!array_key_exists($pl_outcome->pl_outcome_id, $courseProgramsOutcomeMaps[$courseProgram->program_id]))
@@ -472,7 +498,6 @@
                                     @for($i = 0; $i < count($l_outcomes); $i++)
 
                                         <tr>
-
                                             <td style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
                                                 @if(isset($l_outcomes[$i]->clo_shortphrase))
                                                     {{$i+1}}. {{$l_outcomes[$i]->clo_shortphrase}}
