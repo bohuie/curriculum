@@ -227,6 +227,16 @@ class ProgramWizardController extends Controller
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get UnCategorized PLO's
         $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
+
+        // returns the number of Categories that contain at least one PLO
+        $numCatUsed = 0;
+        $uniqueCategories = array();
+        foreach ($ploProgramCategories as $ploInCategory) {
+            if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
+                $uniqueCategories[] += $ploInCategory->plo_category_id;
+                $numCatUsed++;
+            }
+        }
         
         // plosPerCategory returns the number of plo's belonging to each category
         // used for setting the colspan in the view
@@ -273,7 +283,7 @@ class ProgramWizardController extends Controller
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('coursesOutcomes', $coursesOutcomes)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
-                                            ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS);
+                                            ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed);
     }
 
     public function getOutcomeMaps ($allPLO, $coursesOutcomes, $arr) {

@@ -302,7 +302,7 @@
                                                                     <div class="form-group row">
                                                                         <label for="title" class="col-md-4 col-form-label text-md-right">Short Phrase</label>
                                                                         <div class="col-md-8">
-                                                                            <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{$ploCat->plo_shortphrase}}" autofocus>
+                                                                            <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{$ploCat->plo_shortphrase}}" autofocus maxlength="50">
                                                                             @error('title')
                                                                                 <span class="invalid-feedback" role="alert">
                                                                                     <strong>{{ $message }}</strong>
@@ -433,7 +433,7 @@
                                                                 <div class="form-group row">
                                                                     <label for="title" class="col-md-4 col-form-label text-md-right">Short Phrase</label>
                                                                     <div class="col-md-8">
-                                                                        <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{$unCatplo->plo_shortphrase}}" autofocus>
+                                                                        <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{$unCatplo->plo_shortphrase}}" autofocus maxlength="50">
                                                                         @error('title')
                                                                             <span class="invalid-feedback" role="alert">
                                                                                 <strong>{{ $message }}</strong>
@@ -518,7 +518,7 @@
 
                                                     <div class="col-md-8">
                                                         <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" autofocus
-                                                        placeholder="E.g. Citing Sources, Scientific Method">
+                                                        placeholder="E.g. Citing Sources, Scientific Method" maxlength="50">
 
                                                         @error('title')
                                                         <span class="invalid-feedback" role="alert">

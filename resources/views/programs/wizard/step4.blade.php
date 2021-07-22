@@ -30,12 +30,14 @@
                                     </tr>
                                     <tbody>
                                         <!--Categorized PLOs -->
-                                        @foreach ($ploCategories as $plo)
+                                        @foreach ($ploCategories as $catIndex => $plo)
                                             @if ($plo->plo_category != NULL)
                                                 @if ($plo->plos->count() > 0)
                                                     <tr class="table-secondary">
-                                                        <th colspan="1">#</th>
-                                                        <th class="text-left">{{$plo->plo_category}}</th>
+                                                        <th class="text-left" colspan="2">{{$plo->plo_category}} 
+                                                        @if ($numCatUsed > 3)    
+                                                            : (C - {{$catIndex + 1}})</th>
+                                                        @endif
                                                     </tr>
                                                 @endif
                                             @endif
@@ -54,8 +56,7 @@
                                         <!--UnCategorized PLOs -->
                                         @if($hasUncategorized)
                                             <tr class="table-secondary">
-                                                <th colspan="1">#</th>
-                                                <th class="text-left">UnCategorized</th>
+                                                <th class="text-left" colspan="2">UnCategorized</th>
                                             </tr>
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
@@ -129,8 +130,8 @@
                                         @foreach($ploCategories as $index =>$plo)
                                             @if ($plo->plo_category != NULL)
                                                 <!-- Use short name for category if there are more than 3 -->
-                                                @if ($plo->plos->count() > 1)
-                                                    <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">Category: {{$index + 1}}</th>
+                                                @if (($numCatUsed > 3) && ($plo->plos->count() > 0))
+                                                    <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">C - {{$index + 1}}</th>
                                                 @elseif ($plo->plos->count() > 0)
                                                     <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
                                                 @endif
