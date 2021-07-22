@@ -11,11 +11,6 @@
                     Program Overview
                 </h3>
 
-                <div class="card-body m-2">
-                    <div class="card">
-                        <h3 class="card-header" >
-                            Courses to PLOs Frequency Distribution 
-                        </h3>
                         
                         <!-- Program Learning Outcomes -->
                         <div class="card-body">
@@ -28,6 +23,7 @@
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no program learning outcomes for this program.                  
                                 </div>
                             @else
+                                <p>Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
                                 <table class="table table-light table-bordered table" style="width: 95%; margin: auto; table-layout:auto;">
                                     <tr class="table-primary">
                                         <th class="text-left" colspan="2">Program Learning Outcome</th>
@@ -113,14 +109,14 @@
                         <!-- frequency distribution table -->
                         <div class="card-body">
                             <h5 class="card-title">
-                                Courses to PLOs Frequency Distribution Table
+                                Curriculum Map
                             </h5>
                             @if( count($programCourses) < 1 )
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no Courses set for this program yet.                    
                                 </div>
                             @else
-                                <p>The courses to PLOs frequency distribution table provides a simplified way to view the strongest correlation between CLOs to PLOs for each course in the program.</p>
+                                <p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
 
                                 <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
                                     <tr class="table-primary">
@@ -129,9 +125,13 @@
                                     </tr>
                                     <tr>
                                         <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
-                                        @foreach($ploCategories as $plo)
+                                        <!-- Displays Categories -->
+                                        @foreach($ploCategories as $index =>$plo)
                                             @if ($plo->plo_category != NULL)
-                                                @if ($plo->plos->count() > 0) 
+                                                <!-- Use short name for category if there are more than 3 -->
+                                                @if ($plo->plos->count() > 1)
+                                                    <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">Category: {{$index + 1}}</th>
+                                                @elseif ($plo->plos->count() > 0)
                                                     <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
                                                 @endif
                                             @endif
@@ -197,6 +197,7 @@
 
                                                     @else
                                                         <td class="text-center align-middle" style="background-color: white;">
+                                                        <i class="bi bi-exclamation-circle-fill"></i><br>
                                                             Incomplete
                                                         </td>
                                                     @endif
@@ -224,6 +225,7 @@
 
                                                     @else
                                                         <td class="text-center align-middle" style="background-color: white;">
+                                                        <i class="bi bi-exclamation-circle-fill"></i><br>
                                                             Incomplete
                                                         </td>
                                                     @endif
@@ -239,7 +241,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <span class="mr-2" style="font-weight: bold;">Tie</span>
+                                            <span class="mr-5" style="font-weight: bold;">Tie</span>
                                             <div class="float-right" style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;"></div>
                                         </td>
                                         <td>
@@ -248,8 +250,11 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <span class="mr-2" style="font-weight: bold;">Incomplete</span>
-                                            <div class="float-right p-2" style="background-color:#FFFFFF; height: 50px; border:0.25px solid grey;">Incomplete</div>
+                                            <span class="mr-5" style="font-weight: bold;">Incomplete</span>
+                                            <div class="float-right p-2 text-center" style="background-color:#FFFFFF; height: 60px; border:0.25px solid grey;">
+                                            <i class="bi bi-exclamation-circle-fill"></i><br>
+                                                Incomplete
+                                            </div>
                                         </td>
                                         <td>
                                             Occurs when a course has not yet been mapped to the set of PLO's.
@@ -257,7 +262,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <span class="mr-2" style="font-weight: bold;">N/A</span><br>
+                                            <span class="mr-5" style="font-weight: bold;">N/A</span><br>
                                             <small>(Not Applicable)</small>
                                             <div class="float-right text-center align-middle p-2" style="background-color:#FFFFFF; height: 50px; width: 50px; border:0.25px solid grey;">N/A</div>
                                         </td>
@@ -269,7 +274,6 @@
                             @endif
                         </div>  
                     </div>
-            </div>
         </div>
     </div>
         <!-- end Courses to PLOs frequency Distribution card -->

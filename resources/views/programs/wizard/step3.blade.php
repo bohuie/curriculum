@@ -92,7 +92,7 @@
                                                             </div>
 
                                                             <div class="modal-body">
-                                                            Are you sure you want to Remove {{$programCourse->course_code . ' ' . $programCourse->course_num}} ?
+                                                            Are you sure you want to remove {{$programCourse->course_code . ' ' . $programCourse->course_num}} ?
                                                             </div>
 
                                                             <form action="{{route('courses.remove', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
