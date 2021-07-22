@@ -32,7 +32,7 @@ class CourseWizardController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
-        $this->middleware('courseWizard');
+        $this->middleware('hasAccess');
     }
 
     // public function step0($course_id)
@@ -51,7 +51,7 @@ class CourseWizardController extends Controller
     // }
 
 
-    public function step1($course_id)
+    public function step1(Request $request, $course_id)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -59,7 +59,7 @@ class CourseWizardController extends Controller
                                 ->join('users','course_users.user_id',"=","users.id")
                                 ->select('users.email')
                                 ->where('courses.course_id','=',$course_id)->get();
-
+        
         //for progress bar
         $lo_count = LearningOutcome::where('course_id', $course_id)->count();
         $am_count = AssessmentMethod::where('course_id', $course_id)->count();
@@ -86,7 +86,7 @@ class CourseWizardController extends Controller
 
     }
 
-    public function step2($course_id)
+    public function step2($course_id, Request $request)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -124,7 +124,7 @@ class CourseWizardController extends Controller
 
     }
 
-    public function step3($course_id)
+    public function step3($course_id, Request $request)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -160,7 +160,7 @@ class CourseWizardController extends Controller
 
     }
 
-    public function step4($course_id)
+    public function step4($course_id, Request $request)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -196,7 +196,7 @@ class CourseWizardController extends Controller
     }
 
     // Program Outcome Mapping
-    public function step5($course_id)
+    public function step5($course_id, Request $request)
     {
         // for header
         $user = User::where('id',Auth::id())->first();
@@ -245,7 +245,7 @@ class CourseWizardController extends Controller
                                         ->with('coursePrograms', $coursePrograms)->with('programsMappingScales', $programsMappingScales)->with('programsLearningOutcomes', $programsLearningOutcomes);
     }
 
-    public function step6($course_id)
+    public function step6($course_id, Request $request)
     {
         // for header
         $user = User::where('id',Auth::id())->first();
@@ -325,7 +325,7 @@ class CourseWizardController extends Controller
                                         ->with('standard_outcomes', $standard_outcomes);
     }
     
-    public function step7($course_id)
+    public function step7($course_id, Request $request)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -451,97 +451,4 @@ class CourseWizardController extends Controller
                                         
     }
 
-    
-
-    // public function step7($course_id)
-    // {
-    //     $user = User::where('id',Auth::id())->first();
-    //     $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-    //                             ->join('users','course_users.user_id',"=","users.id")
-    //                             ->select('users.email')
-    //                             ->where('courses.course_id','=',$course_id)->get();
-    //     //
-    //     $course =  Course::where('course_id', $course_id)->first();
-
-    //     return view('courses.wizard.step7')->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user);
-
-    // }
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

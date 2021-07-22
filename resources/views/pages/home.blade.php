@@ -219,6 +219,7 @@
                                 @foreach ($myCourses as $index => $course)
                                 <tbody>
                                 <tr>
+                                    <!-- Courses That have Not been Completed -->
                                     @if($course->status !== 1)
                                         <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
@@ -232,19 +233,20 @@
                                             <div class="row">
                                                 <div class="d-flex justify-content-center">
                                                     @if(count($coursesPrograms[$course->course_id]) > 0)
-                                                        <div class="btn bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
+                                                        <div class="bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
                                                             <i class="bi bi-map" style="font-size:x-large; text-align:center;"></i>
                                                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge badge-dark">
                                                                 {{ count($coursesPrograms[$course->course_id]) }}
                                                             </span>
                                                         </div>
                                                     @else
-                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"> <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'></i>None</p>
+                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"><i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'> None</i></p>
                                                     @endif
                                                 </div>
                                             </div>                                           
                                         </td>
                                     @else
+                                        <!-- Courses That have been Completed -->
                                         <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
@@ -256,14 +258,14 @@
                                             <div class="row">
                                                 <div class="d-flex justify-content-center">
                                                     @if(count($coursesPrograms[$course->course_id]) > 0)
-                                                        <div class="btn bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
+                                                        <div class="bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
                                                             <i class="bi bi-map" style="font-size:x-large; text-align:center;"></i>
                                                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge badge-dark">
                                                                 {{ count($coursesPrograms[$course->course_id]) }}
                                                             </span>
                                                         </div>
                                                     @else
-                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"> <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'></i>None</p>
+                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"><i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'> None</i></p>
                                                     @endif
                                                 </div>
                                             </div>                                           

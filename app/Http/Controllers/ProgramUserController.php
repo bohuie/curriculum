@@ -54,7 +54,6 @@ class ProgramUserController extends Controller
             'email'=> 'exists:users,email',
             ]);
         
-        
         $user = User::where('email', $request->input('email'))->first();
 
         //$program_user = new ProgramUser;

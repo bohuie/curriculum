@@ -40,17 +40,17 @@ class HomeController extends Controller
         $myPrograms = $user->programs->map(function ($program) {
             $program['timeSince'] = $this->timeSince(time() - strtotime($program->updated_at));
             return $program;
-        });
+        })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
         // get my courses
         $myCourses = $user->courses->map(function ($course) {
             $course['timeSince'] = $this->timeSince(time() - strtotime($course->updated_at));
             return $course;
-        });
+        })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
         // get my syllabi
         $mySyllabi = $user->syllabi->map(function ($syllabus) {
             $syllabus['timeSince'] = $this->timeSince(time() - strtotime($syllabus->updated_at));
             return $syllabus;
-        });
+        })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
         // returns a collection of programs associated with courses (Programs Icon)
         $coursesPrograms = array();
         foreach ($myCourses as $course) {
