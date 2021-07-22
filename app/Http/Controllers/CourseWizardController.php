@@ -35,23 +35,7 @@ class CourseWizardController extends Controller
         $this->middleware('hasAccess');
     }
 
-    // public function step0($course_id)
-    // {
-
-    //     $course =  Course::where('course_id', $course_id)->first();
-    //     $user = User::where('id',Auth::id())->first();
-    //     $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-    //                             ->join('users','course_users.user_id',"=","users.id")
-    //                             ->select('users.email')
-    //                             ->where('courses.course_id','=',$course_id)->get();
-
-
-    //     return view('courses.wizard.step0')->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user);
-
-    // }
-
-
-    public function step1(Request $request, $course_id)
+    public function step1($course_id)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -86,7 +70,7 @@ class CourseWizardController extends Controller
 
     }
 
-    public function step2($course_id, Request $request)
+    public function step2($course_id)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -124,7 +108,7 @@ class CourseWizardController extends Controller
 
     }
 
-    public function step3($course_id, Request $request)
+    public function step3($course_id)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -160,7 +144,7 @@ class CourseWizardController extends Controller
 
     }
 
-    public function step4($course_id, Request $request)
+    public function step4($course_id)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
@@ -196,7 +180,7 @@ class CourseWizardController extends Controller
     }
 
     // Program Outcome Mapping
-    public function step5($course_id, Request $request)
+    public function step5($course_id)
     {
         // for header
         $user = User::where('id',Auth::id())->first();
@@ -245,7 +229,7 @@ class CourseWizardController extends Controller
                                         ->with('coursePrograms', $coursePrograms)->with('programsMappingScales', $programsMappingScales)->with('programsLearningOutcomes', $programsLearningOutcomes);
     }
 
-    public function step6($course_id, Request $request)
+    public function step6($course_id)
     {
         // for header
         $user = User::where('id',Auth::id())->first();
@@ -325,7 +309,7 @@ class CourseWizardController extends Controller
                                         ->with('standard_outcomes', $standard_outcomes);
     }
     
-    public function step7($course_id, Request $request)
+    public function step7($course_id)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
