@@ -137,7 +137,7 @@
                                                                                         </div>
                                                                                         <div class="box" style="background-color: #87CEEB;">
                                                                                             <strong>EVALUATE</strong>
-                                                                                            <p>Make judgements basesd on criteria and standards</p>
+                                                                                            <p>Make judgments based on criteria and standards</p>
                                                                                         </div>
                                                                                         <div class="box" style="background-color: #6495ED;">
                                                                                             <strong>CREATE</strong>
@@ -148,19 +148,19 @@
                                                                                             <p class="CLO_example">Example: define, describe, identify, list, locate, match, memorize, recall, recognize, reproduce, select, state</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: classify，compare，discuss，distinguish，exemplify，explain，illustrate，inder，interpret，paraphrase，predict，summarize</p>
+                                                                                            <p class="CLO_example">Example: classify，compare，discuss，distinguish，exemplify，explain，illustrate，infer，interpret，paraphrase，predict，summarize</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: calculate，construct，demonstrate，dramatize，employ，execute，implement，manipulate，modify，simulate solve</p>
+                                                                                            <p class="CLO_example">Example: calculate，construct，demonstrate，dramatize，employ，execute，implement，manipulate，modify，simulate, solve</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: attribute，categorize，classify，compare，correlate，deduce，differentiate，distinguish，organize plan</p>
+                                                                                            <p class="CLO_example">Example: attribute，categorize，classify，compare，correlate，deduce，differentiate，distinguish，organize</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: assess，check，critique，decide，defend，judge，justify，presuade，recommend，support</p>
+                                                                                            <p class="CLO_example">Example: assess，check，critique，decide，defend，judge，justify，persuade，recommend，support</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify，plan，produce</p>
+                                                                                            <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify, plan，produce</p>
                                                                                         </div>
                                                                                     </div> -->
 
