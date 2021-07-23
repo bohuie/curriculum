@@ -71,13 +71,19 @@
                 <!-- End of Import an Existing Course Modal -->
             </div>
 
+            
+
+
             <div class="card-body">
+                <h6 class="card-subtitle mb-4 lh-lg fs-6 text-center">
+                    To assist faculty in preparing their syllabi, the Curriculum MAP syllabus generator follows the policies and templates provided by the <a href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
+                </h6>
                 <div class="courseInfo">
                     <form method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
                         @csrf
                         <div class="container">
                                     <div class="row justify-content-center">
-                                        <div class="col mb-2 text-center fs-6">
+                                        <div class="col mb-2 text-end fs-6 ">
                                             <!-- Campus dropdown -->
                                             <span class="requiredField">*
                                                 <select  class="form-group text-center" id="campus" name="campus" form="sylabusGenerator" required>
@@ -89,6 +95,15 @@
                                                 </select>
                                             </span>
                                         </div>
+                                        <div class="col mb-2 text-start fs-6">
+                                            @if (!empty($syllabus))
+                                                <input id="land" class="land" type="checkbox" @if ($syllabus->campus == 'O') {{in_array($okanaganSyllabusResources[0]->id, $selectedOkanaganSyllabusResourceIds) ? 'checked' : ''}} @else {{in_array($vancouverSyllabusResources[0]->id, $selectedVancouverSyllabusResourceIds) ? 'checked' : ''}}@endif>
+                                                <label for="land">Land Acknowledgement</label>
+                                            @else 
+                                                <input id="land" class="land" type="checkbox" checked>
+                                                <label for="land">Land Acknowledgement</label>
+                                            @endif
+                                        </div> 
                                     </div>
                                     
                                     <!-- Course Title -->
@@ -212,7 +227,7 @@
                                             <div id="formatStaff" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                             </div>                                            
-                                            <textarea id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
+                                            <textarea id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="E.g. Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;E.g. Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
                                         </div>
                                     </div>
                                     <!-- Class Start Time, Class End Time -->
@@ -290,7 +305,7 @@
                                             <div id="formatCLOs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                             </div>                                            
-                                            <textarea id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="Define ... &#10;Classify ..." name = "learningOutcome" class ="form-control"
+                                            <textarea id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="E.g. Define ... &#10;E.g. Classify ..." name = "learningOutcome" class ="form-control"
                                             type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_outcomes : ''}}</textarea>
                                         </div>
                                     </div>
@@ -303,7 +318,7 @@
                                             <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                             </div>                                            
-                                            <textarea id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="Presentation, 25%, Dec 1, ... &#10;Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control"
+                                            <textarea id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="E.g. Presentation, 25%, Dec 1, ... &#10;E.g. Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control"
                                             type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_assessments : ''}}</textarea>
                                         </div>
                                     </div>
@@ -316,7 +331,7 @@
                                             <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                             </div>                                            
-                                            <textarea id = "learningActivities" data-formatnoteid="formatActivities" placeholder="Class participation consists of clicker questions, group discussions ... &#10;Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control"
+                                            <textarea id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control"
                                             type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
                                         </div>
                                     </div>
@@ -578,21 +593,26 @@
                 selector: '.has-tooltip'
             }     
         );
+
         // list of vancouver syllabus resources
         var vancouverOptionalList = `
             @if (!isset($selectedVancouverSyllabusResourceIds)) 
-                @foreach($vancouverSyllabusResources as $vSyllabusResource)
+                @foreach($vancouverSyllabusResources as $index => $vSyllabusResource)
+                    @if ($index != 0)
                     <li>
                         <input id="{{$vSyllabusResource->id_name}}" type="checkbox" name="vancouverSyllabusResources[{{$vSyllabusResource->id}}]" value="{{$vSyllabusResource->id_name}}" checked>
                         <label for="{{$vSyllabusResource->id_name}}">{{$vSyllabusResource->title}}</label>   
                     </li>
+                    @endif
                 @endforeach
             @else
-                @foreach($vancouverSyllabusResources as $vSyllabusResource)
+                @foreach($vancouverSyllabusResources as $index => $vSyllabusResource)
+                    @if ($index != 0)
                     <li>
                         <input id="{{$vSyllabusResource->id_name}}" type="checkbox" name="vancouverSyllabusResources[{{$vSyllabusResource->id}}]" value="{{$vSyllabusResource->id_name}}" {{in_array($vSyllabusResource->id, $selectedVancouverSyllabusResourceIds) ? 'checked' : ''}}>
                         <label for="{{$vSyllabusResource->id_name}}">{{$vSyllabusResource->title}}</label>   
                     </li>
+                    @endif
                 @endforeach
             @endif
 
@@ -600,18 +620,22 @@
         // list of okanagan syllabus resources
         var okanaganOptionalList = `
             @if (!isset($selectedOkanaganSyllabusResourceIds)) 
-                @foreach($okanaganSyllabusResources as $oSyllabusResource)
+                @foreach($okanaganSyllabusResources as $index => $oSyllabusResource)
+                    @if ($index != 0)
                     <li>
                         <input id="{{$oSyllabusResource->id_name}}" type="checkbox" name="okanaganSyllabusResources[{{$oSyllabusResource->id}}]" value="{{$oSyllabusResource->id_name}}" checked>
                         <label for="{{$oSyllabusResource->id_name}}">{{$oSyllabusResource->title}}</label>   
                     </li>
+                    @endif
                 @endforeach
             @else
-                @foreach($okanaganSyllabusResources as $oSyllabusResource)
+                @foreach($okanaganSyllabusResources as $index => $oSyllabusResource)
+                    @if ($index != 0)
                     <li>
                         <input id="{{$oSyllabusResource->id_name}}" type="checkbox" name="okanaganSyllabusResources[{{$oSyllabusResource->id}}]" value="{{$oSyllabusResource->id_name}}" {{in_array($oSyllabusResource->id, $selectedOkanaganSyllabusResourceIds) ? 'checked' : ''}}>
                         <label for="{{$oSyllabusResource->id_name}}">{{$oSyllabusResource->title}}</label>   
                     </li>
+                    @endif
                 @endforeach
             @endif
             `;
@@ -644,7 +668,7 @@
                 <div id="formatContacts" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
-                <textarea id="courseContacts" data-formatnoteid="formatContacts" name = "courseContacts" placeholder="Professor, Jane Doe, jane.doe@ubc.ca, +1 234 567 8900, ... &#10;Teaching Assistant, John Doe, john.doe@ubc.ca, ..."class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_contacts : ''}}</textarea>
+                <textarea id="courseContacts" data-formatnoteid="formatContacts" name = "courseContacts" placeholder="E.g. Professor, Jane Doe, jane.doe@ubc.ca, +1 234 567 8900, ... &#10;Teaching Assistant, John Doe, john.doe@ubc.ca, ..."class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_contacts : ''}}</textarea>
             </div>
             `;
 
@@ -655,7 +679,7 @@
                 <div id="formatPrereqs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
-                <textarea id="coursePrereqs" data-formatnoteid="formatPrereqs"name = "coursePrereqs" placeholder="CPSC 210 or EECE 210 or CPEN 221 &#10;CPSC 121 or MATH 220"class ="form-control" type="text" form="sylabusGenerator" >{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_prereqs : ''}}</textarea>
+                <textarea id="coursePrereqs" data-formatnoteid="formatPrereqs"name = "coursePrereqs" placeholder="E.g. CPSC 210 or EECE 210 or CPEN 221 &#10;E.g. CPSC 121 or MATH 220"class ="form-control" type="text" form="sylabusGenerator" >{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_prereqs : ''}}</textarea>
             </div>
             `;
         var courseCoreqs = `
@@ -665,7 +689,7 @@
                 <div id="formatCoreqs"class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false" >
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
-                <textarea id = "courseCoreqs" data-formatnoteid="formatCoreqs"placeholder="CPSC 107 or CPSC 110 &#10;CPSC 210" name = "courseCoreqs" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_coreqs : ''}}</textarea>
+                <textarea id = "courseCoreqs" data-formatnoteid="formatCoreqs"placeholder="E.g. CPSC 107 or CPSC 110 &#10;E.g. CPSC 210" name = "courseCoreqs" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_coreqs : ''}}</textarea>
             </div>
             `;
         var courseInstructorBio = `
@@ -709,6 +733,9 @@
         var campus = $('#campus');
         // check if its value is 'V'
         if(campus.val() == 'V'){
+            $('input.land').attr('name', 'vancouverSyllabusResources[{{$vancouverSyllabusResources[0]->id}}]');
+            $('input.land').attr('value', '{{$vancouverSyllabusResources[0]->id_name}}');
+
             // add data specific to vancouver campus
             $('#optionalSyllabus').html(vancouverOptionalList);
             $('#courseCredit').html(courseCredit);
@@ -726,6 +753,9 @@
         }
         else
         {
+            $('input.land').attr('name', 'okanaganSyllabusResources[{{$okanaganSyllabusResources[0]->id}}]');
+            $('input.land').attr('value', '{{$okanaganSyllabusResources[0]->id_name}}');
+
             // add data specific to okanagan campus
             $('#optionalSyllabus').html(okanaganOptionalList);
             $('#courseFormat').html(courseFormat);

@@ -218,7 +218,7 @@ class SyllabusController extends Controller
             'courseYear' => ['required'],
             'courseSemester' => ['required'],
         ]);
-
+        // get required fields common to both campuses
         $campus = $request->input('campus');
         $courseTitle = $request->input('courseTitle');
         $courseCode = $request->input('courseCode');
@@ -226,7 +226,6 @@ class SyllabusController extends Controller
         $courseInstructor = $request->input('courseInstructor');
         $courseYear = $request->input('courseYear');
         $courseSemester = $request->input('courseSemester');
-
         // get current user
         $user = User::where('id', Auth::id())->first();
         
@@ -282,7 +281,7 @@ class SyllabusController extends Controller
                             ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $resourceId],
                         );            
                     }
-                } 
+                }
             break;
             case 'V':
                 // validate request
@@ -313,7 +312,6 @@ class SyllabusController extends Controller
                         );            
                     }
                 }
-
             break;
         }
         // create a new syllabus user
