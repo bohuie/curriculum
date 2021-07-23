@@ -121,7 +121,7 @@
 
                                 <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
                                     <tr class="table-primary">
-                                        <th colspan='1'>Courses</th>
+                                        <th colspan='1' class="w-auto">Courses</th>
                                         <th class="text-left" colspan='{{ count($plos) }}'>Program-level Learning Outcomes</th>
                                     </tr>
                                     <tr>
@@ -169,12 +169,10 @@
                                     @foreach($programCourses as $course)
                                         <tr>
                                             <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
-                                            {{$course->course_title}}
-                                            <br>
                                             {{$course->course_code}} {{$course->course_num}} {{$course->section}}
                                             <br>
                                             {{$course->semester}} {{$course->year}}
-                                        </th>
+                                            </th>
                                             <!-- Frequency distribution from each course -->
                                             <!-- For Each Categorized PLO -->
                                             @foreach($ploProgramCategories as $index => $plo)

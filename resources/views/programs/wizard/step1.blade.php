@@ -214,7 +214,7 @@
                                                     </tr>
                                                     <tr class="table-primary">
                                                         <th class="text-left" colspan="2">Program Learning Outcome</th>
-                                                        <th class="text-center" colspan="1">Actions</th>
+                                                        <th class="text-center w-25" colspan="1">Actions</th>
                                                     </tr>
                                                 @else
                                                     <tr class="mt-5">
