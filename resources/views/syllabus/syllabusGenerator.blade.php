@@ -16,7 +16,7 @@
                     <div class="modal-dialog modal-lg" role="document" style="width:1250px;">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="importExistingCourse">Import an existing Course</h5>
+                                <h5 class="modal-title" id="importExistingCourse">Import an existing course</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -24,7 +24,7 @@
 
                                 <div class="modal-body" style="height: auto;">
 
-                                    <p style="text-align:left;">Select one course from the below existing courses</p>
+                                    <p style="text-align:left;">Choose a course from your list of existing courses to import relevant course information.</p>
                                     <table class="table table-hover dashBoard">
                                         <thead>
                                             <tr>
@@ -70,9 +70,6 @@
                 </div>
                 <!-- End of Import an Existing Course Modal -->
             </div>
-
-            
-
 
             <div class="card-body">
                 <h6 class="card-subtitle mb-4 lh-lg fs-6 text-center">
