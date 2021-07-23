@@ -68,7 +68,8 @@
                                     </div>
                                 </div>
                                 
-                                <div class="jumbotron">
+                                <div class="jumbotron pt-4">
+                                    <h3 class="card-title">Course Learning Outcomes/Competencies</h3>
                                     <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
                                         Note: Remember to click save once you are done.
                                     </h6>
@@ -123,7 +124,7 @@
                                                                                                                         <td>
                                                                                                                             <b>{{$standard_outcome->s_shortphrase}}</b>
                                                                                                                             <br>
-                                                                                                                            {{$standard_outcome->s_outcome}}
+                                                                                                                            {!! $standard_outcome->s_outcome !!}
                                                                                                                         </td>
 
                                                                                                                         @foreach($mappingScales as $mappingScaleLevel)
@@ -168,14 +169,14 @@
                 
             <!--Optional Priorities Card -->
             <div class="card m-3">
-                <h5 class="card-header wizard text-start">
-                    Alignment with Ministry and UBC Priorities <b>(Optional)</b>
-                </h5>
+                <h3 class="card-header wizard text-start">
+                    Alignment with UBC/Ministry Priorities
+                </h3>
 
                 <div class="card-body">
 
                     <h6 class="card-subtitle wizard mb-3 lh-lg ">
-                        Select, from the below UBC and/or Ministry priorities and strategies, those that align strongly with your course. This is optional.                        
+                        Select, from the below UBC and/or Ministry priorities and strategies, the items that align strongly with your course. This is <b>optional</b>.                        
                     </h6>
 
                     <div class="jumbotron">
@@ -200,8 +201,8 @@
                                         <div class="accordion-body">
                                             <!-- UBCs mandate by the ministry -->
                                             <h6 class="fw-bold mb-3">UBC's Mandate by the Ministry</h6>
-                                            <p>UBC's mandate letter (see <a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-administration/mandate-letters" target="_blank"><i class="bi bi-box-arrow-up-right"></i> mandate letter here </a>)
-                                                calls for the below, as they relate to curriculum:</p>
+                                            <p><a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-administration/mandate-letters" target="_blank"><i class="bi bi-box-arrow-up-right"></i> UBC’s mandate letter</a> sets out overarching principles and specific directions for the institution. 
+                                            The items below draw from the mandate letter:</p>
                                             <table class="table table-hover optionalPLO" id="ubcMandate" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
                                                 <thead class="thead-light">
                                                     <tr>
