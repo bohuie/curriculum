@@ -24,44 +24,39 @@ class HasAccessMiddleware
         $course_id = $request->route()->parameter('course');
         $program_id = $request->route()->parameter('program');
         $syllabus_id = $request->route()->parameter('syllabusId');
-        // get user accessing 
+        // get current user  
+        $user = User::where('id',Auth::id())->first();
 
         if ($course_id != null) {
             // get all users for the course
-            $allCourseUsers = Course::find($course_id)->users;
-
-            $usersArray = array();
-            $usersArray = $this->populateUsersArray($allCourseUsers, $usersArray);
-
-            if ($this->denyAccess($usersArray)) {
+            $courseUsers = Course::find($course_id)->users;
+            // check if the current user belongs to this course
+            if (!in_array($user->id, $courseUsers->pluck('id')->toArray())) {
+                // user does not belong to this course
                 $request->session()->flash('error', 'You do not have access to this course');
                 return redirect()->route('home');
             }
-
-        }else if ($program_id != null) {
+        } else if ($program_id != null) {
             // get all users for the program
-            $allProgramUsers = Program::find($program_id)->users;
-            
-            $usersArray = array();
-            $usersArray = $this->populateUsersArray($allProgramUsers, $usersArray);
-
-            if ($this->denyAccess($usersArray)) {
-                $request->session()->flash('error', 'You do not have access to this Program');
+            $programUsers = Program::find($program_id)->users;
+            // check if the current user belongs to this program
+            if (!in_array($user->id, $programUsers->pluck('id')->toArray())) {
+                // user does not belong to this program
+                $request->session()->flash('error', 'You do not have access to this program');
                 return redirect()->route('home');
             }
 
-        }elseif ($syllabus_id != null) {
+        } elseif ($syllabus_id != null) {
             // get all users for the syllabus
-            $allSyllabusUsers = Syllabus::find($syllabus_id)->users;
-            
-            $usersArray = array();
-            $usersArray = $this->populateUsersArray($allSyllabusUsers, $usersArray);
-            
-            if ($this->denyAccess($usersArray)) {
-                $request->session()->flash('error', 'You do not have access to this Syllabus');
-                return redirect()->route('home');
+            $syllabusUsers = Syllabus::find($syllabus_id)->users;
+            // check if the current user belongs to this syllabus
+            if (!in_array($user->id, $syllabusUsers->pluck('id')->toArray())) {
+                // user does not belong to this syllabus
+                $request->session()->flash('error', 'You do not have access to this syllabus');
+                return redirect()->route('home'); 
             } else {
-                $userPermission = $allSyllabusUsers->where('id', Auth::id())->first()->pivot->permission;
+                // get users permission level for this syllabus
+                $userPermission = $syllabusUsers->where('id', Auth::id())->first()->pivot->permission;
                 switch ($userPermission) {
                     case 1:
                         // Owner
@@ -73,27 +68,15 @@ class HasAccessMiddleware
                     case 3:
                         // Viewer
                         $request->session()->flash('success', 'RETURN SUMMARY VIEWER ONLY');
+                        // return view only syllabus 
                         return redirect()->route('home');
                         break;
+                    default: 
+                        // default 
                 }
             }
         }
 
         return $next($request);
-    }
-
-    public function populateUsersArray($allUsers, $usersArray) {
-        foreach ($allUsers as $user) {
-            $usersArray[] += $user->id; 
-        }
-        return $usersArray;
-    }
-
-    public function denyAccess($users) {
-        $currentUser = User::where('id',Auth::id())->first();
-        // check if current user belongs to the course 
-        if (!in_array($currentUser->id, $users)) {
-            return TRUE;
-        }
     }
 }
