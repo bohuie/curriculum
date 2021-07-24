@@ -34,7 +34,12 @@ class SyllabusController extends Controller
         $this->middleware('hasAccess');
     }
 
-    public function index($syllabusId = null){
+    public function index($syllabusId = null, Request $request){
+        
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
 
         $user = User::where('id', Auth::id())->first();
         $myCourses = $user->courses()
