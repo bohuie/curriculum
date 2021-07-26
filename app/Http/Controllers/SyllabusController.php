@@ -3,15 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use PhpOffice\PhpWord\PhpWord;
-use PhpOffice\PhpWord\TemplateProcessor;
-use PhpOffice\PhpWord\Element\Table;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LearningOutcome;
 use App\Models\AssessmentMethod;
 use App\Models\Course;
+use App\Models\CourseUser;
 use PhpOffice\PhpWord\Element\TextRun;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\Element\Table;
+use Illuminate\Support\Facades\Log;
+use App\Models\syllabus\Syllabus;
+use App\Models\syllabus\OkanaganSyllabus;
+use App\Models\syllabus\OkanaganSyllabusResource;
+use App\Models\syllabus\SyllabusResourceOkanagan;
+use App\Models\syllabus\SyllabusResourceVancouver;
+use App\Models\syllabus\VancouverSyllabus;
+use App\Models\syllabus\SyllabusUser;
+use App\Models\syllabus\VancouverSyllabusResource;
+use stdClass;
 
 class SyllabusController extends Controller
 {
@@ -19,26 +31,13 @@ class SyllabusController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
+        $this->middleware('hasAccess');
     }
 
-    public function index(){
+    public function index($syllabusId = null){
+
         $user = User::where('id', Auth::id())->first();
-        // get completed courses (status = 1) and in progress courses (status = -1) for the current user
-        /*
-        $allCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-            ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-            ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-            ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-            'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-            ->where([
-                ['course_users.user_id','=',Auth::id()],
-                ['courses.status', '=', 1]
-            ])->orWhere([
-                ['course_users.user_id','=',Auth::id()],
-                ['courses.status', '=', -1]
-            ])->get();
-        */
-        $allCourses = $user->courses()
+        $myCourses = $user->courses()
             ->select('courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
             'courses.course_id','courses.course_num','courses.course_title', 'courses.status')
             ->where([
@@ -89,10 +88,458 @@ class SyllabusController extends Controller
         $inputFieldDescriptions['instructorBioStatement'] = 'You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.';
 
         $inputFieldDescriptions['courseLearningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
+
+        // get vancouver campus resources
+        $vancouverSyllabusResources = VancouverSyllabusResource::all();
+        // get okanagan campus resources
+        $okanaganSyllabusResources = OkanaganSyllabusResource::all();
+
+        // if syllabusId is not null, view for syllabus with syllabusId was requested
+        if ($syllabusId != null) {
+            // get the saved syllabus if the current user is a user of this syllabus
+            $syllabus = DB::table('syllabi')->where('id', $syllabusId)
+            ->whereExists(function ($query) use ($syllabusId, $user) {
+                $query->select()->from('syllabi_users')->where([
+                    ['syllabi_users.syllabus_id', '=', $syllabusId],
+                    ['syllabi_users.user_id', '=', $user->id],
+                ]);
+            })->get()->first();
             
-        return view("syllabus.syllabusGenerator")->with('user', $user)->with('allCourses', $allCourses)->with('inputFieldDescriptions', $inputFieldDescriptions);
+            // if syllabus was found, return view with the syllabus data
+            if ($syllabus){
+
+                switch ($syllabus->campus) {
+                    case 'O':
+                        // get data specific to okanagan campus
+                        $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
+                        // get selected okanagan syllabus resource
+                        $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
+                        // return view with okanagan syllabus data
+                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
+                    break;
+                    case 'V':
+                        // get data specific to vancouver campus
+                        $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+                        // get selected vancouver syllabus resource
+                        $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
+                        // return view with vancouver syllabus data
+                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);
+
+                    break;
+
+                    default: 
+                        // return default view 
+                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus);
+
+                }
+
+            // else redirect to the empty syllabus generator view where syllabus id is null
+            } else {
+                return redirect()->route('syllabus')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+            }
+
+        // else return the empty syllabus generator view where syllabus id is null
+        } else {
+            return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+        }
     }
 
+    /**
+     * Save syllabus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function save(Request $request, $syllabusId = null)
+    {
+        // validate request
+        $request->validate([
+            'campus' => ['required'],
+            'courseTitle' => ['required'],
+            'courseCode' => ['required'],
+            'courseNumber' => ['required'],
+            'courseInstructor' => ['required'],
+            'courseYear' => ['required'],
+            'courseSemester' => ['required'],
+        ]);
+        
+        // if syllabus already exists, update it
+        if ($syllabusId) {
+            // update syllabus
+            $syllabus = $this->update($request, $syllabusId);
+        // else create a new syllabus
+        } else {
+            // create a new syllabus
+            $syllabus = $this->create($request);
+        }
+        // set updated_at time
+        $syllabus->updated_at = date('Y-m-d H:i:s');
+        // save syllabus
+        if ($syllabus->save()) {
+            $request->session()->flash('success', 'Your syllabus was successfully saved!');
+            
+        } else {
+            $request->session()->flash('error', 'There was an error saving your syllabus!');
+        }
+
+        $courseCode = $request->input('courseCode');
+        $courseNumber = $request->input('courseNumber');
+
+        // download syllabus as a word document
+        if ($request->input('download')) {
+            $documentName = $courseCode.$courseNumber.'-Syllabus.docx';
+            // create word document
+            $wordDocument = $this->wordExport($request);
+            // save word document on server
+            $wordDocument->saveAs($documentName);
+            // force user browser to download the saved document
+            return response()->download($courseCode.$courseNumber.'-Syllabus.docx')->deleteFileAfterSend(true);            
+        }
+
+        return redirect()->route('syllabus', [
+            'syllabusId' => $syllabus->id,
+        ]);
+    }
+
+    /**
+     * Create a new syllabus resource.
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function create($request)
+    {
+        
+        // validate request
+        $request->validate([
+            'campus' => ['required'],
+            'courseTitle' => ['required'],
+            'courseCode' => ['required'],
+            'courseNumber' => ['required'],
+            'courseInstructor' => ['required'],
+            'courseYear' => ['required'],
+            'courseSemester' => ['required'],
+        ]);
+        // get required fields common to both campuses
+        $campus = $request->input('campus');
+        $courseTitle = $request->input('courseTitle');
+        $courseCode = $request->input('courseCode');
+        $courseNumber = $request->input('courseNumber');
+        $courseInstructor = $request->input('courseInstructor');
+        $courseYear = $request->input('courseYear');
+        $courseSemester = $request->input('courseSemester');
+        // get current user
+        $user = User::where('id', Auth::id())->first();
+        
+        // create a new syllabus and set required data values
+        $syllabus = new Syllabus;
+        $syllabus->campus = $campus;
+        $syllabus->course_title = $courseTitle;
+        $syllabus->course_code = $courseCode;
+        $syllabus->course_num = $courseNumber;
+        $syllabus->course_instructor = $courseInstructor;
+        $syllabus->course_term = $courseSemester;
+        $syllabus->course_year = $courseYear;
+
+        // set optional syllabus fields common to both campuses 
+        $syllabus->course_location = $request->input('courseLocation');
+        $syllabus->other_instructional_staff = $request->input('otherCourseStaff');
+        $syllabus->class_start_time = $request->input('startTime');
+        $syllabus->class_end_time = $request->input('endTime');
+        if ($classMeetingDays = $request->input('schedule')) {
+            $classSchedule = "";
+            foreach($classMeetingDays as $day) {
+                $classSchedule = ($classSchedule == "" ? $day : $classSchedule . '/' . $day);
+            }
+
+            $syllabus->class_meeting_days = $classSchedule;
+        }        
+        $syllabus->learning_outcomes = $request->input('learningOutcome');
+        $syllabus->learning_assessments = $request->input('learningAssessments');
+        $syllabus->learning_activities = $request->input('learningActivities');
+        $syllabus->late_policy = $request->input('latePolicy');
+        $syllabus->missed_exam_policy = $request->input('missingExam');
+        $syllabus->missed_activity_policy = $request->input('missingActivity');
+        $syllabus->passing_criteria = $request->input('passingCriteria');
+        $syllabus->learning_materials = $request->input('learningMaterials');
+        $syllabus->learning_resources = $request->input('learningResources');
+        $syllabus->save();
+
+        switch($campus) {
+            case 'O':
+                // create okanagan syllabus record
+                $okanaganSyllabus = new OkanaganSyllabus;
+                $okanaganSyllabus->syllabus_id = $syllabus->id;
+                // set optional syllabus fields for Okangan campus
+                $okanaganSyllabus->course_format = $request->input('courseFormat');
+                $okanaganSyllabus->course_overview = $request->input('courseOverview');
+                // save okanagan syllabus record
+                $okanaganSyllabus->save();
+                // check if a list of okanagan syllabus resources to include was provided
+                if ($okanaganSyllabusResources = $request->input('okanaganSyllabusResources')) {
+                    foreach ($okanaganSyllabusResources as $resourceId => $resourceIdName) {
+                        // create a record for each resource selected for this syllabus
+                        SyllabusResourceOkanagan::create(
+                            ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $resourceId],
+                        );            
+                    }
+                }
+            break;
+            case 'V':
+                // validate request
+                $request->validate([
+                    'courseCredit' => ['required'],
+                ]);
+                // crate vancouver syllabus record
+                $vancouverSyllabus = new VancouverSyllabus;
+                $vancouverSyllabus->syllabus_id = $syllabus->id;
+                $vancouverSyllabus->course_credit = $request->input('courseCredit');
+                // set optional syllabus fields for Vancouver campus
+                $vancouverSyllabus->office_location = $request->input('officeLocation');
+                $vancouverSyllabus->course_description = $request->input('courseDescription');
+                $vancouverSyllabus->course_contacts = $request->input('courseContacts');                    
+                $vancouverSyllabus->course_prereqs = $request->input('coursePrereqs');
+                $vancouverSyllabus->course_coreqs = $request->input('courseCoreqs');
+                $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
+                $vancouverSyllabus->course_structure = $request->input('courseStructure');
+                $vancouverSyllabus->course_schedule = $request->input('courseSchedule');
+                // save vancouver syllabus record
+                $vancouverSyllabus->save();
+                // check if a list of vancouver syllabus resources to include was provided
+                if ($vancouverSyllabusResources = $request->input('vancouverSyllabusResources')) {
+                    foreach ($vancouverSyllabusResources as $resourceId => $resourceIdName) {
+                        // create a record for each resource selected for this syllabus
+                        SyllabusResourceVancouver::create(
+                            ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $resourceId],
+                        );            
+                    }
+                }
+            break;
+        }
+        // create a new syllabus user
+        $syllabusUser = new SyllabusUser;
+        // set relationship between syllabus and user
+        $syllabusUser->syllabus_id = $syllabus->id;
+        $syllabusUser->user_id = $user->id;
+        $syllabusUser->permission = 1;
+        $syllabusUser->save();
+
+        return $syllabus;
+    }
+
+
+    
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update($request, $syllabusId)
+    {
+        // validate request
+        $request->validate([
+            'campus' => ['required'],
+            'courseTitle' => ['required'],
+            'courseCode' => ['required'],
+            'courseNumber' => ['required'],
+            'courseInstructor' => ['required'],
+            'courseYear' => ['required'],
+            'courseSemester' => ['required'],
+        ]);
+        
+        $campus = $request->input('campus');
+        $courseTitle = $request->input('courseTitle');
+        $courseCode = $request->input('courseCode');
+        $courseNumber = $request->input('courseNumber');
+        $courseInstructor = $request->input('courseInstructor');
+        $courseYear = $request->input('courseYear');
+        $courseSemester = $request->input('courseSemester');
+
+        // get the syllabus, and start updating it
+        $syllabus = Syllabus::find($syllabusId);
+        $syllabus->campus = $campus;
+        $syllabus->course_title = $courseTitle;
+        $syllabus->course_code = $courseCode;
+        $syllabus->course_num = $courseNumber;
+        $syllabus->course_instructor = $courseInstructor;
+        $syllabus->course_term = $courseSemester;
+        $syllabus->course_year = $courseYear;
+
+        // update optional syllabus fields common to both campuses
+        $syllabus->course_location = $request->input('courseLocation');
+        $syllabus->other_instructional_staff = $request->input('otherCourseStaff');
+        $syllabus->office_hours = $request->input('officeHour');
+        $syllabus->class_start_time = $request->input('startTime');
+        $syllabus->class_end_time = $request->input('endTime');
+
+        if ($classMeetingDays = $request->input('schedule')) {
+            $classSchedule = "";
+            foreach($classMeetingDays as $day) {
+                $classSchedule = ($classSchedule == "" ? $day : $classSchedule . '/' . $day);
+            }
+            $syllabus->class_meeting_days = $classSchedule;
+        } else {
+            $syllabus->class_meeting_days = null;
+        }
+
+        $syllabus->learning_outcomes = $request->input('learningOutcome');
+        $syllabus->learning_assessments = $request->input('learningAssessments');
+        $syllabus->learning_activities = $request->input('learningActivities');
+        $syllabus->late_policy = $request->input('latePolicy');
+        $syllabus->missed_exam_policy = $request->input('missingExam');
+        $syllabus->missed_activity_policy = $request->input('missingActivity');
+        $syllabus->passing_criteria = $request->input('passingCriteria');
+        $syllabus->learning_materials = $request->input('learningMaterials');
+        $syllabus->learning_resources = $request->input('learningResources');
+
+        switch ($campus) {
+            case 'O':
+                // campus was not changed
+                if ($syllabus->getOriginal('campus') == 'O') {
+                    // get the related Okanagan syllabus
+                    $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
+                    // update optional fields for okanagan syllabus
+                    $okanaganSyllabus->course_format = $request->input('courseFormat');
+                    $okanaganSyllabus->course_overview = $request->input('courseOverview');
+                    // save okanagan syllabus
+                    $okanaganSyllabus->save();
+                    // check if a list of okanagan syllabus resources to include was provided
+                    if ($okanaganSyllabusResources = $request->input('okanaganSyllabusResources')) {
+                        // delete all resources previously selected for the given syllabus but not currently selected
+                        SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->whereNotIn('o_syllabus_resource_id', array_keys($okanaganSyllabusResources))->delete();
+                        // update or create records for selected okanagan syllabus resources
+                        foreach ($okanaganSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
+                            SyllabusResourceOkanagan::updateOrCreate(
+                                ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $selectedResourceId], 
+                            );
+                        }   
+                    } else {
+                        // delete all resources previously selected for the given syllabus
+                        SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->delete();
+                    }
+                // campus was changed from 'V' to 'O'
+                } else {
+                    // delete vancouver syllabus record 
+                    VancouverSyllabus::where('syllabus_id', $syllabus->id)->delete();
+                    // create a new okanagan syllabus
+                    $okanaganSyllabus = new OkanaganSyllabus;
+                    $okanaganSyllabus->syllabus_id = $syllabus->id;
+                    // set optional syllabus fields for Okangan campus
+                    $okanaganSyllabus->course_format = $request->input('courseFormat');
+                    $okanaganSyllabus->course_overview = $request->input('courseOverview');
+                    // save okanagan syllabus
+                    $okanaganSyllabus->save();
+                    // delete all resources previously selected for the vancouver syllabus
+                    SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->delete();
+                    // check if a list of okanagan syllabus resources to include was provided
+                    if ($okanaganSyllabusResources = $request->input('okanaganSyllabusResources')) {
+                        // update or create records for selected okanagan syllabus resources
+                        foreach ($okanaganSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
+                            SyllabusResourceOkanagan::updateOrCreate(
+                                ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $selectedResourceId], 
+                            );
+                        }   
+                    } 
+                }
+            break;
+            case 'V':
+                // campus was not changed
+                if ($syllabus->getOriginal('campus') == 'V') {
+                    $request->validate([
+                        'courseCredit' => ['required'],
+                    ]);
+                    // get related vancouver syllabus
+                    $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id)->first();
+                    $vancouverSyllabus->course_credit = $request->input('courseCredit');
+                    // update optional fields for vancouver syllabus
+                    $vancouverSyllabus->office_location = $request->input('officeLocation');
+                    $vancouverSyllabus->course_description = $request->input('courseDescription');
+                    $vancouverSyllabus->course_contacts = $request->input('courseContacts');
+                    $vancouverSyllabus->course_prereqs = $request->input('coursePrereqs');
+                    $vancouverSyllabus->course_coreqs = $request->input('courseCoreqs');
+                    $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
+                    $vancouverSyllabus->course_structure = $request->input('courseStructure');
+                    $vancouverSyllabus->course_schedule = $request->input('courseSchedule');
+                    // save vancouver syllabus
+                    $vancouverSyllabus->save();
+                    // check if a list of vancouver syllabus resources to include was provided
+                    if ($vancouverSyllabusResources = $request->input('vancouverSyllabusResources')) {
+                        // delete all resources previously selected for the given syllabus but not currently selected
+                        SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->whereNotIn('v_syllabus_resource_id', array_keys($vancouverSyllabusResources))->delete();
+                        // update or create records for selected vancouver syllabus resources
+                        foreach ($vancouverSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
+                            SyllabusResourceVancouver::updateOrCreate(
+                                ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $selectedResourceId], 
+                            );
+                        }
+                    } else {
+                        // delete all resources previously selected for the given syllabus
+                        SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->delete();
+                    }
+                // campus was changed from 'O' to 'V'
+                } else {
+                    // delete okanagan syllabus record 
+                    OkanaganSyllabus::where('syllabus_id', $syllabusId)->delete();
+                    // validate request
+                    $request->validate([
+                        'courseCredit' => ['required'],
+                    ]);
+                    // create new vancouver syllabus record
+                    $vancouverSyllabus = new VancouverSyllabus;
+                    $vancouverSyllabus->syllabus_id = $syllabus->id;
+                    $vancouverSyllabus->course_credit = $request->input('courseCredit');
+                    // set optional syllabus fields for Vancouver campus
+                    $vancouverSyllabus->office_location = $request->input('officeLocation');
+                    $vancouverSyllabus->course_description = $request->input('courseDescription');
+                    $vancouverSyllabus->course_contacts = $request->input('courseContacts');                    
+                    $vancouverSyllabus->course_prereqs = $request->input('coursePrereqs');
+                    $vancouverSyllabus->course_coreqs = $request->input('courseCoreqs');
+                    $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
+                    $vancouverSyllabus->course_structure = $request->input('courseStructure');
+                    $vancouverSyllabus->course_schedule = $request->input('courseSchedule');
+                    // save vancouver syllabus
+                    $vancouverSyllabus->save();
+                    // delete all resources previously selected for the okanagan syllabus
+                    SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->delete();
+                    // check if a list of vancouver syllabus resources to include was provided
+                    if ($vancouverSyllabusResources = $request->input('vancouverSyllabusResources')) {
+                        // update or create records for selected vancouver syllabus resources
+                        foreach ($vancouverSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
+                            SyllabusResourceVancouver::updateOrCreate(
+                                ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $selectedResourceId], 
+                            );
+                        }
+                    }
+                }
+            }
+            return $syllabus;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $syllabusId
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $syllabusId)
+    {
+        //
+        $syllabus = Syllabus::where('id', $syllabusId)->first();
+
+        if($syllabus->delete()){
+            $request->session()->flash('success','Your syllabus has been deleted');
+        }else{
+            $request->session()->flash('error', 'There was an error deleting your syllabus');
+        }
+
+        return redirect()->route('home');
+
+    }
+
+    
+
+    // get existing course information
     // Ajax to get course infomation
     public function getCourseInfo(Request $request) {
 
@@ -120,14 +567,14 @@ class SyllabusController extends Controller
 
     //Syllabus Word file
     public function WordExport(Request $request){
-        
+                
         // validate request
         $request->validate([
             'campus' => ['required'],
             'courseTitle' => ['required'],
             'courseCode' => ['required'],
             'courseNumber' => ['required'],
-            'courseinstructor' => ['required'],
+            'courseInstructor' => ['required'],
             'courseYear' => ['required'],
             'courseSemester' => ['required'],
         ]);
@@ -135,7 +582,7 @@ class SyllabusController extends Controller
         $courseTitle = $request->input('courseTitle');
         $courseCode = $request->input('courseCode');
         $courseNumber = $request->input('courseNumber');
-        $courseInstructor = $request->input('courseinstructor');
+        $courseInstructor = $request->input('courseInstructor');
         $courseYear = $request->input('courseYear');
         $semester = $request->input('courseSemester');
 
@@ -159,48 +606,17 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NocourseOverview', 0);
                 }
 
-                if($request->input('gradingPractices')){
-                    $templateProcessor->cloneBlock('grading_practice');
-                }else{
-                    $templateProcessor->cloneBlock('grading_practice', 0);
+                $allOkanaganSyllabusResources = OkanaganSyllabusResource::all();
+                foreach ($allOkanaganSyllabusResources as $resource) {
+                    if (array_key_exists($resource->id, $request->input('okanaganSyllabusResources'))) {
+                        $templateProcessor->cloneBlock($resource->id_name);
+                        $templateProcessor->setValue($resource->id_name . '-title', $resource->title);
+                        // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
+                    } else {
+                        $templateProcessor->cloneBlock($resource->id_name, 0);
+                    }
                 }
-
-                if($request->input('health')){
-                    $templateProcessor->cloneBlock('health');
-                }else{
-                    $templateProcessor->cloneBlock('health', 0);
-                }
-
-                if($request->input('hub')){
-                    $templateProcessor->cloneBlock('hub');
-                }else{
-                    $templateProcessor->cloneBlock('hub', 0);
-                }
-
-                if($request->input('equity')){
-                    $templateProcessor->cloneBlock('equity');
-                }else{
-                    $templateProcessor->cloneBlock('equity', 0);
-                }
-
-                if($request->input('disabilityAssistance')){
-                    $templateProcessor->cloneBlock('disability');
-                }else{
-                    $templateProcessor->cloneBlock('disability', 0);
-                }
-
-                if($request->input('safewalk')){
-                    $templateProcessor->cloneBlock('safewalk');
-                }else{
-                    $templateProcessor->cloneBlock('safewalk', 0);
-                }
-
-                if($request->input('final')){
-                    $templateProcessor->cloneBlock('final_exam');
-                } else {
-                    $templateProcessor->cloneBlock('final_exam', 0);
-                }
-
+            
             break;
             case 'V':
                 $request->validate([
@@ -304,11 +720,18 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoTopicsSchedule', 0);
                 }
 
-                if($request->input('disabilities')){
-                    $templateProcessor->cloneBlock('disabilities');
-                }else{
-                    $templateProcessor->cloneBlock('disabilities', 0);
+                $allVancouverSyllabusResources = VancouverSyllabusResource::all();
+                foreach ($allVancouverSyllabusResources as $resource) {
+                    if (array_key_exists($resource->id, $request->input('vancouverSyllabusResources'))) {
+                        $templateProcessor->cloneBlock($resource->id_name);
+                        $templateProcessor->setValue($resource->id_name . '-title', $resource->title);
+                        // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
+                    } else {
+                        $templateProcessor->cloneBlock($resource->id_name, 0);
+                    }
+                    
                 }
+
             break;
         }
         // add required form fields common to both campuses to template
@@ -317,13 +740,6 @@ class SyllabusController extends Controller
 
         // date the syllabus
         $templateProcessor->setValue('dateGenerated', date('d, M Y'));
-
-        // tell template processor to include a land acknowledgement if user selected it
-        if($request->input('landAcknowledgement')){
-            $templateProcessor->cloneBlock('land');
-        }else{
-            $templateProcessor->cloneBlock('land', 0);
-        }
 
         // tell template processor to include learning activities if user completed the field(s)
         if($learningActivities = $request->input('learningActivities')){
@@ -493,20 +909,7 @@ class SyllabusController extends Controller
         }else{
             $templateProcessor->cloneBlock('NoLearningMaterials',0);
         }
-
-        if($request->input('academic')){
-            $templateProcessor->cloneBlock('academic');
-        }else{
-            $templateProcessor->cloneBlock('academic', 0);
-        }
-        if($request->input('copyright')){
-            $templateProcessor->cloneBlock('copyright');
-        }else{
-            $templateProcessor->cloneBlock('copyright', 0);
-        }
-
-        $templateProcessor->saveAs($courseCode.$courseNumber. '-Syllabus.docx');
-        return response()->download($courseCode.$courseNumber.  '-Syllabus.docx')->deleteFileAfterSend(true);
+        return $templateProcessor;
     }
 
 }

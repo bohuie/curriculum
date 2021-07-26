@@ -94,7 +94,9 @@ class CourseController extends Controller
         $course->course_title = $request->input('course_title');
         $course->course_num = $request->input('course_num');
         $course->course_code =  strtoupper($request->input('course_code'));
+        // status of mapping process
         $course->status = -1;
+        // course required for program
         $course->required = $request->input('required');
         $course->type = $request->input('type');
 
@@ -104,8 +106,10 @@ class CourseController extends Controller
         $course->section = $request->input('course_section');
         $course->standard_category_id = $request->input('standard_category_id');
 
+        // course creation triggered by add new course for program
         if($request->input('type') == 'assigned'){
             $isCourseRequired = $request->input('required');
+            // course not yet assigned to an instructor
             $course->assigned = -1;
             $course->save();
 
@@ -129,9 +133,10 @@ class CourseController extends Controller
             }
 
             return redirect()->route('programWizard.step3', $request->input('program_id'));
-
+        
+        // course creation triggered by add new course on dashboard
         }else{
-
+            // course assigned to course creator
             $course->assigned = 1;
             $course->save();
 
@@ -443,6 +448,15 @@ class CourseController extends Controller
             }
         }
 
+        $coursePrograms->map(function($courseProgram, $key) {
+            $courseProgram->push(0, 'num_plos_categorized');
+            $courseProgram->programLearningOutcomes->each(function($plo, $key) use ($courseProgram) {
+                if (isset($plo->category)) {
+                    $courseProgram->num_plos_categorized++;
+                }
+            });            
+        });
+
         $course =  Course::where('course_id', $course_id)->first();
         $courseStandardCategory = $course->ministryStandardCategory;
         $courseStandards = $courseStandardCategory->standards;
@@ -484,7 +498,9 @@ class CourseController extends Controller
         }
         
         $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseStandardCategory','courseStandardCategory','l_outcomes','l_activities','a_methods','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','courseStandardScales', 'courseStandards', 'assessmentMethodsTotal', 'coursePrograms', 'programsLearningOutcomes', 'programsMappingScales', 'courseProgramsOutcomeMaps', 'optional_PLOs', 'ploCategories')) ;
-        
+
+        // return view('courses.downloadSummary', compact('course','courseStandardCategory','courseStandardCategory','l_outcomes','l_activities','a_methods','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','courseStandardScales', 'courseStandards', 'assessmentMethodsTotal', 'coursePrograms', 'programsLearningOutcomes', 'programsMappingScales', 'courseProgramsOutcomeMaps', 'optional_PLOs', 'ploCategories'));
+
         return $pdf->download('summary.pdf');
     }
 

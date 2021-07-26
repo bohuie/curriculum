@@ -108,7 +108,8 @@
                                                 <th class="text-center">Actions</th>
                                     </tr>
 
-                                    @foreach($mappingScales as $ms)                                            
+                                    @foreach($mappingScales as $ms)
+                                        @if($ms->mapping_scale_categories_id != NULL)
                                             <tr>
                                                 <td>
                                                     <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
@@ -124,13 +125,43 @@
                                                         @csrf
                                                         {{method_field('DELETE')}}
                                                         <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
-                                                        @if($ms->mapping_scale_categories_id == NULL)
+                                                        <button type="submit" style="width:60px" class="btn btn-danger btn-sm m-1">Delete</button>
+                                                        
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            @endif
+                                    @endforeach
+                                </table>
+                                @if ($hasCustomMS) 
+                                <table class="table table-light table-bordered" >
+                                    <tr class="table-primary">
+                                                <th class="w-25"> Custom Mapping Scale Level</th>
+                                                <th>Description</th>
+                                                <th class="text-center">Actions</th>
+                                    </tr>
+                                @endif
+                                    @foreach($mappingScales as $ms)
+                                        @if($ms->mapping_scale_categories_id == NULL)
+                                            <tr>
+                                                <td>
+                                                    <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
+                                                    {{$ms->title}}<br>
+                                                    ({{$ms->abbreviation}})
+                                                </td>
+                                                <td>
+                                                    {{$ms->description}}
+                                                </td>
+
+                                                <td class="text-center align-middle">
+                                                    <form action="{{route('mappingScale.destroy', $ms->map_scale_id)}}" method="POST">
+                                                        @csrf
+                                                        {{method_field('DELETE')}}
+                                                        <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
                                                             <button type="button" class="btn btn-secondary btn-sm m-1" data-toggle="modal" style="width:60px;" data-target="#editMSModal{{$ms->map_scale_id}}">
                                                                 Edit
                                                             </button>
-                                                        @endif
                                                         <button type="submit" style="width:60px" class="btn btn-danger btn-sm m-1">Delete</button>
-                                                        
                                                     </form>
                                                     <!-- Edit MS Modal -->
                                                     <div class="modal fade" id="editMSModal{{$ms->map_scale_id}}" tabindex="-1" role="dialog" aria-labelledby="editMSModalLabel" aria-hidden="true">
@@ -250,6 +281,7 @@
                                                     <!-- End of Edit MS Modal -->
                                                 </td>
                                             </tr>
+                                            @endif
                                     @endforeach
                                 </table>
                             @endif

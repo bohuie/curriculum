@@ -62,4 +62,24 @@ class CourseProgramController extends Controller
         
         return redirect()->route('programWizard.step3', $request->input('program_id'));
     }
+
+    public function editCourseRequired(Request $request) {
+        $courseId = $request->input('course_id');
+        $programId = $request->input('program_id');
+        $required = $request->input('required');
+        
+        $course = Course::where('course_id', $courseId)->first();
+
+        if ($courseId != null && $programId != null && $required != null) {
+            CourseProgram::updateOrCreate(
+                ['course_id' => $courseId, 'program_id' => $programId], 
+                ['course_required' => $required]
+            );
+            $request->session()->flash('success', 'Successfully updated required status for: ' .strval($course->course_title));
+        } else {
+            $request->session()->flash('error', 'There was an error updating the required status');
+        }
+
+        return redirect()->route('programWizard.step3', $request->input('program_id'));
+    }
 }

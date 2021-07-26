@@ -39,14 +39,21 @@
                                             <th>Term</th>
                                             <th>Assigned</th>
                                             <th>Status</th>
-                                            <th>Required</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
 
                                         @foreach($programCourses as $programCourse)
                                         <tr >
                                             <td >
-                                                {{$programCourse->course_title}}                                            
+                                                {{$programCourse->course_title}}
+                                                <br>
+                                                <p class="form-text text-muted">
+                                                    @if($programCourse->pivot->course_required == 1)
+                                                        Required 
+                                                    @elseif($programCourse->pivot->course_required == 0)
+                                                        Not Required 
+                                                    @endif
+                                                </p>                                         
                                             </td>
                                             <td>
                                                 {{$programCourse->course_code}} {{$programCourse->course_num}}
@@ -70,15 +77,6 @@
                                             @endif
                                             </td>
                                             <td>
-                                                <p class="form-text text-muted">
-                                                    @if($programCourse->pivot->course_required == 1)
-                                                        Required 
-                                                    @elseif($programCourse->pivot->course_required == 0)
-                                                        Not Required 
-                                                    @endif
-                                                </p>
-                                            </td>
-                                            <td>
                                                 <!-- Delete button -->
                                                 <button style="width:70px" type="submit" class="btn btn-danger btn-sm float-right ml-2" data-toggle="modal" data-target="#deleteConfirmationCourse{{$programCourse->course_id}}">Remove</button>
 
@@ -94,7 +92,7 @@
                                                             </div>
 
                                                             <div class="modal-body">
-                                                            Are you sure you want to Remove {{$programCourse->course_code . ' ' . $programCourse->course_num}} ?
+                                                            Are you sure you want to remove {{$programCourse->course_code . ' ' . $programCourse->course_num}} ?
                                                             </div>
 
                                                             <form action="{{route('courses.remove', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
@@ -116,177 +114,25 @@
                                                     Edit
                                                 </button>
 
-                                                <!-- Edit Course Modal -->
-                                                <div class="modal fade" id="editCourseModal{{$programCourse->course_id}}" tabindex="-1"
-                                                    role="dialog" aria-labelledby="editCourseModalLabel"
-                                                    aria-hidden="true">
+                                                <!-- Edit Course Required Modal -->
+                                                <div class="modal fade" id="editCourseModal{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="editCourseModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="editCourseModalLabel">
-                                                                    Edit
-                                                                    Course</h5>
-                                                                <button type="button" class="close"
-                                                                    data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
+                                                                <h5 class="modal-title" id="editCourseModalLabel">Edit Course</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                             </div>
-
-                                                            <form method="POST"
-                                                                action="{{ action('CourseController@update', $programCourse->course_id) }}">
+                                                            <form method="POST" action="{{ route('courseProgram.editCourseRequired', $program->program_id) }}">
                                                                 @csrf
-                                                                {{method_field('PUT')}}
 
                                                                 <div class="modal-body">
-
-
-                                                                    <div class="form-group row">
-                                                                        <label for="course_code"
-                                                                            class="col-md-3 col-form-label text-md-right">Course
-                                                                            Code</label>
-
-                                                                        <div class="col-md-8">
-                                                                            <input id="course_code" type="text"
-                                                                            pattern="[A-Za-z]+"
-                                                                            minlength="1"
-                                                                            maxlength="4"
-                                                                            class="form-control @error('course_code') is-invalid @enderror" 
-                                                                            value="{{$programCourse->course_code}}"
-                                                                            name="course_code" required autofocus>
-
-                                                                            @error('course_code')
-                                                                            <span class="invalid-feedback" role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                            <small id="helpBlock" class="form-text text-muted">
-                                                                                Four letter course code e.g. SUST, COSC etc.
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="course_num"
-                                                                            class="col-md-3 col-form-label text-md-right">Course
-                                                                            Number</label>
-
-                                                                        <div class="col-md-8">
-                                                                            <input id="course_num" type="text"
-                                                                                class="form-control @error('course_num') is-invalid @enderror"
-                                                                                name="course_num"
-                                                                                value="{{$programCourse->course_num}}"
-                                                                                required autofocus>
-
-                                                                            @error('course_num')
-                                                                            <span class="invalid-feedback"
-                                                                                role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="course_title"
-                                                                            class="col-md-3 col-form-label text-md-right">Course
-                                                                            Title</label>
-
-                                                                        <div class="col-md-8">
-                                                                            <input id="course_title" type="text"
-                                                                                class="form-control @error('course_title') is-invalid @enderror"
-                                                                                name="course_title"
-                                                                                value="{{$programCourse->course_title}}"
-                                                                                required autofocus>
-
-                                                                            @error('course_title')
-                                                                            <span class="invalid-feedback"
-                                                                                role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="course_semester" class="col-md-3 col-form-label text-md-right">Year and Semester</label>
-
-                                                                        <div class="col-md-3">
-                                                                            <select id="course_semester" class="form-control @error('course_semester') is-invalid @enderror"
-                                                                                name="course_semester" required autofocus>
-                                                                                <option @if($programCourse->semester === "W1") selected @endif value="W1">Winter Term 1</option>
-                                                                                <option @if($programCourse->semester === "W2") selected @endif value="W2">Winter Term 2</option>
-                                                                                <option @if($programCourse->semester === "S1") selected @endif value="S1">Summer Term 1</option>
-                                                                                <option @if($programCourse->semester === "S2") selected @endif value="S2">Summer Term 2</option>
-
-                                                                            @error('course_semester')
-                                                                            <span class="invalid-feedback" role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                            </select>
-                                                                        </div>
-
-                                                                        <div class="col-md-2 float-right">
-                                                                            <select id="course_year" class="form-control @error('course_year') is-invalid @enderror"
-                                                                            name="course_year" required autofocus>
-                                                                                <option @if($programCourse->year === 2021) selected @endif value="2021">2021</option>
-                                                                                <option @if($programCourse->year === 2020) selected @endif value="2020">2020</option>
-                                                                                <option @if($programCourse->year === 2019) selected @endif value="2019">2019</option>
-                                                                                <option @if($programCourse->year === 2018) selected @endif value="2018">2018</option>
-                                                                                <option @if($programCourse->year === 2017) selected @endif value="2017">2017</option>
-
-                                                                            @error('course_year')
-                                                                            <span class="invalid-feedback" role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                            </select>
-                                                                        </div>
-
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="course_section" class="col-md-3 col-form-label text-md-right">Course
-                                                                            Section</label>
-
-                                                                        <div class="col-md-4">
-                                                                            <input id="course_section" type="text"
-                                                                                class="form-control @error('course_section') is-invalid @enderror"
-                                                                        name="course_section" autofocus value= {{$programCourse->section}}>
-
-                                                                            @error('course_section')
-                                                                            <span class="invalid-feedback" role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="delivery_modality" class="col-md-3 col-form-label text-md-right">Mode of Delivery</label>
-
-                                                                        <div class="col-md-3 float-right">
-                                                                            <select id="delivery_modality" class="form-control @error('delivery_modality') is-invalid @enderror"
-                                                                            name="delivery_modality" required autofocus>
-                                                                                <option @if($programCourse->delivery_modality === 'O') selected @endif value="O">Online</option>
-                                                                                <option @if($programCourse->delivery_modality === 'I') selected @endif value="I">In-person</option>
-                                                                                <option @if($programCourse->delivery_modality === 'B') selected @endif value="B">Hybrid</option>
-
-                                                                            @error('delivery_modality')
-                                                                            <span class="invalid-feedback" role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
 
                                                                     <div class="form-group row">
                                                                         <label for="required"
                                                                             class="col-md-3 col-form-label text-md-right">Required</label>
                                                                         <div class="col-md-6">
 
-                                                                                @if($programCourse->required == 0)
+                                                                                @if($programCourse->pivot->course_required == 0)
                                                                                     <div class="form-check ">
                                                                                         <label class="form-check-label">
                                                                                             <input type="radio" class="form-check-input" name="required" value="1">
@@ -299,7 +145,7 @@
                                                                                             Not Required
                                                                                         </label>
                                                                                     </div>
-                                                                                @elseif($programCourse->required == 1)
+                                                                                @else
                                                                                     <div class="form-check ">
                                                                                         <label class="form-check-label">
                                                                                             <input type="radio" class="form-check-input" name="required" value="1" checked>
@@ -312,37 +158,21 @@
                                                                                             Not Required
                                                                                         </label>
                                                                                     </div>
-                                                                                @else
-                                                                                    <div class="form-check ">
-                                                                                        <label class="form-check-label">
-                                                                                            <input type="radio" class="form-check-input" name="required" value="1" >
-                                                                                            Required
-                                                                                        </label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <label class="form-check-label">
-                                                                                            <input type="radio" class="form-check-input" name="required" value="0" >
-                                                                                            Not Required
-                                                                                        </label>
-                                                                                    </div>
-
                                                                                 @endif
                                                                                 <small class="form-text text-muted">
                                                                                     Is this course required by the program?
                                                                                 </small>
                                                                         </div>
                                                                     </div>
-
-                                                                    <input type="hidden" class="form-input" name="program_id" value={{$program->program_id}}>
-                                                                    <input type="hidden" class="form-check-input" name="user_id" value={{Auth::id()}}>
+                                                                    
+                                                                    <input type="hidden" class="form-input" name="course_id" value="{{$programCourse->course_id}}">
+                                                                    <input type="hidden" class="form-input" name="program_id" value="{{$program->program_id}}">
+                                                                    <input type="hidden" class="form-check-input" name="user_id" value="{{Auth::id()}}">
 
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <button type="button"
-                                                                        class="btn btn-secondary col-2 btn-sm"
-                                                                        data-dismiss="modal">Close</button>
-                                                                    <button type="submit"
-                                                                        class="btn btn-primary col-2 btn-sm">Save</button>
+                                                                    <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary col-2 btn-sm">Save</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -350,8 +180,7 @@
                                                 </div>
 
                                                 <!-- Assign instructor button  -->
-                                                <br>
-                                                <button type="button" class="btn btn-outline-primary btn-sm m-2 float-right" data-toggle="modal" data-target="#assignInstructorModal{{$programCourse->course_id}}">
+                                                <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#assignInstructorModal{{$programCourse->course_id}}">
                                                 Assign Instructor
                                                 </button>
 

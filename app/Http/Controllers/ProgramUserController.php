@@ -53,20 +53,25 @@ class ProgramUserController extends Controller
             'email'=> 'required',
             'email'=> 'exists:users,email',
             ]);
-
+        
         $user = User::where('email', $request->input('email'))->first();
 
-        // $pu = new ProgramUser;
-        // $pu->program_id = $request->input('program_id');
-        // $pu->user_id = $user->id;
+        //$program_user = new ProgramUser;
+        //$program_user->program_id = $request->input('program_id');
+        //$program_user->user_id = $user->id;
 
+        $program_id = $request->input('program_id');
+        
+        $program = DB::table('programs')->where('program_id',$program_id)->first();
+
+        //dd($program);
 
         $pu = DB::table('program_users')->updateOrInsert(
             ['program_id' => $request->input('program_id'), 'user_id' => $user->id ]
         );
 
         if($user->save()){
-            Mail::to($user->email)->send(new NotifyProgramAdminMail());
+            Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $user->name));
 
             $request->session()->flash('success', 'Collaborator added');
         }else{

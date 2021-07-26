@@ -32,24 +32,8 @@ class CourseWizardController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
-        $this->middleware('courseWizard');
+        $this->middleware('hasAccess');
     }
-
-    // public function step0($course_id)
-    // {
-
-    //     $course =  Course::where('course_id', $course_id)->first();
-    //     $user = User::where('id',Auth::id())->first();
-    //     $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-    //                             ->join('users','course_users.user_id',"=","users.id")
-    //                             ->select('users.email')
-    //                             ->where('courses.course_id','=',$course_id)->get();
-
-
-    //     return view('courses.wizard.step0')->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user);
-
-    // }
-
 
     public function step1($course_id)
     {
@@ -59,7 +43,7 @@ class CourseWizardController extends Controller
                                 ->join('users','course_users.user_id',"=","users.id")
                                 ->select('users.email')
                                 ->where('courses.course_id','=',$course_id)->get();
-
+        
         //for progress bar
         $lo_count = LearningOutcome::where('course_id', $course_id)->count();
         $am_count = AssessmentMethod::where('course_id', $course_id)->count();
@@ -220,7 +204,6 @@ class CourseWizardController extends Controller
                                 ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
 
-
         // get all the programs this course belongs to
         $coursePrograms = $course->programs;
         // get the mapping scale for each program
@@ -233,14 +216,10 @@ class CourseWizardController extends Controller
         foreach ($coursePrograms as $courseProgram) {
             $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
         }
+        // get course learning outcomes
+        $l_outcomes = $course->learningOutcomes;
 
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
-        $pl_outcomes = ProgramLearningOutcome::where('program_id', $course->program_id)->get();
-        $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                            ->where('mapping_scale_programs.program_id', $course->program_id)->get();
-
-
-        return view('courses.wizard.step5')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('pl_outcomes',$pl_outcomes)->with('mappingScales', $mappingScales)->with('courseUsers', $courseUsers)->with('user', $user)
+        return view('courses.wizard.step5')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)
                                         ->with('lo_count',$lo_count)->with('am_count', $am_count)->with('la_count', $la_count)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
                                         ->with('coursePrograms', $coursePrograms)->with('programsMappingScales', $programsMappingScales)->with('programsLearningOutcomes', $programsLearningOutcomes);
     }
@@ -361,6 +340,17 @@ class CourseWizardController extends Controller
         }
         // get the PLOs for each program
         $programsLearningOutcomes = array();
+        $programsPlosCategorizedCount = array();
+
+        $coursePrograms->map(function($courseProgram, $key) {
+            $courseProgram->push(0, 'num_plos_categorized');
+            $courseProgram->programLearningOutcomes->each(function($plo, $key) use ($courseProgram) {
+                if (isset($plo->category)) {
+                    $courseProgram->num_plos_categorized++;
+                }
+            });            
+        });
+
         foreach ($coursePrograms as $courseProgram) {
             $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
         }
@@ -451,97 +441,4 @@ class CourseWizardController extends Controller
                                         
     }
 
-    
-
-    // public function step7($course_id)
-    // {
-    //     $user = User::where('id',Auth::id())->first();
-    //     $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-    //                             ->join('users','course_users.user_id',"=","users.id")
-    //                             ->select('users.email')
-    //                             ->where('courses.course_id','=',$course_id)->get();
-    //     //
-    //     $course =  Course::where('course_id', $course_id)->first();
-
-    //     return view('courses.wizard.step7')->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user);
-
-    // }
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

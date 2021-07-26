@@ -54,6 +54,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany('App\Models\Program', 'program_users', 'user_id', 'program_id',);
     }
 
+    public function syllabi(){
+        return $this->belongsToMany('App\Models\syllabus\Syllabus', 'syllabi_users', 'user_id', 'syllabus_id',);
+    }
+
     public function hasAnyRoles($roles){
         if($this->roles()->whereIn('role', $roles)->first()){
             return true;

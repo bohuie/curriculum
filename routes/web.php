@@ -34,10 +34,18 @@ Route::get('/about', 'AboutController@index')->name('about');
 Route::get('/faq', 'FAQController@index')->name('FAQ');
 Route::get('/terms', 'TermsController@index')->name('terms');
 
-
-Route::get('/syllabusGenerator', 'SyllabusController@index')->name('syllabus');
-Route::post('/syllabusGenerator/word','SyllabusController@WordExport')->name('syllabus.word');
-Route::get('/syllabusGenerator/course','SyllabusController@getCourseInfo');
+// route to view a syllabus
+Route::get('/syllabusGenerator/{syllabusId?}', 'SyllabusController@index')->name('syllabus');
+// route to save a syllabus
+Route::post('/syllabusGenerator/{syllabusId?}', 'SyllabusController@save')->name('syllabus.save');
+// route to import course info into a syllabus
+Route::get('/syllabusGenerator/import/course','SyllabusController@getCourseInfo');
+// route to delete a syllabus
+Route::delete('/syllabusGenerator/{syllabusId}', 'SyllabusController@destroy')->name('syllabus.delete');
+// route to assign a syllabus collaborator
+Route::post('/syllabi/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
+// route to unassign a syllabus collaborator
+Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
@@ -84,6 +92,8 @@ Route::get('/programWizard/{program}/step4','ProgramWizardController@step4')->na
 
 // Program step3 add existing courses to a program
 Route::post('/programWizard/{program}/step3/addCoursesToProgram', 'CourseProgramController@addCoursesToProgram')->name('courseProgram.addCoursesToProgram');
+// Program step3 edit required status
+Route::post('/programWizard/{program}/step3/editCourseRequired', 'CourseProgramController@editCourseRequired')->name('courseProgram.editCourseRequired');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
