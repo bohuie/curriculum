@@ -73,7 +73,7 @@
 
             <div class="card-body">
                 <h6 class="card-subtitle mb-4 lh-lg fs-6 text-center">
-                    To assist faculty in preparing their syllabi, the Curriculum MAP syllabus generator follows the policies and templates provided by the <a href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
+                    To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank"href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
                 </h6>
                 <div class="courseInfo">
                     <form method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
@@ -151,37 +151,72 @@
                                                 <option value="S2" {{!empty($syllabus) ? (($syllabus->course_term == 'S2') ? 'selected=true' : '') : ''}}>
                                                     Summer Term 2
                                                 </option>
+                                                <option value="O" {{!empty($syllabus) ? (($syllabus->course_term == 'O') ? 'selected=true' : '') : ''}}>
+                                                    Other
+                                                </option>
                                             </select>
                                         </div>
                                         <!-- Course Year -->
                                         <div class="col-2">
                                             <label for="courseYear"><span class="requiredField">* </span>Course Year</label>
                                             <select id="courseYear" class="form-control" name="courseYear">
-                                                <option
-                                                value="2023"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2023') ? 'selected=true' : '') : ''}}
+                                            <option value="2021"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2021') ? 'selected=true' : '') : ''}}
                                                 >
-                                                    2023
+                                                    2021
                                                 </option>
                                                 <option value="2022"
                                                 {{!empty($syllabus) ? (($syllabus->course_year == '2022') ? 'selected=true' : '') : ''}}
                                                 >
                                                     2022
                                                 </option>
-                                                <option value="2021"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2021') ? 'selected=true' : '') : ''}}
+                                                <option
+                                                value="2023"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2023') ? 'selected=true' : '') : ''}}
                                                 >
-                                                    2021
+                                                    2023
                                                 </option>
-                                                <option value="2020"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2020') ? 'selected=true' : '') : ''}}
+                                                <option
+                                                value="2024"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2024') ? 'selected=true' : '') : ''}}
                                                 >
-                                                    2020
+                                                    2024
                                                 </option>
-                                                <option value="2019"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2019') ? 'selected=true' : '') : ''}}
+                                                <option
+                                                value="2025"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2025') ? 'selected=true' : '') : ''}}
                                                 >
-                                                    2019
+                                                    2025
+                                                </option>
+                                                <option
+                                                value="2026"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2026') ? 'selected=true' : '') : ''}}
+                                                >
+                                                    2026
+                                                </option>
+                                                <option
+                                                value="2027"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2027') ? 'selected=true' : '') : ''}}
+                                                >
+                                                    2027
+                                                </option>
+                                                <option
+                                                value="2028"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2028') ? 'selected=true' : '') : ''}}
+                                                >
+                                                    2028
+                                                </option>
+                                                <option
+                                                value="2029"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2029') ? 'selected=true' : '') : ''}}
+                                                >
+                                                2029
+                                                </option>
+                                                <option
+                                                value="2030"
+                                                {{!empty($syllabus) ? (($syllabus->course_year == '2030') ? 'selected=true' : '') : ''}}
+                                                >
+                                                    2030
                                                 </option>
                                             </select>
                                         </div>
@@ -384,9 +419,9 @@
                                     <!-- Course Learning Resources -->
                                     <div class="row mb-3">
                                         <div class="col">
-                                                <label for="courseLearningResources">Learning Resources</label>
-                                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseLearningResources']}}"></i>
-                                                <textarea id = "courseLearningResources" name = "courseLearningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{old('courseLearningResources')}}</textarea>
+                                                <label for="learningResources">Learning Resources</label>
+                                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                                                <textarea id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
                                         </div>
                                     </div>
 
