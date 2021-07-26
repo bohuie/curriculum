@@ -415,7 +415,7 @@
                                         <td style="width:5%" >{{$index + 1}}</td>
                                         <td>
                                             <b>{{$standard_outcome->s_shortphrase}}</b><br>
-                                                {{$standard_outcome->s_outcome}}
+                                                {!! $standard_outcome->s_outcome !!}
                                         </td>
                                     </tr>
                                     @endforeach

@@ -75,7 +75,8 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="jumbotron">
+                                    <div class="jumbotron pt-4">
+                                        <h4 class="mb-4">Course Learning Outcomes/Competencies</h4>
                                         <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
                                             Note: Remember to click save once you are done.
                                         </h6>
@@ -130,7 +131,7 @@
                                                                                                                             <td>
                                                                                                                                 <b>{{$standard_outcome->s_shortphrase}}</b>
                                                                                                                                 <br>
-                                                                                                                                {{$standard_outcome->s_outcome}}
+                                                                                                                                {!! $standard_outcome->s_outcome !!}
                                                                                                                             </td>
 
                                                                                                                             @foreach($mappingScales as $mappingScaleLevel)
@@ -164,25 +165,27 @@
                                                                                 </div>                                                                            
                                                                             </div>
                                                                         </div>
+                                                                
                                                                     @endforeach
-                    
                                         </div>
-                                    </div>          
+                                    </div>
                             @endif
-                            <!-- End of standards mapping -->
                         </div>
 
                         <div class="tab-pane fade" id="nav-priorities" role="tabpanel" aria-labelledby="nav-priorities-tab">
                             <!--Optional Priorities -->
                             <div class="card-body">
+                                
                                 <h6 class="card-subtitle wizard mb-3 mt-3 lh-lg text-center">
-                                    Select, from the below UBC and/or Ministry priorities and strategies, those that align strongly with your course. This is optional.                        
+                                    Select, from the below UBC and/or Ministry priorities and strategies, the items that align strongly with your course. This is <b>optional</b>.                                   
                                 </h6>
 
-                                <div class="jumbotron">
-                                                                <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
-                                                                    Note: Remember to click save once you are done.
-                                                                </h6>
+                                <div class="jumbotron pt-4">
+                                    <h4 class="mb-4">Alignment with UBC/Ministry Priorities</h4>
+
+                                    <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
+                                        Note: Remember to click save once you are done.
+                                    </h6>
                                                                 
                                     <form id="optinal" action="{{route('storeOptionalPLOs')}}" method="POST">
                                                                     {{ csrf_field() }}
@@ -353,8 +356,9 @@
                                                                                         </table>
 
                                                             <h6 class="fw-bold mt-4 mb-4">
-                                                                <a href="https://aboriginal-2018.sites.olt.ubc.ca/files/2020/09/UBC.ISP_C2V13.1_Spreads_Sept1.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i>
-                                                                UBC's Indigenous Strategic Plan (2020)</a>
+                                                                <a href="https://indigenous.ubc.ca/indigenous-engagement/indigenous-strategic-plan/" target="_blank"><i class="bi bi-box-arrow-up-right"></i>
+                                                                    UBC's Indigenous Strategic Plan (2020)
+                                                                </a>
                                                             </h6>
 
                                                             <table class="table table-hover optionalPLO" id="IndigenousPlan" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">

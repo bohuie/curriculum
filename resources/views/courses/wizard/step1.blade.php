@@ -77,52 +77,52 @@
                                                 </div>
                                                 <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
                                                 <!-- Bloom's Taxonomy Image -->
-                                                <!-- <div class="flex-container ">
-                                                    <div class="box" style="background-color: #e8f4f8;">
-                                                        <strong>REMEMBER</strong>
-                                                        <p>Retrieve relevant knowledge from long-term memory</p>
-                                                    </div>
-                                                    <div class="box" style="background-color: #E6E6FA;">
-                                                        <strong>UNDERSTAND</strong>
-                                                        <p>Construct meaning from instructional messages</p>
-                                                    </div>
-                                                    <div class="box" style="background-color: #c1e1ec;">
-                                                        <strong>APPLY</strong>
-                                                        <p>Carry out or use a procedure in a given situation</p>
-                                                    </div>
-                                                    <div class="box" style="background-color: #ADD8E6;">
-                                                        <strong>ANALYZE</strong>
-                                                        <p>Break material into its constituent parts and determine how the parts relate</p>
-                                                    </div>
-                                                    <div class="box" style="background-color: #87CEEB;">
-                                                        <strong>EVALUATE</strong>
-                                                        <p>Make judgements basesd on criteria and standards</p>
-                                                    </div>
-                                                    <div class="box" style="background-color: #6495ED;">
-                                                        <strong>CREATE</strong>
-                                                        <p>Put elements together to form a coherent or functional whole</p>
-                                                    </div>
+                                                    <!--<div class="flex-container">
+                                                                                        <div class="box" style="background-color: #e8f4f8;">
+                                                                                            <strong>REMEMBER</strong>
+                                                                                            <p>Retrieve relevant knowledge from long-term memory</p>
+                                                                                        </div>
+                                                                                        <div class="box" style="background-color: #E6E6FA;">
+                                                                                            <strong>UNDERSTAND</strong>
+                                                                                            <p>Construct meaning from instructional messages</p>
+                                                                                        </div>
+                                                                                        <div class="box" style="background-color: #c1e1ec;">
+                                                                                            <strong>APPLY</strong>
+                                                                                            <p>Carry out or use a procedure in a given situation</p>
+                                                                                        </div>
+                                                                                        <div class="box" style="background-color: #ADD8E6;">
+                                                                                            <strong>ANALYZE</strong>
+                                                                                            <p>Break material into its constituent parts and determine how the parts relate</p>
+                                                                                        </div>
+                                                                                        <div class="box" style="background-color: #87CEEB;">
+                                                                                            <strong>EVALUATE</strong>
+                                                                                            <p>Make judgments based on criteria and standards</p>
+                                                                                        </div>
+                                                                                        <div class="box" style="background-color: #6495ED;">
+                                                                                            <strong>CREATE</strong>
+                                                                                            <p>Put elements together to form a coherent or functional whole</p>
+                                                                                        </div>
 
-                                                    <div class="box">
-                                                        <p class="CLO_example">Example: define, describe, identify, list, locate, match, memorize, recall, recognize, reproduce, select, state</p>
-                                                    </div>
-                                                    <div class="box">
-                                                        <p class="CLO_example">Example: classify，compare，discuss，distinguish，exemplify，explain，illustrate，inder，interpret，paraphrase，predict，summarize</p>
-                                                    </div>
-                                                    <div class="box">
-                                                        <p class="CLO_example">Example: calculate，construct，demonstrate，dramatize，employ，execute，implement，manipulate，modify，simulate solve</p>
-                                                    </div>
-                                                    <div class="box">
-                                                        <p class="CLO_example">Example: attribute，categorize，classify，compare，correlate，deduce，differentiate，distinguish，organize plan</p>
-                                                    </div>
-                                                    <div class="box">
-                                                        <p class="CLO_example">Example: assess，check，critique，decide，defend，judge，justify，presuade，recommend，support</p>
-                                                    </div>
-                                                    <div class="box">
-                                                        <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify，plan，produce</p>
-                                                    </div>
-                                                </div> -->
-                                                <!-- End of Bloom's Taxonomy Image -->
+                                                                                        <div class="box">
+                                                                                            <p class="CLO_example">Example: define, describe, identify, list, locate, match, memorize, recall, recognize, reproduce, select, state</p>
+                                                                                        </div>
+                                                                                        <div class="box">
+                                                                                            <p class="CLO_example">Example: classify，compare，discuss，distinguish，exemplify，explain，illustrate，infer，interpret，paraphrase，predict，summarize</p>
+                                                                                        </div>
+                                                                                        <div class="box">
+                                                                                            <p class="CLO_example">Example: calculate，construct，demonstrate，dramatize，employ，execute，implement，manipulate，modify，simulate, solve</p>
+                                                                                        </div>
+                                                                                        <div class="box">
+                                                                                            <p class="CLO_example">Example: attribute，categorize，classify，compare，correlate，deduce，differentiate，distinguish，organize</p>
+                                                                                        </div>
+                                                                                        <div class="box">
+                                                                                            <p class="CLO_example">Example: assess，check，critique，decide，defend，judge，justify，persuade，recommend，support</p>
+                                                                                        </div>
+                                                                                        <div class="box">
+                                                                                            <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify, plan，produce</p>
+                                                                                        </div>
+                                                    </div> -->                                                
+                                                <!-- End of Bloom's Taxonomy Image -->                                                
                                                 <small>
                                                     Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
                                                 </small>
@@ -216,8 +216,8 @@
                                                                                     @enderror
 
                                                                                     <small class="form-text text-muted">
-                                                                                        <a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><strong><i class="bi bi-box-arrow-up-right"></i> Click here</strong></a>
-                                                                                        for tips to write effective CLOs
+                                                                                        <p>Add <strong>One CLO</strong> at a time. <a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><strong><i class="bi bi-box-arrow-up-right"></i> Click here</strong></a>
+                                                                                        for tips to write effective CLOs</p>
                                                                                     </small>
 
                                                                                 </div>
@@ -248,7 +248,8 @@
                                                                                         <p>The below are examples of verbs associated with different levels of Bloom’s Taxonomy of Learning.</p>
                                                                                     </div>
 
-                                                                                    <div class="flex-container">
+                                                                                    <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
+                                                                                    <!--<div class="flex-container">
                                                                                         <div class="box" style="background-color: #e8f4f8;">
                                                                                             <strong>REMEMBER</strong>
                                                                                             <p>Retrieve relevant knowledge from long-term memory</p>
@@ -267,7 +268,7 @@
                                                                                         </div>
                                                                                         <div class="box" style="background-color: #87CEEB;">
                                                                                             <strong>EVALUATE</strong>
-                                                                                            <p>Make judgements basesd on criteria and standards</p>
+                                                                                            <p>Make judgments based on criteria and standards</p>
                                                                                         </div>
                                                                                         <div class="box" style="background-color: #6495ED;">
                                                                                             <strong>CREATE</strong>
@@ -278,21 +279,21 @@
                                                                                             <p class="CLO_example">Example: define, describe, identify, list, locate, match, memorize, recall, recognize, reproduce, select, state</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: classify，compare，discuss，distinguish，exemplify，explain，illustrate，inder，interpret，paraphrase，predict，summarize</p>
+                                                                                            <p class="CLO_example">Example: classify，compare，discuss，distinguish，exemplify，explain，illustrate，infer，interpret，paraphrase，predict，summarize</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: calculate，construct，demonstrate，dramatize，employ，execute，implement，manipulate，modify，simulate solve</p>
+                                                                                            <p class="CLO_example">Example: calculate，construct，demonstrate，dramatize，employ，execute，implement，manipulate，modify，simulate, solve</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: attribute，categorize，classify，compare，correlate，deduce，differentiate，distinguish，organize plan</p>
+                                                                                            <p class="CLO_example">Example: attribute，categorize，classify，compare，correlate，deduce，differentiate，distinguish，organize</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: assess，check，critique，decide，defend，judge，justify，presuade，recommend，support</p>
+                                                                                            <p class="CLO_example">Example: assess，check，critique，decide，defend，judge，justify，persuade，recommend，support</p>
                                                                                         </div>
                                                                                         <div class="box">
-                                                                                            <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify，plan，produce</p>
+                                                                                            <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify, plan，produce</p>
                                                                                         </div>
-                                                                                    </div>
+                                                                                    </div> -->
 
                                                                                     <small>
                                                                                         Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
