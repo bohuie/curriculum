@@ -277,8 +277,8 @@ class ProgramWizardController extends Controller
         $store = array();
         $store = $this->createCDFArray($arr, $store);
         $store = $this->frequencyDistribution($arr, $store);
-        //dd($store[19][45]['frequencies']);
-        $store = $this->assignColours($store, $program_id);
+        $store = $this->replaceIdsWithAbv($store, $arr);
+        $store = $this->assignColours($store);
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
@@ -300,11 +300,11 @@ class ProgramWizardController extends Controller
                         // else if record (mapping_scale_value) is found then store it in the array
                     } else {
                         $count++;
-                        $mapScaleValue = OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->value('map_scale_value');
+                        $mapScaleValue = OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->value('map_scale_id');
                         $arr[$count] = array(
                             'pl_outcome_id' => $plo->pl_outcome_id,
                             'course_id' => $clo->course_id,
-                            'map_scale_value' => $mapScaleValue,
+                            'map_scale_id' => $mapScaleValue,
                             'l_outcome_id' => $clo->l_outcome_id,
                         );
                     }
@@ -340,21 +340,21 @@ class ProgramWizardController extends Controller
         foreach ($arr as $map) {
             $pl_outcome_id = $map['pl_outcome_id'];
             $course_id = $map['course_id'];
-            $map_scale_value = $map['map_scale_value'];
+            $map_scale_id = $map['map_scale_id'];
             //Initialize Array with the value of zero
-            $freq[$pl_outcome_id][$course_id][$map_scale_value] = 0;
+            $freq[$pl_outcome_id][$course_id][$map_scale_id] = 0;
         }
         // Store values in the frequency distribution array that was initialized to zero above
         foreach ($arr as $map) {
             $pl_outcome_id = $map['pl_outcome_id'];
             $course_id = $map['course_id'];
-            $map_scale_value = $map['map_scale_value'];
+            $map_scale_id = $map['map_scale_id'];
             // check if map_scale_value is in the frequency array and give it the value of 1
-            if ($freq[$pl_outcome_id][$course_id][$map_scale_value] == 0) {
-                $freq[$pl_outcome_id][$course_id][$map_scale_value] = 1;
+            if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
+                $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
             // if the value is found again, and is not zero, increment
             } else {
-                $freq[$pl_outcome_id][$course_id][$map_scale_value] += 1;
+                $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
             }
         }
         // loop through the frequencies of the mapping values
@@ -380,50 +380,82 @@ class ProgramWizardController extends Controller
                     foreach ($tieResults as $tieResult) {
                         // appends '/' only if it's not at the last index in the array
                         if (++$i !== $numItems) {
-                            $stringResults .= "" .$tieResult. " / "; 
+                            $stringResults .= "" .MappingScale::where('map_scale_id', $tieResult)->value('abbreviation'). " / "; 
                         } else {
-                            $stringResults .= "" .$tieResult;
+                            $stringResults .= "" .MappingScale::where('map_scale_id', $tieResult)->value('abbreviation');
                         }
                     }
                     // Store the results array as the map_scale_value key
                     $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_value' => $stringResults 
+                        'map_scale_abv' => $stringResults 
                     );
                     // Store a new array to be able to determine if the mapping scale value comes from the result of a tie
                     $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_value_tie' => True
+                        'map_scale_id_tie' => True
                     );
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
-                    // If no tie is present, store the strongest weighted map_scale_value 
                 } else {
+                    // If no tie is present, store the strongest weighted map_scale_value 
                     $store[$plOutcomeId][$courseId] = array(
-                        'map_scale_value' => array_search($weight, $d)
+                        'map_scale_id' => array_search($weight, $d)
+                    );
+                    $store[$plOutcomeId][$courseId] += array(
+                        'map_scale_abv' => MappingScale::where('map_scale_id', array_search($weight, $d))->value('abbreviation')
                     );
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
                 }
             }
         }
-        //dd($store[19][45]['frequencies']);
         return $store;
     }
 
-    public function assignColours($store, $program_id){
+    public function replaceIdsWithAbv($store, $arr) {
+        //Initialize Array for Frequency Distribution
+        $freq = array();
+        foreach ($arr as $map) {
+            $pl_outcome_id = $map['pl_outcome_id'];
+            $course_id = $map['course_id'];
+            $map_scale_id = MappingScale::where('map_scale_id', $map['map_scale_id'])->value('abbreviation');
+            //Initialize Array with the value of zero
+            $freq[$pl_outcome_id][$course_id][$map_scale_id] = 0;
+        }
+        // Store values in the frequency distribution array that was initialized to zero above
+        foreach ($arr as $map) {
+            $pl_outcome_id = $map['pl_outcome_id'];
+            $course_id = $map['course_id'];
+            $map_scale_id = MappingScale::where('map_scale_id', $map['map_scale_id'])->value('abbreviation');
+            // check if map_scale_value is in the frequency array and give it the value of 1
+            if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
+                $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
+            // if the value is found again, and is not zero, increment
+            } else {
+                $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
+            }
+        }
+        foreach($freq as $plOutcomeId => $dist) {
+            foreach($dist as $courseId => $d) {
+                // Store the frequencies
+                $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+            }
+        }
+        return $store;
+    }
+
+    public function assignColours($store){
         // Assign a colour to store based
         foreach ($store as $plOutcomeId => $s) {
             foreach ($s as $courseId => $msv) {
                 // If a tie exists assign it the colour white
-                if (array_key_exists("map_scale_value_tie",$msv)) {
+                if (array_key_exists("map_scale_id_tie",$msv)) {
                     $mapScaleColour = '#FFFFFF';
                     $store[$plOutcomeId][$courseId] += array(
                         'colour' => $mapScaleColour
                     );
                 } else {
                     // Search for the mapping scale colour in the db, then assign it to the array
-                    $mapScaleColour = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)
-                                    ->where('mapping_scales.abbreviation', $msv)->value('colour');
+                    $mapScaleColour = MappingScale::where('map_scale_id', $msv['map_scale_id'])->value('colour');
                 
                 if ($mapScaleColour == null) {
                     $mapScaleColour = '#FFFFFF';

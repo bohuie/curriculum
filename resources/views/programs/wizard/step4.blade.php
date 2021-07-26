@@ -180,16 +180,16 @@
                                                 <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
                                                     @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
                                                         <!-- Check if a Tie is present -->
-                                                        @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_value_tie']))
+                                                        @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
                                                             <td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                 <span style="color: black;">
-                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_value']}}
+                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                 </span>
                                                             </td>
                                                         @else
                                                             <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                 <span style="color: black;">
-                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_value']}}
+                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                 </span>
                                                             </td>
                                                         @endif
@@ -208,16 +208,16 @@
                                                     <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
                                                     @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
                                                         <!-- Check if a Tie is present -->
-                                                        @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_value_tie']))
+                                                        @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
                                                             <td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 10px, #ccc 10px, #ccc 20px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                 <span style="color: black;">
-                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_value']}}
+                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                 </span>
                                                             </td>
                                                         @else
                                                             <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                 <span style="color: black;">
-                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_value']}}
+                                                                    {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                 </span>
                                                             </td>
                                                         @endif
