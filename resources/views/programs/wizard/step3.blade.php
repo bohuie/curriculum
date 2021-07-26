@@ -386,7 +386,7 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            <label for="course_section" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course
+                                            <label for="course_section" class="col-md-3 col-form-label text-md-right">Course
                                                 Section</label>
 
                                             <div class="col-md-4">
