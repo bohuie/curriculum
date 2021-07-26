@@ -86,7 +86,7 @@ class SyllabusController extends Controller
 
         $inputFieldDescriptions['instructorBioStatement'] = 'You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.';
 
-        $inputFieldDescriptions['courseLearningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
+        $inputFieldDescriptions['learningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
 
         // get vancouver campus resources
         $vancouverSyllabusResources = VancouverSyllabusResource::all();
@@ -895,9 +895,9 @@ class SyllabusController extends Controller
         }
 
         // include vancouver course learning resources in template
-        if($courseLearningResources = $request->input('courseLearningResources')){
+        if($learningResources = $request->input('learningResources')){
             $templateProcessor->cloneBlock('NoCourseLearningResources');
-            $templateProcessor->setValue('courseLearningResources', $courseLearningResources);
+            $templateProcessor->setValue('courseLearningResources', $learningResources);
         }else{
             $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
         }
