@@ -177,9 +177,43 @@ class ProgramWizardController extends Controller
         // Returns all standard categories in the DB
         $standard_categories = DB::table('standard_categories')->get();
 
+        // All Learning Outcomes for program courses
+        $LearningOutcomesForProgramCourses = array();
+        foreach ($programCourses as $programCourse) {
+            $LearningOutcomesForProgramCourses[$programCourse->course_id] = LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray();
+        }
+
+        // ploCount * cloCount = number of outcome map results for course and program
+        $expectedTotalOutcomes = array();
+        foreach ($programCourses as $programCourse) {
+            $expectedTotalOutcomes[$programCourse->course_id] = count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
+        }
+
+        // Get all PLO Id's
+        $arrayPLOutcomeIds = ProgramLearningOutcome::where('program_id', $program_id)->pluck('pl_outcome_id')->toArray();
+
+        // Loop through All Learning Outcomes for program courses
+        $actualTotalOutcomes = array();
+        foreach($LearningOutcomesForProgramCourses as $courseId => $courseLOs) {
+            // Loop through each of the CLO IDs
+            $count = 0;
+            foreach ($courseLOs as $lo_Id) {
+                // loop through all of the PLO ID's
+                foreach ($arrayPLOutcomeIds as $pl_id) {
+                    // If entry for an Outcome map [l_outcome_id, pl_outcome_id] exists increment counter
+                    if (OutcomeMap::where('l_outcome_id', $lo_Id)->where('pl_outcome_id', $pl_id)->exists()) {
+                        $count++;
+                    }
+                }
+            }
+            // stores total count 
+            $actualTotalOutcomes[$courseId] = $count;
+        }
+
         return view('programs.wizard.step3')->with('program', $program)->with('programCoursesUsers', $programCoursesUsers)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('programCourses', $programCourses)->with('userCoursesNotInProgram', $userCoursesNotInProgram)->with('standard_categories', $standard_categories);
+                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('programCourses', $programCourses)->with('userCoursesNotInProgram', $userCoursesNotInProgram)->with('standard_categories', $standard_categories)
+                                            ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes);
     }
 
     public function step4($program_id)

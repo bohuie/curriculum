@@ -38,7 +38,7 @@
                                             <th>Course Code</th>
                                             <th>Term</th>
                                             <th>Assigned</th>
-                                            <th>Status</th>
+                                            <th>Mapping Status</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
 
@@ -70,8 +70,10 @@
 
                                             </td>
                                             <td>
-                                            @if($programCourse->status == -1)
-                                                <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>In Progress
+                                            @if($actualTotalOutcomes[$programCourse->course_id] == 0)
+                                                <i class="bi bi-exclamation-circle-fill text-danger pr-2"></i>Not Mapped
+                                            @elseif ($actualTotalOutcomes[$programCourse->course_id] < $expectedTotalOutcomes[$programCourse->course_id])
+                                                <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Partially Mapped
                                             @else
                                                 <i class="bi bi-check-circle-fill text-success pr-2"></i>Completed
                                             @endif
