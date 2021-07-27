@@ -23,7 +23,7 @@
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no program learning outcomes for this program.                  
                                 </div>
                             @else
-                                <p>Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
+                                <p>Program-level learning outcomes (PLO&#39;s) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
                                 <table class="table table-light table-bordered table" style="width: 95%; margin: auto; table-layout:auto;">
                                     <tr class="table-primary">
                                         <th class="text-left" colspan="2">Program Learning Outcome</th>
@@ -96,7 +96,7 @@
                                                         {{$ms->title}}<br>
                                                         ({{$ms->abbreviation}})
                                                     </td>
-                                                    <td>
+                                                    <td style="width:900px; word-wrap:break-word; display:inline-block; border:none;">
                                                         {{$ms->description}}
                                                     </td>
                                                 </tr>
@@ -139,7 +139,7 @@
                                         @endforeach
                                         <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
                                         @if($hasUncategorized)
-                                            <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
+                                            <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLO&#39;s</th>
                                         @endif
                                     </tr>
 

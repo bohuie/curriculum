@@ -116,6 +116,13 @@ class ProgramWizardController extends Controller
                 $hasCustomMS = true;
             }
         }
+        // checks if user has created a custom mapping scale
+        $hasImportedMS = false;
+        foreach ($mappingScales as $ms) {
+            if ($ms->mapping_scale_categories_id != null) {
+                $hasImportedMS = true;
+            }
+        }
 
         // Returns all mapping scale categories 
         $msCategories = DB::table('mapping_scale_categories')->get();
@@ -132,7 +139,8 @@ class ProgramWizardController extends Controller
 
         return view('programs.wizard.step2')->with('mappingScales', $mappingScales)->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('msCategories', $msCategories)->with('mscScale', $mscScale)->with('hasCustomMS', $hasCustomMS);
+                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('msCategories', $msCategories)->with('mscScale', $mscScale)
+                                            ->with('hasCustomMS', $hasCustomMS)->with('hasImportedMS', $hasImportedMS);
     }
 
     public function step3($program_id)
