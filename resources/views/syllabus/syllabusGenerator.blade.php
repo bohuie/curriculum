@@ -9,7 +9,7 @@
             <div class="card-header wizard text-start">
                 <h2>
                     Syllabus Generator 
-                    <button type="button" class="btn bg-primary text-white fw-bold col-3 float-right" data-toggle="modal" data-target="#importExistingCourse">Import an existing course</button>
+                    <button type="button" class="btn bg-primary text-white col-3 float-right" data-toggle="modal" data-target="#importExistingCourse">Import an existing course <i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
                 </h2>
                 <!-- Import existing course Modal -->
                 <div class="modal fade" id="importExistingCourse" tabindex="-1" role="dialog" aria-labelledby="importExistingCourse" aria-hidden="true">
@@ -22,20 +22,20 @@
                                 </button>
                             </div>
 
-                                <div class="modal-body" style="height: auto;">
-
-                                    <p style="text-align:left;">Choose a course from your list of existing courses to import relevant course information.</p>
-                                    <table class="table table-hover dashBoard">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col"></th>
-                                                <th scope="col">Course Title</th>
-                                                <th scope="col">Course Code</th>
-                                                <th scope="col">Semester</th>
-                                            </tr>
-                                        </thead>
-                                        @foreach ($myCourses as $index => $course)
-                                        <tbody>
+                            <div class="modal-body" style="height: auto;">
+                                <p style="text-align:left;">Choose a course from your list of existing courses to import relevant course information.</p>
+                                <table class="table table-hover dashBoard">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col">Course Title</th>
+                                            <th scope="col">Course Code</th>
+                                            <th scope="col">Semester</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    @foreach ($myCourses as $index => $course)
+                                    <tbody>
                                         <tr>
                                             <th scope="row">
                                                 <input value = {{$course->course_id}} class="form-check-input" type="radio" name="importCourse" id="importCourse"
@@ -55,16 +55,15 @@
                                                 @endif
                                             </td>
                                         </tr>
-                                        </tbody>
-                                        @endforeach
-                                    </table>
-                                </div>
+                                    </tbody>
+                                    @endforeach
+                                </table>
+                            </div>
 
-                                <div class="modal-footer">
-                                    <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
-                                    <button style="width:60px" type="button" class="btn btn-primary btn-sm"
-                                    id="importButton" name="importButton" data-dismiss="modal">Import</button>
-                                </div>
+                            <div class="modal-footer">
+                                <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                <button style="width:60px" type="button" class="btn btn-primary btn-sm" id="importButton" name="importButton" data-dismiss="modal">Import</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,379 +74,278 @@
                 <h6 class="card-subtitle mb-4 lh-lg fs-6 text-center">
                     To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank"href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
                 </h6>
-                <div class="courseInfo">
-                    <form method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
-                        @csrf
-                        <div class="container">
-                                    <div class="row justify-content-center">
-                                        <div class="col mb-2 text-end fs-6 ">
-                                            <!-- Campus dropdown -->
-                                            <span class="requiredField">*
-                                                <select  class="form-group text-center" id="campus" name="campus" form="sylabusGenerator" required>
-                                                    <option disabled selected value=""> -- Campus -- </option>
-                                                    <option value="O">
-                                                        UBC Okanagan
-                                                    </option>
-                                                    <option value="V">UBC Vancouver</option>
-                                                </select>
-                                            </span>
-                                        </div>
-                                        <div class="col mb-2 text-start fs-6">
-                                            @if (!empty($syllabus))
-                                                <input id="land" class="land" type="checkbox" @if ($syllabus->campus == 'O') {{in_array($okanaganSyllabusResources[0]->id, $selectedOkanaganSyllabusResourceIds) ? 'checked' : ''}} @else {{in_array($vancouverSyllabusResources[0]->id, $selectedVancouverSyllabusResourceIds) ? 'checked' : ''}}@endif>
-                                                <label for="land">Land Acknowledgement</label>
-                                            @else 
-                                                <input id="land" class="land" type="checkbox" checked>
-                                                <label for="land">Land Acknowledgement</label>
-                                            @endif
-                                        </div> 
-                                    </div>
-                                    
-                                    <!-- Course Title -->
-                                    <div class="row mb-3">
-                                        <div class="col-10">
-                                            <label for="courseTitle"><span class="requiredField">* </span>Course Title</label>
-                                            <input spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text"
-                                            placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
-                                        </div>
-                                    </div>
-                                    <!-- Course Code, Course Number, Course Credit -->
-                                    <div class="row mb-3">
-                                        <div class="col-3 ">
-                                            <label for="courseCode"><span class="requiredField">* </span>Course Code</label>
-                                            <input id = "courseCode" name = "courseCode" class ="form-control" type="text"
-                                            placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->course_code : '' }}">
-                                        </div>
-
-                                        <div class="col-2">
-                                            <label for="courseNumber"><span class="requiredField">* </span>Course Number</label>
-                                            <input id = "courseNumber" name = "courseNumber" class ="form-control" type="text"
-                                            placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
-                                        </div>
-                                        <div id="courseCredit" class="col-2">
-                                        </div>
-                                    </div>
-                                    <!-- Course Instructor, Course Semester -->
-                                    <div class="row mb-3">
-
-                                        <div class="col-5">
-                                            <label for="courseInstructor"><span class="requiredField">* </span>Course Instructor</label>
-                                            
-                                            <input id = "courseInstructor" name = "courseInstructor" class ="form-control" type="text"
-                                            placeholder="E.g. Dr. J. Doe" required value="{{ !empty($syllabus) ? $syllabus->course_instructor : ''}}">
-                                        </div>
-                                        <div class="col-3">
-                                            <label for="courseSemester"><span class="requiredField">* </span>Course Term</label>
-                                            <select id="courseSemester" class="form-control" name="courseSemester" required>
-                                                <option value="W1" {{!empty($syllabus) ? (($syllabus->course_term == 'W1') ? 'selected=true' : '') : ''}}>
-                                                    Winter Term 1
-                                                </option>
-                                                <option value="W2" {{!empty($syllabus) ? (($syllabus->course_term == 'W2') ? 'selected=true' : '') : ''}}>
-                                                    Winter Term 2
-                                                </option>
-                                                <option value="S1" {{!empty($syllabus) ? (($syllabus->course_term == 'S1') ? 'selected=true' : '') : ''}}>
-                                                    Summer Term 1
-                                                </option>
-                                                <option value="S2" {{!empty($syllabus) ? (($syllabus->course_term == 'S2') ? 'selected=true' : '') : ''}}>
-                                                    Summer Term 2
-                                                </option>
-                                                <option value="O" {{!empty($syllabus) ? (($syllabus->course_term == 'O') ? 'selected=true' : '') : ''}}>
-                                                    Other
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <!-- Course Year -->
-                                        <div class="col-2">
-                                            <label for="courseYear"><span class="requiredField">* </span>Course Year</label>
-                                            <select id="courseYear" class="form-control" name="courseYear">
-                                            <option value="2021"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2021') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2021
-                                                </option>
-                                                <option value="2022"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2022') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2022
-                                                </option>
-                                                <option
-                                                value="2023"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2023') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2023
-                                                </option>
-                                                <option
-                                                value="2024"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2024') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2024
-                                                </option>
-                                                <option
-                                                value="2025"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2025') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2025
-                                                </option>
-                                                <option
-                                                value="2026"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2026') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2026
-                                                </option>
-                                                <option
-                                                value="2027"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2027') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2027
-                                                </option>
-                                                <option
-                                                value="2028"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2028') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2028
-                                                </option>
-                                                <option
-                                                value="2029"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2029') ? 'selected=true' : '') : ''}}
-                                                >
-                                                2029
-                                                </option>
-                                                <option
-                                                value="2030"
-                                                {{!empty($syllabus) ? (($syllabus->course_year == '2030') ? 'selected=true' : '') : ''}}
-                                                >
-                                                    2030
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <!-- Course Location -->
-                                    <div class="row mb-3">
-                                        <div class="col-5">
-                                            <label for="courseLocation">Course Location</label>
-                                            <input id = "courseLocation" name = "courseLocation" class ="form-control" type="text"
-                                            placeholder="E.g. WEL 140"
-                                            value="{{ !empty($syllabus) ? $syllabus->course_location : ''}}" 
-                                            >
-                                        </div>
-                                        <!-- Office Location -->
-                                        <div id="officeLocation" class="col-6">
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Description -->
-                                    <div class="row" id="courseDescription"></div>                                    
-                                    <!-- Course Contacts -->
-                                    <div class="row" id="courseContacts"></div>
-
-                                    <!-- Office Hours -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label for="officeHour">Office Hours</label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
-                                            <textarea spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control"
-                                            type="date"
-                                            form="sylabusGenerator" 
-                                            >{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
-                                        </div>
-                                    </div>
-                                    <!-- Other Course Staff -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label  for="otherCourseStaff">Other Instructional Staff</label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['otherCourseStaff']}}"></i>
-                                            <div id="formatStaff" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                                                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
-                                            </div>                                            
-                                            <textarea id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="E.g. Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;E.g. Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
-                                        </div>
-                                    </div>
-                                    <!-- Class Start Time, Class End Time -->
-                                    <div class="row mb-3">
-                                        <div class="col-3">
-                                            <label for="startTime">Class Start Time</label>
-                                            <input id = "startTime" name = "startTime" class ="form-control" type="text"
-                                            placeholder="E.g. 1:00 PM"
-                                            value="{{ !empty($syllabus) ? $syllabus->class_start_time : ''}}"
-                                            >
-                                        </div>
-
-                                        <div class="col-3">
-                                            <label for="endTime">Class End Time</label>
-                                            <input id = "endTime" name = "endTime" class ="form-control" type="text"
-                                            placeholder="E.g. 2:00 PM"
-                                            value="{{ !empty($syllabus) ? $syllabus->class_end_time : ''}}" >
-                                        </div>
-                                    </div>
-                                    <!-- Class Meeting Days -->
-                                    <div class="row mb-3">
-                                        <div class="col ">
-                                            <label for="classDate">Class Meeting Days</label>
-
-                                            <div class="classDate">
-                                                <input id="monday" type="checkbox" name="schedule[]" value="Mon">
-                                                <label for="monday" class="mr-2">Monday</label>
-
-                                                <input id="tuesday" type="checkbox" name="schedule[]" value="Tue">
-                                                <label for="tuesday" class="mr-2">Tuesday</label>
-
-                                                <input id="wednesday" type="checkbox" name="schedule[]" value="Wed">
-                                                <label for="wednesday" class="mr-2">Wednesday</label>
-
-                                                <input id="thursday" type="checkbox" name="schedule[]" value= "Thu">
-                                                <label for="thursday" class="mr-2">Thursday</label>
-
-                                                <input id="friday" type="checkbox" name="schedule[]" value="Fri">
-                                                <label for="friday" class="mr-2">Friday</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Instructor Biographical Statement -->
-                                    <div class="row" id="courseInstructorBio"></div>
-
-                                    <!-- Course Prerequisites -->
-                                    <div class="row" id="coursePrereqs"></div>
-
-                                    <!-- Course Corequisites -->
-                                    <div class="row" id="courseCoreqs"></div>
-
-                                    <!-- Course Structure -->
-                                    <div class="row" id="courseStructure"></div>
-
-                                    <!-- Course Schedule -->
-                                    <div class="row" id="courseSchedule"></div>
-
-                                    <!-- Course Format -->
-                                    <div class="row" id="courseFormat"></div>
-
-                                    <!-- Course Overview -->
-                                    <div class="row" id="courseOverview"></div>
-
-                                    <!-- Learning Outcomes -->
-                                    <div class="row mb-3">
-                                        <div class="col ">
-                                            <label for="learningOutcome">Learning Outcomes
-                                            </label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningOutcomes']}}"></i>
-                                            <p style="color:gray">
-                                                <i>                     Upon successful completion of this course, students will be able to...
-                                                </i>
-                                            </p>
-                                            <div id="formatCLOs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                                                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
-                                            </div>                                            
-                                            <textarea id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="E.g. Define ... &#10;E.g. Classify ..." name = "learningOutcome" class ="form-control"
-                                            type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_outcomes : ''}}</textarea>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Course Learning Assessments -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label for="learningAssessments">Assessments of Learning</label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningAssessments']}}"></i>
-                                            <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                                                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
-                                            </div>                                            
-                                            <textarea id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="E.g. Presentation, 25%, Dec 1, ... &#10;E.g. Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control"
-                                            type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_assessments : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Learning Activities -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label for="learningActivities">Learning Activities</label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningActivities']}}"></i>
-                                            <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                                                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
-                                            </div>                                            
-                                            <textarea id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control"
-                                            type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Late Policy -->
-                                    <div class="row mb-3">
-                                        <div class="col ">
-                                            <label for="latePolicy">Late policy</label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['latePolicy']}}"></i>
-                                            <textarea id = "latePolicy" name = "latePolicy" class ="form-control"
-                                            type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->late_policy : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Missing Exam -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label for="missingExam">Missed exam policy</label>
-                                            <textarea id = "missingExam" name = "missingExam" class ="form-control"
-                                            type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_exam_policy : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Missed Activity Policy -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label for="missingActivity">Missed Activity Policy</label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
-                                            <textarea id = "missingActivity" name = "missingActivity" class ="form-control"
-                                            type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_activity_policy : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Passing Criteria -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label for="passingCriteria">Passing criteria</label>
-                                            <textarea id = "passingCriteria" name = "passingCriteria" class ="form-control"
-                                            type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Learning Materials -->
-                                    <div class="row mb-3">
-                                        <div class="col" >
-                                            <label for="learningMaterials">Learning Materials</label>
-                                            <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningMaterials']}}"></i>
-                                            <textarea id = "learningMaterials" name = "learningMaterials" class ="form-control"
-                                            type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Learning Resources -->
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                                <label for="learningResources">Learning Resources</label>
-                                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
-                                                <textarea id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Course Optional Resources -->
-                                    <div class="row mb-3 mt-4" >
-                                        <div class="col">
-                                            <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
-                                            
-                                            <div class="optionalSyllabus">
-                                                <ul id="optionalSyllabus" class="text-start" style="list-style-type:none;">
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
+                
+                <form class="courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
+                    @csrf
+                    <div class="container">
+                        <div class="row mb-3 ml-2 mr-2">
+                            <div class="col fs-6 ">
+                                <!-- Campus dropdown -->
+                                <div class="row justify-content-end mr-4 position-relative">
+                                    <label for="campus" class="col-auto col-form-label requiredField">*</label>
+                                    <select class="form-select form-select-sm text-center w-50 col-auto" id="campus" name="campus" form="sylabusGenerator" required>
+                                        <option disabled selected value=""> -- Campus -- </option>
+                                        <option value="O">UBC Okanagan</option>
+                                        <option value="V">UBC Vancouver</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- land acknowledgement -->
+                            <div class="col fs-6 form-check align-self-center">
+                                @if (!empty($syllabus))
+                                    <input id="land" class="land form-check-input" type="checkbox" @if ($syllabus->campus == 'O') {{in_array($okanaganSyllabusResources[0]->id, $selectedOkanaganSyllabusResourceIds) ? 'checked' : ''}} @else {{in_array($vancouverSyllabusResources[0]->id, $selectedVancouverSyllabusResourceIds) ? 'checked' : ''}}@endif>
+                                    <label for="land" class="form-check-label">Land Acknowledgement</label>
+                                @else 
+                                    <input id="land" class="land form-check-input" type="checkbox" checked>
+                                    <label for="land" class="form-check-label">Land Acknowledgement</label>
+                                @endif
+                            </div> 
                         </div>
-                    </form>
-                </div>
+                        <!-- Course Title -->
+                        <div class="row mb-3">
+                            <div class="col-10">
+                                <label for="courseTitle" class="form-label"><span class="requiredField">* </span>Course Title</label>
+                                <input spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text" placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
+                                <div class="invalid-tooltip">
+                                    Please enter the course title.
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Course Code, Course Number, Course Credit -->
+                        <div class="row mb-3">
+                            <div class="col-3 ">
+                                <label for="courseCode"><span class="requiredField">* </span>Course Code</label>
+                                <input id = "courseCode" name = "courseCode" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->course_code : '' }}">
+                                <div class="invalid-tooltip">
+                                    Please enter the course code.
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <label for="courseNumber"><span class="requiredField">* </span>Course Number</label>
+                                <input id = "courseNumber" name = "courseNumber" class ="form-control" type="text" placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
+                                <div class="invalid-tooltip">
+                                    Please enter the course number.
+                                </div>
+                            </div>
+                            <div id="courseCredit" class="col-2"></div>
+                        </div>
+                        <!-- Course Instructor, Course Semester, Course Year -->
+                        <div class="row mb-3">
+                            <div class="col-5">
+                                <label for="courseInstructor"><span class="requiredField">* </span>Course Instructor</label>
+                                <input id = "courseInstructor" name = "courseInstructor" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required value="{{ !empty($syllabus) ? $syllabus->course_instructor : ''}}">
+                                <div class="invalid-tooltip">
+                                    Please enter the course instructor.
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <label for="courseSemester"><span class="requiredField">* </span>Course Term</label>
+                                <select id="courseSemester" class="form-control" name="courseSemester" required>
+                                    <option value="W1" {{!empty($syllabus) ? (($syllabus->course_term == 'W1') ? 'selected=true' : '') : ''}}>Winter Term 1</option>
+                                    <option value="W2" {{!empty($syllabus) ? (($syllabus->course_term == 'W2') ? 'selected=true' : '') : ''}}>Winter Term 2</option>
+                                    <option value="S1" {{!empty($syllabus) ? (($syllabus->course_term == 'S1') ? 'selected=true' : '') : ''}}>Summer Term 1</option>
+                                    <option value="S2" {{!empty($syllabus) ? (($syllabus->course_term == 'S2') ? 'selected=true' : '') : ''}}>Summer Term 2</option>
+                                    <option value="O" {{!empty($syllabus) ? (($syllabus->course_term == 'O') ? 'selected=true' : '') : ''}}>Other</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please enter the course semester.
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <label for="courseYear"><span class="requiredField">* </span>Course Year</label>
+                                <select id="courseYear" class="form-control" name="courseYear">
+                                    <option value="2021" {{!empty($syllabus) ? (($syllabus->course_year == '2021') ? 'selected=true' : '') : ''}}>2021</option>
+                                    <option value="2022" {{!empty($syllabus) ? (($syllabus->course_year == '2022') ? 'selected=true' : '') : ''}}>2022</option>
+                                    <option value="2023" {{!empty($syllabus) ? (($syllabus->course_year == '2023') ? 'selected=true' : '') : ''}}>2023</option>
+                                    <option value="2024" {{!empty($syllabus) ? (($syllabus->course_year == '2024') ? 'selected=true' : '') : ''}}>2024</option>
+                                    <option value="2025" {{!empty($syllabus) ? (($syllabus->course_year == '2025') ? 'selected=true' : '') : ''}}>2025</option>
+                                    <option value="2026" {{!empty($syllabus) ? (($syllabus->course_year == '2026') ? 'selected=true' : '') : ''}}>2026</option>
+                                    <option value="2027" {{!empty($syllabus) ? (($syllabus->course_year == '2027') ? 'selected=true' : '') : ''}}>2027</option>
+                                    <option value="2028" {{!empty($syllabus) ? (($syllabus->course_year == '2028') ? 'selected=true' : '') : ''}}>2028</option>
+                                    <option value="2029" {{!empty($syllabus) ? (($syllabus->course_year == '2029') ? 'selected=true' : '') : ''}}>2029</option>
+                                    <option value="2030" {{!empty($syllabus) ? (($syllabus->course_year == '2030') ? 'selected=true' : '') : ''}}>2030</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please enter the course year.
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Course Location, Office Location -->
+                        <div class="row mb-3">
+                            <div class="col-5">
+                                <label for="courseLocation">Course Location</label>
+                                <input id = "courseLocation" name = "courseLocation" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{ !empty($syllabus) ? $syllabus->course_location : ''}}">
+                            </div>
+                            <div id="officeLocation" class="col-6"></div>
+                        </div>
+                        <!-- Office Hours -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="officeHour">Office Hours</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
+                                <textarea spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Other Course Staff -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label  for="otherCourseStaff">Other Instructional Staff</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['otherCourseStaff']}}"></i>
+                                <div id="formatStaff" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                                </div>                                            
+                                <textarea id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="E.g. Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;E.g. Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Class Start Time, Class End Time -->
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                <label for="startTime">Class Start Time</label>
+                                <input id = "startTime" name = "startTime" class ="form-control" type="text" placeholder="E.g. 1:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_start_time : ''}}">
+                            </div>
+                            <div class="col-3">
+                                <label for="endTime">Class End Time</label>
+                                <input id = "endTime" name = "endTime" class ="form-control" type="text" placeholder="E.g. 2:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_end_time : ''}}" >
+                            </div>
+                        </div>
+                        <!-- Class Meeting Days -->
+                        <div class="row mb-3">
+                            <div class="col ">
+                                <label for="classDate">Class Meeting Days</label>
+                                <div class="classDate">
+                                    <input id="monday" type="checkbox" name="schedule[]" value="Mon">
+                                    <label for="monday" class="mr-2">Monday</label>
+
+                                    <input id="tuesday" type="checkbox" name="schedule[]" value="Tue">
+                                    <label for="tuesday" class="mr-2">Tuesday</label>
+
+                                    <input id="wednesday" type="checkbox" name="schedule[]" value="Wed">
+                                    <label for="wednesday" class="mr-2">Wednesday</label>
+
+                                    <input id="thursday" type="checkbox" name="schedule[]" value= "Thu">
+                                    <label for="thursday" class="mr-2">Thursday</label>
+
+                                    <input id="friday" type="checkbox" name="schedule[]" value="Fri">
+                                    <label for="friday" class="mr-2">Friday</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Course Instructor Biographical Statement -->
+                        <div class="row" id="courseInstructorBio"></div>
+                        <!-- Course Prerequisites -->
+                        <div class="row" id="coursePrereqs"></div>
+                        <!-- Course Corequisites -->
+                        <div class="row" id="courseCoreqs"></div>
+                        <!-- Course Structure -->
+                        <div class="row" id="courseStructure"></div>
+                        <!-- Course Schedule -->
+                        <div class="row" id="courseSchedule"></div>
+                        <!-- Course Format -->
+                        <div class="row" id="courseFormat"></div>
+                        <!-- Course Overview -->
+                        <div class="row" id="courseOverview"></div>
+                        <!-- Learning Outcomes -->
+                        <div class="row mb-3">
+                            <div class="col ">
+                                <label for="learningOutcome">Learning Outcomes</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningOutcomes']}}"></i>
+                                <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
+                                <div id="formatCLOs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                                </div>                                            
+                                <textarea id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="E.g. Define ... &#10;E.g. Classify ..." name = "learningOutcome" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_outcomes : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Course Learning Assessments -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="learningAssessments">Assessments of Learning</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningAssessments']}}"></i>
+                                <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                                </div>                                            
+                                <textarea id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="E.g. Presentation, 25%, Dec 1, ... &#10;E.g. Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_assessments : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Learning Activities -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="learningActivities">Learning Activities</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningActivities']}}"></i>
+                                <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                                </div>                                            
+                                <textarea id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Late Policy -->
+                        <div class="row mb-3">
+                            <div class="col ">
+                                <label for="latePolicy">Late policy</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['latePolicy']}}"></i>
+                                <textarea id = "latePolicy" name = "latePolicy" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->late_policy : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Course Missing Exam -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="missingExam">Missed exam policy</label>
+                                <textarea id = "missingExam" name = "missingExam" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_exam_policy : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Course Missed Activity Policy -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="missingActivity">Missed Activity Policy</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
+                                <textarea id = "missingActivity" name = "missingActivity" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_activity_policy : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Course Passing Criteria -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="passingCriteria">Passing criteria</label>
+                                <textarea id = "passingCriteria" name = "passingCriteria" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Course Learning Materials -->
+                        <div class="row mb-3">
+                            <div class="col" >
+                                <label for="learningMaterials">Learning Materials</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningMaterials']}}"></i>
+                                <textarea id = "learningMaterials" name = "learningMaterials" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
+                            </div>
+                        </div>
+                        <!-- Course Learning Resources -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="learningResources">Learning Resources</label>
+                                <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                                <textarea id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Course Optional Resources -->
+                        <div class="row mb-3 mt-4" >
+                            <div class="col">
+                                <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
+                                <div class="optionalSyllabus form-check">
+                                    <ul id="optionalSyllabus" class="text-start" style="list-style-type:none;">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>                 
+                    </div>                                    
+                </form>
             </div>
 
             <div class="card-footer p-4">
-                    <div style="display:flex; flex-flow:row nowrap; justify-content:flex-end;">
-                        <button type="submit" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save</button>
-                        <button type="submit" name="download" value="1" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save and Download <i class="bi bi-download"></i></button>
-                    </div>
+                <div style="display:flex; flex-flow:row nowrap; justify-content:flex-end;">
+                    <button type="submit" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save</button>
+                    <button type="submit" name="download" value="1" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save and Download <i class="bi bi-download"></i></button>
+                </div>
             </div>
-            
         </div>
     </div>
 </div>
@@ -456,12 +354,28 @@
     $(document).ready(function () {
 
         var syllabus = <?php echo json_encode($syllabus);?>;
-    
         $('[data-toggle="tooltip"]').tooltip();
         // add on change event listener to campus select 
         $('#campus').change(function(){
             onChangeCampus();
             });
+        
+        // use custom bootstrap input validation
+        $('#sylabusGenerator').submit(function(event){
+            var invalidFields = $('#sylabusGenerator :invalid');
+            if (invalidFields.length > 0) {
+                event.preventDefault();
+                event.stopPropagation();
+                $('html, body').animate({
+                    scrollTop: $(invalidFields[0]).offset().top - 100,
+                });
+                $(this).addClass('was-validated');
+            // all fields are valid
+            } else {
+                $(this).removeClass('was-validated');
+            }
+        });
+        
         // add on click event listener to import course info button
         $('#importButton').click(importCourseInfo);
         // trigger campus dropdown change based on saved syllabus
@@ -505,7 +419,7 @@
                 } 
             }
         });
-
+        
         // use event delegation to hide format note on focus out
         document.getElementById("sylabusGenerator").addEventListener('focusout', function (event) {
             var formatNoteId = event.target.dataset.formatnoteid;
@@ -632,8 +546,8 @@
                 @foreach($vancouverSyllabusResources as $index => $vSyllabusResource)
                     @if ($index != 0)
                     <li>
-                        <input id="{{$vSyllabusResource->id_name}}" type="checkbox" name="vancouverSyllabusResources[{{$vSyllabusResource->id}}]" value="{{$vSyllabusResource->id_name}}" checked>
-                        <label for="{{$vSyllabusResource->id_name}}">{{$vSyllabusResource->title}}</label>   
+                        <input class="form-check-input" id="{{$vSyllabusResource->id_name}}" type="checkbox" name="vancouverSyllabusResources[{{$vSyllabusResource->id}}]" value="{{$vSyllabusResource->id_name}}" checked>
+                        <label class="form-check-label" for="{{$vSyllabusResource->id_name}}">{{$vSyllabusResource->title}}</label>   
                     </li>
                     @endif
                 @endforeach
@@ -641,8 +555,8 @@
                 @foreach($vancouverSyllabusResources as $index => $vSyllabusResource)
                     @if ($index != 0)
                     <li>
-                        <input id="{{$vSyllabusResource->id_name}}" type="checkbox" name="vancouverSyllabusResources[{{$vSyllabusResource->id}}]" value="{{$vSyllabusResource->id_name}}" {{in_array($vSyllabusResource->id, $selectedVancouverSyllabusResourceIds) ? 'checked' : ''}}>
-                        <label for="{{$vSyllabusResource->id_name}}">{{$vSyllabusResource->title}}</label>   
+                        <input class="form-check-input" id="{{$vSyllabusResource->id_name}}" type="checkbox" name="vancouverSyllabusResources[{{$vSyllabusResource->id}}]" value="{{$vSyllabusResource->id_name}}" {{in_array($vSyllabusResource->id, $selectedVancouverSyllabusResourceIds) ? 'checked' : ''}}>
+                        <label class="form-check-label" for="{{$vSyllabusResource->id_name}}">{{$vSyllabusResource->title}}</label>   
                     </li>
                     @endif
                 @endforeach
@@ -678,6 +592,9 @@
                 Course Credit
             </label>
             <input name = "courseCredit" class ="form-control" type="number" min="0" step="1"placeholder="E.g. 3" required value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_credit : ''}}">
+            <div class="invalid-tooltip">
+                Please enter the course course credits.
+            </div>
             `;
         
         var officeLocation = `
@@ -807,7 +724,6 @@
         var formatNotes = document.querySelectorAll('.collapsibleNotes').forEach(function(note) {
             // collapse sections when document is ready
             var isCollapsed = note.dataset.collapsed === 'true';
-            console.log(isCollapsed);
             if (!isCollapsed) {
                 collapseSection(note);
             }
