@@ -154,7 +154,7 @@
                                                 {{$ms->title}}<br>
                                                 ({{$ms->abbreviation}})
                                             </td>
-                                            <td style="width:750px; word-wrap:break-word; display:inline-block;">
+                                            <td>
                                                 {{$ms->description}}
                                             </td>
                                             <td class="text-center align-middle">

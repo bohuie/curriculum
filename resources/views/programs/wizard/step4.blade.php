@@ -96,7 +96,7 @@
                                                         {{$ms->title}}<br>
                                                         ({{$ms->abbreviation}})
                                                     </td>
-                                                    <td style="width:900px; word-wrap:break-word; display:inline-block; border:none;">
+                                                    <td>
                                                         {{$ms->description}}
                                                     </td>
                                                 </tr>
