@@ -132,7 +132,7 @@ class ProgramWizardController extends Controller
         $program = Program::where('program_id', $program_id)->first();
 
         //progress bar
-        $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();;
+        $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $msCount = count($mappingScales);
         $courseCount = CourseProgram::where('program_id', $program_id)->count();
 
@@ -250,15 +250,9 @@ class ProgramWizardController extends Controller
 
         // get all the courses this program belongs to
         $programCourses = $program->courses;
-        //dd($programCourses[0]->pivot->course_required);
-        // get ONLY required courses for the program
-        $allProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
-        $requiredProgramCourses = array();
-        foreach ($allProgramCourses as $course) {
-            if ($course->course_required != 0) {
-                $requiredProgramCourses += array($course);
-            }
-        }
+
+        // get all of the required courses this program belongs to
+        $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
 
         // get all categories for program
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
@@ -307,13 +301,9 @@ class ProgramWizardController extends Controller
             }
         }
 
-        // get all CLO's for each course in the program
+        // All Courses Frequency Distribution
         $coursesOutcomes = array();
-        foreach ($programCourses as $programCourse) {
-            $learningOutcomes = $programCourse->learningOutcomes;
-            $coursesOutcomes[$programCourse->course_id] = $learningOutcomes;
-        }
-
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
         $arr = array();
         $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
         $store = array();
@@ -322,11 +312,32 @@ class ProgramWizardController extends Controller
         $store = $this->replaceIdsWithAbv($store, $arr);
         $store = $this->assignColours($store);
 
+        // Required Courses Frequency Distribution
+        $coursesOutcomes = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
+        $arrRequired = array();
+        $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
+        $storeRequired = array();
+        $storeRequired = $this->createCDFArray($arrRequired, $storeRequired);
+        $storeRequired = $this->frequencyDistribution($arrRequired, $storeRequired);
+        $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
+        $storeRequired = $this->assignColours($storeRequired);
+
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('coursesOutcomes', $coursesOutcomes)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
-                                            ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed);
+                                            ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
+                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses);
+    }
+
+    public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
+        // get all CLO's for each course in the program
+        foreach ($programCourses as $programCourse) {
+            $learningOutcomes = $programCourse->learningOutcomes;
+            $coursesOutcomes[$programCourse->course_id] = $learningOutcomes;
+        }
+        return $coursesOutcomes;
     }
 
     public function getOutcomeMaps ($allPLO, $coursesOutcomes, $arr) {
@@ -339,7 +350,7 @@ class ProgramWizardController extends Controller
                     // Check if record exists in the db
                     if (!OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->exists()) {
                         // if nothing is found then do nothing
-                        // else if record (mapping_scale_value) is found then store it in the array
+                        // else if record (mapping_scale_id) is found then store it in the array
                     } else {
                         $count++;
                         $mapScaleValue = OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->value('map_scale_id');
