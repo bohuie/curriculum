@@ -96,16 +96,19 @@
                     <div id="plos">
                         <div class="row">
                             <div class="col">
+                            <!--Table for Imported Mapping Scales-->    
                             @if ($mappingScales->count() < 1)
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no mapping scale levels set for this program yet.                    
                                 </div>
+                            @elseif (!$hasImportedMS)
+                            <!--Display Nothing when there are no imported Mapping scales-->
                             @else 
                                 <table class="table table-light table-bordered" >
                                     <tr class="table-primary">
-                                                <th class="w-25">Mapping Scale Level</th>
-                                                <th>Description</th>
-                                                <th class="text-center">Actions</th>
+                                        <th class="w-25">Mapping Scale Level</th>
+                                        <th>Description</th>
+                                        <th class="text-center">Actions</th>
                                     </tr>
 
                                     @foreach($mappingScales as $ms)
@@ -133,160 +136,147 @@
                                             @endif
                                     @endforeach
                                 </table>
-                                @if ($hasCustomMS) 
-                                <table class="table table-light table-bordered" >
-                                    <tr class="table-primary">
-                                                <th class="w-25"> Custom Mapping Scale Level</th>
-                                                <th>Description</th>
-                                                <th class="text-center">Actions</th>
-                                    </tr>
-                                @endif
-                                    @foreach($mappingScales as $ms)
-                                        @if($ms->mapping_scale_categories_id == NULL)
-                                            <tr>
-                                                <td>
-                                                    <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
-                                                    {{$ms->title}}<br>
-                                                    ({{$ms->abbreviation}})
-                                                </td>
-                                                <td>
-                                                    {{$ms->description}}
-                                                </td>
-
-                                                <td class="text-center align-middle">
-                                                    <form action="{{route('mappingScale.destroy', $ms->map_scale_id)}}" method="POST">
-                                                        @csrf
-                                                        {{method_field('DELETE')}}
-                                                        <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
-                                                            <button type="button" class="btn btn-secondary btn-sm m-1" data-toggle="modal" style="width:60px;" data-target="#editMSModal{{$ms->map_scale_id}}">
-                                                                Edit
-                                                            </button>
-                                                        <button type="submit" style="width:60px" class="btn btn-danger btn-sm m-1">Delete</button>
-                                                    </form>
-                                                    <!-- Edit MS Modal -->
-                                                    <div class="modal fade" id="editMSModal{{$ms->map_scale_id}}" tabindex="-1" role="dialog" aria-labelledby="editMSModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-lg" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="editMSModalLabel">Edit Mapping Scale Level</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-
-                                                                <form method="POST"
-                                                                    action="{{ action('MappingScaleController@update', $ms->map_scale_id) }}">
-                                                                    @csrf
-                                                                    {{method_field('PUT')}}
-
-                                                                    <div class="modal-body">
-                                                                        <div class="form-group row">
-                                                                            <label for="title" class="col-md-4 col-form-label text-md-right">Title</label>
-                                
-                                                                            <div class="col-md-8">
-                                                                                <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{$ms->title}}" required autofocus>
-                                
-                                                                                @error('title')
-                                                                                <span class="invalid-feedback" role="alert">
-                                                                                    <strong>{{ $message }}</strong>
-                                                                                </span>
-                                                                                @enderror
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="form-group row">
-                                                                            <label for="abbreviation" class="col-md-4 col-form-label text-md-right">Abbreviation</label>
-                                
-                                                                            <div class="col-md-8">
-                                                                                <input id="abbreviation" type="text" class="form-control @error('abbreviation') is-invalid @enderror" name="abbreviation" value="{{$ms->abbreviation}}" maxlength="5" required autofocus>
-                                
-                                                                                @error('abbreviation')
-                                                                                <span class="invalid-feedback" role="alert">
-                                                                                    <strong>{{ $message }}</strong>
-                                                                                </span>
-                                                                                @enderror
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="form-group row">
-                                                                            <label for="colour" class="col-md-4 col-form-label text-md-right">Colour</label>
-                                
-                                                                            <div class="col-md-8">
-                                                                                <input id="colour" type="color" class="form-control @error('colour') is-invalid @enderror" name="colour" value="{{$ms->colour}}" required autofocus list="colours">
-                                                                                <datalist id="colours">
-                                                                                    <option value="#494444">
-                                                                                    <option value="#726f6f">
-                                                                                    <option value="#8b8989">
-                                                                                    <option value="#bbbbbb">
-                                                                                    <option value="#aaaaaa">
-
-                                                                                    <option value="#011f4b">
-                                                                                    <option value="#03396c">
-                                                                                    <option value="#005b96">
-                                                                                    <option value="#6497b1">
-                                                                                    <option value="#b3cde0">
-
-                                                                                    <option value="#991101">
-                                                                                    <option value="#c23210">
-                                                                                    <option value="#d65f59">
-                                                                                    <option value="#ff8ab3">
-                                                                                    <option value="#ffd0c2">
-
-                                                                                    <option value="#009c1a">
-                                                                                    <option value="#22b600">
-                                                                                    <option value="#26cc00">
-                                                                                    <option value="#7be382">
-                                                                                    <option value="#d2f2d4">
-
-                                                                                    <option value="#7f6b00">
-                                                                                    <option value="#ccac00">
-                                                                                    <option value="#ffd700">
-                                                                                    <option value="#ffeb7f">
-                                                                                    <option value="#fff7cc">
-                                                                                </datalist>
-
-                                                                                @error('colour')
-                                                                                <span class="invalid-feedback" role="alert">
-                                                                                    <strong>{{ $message }}</strong>
-                                                                                </span>
-                                                                                @enderror
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="form-group row">
-                                                                            <label for="description" class="col-md-4 col-form-label text-md-right">Description</label>
-                                
-                                                                            <div class="col-md-8">
-                                                                                <textarea id="description" class="form-control" @error('description') is-invalid @enderror rows="3" name="description" required autofocus>{{$ms->description}}</textarea>
-                                
-                                                                                @error('description')
-                                                                                <span class="invalid-feedback" role="alert">
-                                                                                    <strong>{{ $message }}</strong>
-                                                                                </span>
-                                                                                @enderror
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
-
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
-                                                                        <button type="submit" class="btn btn-primary col-2 btn-sm">Save</button>
-                                                                    </div>
-                                                                </form>
+                            @endif
+                            <!--Table for Custom Mapping Scales-->
+                            @if ($hasCustomMS) 
+                            <table class="table table-light table-bordered w-100">
+                                <tr class="table-primary">
+                                    <th class="w-25"> Custom Mapping Scale Level</th>
+                                    <th>Description</th>
+                                    <th class="text-center w-25">Actions</th>
+                                </tr>
+                            @endif
+                                @foreach($mappingScales as $ms)
+                                    @if($ms->mapping_scale_categories_id == NULL)
+                                        <tr>
+                                            <td>
+                                                <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
+                                                {{$ms->title}}<br>
+                                                ({{$ms->abbreviation}})
+                                            </td>
+                                            <td>
+                                                {{$ms->description}}
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <form action="{{route('mappingScale.destroy', $ms->map_scale_id)}}" method="POST">
+                                                    @csrf
+                                                    {{method_field('DELETE')}}
+                                                    <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
+                                                        <button type="button" class="btn btn-secondary btn-sm m-1" data-toggle="modal" style="width:60px;" data-target="#editMSModal{{$ms->map_scale_id}}">
+                                                            Edit
+                                                        </button>
+                                                    <button type="submit" style="width:60px" class="btn btn-danger btn-sm m-1">Delete</button>
+                                                </form>
+                                                <!-- Edit MS Modal -->
+                                                <div class="modal fade" id="editMSModal{{$ms->map_scale_id}}" tabindex="-1" role="dialog" aria-labelledby="editMSModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editMSModalLabel">Edit Mapping Scale Level</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
                                                             </div>
+                                                            <form method="POST"
+                                                                action="{{ action('MappingScaleController@update', $ms->map_scale_id) }}">
+                                                                @csrf
+                                                                {{method_field('PUT')}}
+                                                                <div class="modal-body">
+                                                                    <div class="form-group row">
+                                                                        <label for="title" class="col-md-4 col-form-label text-md-right">Title</label>
+                            
+                                                                        <div class="col-md-8">
+                                                                            <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{$ms->title}}" required autofocus>
+                            
+                                                                            @error('title')
+                                                                            <span class="invalid-feedback" role="alert">
+                                                                                <strong>{{ $message }}</strong>
+                                                                            </span>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="abbreviation" class="col-md-4 col-form-label text-md-right">Abbreviation</label>
+                            
+                                                                        <div class="col-md-8">
+                                                                            <input id="abbreviation" type="text" class="form-control @error('abbreviation') is-invalid @enderror" name="abbreviation" value="{{$ms->abbreviation}}" maxlength="5" required autofocus>
+                            
+                                                                            @error('abbreviation')
+                                                                            <span class="invalid-feedback" role="alert">
+                                                                                <strong>{{ $message }}</strong>
+                                                                            </span>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="colour" class="col-md-4 col-form-label text-md-right">Colour</label>
+                            
+                                                                        <div class="col-md-8">
+                                                                            <input id="colour" type="color" class="form-control @error('colour') is-invalid @enderror" name="colour" value="{{$ms->colour}}" required autofocus list="colours">
+                                                                            <datalist id="colours">
+                                                                                <option value="#494444">
+                                                                                <option value="#726f6f">
+                                                                                <option value="#8b8989">
+                                                                                <option value="#bbbbbb">
+                                                                                <option value="#aaaaaa">
+                                                                                <option value="#011f4b">
+                                                                                <option value="#03396c">
+                                                                                <option value="#005b96">
+                                                                                <option value="#6497b1">
+                                                                                <option value="#b3cde0">
+                                                                                <option value="#991101">
+                                                                                <option value="#c23210">
+                                                                                <option value="#d65f59">
+                                                                                <option value="#ff8ab3">
+                                                                                <option value="#ffd0c2">
+                                                                                <option value="#009c1a">
+                                                                                <option value="#22b600">
+                                                                                <option value="#26cc00">
+                                                                                <option value="#7be382">
+                                                                                <option value="#d2f2d4">
+                                                                                <option value="#7f6b00">
+                                                                                <option value="#ccac00">
+                                                                                <option value="#ffd700">
+                                                                                <option value="#ffeb7f">
+                                                                                <option value="#fff7cc">
+                                                                            </datalist>
+                                                                            @error('colour')
+                                                                            <span class="invalid-feedback" role="alert">
+                                                                                <strong>{{ $message }}</strong>
+                                                                            </span>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="description" class="col-md-4 col-form-label text-md-right">Description</label>
+                            
+                                                                        <div class="col-md-8">
+                                                                            <textarea id="description" class="form-control" @error('description') is-invalid @enderror rows="3" name="description" required autofocus>{{$ms->description}}</textarea>
+                            
+                                                                            @error('description')
+                                                                            <span class="invalid-feedback" role="alert">
+                                                                                <strong>{{ $message }}</strong>
+                                                                            </span>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary col-2 btn-sm">Save</button>
+                                                                </div>
+                                                            </form>
                                                         </div>
                                                     </div>
-                                                    <!-- End of Edit MS Modal -->
-                                                </td>
-                                            </tr>
-                                            @endif
-                                    @endforeach
-                                </table>
-                            @endif
+                                                </div>
+                                                <!-- End of Edit MS Modal -->
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </table>
                         </div>
-
                     </div>
                 </div>
                     <!-- Modal -->
