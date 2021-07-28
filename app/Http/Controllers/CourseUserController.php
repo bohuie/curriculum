@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 use App\Mail\NotifyInstructorMail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\DB;
@@ -68,10 +69,12 @@ class CourseUserController extends Controller
             ['course_id' => $course_id , 'user_id' => $user->id ]
         );
 
-        //dd($user);
+        $sender = User::where('id', Auth::id())->first();
+
+        //dd($sender);
 
         if($course->save()){
-            Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $user->name));
+            Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $sender->name));
 
             $request->session()->flash('success', 'Course '.$course->course_code.''.$course->course_num.' successfully assigned to '.$user->email);
         }else{
@@ -153,12 +156,7 @@ class CourseUserController extends Controller
         }
 
         $course->save();
-
-        if($course->type == "assigned"){
-            return redirect()->route('programWizard.step3', $request->input('program_id'));
-        }else{
-            return redirect()->back();
-        }
+        return redirect()->back();  //fix assigned course removing collaborator bug :)
 
     }
 }
