@@ -92,7 +92,8 @@ class SyllabusController extends Controller
 
         $inputFieldDescriptions['instructorBioStatement'] = 'You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.';
 
-        $inputFieldDescriptions['courseLearningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
+        $inputFieldDescriptions['learningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
+        $inputFieldDescriptions['learningAnalytics'] = 'If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?';
 
         // get vancouver campus resources
         $vancouverSyllabusResources = VancouverSyllabusResource::all();
@@ -307,6 +308,7 @@ class SyllabusController extends Controller
                 $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
                 $vancouverSyllabus->course_structure = $request->input('courseStructure');
                 $vancouverSyllabus->course_schedule = $request->input('courseSchedule');
+                $vancouverSyllabus->learning_analytics = $request->input('learningAnalytics');
                 // save vancouver syllabus record
                 $vancouverSyllabus->save();
                 // check if a list of vancouver syllabus resources to include was provided
@@ -466,6 +468,7 @@ class SyllabusController extends Controller
                     $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
                     $vancouverSyllabus->course_structure = $request->input('courseStructure');
                     $vancouverSyllabus->course_schedule = $request->input('courseSchedule');
+                    $vancouverSyllabus->learning_analytics = $request->input('learningAnalytics');
                     // save vancouver syllabus
                     $vancouverSyllabus->save();
                     // check if a list of vancouver syllabus resources to include was provided
@@ -503,6 +506,7 @@ class SyllabusController extends Controller
                     $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
                     $vancouverSyllabus->course_structure = $request->input('courseStructure');
                     $vancouverSyllabus->course_schedule = $request->input('courseSchedule');
+                    $vancouverSyllabus->learning_analytics = $request->input('learningAnalytics');
                     // save vancouver syllabus
                     $vancouverSyllabus->save();
                     // delete all resources previously selected for the okanagan syllabus
@@ -611,6 +615,146 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NocourseOverview', 0);
                 }
 
+                // tell template processor to include learning activities if user completed the field(s)
+                if($learningActivities = $request->input('learningActivities')){
+                    $templateProcessor->cloneBlock('NoLearningActivities');
+                    // split learning activities string on newline char
+                    $learningActivitiesArr = explode("\n", $learningActivities);
+                    // create a table for learning activities (workaround for no list option)
+                    $learningActivitiesTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each learning activity
+                    foreach($learningActivitiesArr as $index => $learningActivity){
+                        $learningActivitiesTable->addRow();
+                        $learningActivitiesTable->addCell()->addText(strval($index + 1));
+                        $learningActivitiesTable->addCell()->addText($learningActivity);
+                    }
+                    // add learning activities table to word doc
+                    $templateProcessor->setComplexBlock('learningActivities', $learningActivitiesTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningActivities',0);
+                }
+                // tell template processor to include other course staff if user completed the field(s)
+                if($otherCourseStaff = $request->input('otherCourseStaff')){
+                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
+                    // split other course staff string on newline char
+                    $otherCourseStaffArr = explode("\n", $otherCourseStaff);
+                    // create a table for other course staff (workaround for no list option)
+                    $otherCourseStaffTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each course staff member
+                    foreach($otherCourseStaffArr as $index => $courseStaffMember){
+                        $otherCourseStaffTable->addRow();
+                        $otherCourseStaffTable->addCell()->addText(strval($index + 1));
+                        $otherCourseStaffTable->addCell()->addText($courseStaffMember);
+                    }
+                    // add other course staff table to word doc
+                    $templateProcessor->setComplexBlock('otherInstructionalStaff', $otherCourseStaffTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff',0);
+                }
+                // tell template processor to include course location if user completed the field(s)
+                if ($courseLocation = $request->input('courseLocation')) {
+                    $templateProcessor->cloneBlock('NoCourseLocation');
+                    $templateProcessor->setValue('courseLocation',$courseLocation);
+                } else {
+                    $templateProcessor->cloneBlock('NoCourseLocation',0);
+                }
+                
+                // tell template processor to include class hours if user completed the field(s)
+                if ($classStartTime = $request->input('startTime') and $classEndTime = $request->input('endTime')) {
+                    $templateProcessor->cloneBlock('NoClassHours');
+                    $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
+                } else {
+                    $templateProcessor->cloneBlock('NoClassHours',0);
+                }
+
+                // tell template processor to include course schedule if user completed the field(s)
+                if ($schedules = $request->input('schedule')) {
+                    $templateProcessor->cloneBlock('NoCourseDays');
+                    $schedule = "";
+                    foreach($schedules as $day) {
+                        $schedule = ($schedule == "" ? $day : $schedule . '/' . $day);
+                    }
+                    $templateProcessor->setValue('schedule',$schedule);
+                } else {
+                    $templateProcessor->cloneBlock('NoCourseDays', 0);
+                }
+
+                // tell template processor to include office hours if user completed the field(s)
+                if ($officeHour = $request->input('officeHour')) {
+                    $templateProcessor->cloneBlock('NoOfficeHours');
+                    $templateProcessor->setValue('officeHour',$officeHour);
+                } else {
+                    $templateProcessor->cloneBlock('NoOfficeHours', 0);
+                }
+
+                switch($semester){
+                    case("W1"):
+                        $templateProcessor->setValue('season',"Winter");
+                        $templateProcessor->setValue('term',"Term 1");
+                    break;
+                    case("W2"):
+                        $templateProcessor->setValue('season',"Winter");
+                        $templateProcessor->setValue('term',"Term 2");
+                    break;
+                    case("S1"):
+                        $templateProcessor->setValue('season',"Summer");
+                        $templateProcessor->setValue('term',"Term 1");
+                    break;
+                    case("S2"):
+                        $templateProcessor->setValue('season',"Summer");
+                        $templateProcessor->setValue('term',"Term 2");
+                    break;
+                }
+
+                if($learningOutcome = $request->input('learningOutcome')){
+                    $templateProcessor->cloneBlock('NolearningOutcomes');
+                    // split learning outcomes string on newline char
+                    $learningOutcomes = explode("\n", $learningOutcome);
+                    // create a table for learning outcomes (workaround for no list option)
+                    $learningOutcomesTable = new Table(array('borderSize'=>8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each learning outcome
+                    foreach($learningOutcomes as $outcome) {
+                        $learningOutcomesTable->addRow();
+                        $learningOutcomesTable->addCell()->addText($outcome);
+                    }
+                    // add learning outcome table to word doc
+                    $templateProcessor->setComplexBlock('learningOutcomes',$learningOutcomesTable);
+                }else{
+                    $templateProcessor->cloneBlock('NolearningOutcomes',0);
+                }
+
+                if($learningAssessments = $request->input('learningAssessments')){
+                    $templateProcessor->cloneBlock('NoLearningAssessments');
+                    // split assessment methods string on newline char
+                    $assessmentMethods = explode("\n", $learningAssessments);
+                    // create a table for learning outcomes (workaround for no list option)
+                    $assessmentMethodsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each assessment method
+                    foreach($assessmentMethods as $index => $assessmentMethod){
+                        $assessmentMethodsTable->addRow();
+                        $assessmentMethodsTable->addCell()->addText(strval($index + 1));
+                        $assessmentMethodsTable->addCell()->addText($assessmentMethod);
+                    }
+                    // add assessment methods table to word doc
+                    $templateProcessor->setComplexBlock('learningAssessments', $assessmentMethodsTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningAssessments',0);
+                }
+                // include vancouver course learning resources in template
+                if($learningResources = $request->input('learningResources')){
+                    $templateProcessor->cloneBlock('NoCourseLearningResources');
+                    $templateProcessor->setValue('courseLearningResources', $learningResources);
+                }else{
+                    $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
+                }
+        
+                if($learningMaterials = $request->input('learningMaterials')){
+                    $templateProcessor->cloneBlock('NoLearningMaterials');
+                    $templateProcessor->setValue('learningMaterials',$learningMaterials);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningMaterials',0);
+                }
+
                 $allOkanaganSyllabusResources = OkanaganSyllabusResource::all();
                 foreach ($allOkanaganSyllabusResources as $resource) {
                     if (array_key_exists($resource->id, $request->input('okanaganSyllabusResources'))) {
@@ -650,7 +794,7 @@ class SyllabusController extends Controller
                 }
 
                 if($contacts = $request->input('courseContacts')){
-                    $templateProcessor->cloneBlock('NoContacts');
+                    $templateProcessor->cloneBlock('NoContacts', 0);
                     // split contacts string on newline char
                     $contactsArr = explode("\n", $contacts);
                     // create a table for contacts (workaround for no list option)
@@ -665,11 +809,12 @@ class SyllabusController extends Controller
                     $templateProcessor->setComplexBlock('contacts', $contactsTable);
                     
                 }else{
-                    $templateProcessor->cloneBlock('NoContacts', 0);
+                    $templateProcessor->cloneBlock('NoContacts');
+                    $templateProcessor->setValue('contacts', '');
                 }
 
                 if($coursePrereqs = $request->input('coursePrereqs')){
-                    $templateProcessor->cloneBlock('NoPrerequisites');
+                    $templateProcessor->cloneBlock('NoPrerequisites', 0);
                     // split course prereqs string on newline char
                     $coursePrereqsArr = explode("\n", $coursePrereqs);
                     // create a table for course prereqs (workaround for no list option)
@@ -683,11 +828,12 @@ class SyllabusController extends Controller
                     // add course prereqs table to word doc
                     $templateProcessor->setComplexBlock('prerequisites', $coursePrereqsTable);
                 }else{
-                    $templateProcessor->cloneBlock('NoPrerequisites', 0);
+                    $templateProcessor->cloneBlock('NoPrerequisites');
+                    $templateProcessor->setValue('prerequisites', '');
                 }
 
                 if($courseCoreqs = $request->input('courseCoreqs')){
-                    $templateProcessor->cloneBlock('NoCorequisites');
+                    $templateProcessor->cloneBlock('NoCorequisites', 0);
                     // split course coreqs string on newline char
                     $courseCoreqsArr = explode("\n", $courseCoreqs);
                     // create a table for course coreqs (workaround for no list option)
@@ -701,7 +847,8 @@ class SyllabusController extends Controller
                     // add course coreqs table to word doc
                     $templateProcessor->setComplexBlock('corequisites', $courseCoreqsTable);
                 }else{
-                    $templateProcessor->cloneBlock('NoCorequisites', 0);
+                    $templateProcessor->cloneBlock('NoCorequisites');
+                    $templateProcessor->setValue('corequisites', '');
                 }
 
                 if($courseInstructorBio = $request->input('courseInstructorBio')){
@@ -712,24 +859,181 @@ class SyllabusController extends Controller
                 }
 
                 if($courseStructure = $request->input('courseStructure')){
-                    $templateProcessor->cloneBlock('NoCourseStructure');
+                    $templateProcessor->cloneBlock('NoCourseStructure', 0);
                     $templateProcessor->setValue('courseStructure', $courseStructure);
                 }else{
-                    $templateProcessor->cloneBlock('NoCourseStructure', 0);
+                    $templateProcessor->cloneBlock('NoCourseStructure');
+                    $templateProcessor->setValue('courseStructure', '');
                 }
 
                 if($courseSchedule = $request->input('courseSchedule')){
-                    $templateProcessor->cloneBlock('NoTopicsSchedule');
+                    $templateProcessor->cloneBlock('NoTopicsSchedule', 0 );
                     $templateProcessor->setValue('courseSchedule', $courseSchedule);
                 }else{
-                    $templateProcessor->cloneBlock('NoTopicsSchedule', 0);
+                    $templateProcessor->cloneBlock('NoTopicsSchedule');
+                    $templateProcessor->setValue('courseSchedule', '');
+                }
+
+                // tell template processor to include learning activities if user completed the field(s)
+                if($learningActivities = $request->input('learningActivities')){
+                    $templateProcessor->cloneBlock('NoLearningActivities', 0);
+                    // split learning activities string on newline char
+                    $learningActivitiesArr = explode("\n", $learningActivities);
+                    // create a table for learning activities (workaround for no list option)
+                    $learningActivitiesTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each learning activity
+                    foreach($learningActivitiesArr as $index => $learningActivity){
+                        $learningActivitiesTable->addRow();
+                        $learningActivitiesTable->addCell()->addText(strval($index + 1));
+                        $learningActivitiesTable->addCell()->addText($learningActivity);
+                    }
+                    // add learning activities table to word doc
+                    $templateProcessor->setComplexBlock('learningActivities', $learningActivitiesTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningActivities');
+                    $templateProcessor->setValue('learningActivities', '');
+
+                }
+                // tell template processor to include other course staff if user completed the field(s)
+                if($otherCourseStaff = $request->input('otherCourseStaff')){
+                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff', 0);
+                    // split other course staff string on newline char
+                    $otherCourseStaffArr = explode("\n", $otherCourseStaff);
+                    // create a table for other course staff (workaround for no list option)
+                    $otherCourseStaffTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each course staff member
+                    foreach($otherCourseStaffArr as $index => $courseStaffMember){
+                        $otherCourseStaffTable->addRow();
+                        $otherCourseStaffTable->addCell()->addText(strval($index + 1));
+                        $otherCourseStaffTable->addCell()->addText($courseStaffMember);
+                    }
+                    // add other course staff table to word doc
+                    $templateProcessor->setComplexBlock('otherInstructionalStaff', $otherCourseStaffTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
+                    $templateProcessor->setValue('otherInstructionalStaff', '');
+                }
+                // tell template processor to include course location if user completed the field(s)
+                if ($courseLocation = $request->input('courseLocation')) {
+                    $templateProcessor->cloneBlock('NoCourseLocation');
+                    $templateProcessor->setValue('courseLocation',$courseLocation);
+                } else {
+                    $templateProcessor->cloneBlock('NoCourseLocation',0);
+                }
+                
+                // tell template processor to include class hours if user completed the field(s)
+                if ($classStartTime = $request->input('startTime') and $classEndTime = $request->input('endTime')) {
+                    $templateProcessor->cloneBlock('NoClassHours');
+                    $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
+                } else {
+                    $templateProcessor->cloneBlock('NoClassHours',0);
+                }
+
+                // tell template processor to include course schedule if user completed the field(s)
+                if ($schedules = $request->input('schedule')) {
+                    $templateProcessor->cloneBlock('NoCourseDays');
+                    $schedule = "";
+                    foreach($schedules as $day) {
+                        $schedule = ($schedule == "" ? $day : $schedule . '/' . $day);
+                    }
+                    $templateProcessor->setValue('schedule',$schedule);
+                } else {
+                    $templateProcessor->cloneBlock('NoCourseDays', 0);
+                }
+
+                // tell template processor to include office hours if user completed the field(s)
+                if ($officeHour = $request->input('officeHour')) {
+                    $templateProcessor->cloneBlock('NoOfficeHours');
+                    $templateProcessor->setValue('officeHour',$officeHour);
+                } else {
+                    $templateProcessor->cloneBlock('NoOfficeHours', 0);
+                }
+
+                switch($semester){
+                    case("W1"):
+                        $templateProcessor->setValue('season',"Winter");
+                        $templateProcessor->setValue('term',"Term 1");
+                    break;
+                    case("W2"):
+                        $templateProcessor->setValue('season',"Winter");
+                        $templateProcessor->setValue('term',"Term 2");
+                    break;
+                    case("S1"):
+                        $templateProcessor->setValue('season',"Summer");
+                        $templateProcessor->setValue('term',"Term 1");
+                    break;
+                    case("S2"):
+                        $templateProcessor->setValue('season',"Summer");
+                        $templateProcessor->setValue('term',"Term 2");
+                    break;
+                }
+
+                if($learningOutcome = $request->input('learningOutcome')){
+                    $templateProcessor->cloneBlock('NolearningOutcomes', 0);
+                    // split learning outcomes string on newline char
+                    $learningOutcomes = explode("\n", $learningOutcome);
+                    // create a table for learning outcomes (workaround for no list option)
+                    $learningOutcomesTable = new Table(array('borderSize'=>8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each learning outcome
+                    foreach($learningOutcomes as $outcome) {
+                        $learningOutcomesTable->addRow();
+                        $learningOutcomesTable->addCell()->addText($outcome);
+                    }
+                    // add learning outcome table to word doc
+                    $templateProcessor->setComplexBlock('learningOutcomes',$learningOutcomesTable);
+                }else{
+                    $templateProcessor->cloneBlock('NolearningOutcomes');
+                    $templateProcessor->setValue('learningOutcomes', '');
+                }
+
+                if($learningAssessments = $request->input('learningAssessments')){
+                    $templateProcessor->cloneBlock('NoLearningAssessments', 0);
+                    // split assessment methods string on newline char
+                    $assessmentMethods = explode("\n", $learningAssessments);
+                    // create a table for learning outcomes (workaround for no list option)
+                    $assessmentMethodsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    // add a new row and cell to table for each assessment method
+                    foreach($assessmentMethods as $index => $assessmentMethod){
+                        $assessmentMethodsTable->addRow();
+                        $assessmentMethodsTable->addCell()->addText(strval($index + 1));
+                        $assessmentMethodsTable->addCell()->addText($assessmentMethod);
+                    }
+                    // add assessment methods table to word doc
+                    $templateProcessor->setComplexBlock('learningAssessments', $assessmentMethodsTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningAssessments');
+                    $templateProcessor->setValue('learningAssessments', '');
+
+                }
+                // include vancouver course learning resources in template
+                if($learningResources = $request->input('learningResources')){
+                    $templateProcessor->cloneBlock('NoCourseLearningResources');
+                    $templateProcessor->setValue('courseLearningResources', $learningResources);
+                }else{
+                    $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
+                }
+        
+                if($learningMaterials = $request->input('learningMaterials')){
+                    $templateProcessor->cloneBlock('NoLearningMaterials', 0);
+                    $templateProcessor->setValue('learningMaterials',$learningMaterials);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningMaterials');
+                    $templateProcessor->setValue('learningMaterials', '');
+
+                }
+
+                if ($learningAnalytics = $request->input('learningAnalytics')) {
+                    $templateProcessor->cloneBlock('NoLearningAnalytics');
+                    $templateProcessor->setValue('learningAnalytics', $learningAnalytics);
+                } else {
+                    $templateProcessor->cloneBlock('NoLearningAnalytics', 0);
                 }
 
                 $allVancouverSyllabusResources = VancouverSyllabusResource::all();
                 foreach ($allVancouverSyllabusResources as $resource) {
                     if (array_key_exists($resource->id, $request->input('vancouverSyllabusResources'))) {
                         $templateProcessor->cloneBlock($resource->id_name);
-                        $templateProcessor->setValue($resource->id_name . '-title', $resource->title);
+                        $templateProcessor->setValue($resource->id_name . '-title', strtoupper($resource->title));
                         // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
                     } else {
                         $templateProcessor->cloneBlock($resource->id_name, 0);
@@ -745,133 +1049,7 @@ class SyllabusController extends Controller
 
         // date the syllabus
         $templateProcessor->setValue('dateGenerated', date('d, M Y'));
-
-        // tell template processor to include learning activities if user completed the field(s)
-        if($learningActivities = $request->input('learningActivities')){
-            $templateProcessor->cloneBlock('NoLearningActivities');
-            // split learning activities string on newline char
-            $learningActivitiesArr = explode("\n", $learningActivities);
-            // create a table for learning activities (workaround for no list option)
-            $learningActivitiesTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
-            // add a new row and cell to table for each learning activity
-            foreach($learningActivitiesArr as $index => $learningActivity){
-                $learningActivitiesTable->addRow();
-                $learningActivitiesTable->addCell()->addText(strval($index + 1));
-                $learningActivitiesTable->addCell()->addText($learningActivity);
-            }
-            // add learning activities table to word doc
-            $templateProcessor->setComplexBlock('learningActivities', $learningActivitiesTable);
-        }else{
-            $templateProcessor->cloneBlock('NoLearningActivities',0);
-        }
-        // tell template processor to include other course staff if user completed the field(s)
-        if($otherCourseStaff = $request->input('otherCourseStaff')){
-            $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
-            // split other course staff string on newline char
-            $otherCourseStaffArr = explode("\n", $otherCourseStaff);
-            // create a table for other course staff (workaround for no list option)
-            $otherCourseStaffTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
-            // add a new row and cell to table for each course staff member
-            foreach($otherCourseStaffArr as $index => $courseStaffMember){
-                $otherCourseStaffTable->addRow();
-                $otherCourseStaffTable->addCell()->addText(strval($index + 1));
-                $otherCourseStaffTable->addCell()->addText($courseStaffMember);
-            }
-            // add other course staff table to word doc
-            $templateProcessor->setComplexBlock('otherInstructionalStaff', $otherCourseStaffTable);
-        }else{
-            $templateProcessor->cloneBlock('NoOtherInstructionalStaff',0);
-        }
-        // tell template processor to include course location if user completed the field(s)
-        if ($courseLocation = $request->input('courseLocation')) {
-            $templateProcessor->cloneBlock('NoCourseLocation');
-            $templateProcessor->setValue('courseLocation',$courseLocation);
-        } else {
-            $templateProcessor->cloneBlock('NoCourseLocation',0);
-        }
         
-        // tell template processor to include class hours if user completed the field(s)
-        if ($classStartTime = $request->input('startTime') and $classEndTime = $request->input('endTime')) {
-            $templateProcessor->cloneBlock('NoClassHours');
-            $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
-        } else {
-            $templateProcessor->cloneBlock('NoClassHours',0);
-        }
-
-        // tell template processor to include course schedule if user completed the field(s)
-        if ($schedules = $request->input('schedule')) {
-            $templateProcessor->cloneBlock('NoCourseDays');
-            $schedule = "";
-            foreach($schedules as $day) {
-                $schedule = ($schedule == "" ? $day : $schedule . '/' . $day);
-            }
-            $templateProcessor->setValue('schedule',$schedule);
-        } else {
-            $templateProcessor->cloneBlock('NoCourseDays', 0);
-        }
-
-        // tell template processor to include office hours if user completed the field(s)
-        if ($officeHour = $request->input('officeHour')) {
-            $templateProcessor->cloneBlock('NoOfficeHours');
-            $templateProcessor->setValue('officeHour',$officeHour);
-        } else {
-            $templateProcessor->cloneBlock('NoOfficeHours', 0);
-        }
-
-        switch($semester){
-            case("W1"):
-                $templateProcessor->setValue('season',"Winter");
-                $templateProcessor->setValue('term',"Term 1");
-            break;
-            case("W2"):
-                $templateProcessor->setValue('season',"Winter");
-                $templateProcessor->setValue('term',"Term 2");
-            break;
-            case("S1"):
-                $templateProcessor->setValue('season',"Summer");
-                $templateProcessor->setValue('term',"Term 1");
-            break;
-            case("S2"):
-                $templateProcessor->setValue('season',"Summer");
-                $templateProcessor->setValue('term',"Term 2");
-            break;
-        }
-
-        if($learningOutcome = $request->input('learningOutcome')){
-            $templateProcessor->cloneBlock('NolearningOutcomes');
-            // split learning outcomes string on newline char
-            $learningOutcomes = explode("\n", $learningOutcome);
-            // create a table for learning outcomes (workaround for no list option)
-            $learningOutcomesTable = new Table(array('borderSize'=>8, 'borderColor' => 'DCDCDC'));
-            // add a new row and cell to table for each learning outcome
-            foreach($learningOutcomes as $outcome) {
-                $learningOutcomesTable->addRow();
-                $learningOutcomesTable->addCell()->addText($outcome);
-            }
-            // add learning outcome table to word doc
-            $templateProcessor->setComplexBlock('learningOutcomes',$learningOutcomesTable);
-        }else{
-            $templateProcessor->cloneBlock('NolearningOutcomes',0);
-        }
-
-        if($learningAssessments = $request->input('learningAssessments')){
-            $templateProcessor->cloneBlock('NoLearningAssessments');
-            // split assessment methods string on newline char
-            $assessmentMethods = explode("\n", $learningAssessments);
-            // create a table for learning outcomes (workaround for no list option)
-            $assessmentMethodsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
-            // add a new row and cell to table for each assessment method
-            foreach($assessmentMethods as $index => $assessmentMethod){
-                $assessmentMethodsTable->addRow();
-                $assessmentMethodsTable->addCell()->addText(strval($index + 1));
-                $assessmentMethodsTable->addCell()->addText($assessmentMethod);
-            }
-            // add assessment methods table to word doc
-            $templateProcessor->setComplexBlock('learningAssessments', $assessmentMethodsTable);
-        }else{
-            $templateProcessor->cloneBlock('NoLearningAssessments',0);
-        }
-
         if($latePolicy = $request->input('latePolicy')){
             $templateProcessor->cloneBlock('NolatePolicy');
             $templateProcessor->setValue('latePolicy',$latePolicy);
@@ -900,20 +1078,6 @@ class SyllabusController extends Controller
             $templateProcessor->cloneBlock('NopassingCriteria',0);
         }
 
-        // include vancouver course learning resources in template
-        if($courseLearningResources = $request->input('courseLearningResources')){
-            $templateProcessor->cloneBlock('NoCourseLearningResources');
-            $templateProcessor->setValue('courseLearningResources', $courseLearningResources);
-        }else{
-            $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
-        }
-
-        if($learningMaterials = $request->input('learningMaterials')){
-            $templateProcessor->cloneBlock('NoLearningMaterials');
-            $templateProcessor->setValue('learningMaterials',$learningMaterials);
-        }else{
-            $templateProcessor->cloneBlock('NoLearningMaterials',0);
-        }
         return $templateProcessor;
     }
 
