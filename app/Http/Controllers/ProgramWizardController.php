@@ -50,8 +50,13 @@ class ProgramWizardController extends Controller
     //     return view('programs.wizard.step1')->with('program', $program)->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers);
     // }
 
-    public function step1($program_id)
+    public function step1($program_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
@@ -91,11 +96,15 @@ class ProgramWizardController extends Controller
         return view('programs.wizard.step1')->with('plos', $plos)->with('program', $program)->with('ploCategories', $ploCategories)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('ploProgramCategories', $ploProgramCategories)
-                                            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS);
+                                            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('isEditor', $isEditor);
     }
 
-    public function step2($program_id)
+    public function step2($program_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
@@ -140,11 +149,15 @@ class ProgramWizardController extends Controller
         return view('programs.wizard.step2')->with('mappingScales', $mappingScales)->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('msCategories', $msCategories)->with('mscScale', $mscScale)
-                                            ->with('hasCustomMS', $hasCustomMS)->with('hasImportedMS', $hasImportedMS);
+                                            ->with('hasCustomMS', $hasCustomMS)->with('hasImportedMS', $hasImportedMS)->with('isEditor', $isEditor);
     }
 
-    public function step3($program_id)
+    public function step3($program_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
@@ -221,11 +234,15 @@ class ProgramWizardController extends Controller
         return view('programs.wizard.step3')->with('program', $program)->with('programCoursesUsers', $programCoursesUsers)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('programCourses', $programCourses)->with('userCoursesNotInProgram', $userCoursesNotInProgram)->with('standard_categories', $standard_categories)
-                                            ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes);
+                                            ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes)->with('isEditor', $isEditor);
     }
 
-    public function step4($program_id)
+    public function step4($program_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
@@ -328,7 +345,7 @@ class ProgramWizardController extends Controller
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('coursesOutcomes', $coursesOutcomes)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
                                             ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
-                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses);
+                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor);
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {

@@ -44,6 +44,26 @@ class HasAccessMiddleware
                 // user does not belong to this program
                 $request->session()->flash('error', 'You do not have access to this program');
                 return redirect()->route('home');
+            } else {
+                // get users permission level for this syllabus
+                $userPermission = $programUsers->where('id', Auth::id())->first()->pivot->permission;
+                switch ($userPermission) {
+                    case 1:
+                        // Owner
+                        break;
+                    case 2:
+                        // Editor
+                        $request['isEditor'] = TRUE;
+                        break;
+                    case 3:
+                        // Viewer
+                        $request->session()->flash('success', 'RETURN SUMMARY VIEWER ONLY');
+                        // return view only syllabus 
+                        return redirect()->route('home');
+                        break;
+                    default: 
+                        // default 
+                }
             }
 
         } elseif ($syllabus_id != null) {
