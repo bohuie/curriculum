@@ -83,7 +83,7 @@
                                 <!-- Campus dropdown -->
                                 <div class="row justify-content-end mr-4 position-relative">
                                     <label for="campus" class="col-auto col-form-label requiredField">*</label>
-                                    <select class="form-select form-select-sm text-center w-50 col-auto" id="campus" name="campus" form="sylabusGenerator" required>
+                                    <select class="form-select form-select-sm text-center col-5" id="campus" name="campus" form="sylabusGenerator" required>
                                         <option disabled selected value=""> -- Campus -- </option>
                                         <option value="O">UBC Okanagan</option>
                                         <option value="V">UBC Vancouver</option>
@@ -325,7 +325,9 @@
                                 <textarea id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
                             </div>
                         </div>
-
+                        <!-- Course Overview -->
+                        <div class="row" id="learningAnalytics"></div>
+                        
                         <!-- Course Optional Resources -->
                         <div class="row mb-3 mt-4" >
                             <div class="col">
@@ -665,6 +667,13 @@
             </div>
             `;
 
+        var learningAnalytics = `
+            <div class="col">
+                <label for="learningAnalytics">Learning Analytics</label>
+                <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['learningAnalytics']}}"></i>                                            
+                <textarea id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
+            </div>
+            `;
         var courseFormat = `
             <div class="col">
                 <label for="courseFormat">Course Format</label>
@@ -696,6 +705,8 @@
             $('#courseSchedule').html(courseSchedule);
             $('#courseInstructorBio').html(courseInstructorBio);
             $('#courseDescription').html(courseDescription);
+            $('#learningAnalytics').html(learningAnalytics);
+
             // remove data specific to okanangan campus
             $('#courseFormat').empty();
             $('#courseOverview').empty();
@@ -719,6 +730,7 @@
             $('#courseSchedule').empty();
             $('#courseInstructorBio').empty();
             $('#courseDescription').empty();
+            $('#learningAnalytics').empty();
         }
 
         var formatNotes = document.querySelectorAll('.collapsibleNotes').forEach(function(note) {
