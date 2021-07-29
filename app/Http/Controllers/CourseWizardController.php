@@ -299,7 +299,7 @@ class CourseWizardController extends Controller
             $assessmentMethodsTotal += $a_method->weight;
         }
         
-        return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('outcomeMaps', $outcomeMaps)->with('user', $user)->with('oAct', $oActCount)->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)->with('standardsOutcomeMap', $standardsOutcomeMap);
+        return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)->with('standardsOutcomeMap', $standardsOutcomeMap);
     }
 
 }

@@ -400,37 +400,10 @@ class CourseController extends Controller
     public function pdf($course_id)
     {
         $user = User::where('id',Auth::id())->first();
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
-
-        //for progress bar
-        $lo_count = LearningOutcome::where('course_id', $course_id)->count();
-        $am_count = AssessmentMethod::where('course_id', $course_id)->count();
-        $la_count = LearningActivity::where('course_id', $course_id)->count();
-        $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
-                                ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_activities.course_id','=',$course_id)->count();
-        $oAss = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
-                                ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('assessment_methods.course_id','=',$course_id)->count();
-        $outcomeMapsCount = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
-                                ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
-
-        //
-
+        $course =  Course::find($course_id);
         // get all the programs this course belongs to
         $coursePrograms = Course::find($course_id)->programs;
-        // get the mapping scale for each program
-        $programsMappingScales = array();
-        foreach ($coursePrograms as $courseProgram) {
-            $programsMappingScales[$courseProgram->program_id] = $courseProgram->mappingScaleLevels;
-        }
+
         // get the PLOs for each program
         $programsLearningOutcomes = array();
         foreach ($coursePrograms as $courseProgram) {
@@ -443,7 +416,7 @@ class CourseController extends Controller
             foreach ($programLearningOutcomes as $programLearningOutcome) {
                 $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $course_id);
                 foreach($outcomeMaps as $outcomeMap){
-                    $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = $outcomeMap->pivot->map_scale_value;
+                    $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
                 } 
             }
         }
@@ -456,24 +429,7 @@ class CourseController extends Controller
                 }
             });            
         });
-
-        $course =  Course::where('course_id', $course_id)->first();
-        $courseStandardCategory = $course->ministryStandardCategory;
-        $courseStandards = $courseStandardCategory->standards;
-        $courseScalesCategory = $course->scalesCategory;
-        $courseStandardScales = $courseScalesCategory->standardScales;
-
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
-        $l_activities = LearningActivity::where('course_id', $course_id)->get();
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
-        // $mappingScales = MappingScale::where('program_id', $course->program_id)->get();
-
-        // $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-        //                     ->where('mapping_scale_programs.program_id', $course->program_id)->get();
         
-        $ploCategories = [];
-
-
         $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -486,20 +442,16 @@ class CourseController extends Controller
 
         $standardOutcomeMaps = Standard::join('standards_outcome_maps','standards.standard_id','=','standards_outcome_maps.standard_id')
                                 ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('standards_outcome_maps.map_scale_value','standards_outcome_maps.standard_id','standards.standard_id','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->join('standard_scales', 'standard_scales.standard_scale_id', '=', 'standards_outcome_maps.standard_scale_id')
+                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.standard_id','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
                                 ->where('learning_outcomes.course_id','=',$course_id)->get();
             
-        
-        $optional_PLOs = Optional_priorities::where('course_id', $course_id)->get();
-
         $assessmentMethodsTotal = 0;
-        foreach ($a_methods as $a_method) {
+        foreach ($course->assessmentMethods as $a_method) {
             $assessmentMethodsTotal += $a_method->weight;
         }
         
-        $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseStandardCategory','courseStandardCategory','l_outcomes','l_activities','a_methods','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','courseStandardScales', 'courseStandards', 'assessmentMethodsTotal', 'coursePrograms', 'programsLearningOutcomes', 'programsMappingScales', 'courseProgramsOutcomeMaps', 'optional_PLOs', 'ploCategories')) ;
-
-        // return view('courses.downloadSummary', compact('course','courseStandardCategory','courseStandardCategory','l_outcomes','l_activities','a_methods','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','courseStandardScales', 'courseStandards', 'assessmentMethodsTotal', 'coursePrograms', 'programsLearningOutcomes', 'programsMappingScales', 'courseProgramsOutcomeMaps', 'optional_PLOs', 'ploCategories'));
+        $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps')) ;
 
         return $pdf->download('summary.pdf');
     }
