@@ -225,8 +225,23 @@
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
-                                        <td>
-                                            <i class="bi bi-exclamation-circle-fill fs-5 text-warning pr-2"></i>In Progress
+                                        <td class="align-middle">
+                                            @if ($progressBar[$course->course_id] == 0)
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @elseif ($progressBar[$course->course_id] == 100)
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @else
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @endif
                                         </td>
 
                                         <td> 
@@ -391,6 +406,7 @@
                                         <!-- End of Delete Course Confirmation Modal -->
                                     </td>
                                 </tr>
+
                                 </tbody>
                                 @endforeach
                             </table>

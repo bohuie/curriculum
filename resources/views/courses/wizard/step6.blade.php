@@ -26,11 +26,14 @@
                     </nav>
                     <div class="tab-content" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-standards" role="tabpanel" aria-labelledby="nav-standards-tab">
-                            @if (count($course->learningOutcomes) < 1)
+                            @if ($course->standard_category_id == 0) 
+                                <div class="alert alert-warning wizard">
+                                    <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this course to map to.                     
+                                </div>
+                            @elseif ($course->learningOutcomes->count() < 1)
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
                                 </div>
-
                             @else
                         
                                 <h6 class="card-subtitle wizard mb-3 mt-3 lh-lg text-center">
