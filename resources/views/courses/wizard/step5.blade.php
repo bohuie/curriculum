@@ -31,7 +31,7 @@
                         
                         <!-- list of programs this course belongs to -->
                         <div class="jumbotron">
-                            @if (count($coursePrograms) < 1)
+                            @if (count($course->programs) < 1)
                                 <div class="alert alert-warning text-center">
                                     <i class="bi bi-exclamation-circle-fill pr-2 fs-3"></i>
                                     <br>
@@ -42,7 +42,7 @@
                             @else
                                 <div class="programsAccordions" style="width:100%">
 
-                                    @foreach($coursePrograms as $index => $courseProgram)
+                                    @foreach($course->programs as $index => $courseProgram)
                                                 
                                         <!-- Program accordion -->
                                         <div class="accordion" id="programAccordion{{$courseProgram->program_id}}">

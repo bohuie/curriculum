@@ -200,7 +200,7 @@
 
                                     <table class="table table-borderless">
 
-                                            @if(count($courseUsers) == 0)
+                                            @if($course->users->count() == 0)
                                                 <tr class="table-active">
                                                     <th colspan="2">You have not added any collaborators to this course
                                                     </th>
@@ -211,7 +211,7 @@
                                                 <tr class="table-active">
                                                     <th colspan="2">Collaborators</th>
                                                 </tr>
-                                                @foreach($courseUsers as $instructor)
+                                                @foreach($course->users as $instructor)
                                                     @if($instructor->email != $user->email)
                                                         <tr>
                                                             <td>{{$instructor->email}}</td>

@@ -162,7 +162,6 @@ class CourseWizardController extends Controller
         // for header
         $user = User::where('id',Auth::id())->first();
         $course = Course::find($course_id);
-        $courseUsers = $course->users()->select('users.email')->get();
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -175,10 +174,8 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        // get all the programs this course belongs to
-        $coursePrograms = $course->programs;
 
-        return view('courses.wizard.step5')->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('coursePrograms', $coursePrograms);
+        return view('courses.wizard.step5')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount);
     }
 
     public function step6($course_id)
@@ -186,7 +183,6 @@ class CourseWizardController extends Controller
         // for header
         $user = User::where('id',Auth::id())->first();
         $course = Course::find($course_id);
-        $courseUsers = $course->users()->select('users.email')->get();        
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -232,22 +228,19 @@ class CourseWizardController extends Controller
         "Content from Indigenous scholars and communities and/or equity-seeking and marginalized groups","Inclusion of de-colonial approaches to science through Indigenous and community traditional knowledge and 'authorship'","Knowledge, awareness and skills related to the relationship between climate change and food systems",
         "Climate-related mental health content","Applied learning opportunities grounded in the personal, local and regional community (e.g. flood and wildfire impacted communities in BC)");
 
-        return view('courses.wizard.step6')->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('bc_labour_market',$bc_labour_market)->with('shaping_ubc',$shaping_ubc)->with('ubc_mandate_letters',$ubc_mandate_letters)->with('okanagan_2040_outlook',$okanagan_2040_outlook)->with('ubc_indigenous_plan',$ubc_indigenous_plan)->with('ubc_climate_priorities',$ubc_climate_priorities)->with('shaping_ubc_link',$shaping_ubc_link);
+        return view('courses.wizard.step6')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('bc_labour_market',$bc_labour_market)->with('shaping_ubc',$shaping_ubc)->with('ubc_mandate_letters',$ubc_mandate_letters)->with('okanagan_2040_outlook',$okanagan_2040_outlook)->with('ubc_indigenous_plan',$ubc_indigenous_plan)->with('ubc_climate_priorities',$ubc_climate_priorities)->with('shaping_ubc_link',$shaping_ubc_link);
     }
     
     public function step7($course_id)
     {
         //for header
         $user = User::where('id',Auth::id())->first();
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
-        $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
+        $course =  Course::find($course_id);
+        $oActCount = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_activities.course_id','=',$course_id)->count();
-        $oAss = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
+        $oAssCount = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
                                 ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('assessment_methods.course_id','=',$course_id)->count();
@@ -257,15 +250,9 @@ class CourseWizardController extends Controller
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
 
         // get all the programs this course belongs to
-        $coursePrograms = Course::find($course_id)->programs;
-        // get the mapping scale for each program
-        $programsMappingScales = array();
-        foreach ($coursePrograms as $courseProgram) {
-            $programsMappingScales[$courseProgram->program_id] = $courseProgram->mappingScaleLevels;
-        }
+        $coursePrograms = $course->programs;
         // get the PLOs for each program
         $programsLearningOutcomes = array();
-        $programsPlosCategorizedCount = array();
 
         $coursePrograms->map(function($courseProgram, $key) {
             $courseProgram->push(0, 'num_plos_categorized');
@@ -279,48 +266,24 @@ class CourseWizardController extends Controller
         foreach ($coursePrograms as $courseProgram) {
             $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
         }
-
-        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_value
+        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = mapping scale
         $courseProgramsOutcomeMaps = array();
         foreach ($programsLearningOutcomes as $programId => $programLearningOutcomes) {
             foreach ($programLearningOutcomes as $programLearningOutcome) {
                 $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $course_id);
                 foreach($outcomeMaps as $outcomeMap){
-                    $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = $outcomeMap->pivot->map_scale_value;
+                    $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
                 } 
             }
         }
 
-        $course =  Course::where('course_id', $course_id)->first();
-        $program = Program::where('program_id', $course->program_id)->first();
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
-        $l_activities = LearningActivity::where('course_id', $course_id)->get();
-
-        // get learning outcomes for a course
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
-        // get Standards and strategic outcomes for a course
-        $standard_outcomes = Standard::where('standard_category_id', $course->standard_category_id)->get();
-        // get mapping scales associated with course
-        $standardsMappingScales = StandardScale::where('scale_category_id', $course->scale_category_id)->get();
         // get standards outcome map
         $standardsOutcomeMap = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
                                 ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('standards_outcome_maps.map_scale_value','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
+                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
                                 ->where('learning_outcomes.course_id','=',$course_id)->get();
-        // get standards outcome map
-        $standardsOutcomeMap = DB::table('standards')
-                                ->leftJoin('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->leftJoin('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id')
-                                ->select('standards_outcome_maps.map_scale_value','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_outcomes.course_id','=',$course_id)->get();
-
-        $pl_outcomes = ProgramLearningOutcome::where('program_id', $course->program_id)->get();
-
-        $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                            ->where('mapping_scale_programs.program_id', $course->program_id)->get();
-
-        $ploCategories = PLOCategory::where('program_id', $course->program_id)->get();
-
+        
         $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -331,19 +294,12 @@ class CourseWizardController extends Controller
                                 ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('assessment_methods.course_id','=',$course_id)->get();
 
-        $outcomeMaps = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
-                                ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_outcomes.course_id','=',$course_id)->get();
-        $optional_PLOs = Optional_priorities::where('course_id', $course_id)->get();
-
         $assessmentMethodsTotal = 0;
-        foreach ($a_methods as $a_method) {
+        foreach ($course->assessmentMethods as $a_method) {
             $assessmentMethodsTotal += $a_method->weight;
         }
         
-        return view('courses.wizard.step7')->with('course', $course)->with('program', $program)->with('l_outcomes', $l_outcomes)->with('pl_outcomes',$pl_outcomes)->with('l_activities', $l_activities)->with('a_methods', $a_methods)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('outcomeMaps', $outcomeMaps)->with('mappingScales', $mappingScales)->with('ploCategories', $ploCategories)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('optional_PLOs',$optional_PLOs)->with('coursePrograms', $coursePrograms)->with('programsMappingScales', $programsMappingScales)->with('programsLearningOutcomes', $programsLearningOutcomes)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)->with('standard_outcomes', $standard_outcomes)->with('standardsMappingScales', $standardsMappingScales)->with('standardsOutcomeMap', $standardsOutcomeMap);
-                                        
+        return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('outcomeMaps', $outcomeMaps)->with('user', $user)->with('oAct', $oActCount)->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)->with('standardsOutcomeMap', $standardsOutcomeMap);
     }
 
 }
