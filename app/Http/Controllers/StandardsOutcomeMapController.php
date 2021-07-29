@@ -34,20 +34,18 @@ class StandardsOutcomeMapController extends Controller
     */
     public function store(Request $request)
     {
-        // get the learning outcome 
-        $l_outcome = LearningOutcome::where('l_outcome_id', $request->input('l_outcome_id'))->first();
-        // get the standard priorities and outcomes
-        $courseStandardOutcomes = Course::find($request->input('course_id'))->courseStandardOutcomes;
-        // get the program learning outcomes for this program
-        //$programLearningOutcomes = Program::find($request->input('program_id'))->programLearningOutcomes;
-        // courseToProgramOutcome is a 2-D array => map[CLO][standard] = map_scale_value
-        $courseToProgramOutcome = $request->input('map');
+        $this->validate($request, [
+            'map' => 'required',
+            ]);
 
-        foreach($courseStandardOutcomes as $courseStandardOutcome){
-            $outcomeMap = DB::table('standards_outcome_maps')->updateOrInsert(
-            ['standard_id' =>$courseStandardOutcome->standard_id , 'l_outcome_id' => $l_outcome->l_outcome_id ],
-            ['map_scale_value' => $courseToProgramOutcome[$l_outcome->l_outcome_id][$courseStandardOutcome->standard_id]]
-            );
+        $outcomeMap = $request->input('map');
+        foreach ($outcomeMap as $cloId => $standardToScaleIds) {
+            foreach (array_keys($standardToScaleIds) as $standardId) {
+                DB::table('standards_outcome_maps')->updateOrInsert(
+                    ['standard_id' => $standardId, 'l_outcome_id' => $cloId],
+                    ['standard_scale_id' => $outcomeMap[$cloId][$standardId]]
+                );
+            }
         }
 
         return redirect()->back()->with('success', 'Your answers have been saved successfully.');

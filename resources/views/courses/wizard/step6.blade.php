@@ -26,7 +26,7 @@
                     </nav>
                     <div class="tab-content" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-standards" role="tabpanel" aria-labelledby="nav-standards-tab">
-                            @if (count($l_outcomes) < 1)
+                            @if (count($course->learningOutcomes) < 1)
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
                                 </div>
@@ -41,7 +41,7 @@
                                     <!-- Ministry Standards mapping scale -->
                                     <div class="container row">
                                         <div class="col">
-                                            @if(count($mappingScales)>0)
+                                            @if(count($course->standardScalesCategory->standardScales)>0)
                                                 <table class="table table-bordered table-sm">
                                                     <thead>
                                                         <tr>
@@ -49,7 +49,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach($mappingScales as $ms)
+                                                        @foreach($course->standardScalesCategory->standardScales as $ms)
 
                                                             <tr>
 
@@ -83,7 +83,7 @@
 
                                         <!-- list of course learning outcome accordions with mapping form -->
                                         <div class="cloAccordions mb-4">
-                                                                    @foreach($l_outcomes as $index => $courseLearningOutcome)
+                                                                    @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
                                                                         <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                             <div class="accordion-item mb-2">
                                                                                 <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
@@ -97,36 +97,31 @@
 
                                                                                         <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
                                                                                             @csrf
-                                                                                            <input type="hidden" name="program_id" value="{{$course->program_id}}">
-                                                                                            <input type="hidden" name="l_outcome_id" value="{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                            <input type="hidden" name="standard_category_id" value="{{$course->standard_category_id}}">
-                                                                                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                        
 
                                                                                             <div class="card border-white">
                                                                                                 <div class="card-body">
                                                                                                     <h5 style="margin-bottom:16px;text-align:center;font-weight: bold;">{{$courseLearningOutcome->l_outcome}}</h5>
 
-                                                                                                        @if ($standard_outcomes->count() > 0) 
+                                                                                                        @if ($course->standardOutcomes->count() > 0) 
 
                                                                                                             <table class="table table-bordered table-sm">
                                                                                                                 <thead class="thead-light">
                                                                                                                     <tr class="table-active">
                                                                                                                         <th>Standards</th>
                                                                                                                         <!-- Mapping Table Levels -->
-                                                                                                                        @foreach($mappingScales as $mappingScaleLevel)
+                                                                                                                        @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
                                                                                                                             <th data-toggle="tooltip" title="{{$mappingScaleLevel->title}}: {{$mappingScaleLevel->description}}">
                                                                                                                                 {{$mappingScaleLevel->abbreviation}}
                                                                                                                             </th>
                                                                                                                         @endforeach
-                                                                                                                                
+                                                                                                                        
                                                                                                                         <th data-toggle="tooltip" title="Not Aligned">N/A</th>
                                                                                                                     </tr>
 
                                                                                                                 </thead>
                                                                                                                 
                                                                                                                 <tbody>
-                                                                                                                    @foreach($standard_outcomes as $standard_outcome)
+                                                                                                                    @foreach($course->standardOutcomes as $standard_outcome)
                                                                                                                         <tr>
                                                                                                                             <td>
                                                                                                                                 <b>{{$standard_outcome->s_shortphrase}}</b>
@@ -134,17 +129,17 @@
                                                                                                                                 {!! $standard_outcome->s_outcome !!}
                                                                                                                             </td>
 
-                                                                                                                            @foreach($mappingScales as $mappingScaleLevel)
+                                                                                                                            @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
                                                                                                                                 <td>
                                                                                                                                     <div class="form-check">
-                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="{{$mappingScaleLevel->abbreviation}}" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->map_scale_value == $mappingScaleLevel->abbreviation) checked=checked @endif @endif>
+                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="{{$mappingScaleLevel->standard_scale_id}}" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == $mappingScaleLevel->standard_scale_id) checked=checked @endif @endif>
                                                                                                                                     </div>
                                                                                                                                 </td>
                                                                                                                             @endforeach
 
                                                                                                                             <td>
                                                                                                                                 <div class="form-check">
-                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="N/A" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->map_scale_value =='N/A') checked=checked @endif @endif required>
+                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @endif required>
                                                                                                                                 </div>
                                                                                                                             </td>
 
@@ -218,7 +213,7 @@
                                                                                             <tr>
                                                                                             <td>
 
-                                                                                                @if (in_array($letter,$optional_PLOs))
+                                                                                                @if (in_array($letter, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
                                                                                                     <input type="checkbox" name = "optionalItem[]" value="{{$letter}}" checked>
                                                                                                 @else
                                                                                                     <input type="checkbox" name = "optionalItem[]" value="{{$letter}}">
@@ -258,7 +253,7 @@
                                                                                             @foreach ($bc_labour_market as $index => $skill)
                                                                                             <tr>
                                                                                                 <td>
-                                                                                                    @if (in_array($skill,$optional_PLOs))
+                                                                                                    @if (in_array($skill,$course->optionalPriorities->pluck('custom_PLO')->toArray()))
                                                                                                         <input type="checkbox" name = "optionalItem[]" value="{{$skill}}" checked>
                                                                                                     @else
                                                                                                         <input type="checkbox" name = "optionalItem[]" value="{{$skill}}">
@@ -306,7 +301,7 @@
                                                                                                 @foreach ($shaping_ubc as $index => $strategy)
                                                                                                 <tr>
                                                                                                 <td>
-                                                                                                    @if (in_array($strategy,$optional_PLOs))
+                                                                                                    @if (in_array($strategy, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
                                                                                                         <input type="checkbox" name= "optionalItem[]" value="{{$strategy}}" checked>
                                                                                                     @else
                                                                                                         <input type="checkbox" name= "optionalItem[]" value="{{$strategy}}">
@@ -341,7 +336,7 @@
                                                                                                 @foreach ($okanagan_2040_outlook as $index => $outlook)
                                                                                                 <tr>
                                                                                                 <td>
-                                                                                                    @if (in_array($outlook,$optional_PLOs))
+                                                                                                    @if (in_array($outlook, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
                                                                                                         <input type="checkbox" name= "optionalItem[]" value="{{$outlook}}" checked>
                                                                                                     @else
                                                                                                         <input type="checkbox" name= "optionalItem[]" value="{{$outlook}}">
@@ -372,7 +367,7 @@
                                                                     @foreach ($ubc_indigenous_plan as $index => $plan)
                                                                     <tr>
                                                                         <td>
-                                                                            @if (in_array($plan,$optional_PLOs))
+                                                                            @if (in_array($plan, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
                                                                                 <input type="checkbox" name= "optionalItem[]" value="{{$plan}}" checked>
                                                                             @else
                                                                                 <input type="checkbox" name= "optionalItem[]" value="{{$plan}}">
@@ -404,7 +399,7 @@
                                                                     @foreach ($ubc_climate_priorities as $index => $climate)
                                                                     <tr>
                                                                         <td>
-                                                                            @if (in_array($climate,$optional_PLOs))
+                                                                            @if (in_array($climate, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
                                                                                 <input type="checkbox" name= "optionalItem[]" value="{{$climate}}" checked>
                                                                             @else
                                                                                 <input type="checkbox" name= "optionalItem[]" value="{{$climate}}">

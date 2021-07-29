@@ -39,7 +39,7 @@ class Course extends Model
         return $this->belongsToMany(Program::class, 'course_programs', 'course_id', 'program_id');
     }
 
-    public function scalesCategory() {
+    public function standardScalesCategory() {
         return $this->belongsTo(StandardsScaleCategory::class, 'scale_category_id', 'scale_category_id');
     }
 
@@ -47,8 +47,12 @@ class Course extends Model
         return $this->belongsTo(StandardCategory::class, 'standard_category_id', 'standard_category_id');
     }
 
-    public function courseStandardOutcomes() {
+    public function standardOutcomes() {
         return $this->hasMany(Standard::class, 'standard_category_id', 'standard_category_id');
+    }
+
+    public function optionalPriorities() {
+        return $this->hasMany(Optional_priorities::class, 'course_id', 'course_id');
     }
 }
 
