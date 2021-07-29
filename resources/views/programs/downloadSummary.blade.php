@@ -251,7 +251,6 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                            <i class="bi bi-exclamation-circle-fill"></i><br>
                                                 Incomplete
                                             </td>
                                         @endif
@@ -278,7 +277,6 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                            <i class="bi bi-exclamation-circle-fill"></i><br>
                                                 Incomplete
                                             </td>
                                         @endif
@@ -381,7 +379,6 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                            <i class="bi bi-exclamation-circle-fill"></i><br>
                                                 Incomplete
                                             </td>
                                         @endif
@@ -408,7 +405,6 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                            <i class="bi bi-exclamation-circle-fill"></i><br>
                                                 Incomplete
                                             </td>
                                         @endif
@@ -420,15 +416,15 @@
                     <!--Legend-->
                     <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black; table-layout:auto;">
                         <tr>
-                            <th colspan="3" class="" style="border-color: #FFF; background-color:#FFF;"></th>
+                            <th colspan="3" style="border-color: #FFF; background-color:#FFF;"></th>
                         </tr>
                         <tr class="table-primary" style="background-color: #c6e0f5;">
                             <th colspan="3" class="text-left">Legend</th>
                         </tr>
                         <tr>
-                            <td style="background-color:#999; height: 50px; width: 50px;">
+                            <td style="background-color:#999; height: 30px; width: 30px;">
                             </td>
-                            <td>
+                            <td style="width:20%;">
                                 <span class="mr-5" style="font-size:10px; font-weight: bold;">Tie</span>
                             </td>
                             <td style="font-size:10px;">
@@ -437,10 +433,9 @@
                         </tr>
                         <tr>
                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
-                                <i class="bi bi-exclamation-circle-fill"></i><br>
                                 Incomplete
                             </td>
-                            <td>
+                            <td style="width:20%;">
                                 <span class="mr-5" style="font-size:10px; font-weight: bold;">Incomplete</span>
                             </td>
                             <td style="font-size:10px;">
@@ -451,7 +446,7 @@
                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
                                 N/A
                             </td>
-                            <td>
+                            <td style="width:20%;">
                                 <span style="font-size:10px; font-weight: bold;">N/A</span><br>
                                 <small class="mr-5" style="font-size:10px;">(Not Applicable)</small>
                             </td>
