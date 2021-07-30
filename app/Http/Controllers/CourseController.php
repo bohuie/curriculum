@@ -19,6 +19,7 @@ use App\Models\CourseProgram;
 use PDF;
 use Illuminate\Support\Facades\DB;
 use App\Models\Optional_priorities;
+use App\Models\OutcomeMap;
 use App\Models\Standard;
 use App\Models\StandardCategory;
 use Illuminate\Support\Facades\Auth;
@@ -458,10 +459,24 @@ class CourseController extends Controller
 
     // Removes the program id for a given course (Used In program wizard step 3).
     public function removeFromProgram(Request $request, $course_id) {
-    //$course = Course::where('course_id', $course_id)->first();
-    //$courseProgram = CourseProgram::where('course_id',  $course_id)->where('program_id', $request->input('program_id'))->delete();
-    
+
+    // Delete row from coursePrograms 
     if(CourseProgram::where('course_id',  $course_id)->where('program_id', $request->input('program_id'))->delete()){
+
+        // Retreive all plos and clos in an array storing their id's 
+        $plos = ProgramLearningOutcome::where('program_id', $request->input('program_id'))->pluck('pl_outcome_id')->toArray();
+        $clos = LearningOutcome::where('course_id', $course_id)->pluck('l_outcome_id')->toArray();
+        // loop through arrays
+        foreach ($plos as $plo) {
+            foreach ($clos as $clo) {
+                // check if outcome map exists for plo and clo
+                if (OutcomeMap::where('pl_outcome_id', $plo)->where('l_outcome_id', $clo)->exists()) {
+                    // delete row
+                    OutcomeMap::where('pl_outcome_id', $plo)->where('l_outcome_id', $clo)->delete();
+                }
+            }
+        }
+
         $request->session()->flash('success', 'Course updated');
     }else{
         $request->session()->flash('error', 'There was an error removing the course');
