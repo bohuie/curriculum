@@ -326,6 +326,7 @@
                             <div class="col">
                                 <label for="learningResources">Learning Resources</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                                <span class="requiredBySenate"></span>
                                 <textarea id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
                             </div>
                         </div>
