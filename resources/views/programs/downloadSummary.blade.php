@@ -61,6 +61,14 @@
         </style>
     </head>
     <body>
+
+        <div style="display:inline-block;">
+            <h3>Program Project: {{$program->program}}</h3>
+            <h5 class="text-muted">{{$program->faculty}}</h5>
+            <h5 class="text-muted">{{$program->department}}</h5>
+            <h5 class="text-muted">{{$program->level}}</h5>
+        </div>
+
         <div class="card">
             <div class="card-header wizard">
                 <div class="w-25" style="display: inline-block;"></div>
