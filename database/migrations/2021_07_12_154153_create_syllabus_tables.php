@@ -26,6 +26,7 @@ class CreateSyllabusTables extends Migration
             $table->text('course_coreqs')->nullable();
             $table->text('course_structure')->nullable();
             $table->text('course_schedule')->nullable();
+            $table->text('learning_analytics')->nullable();
             $table->timestamps();
         });
 
