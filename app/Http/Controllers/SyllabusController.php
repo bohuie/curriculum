@@ -94,6 +94,7 @@ class SyllabusController extends Controller
 
         $inputFieldDescriptions['learningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
         $inputFieldDescriptions['learningAnalytics'] = 'If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?';
+        $inputFieldDescriptions['officeLocation'] = 'Building & Room Number';
 
         // get vancouver campus resources
         $vancouverSyllabusResources = VancouverSyllabusResource::all();

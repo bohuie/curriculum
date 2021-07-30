@@ -16,4 +16,11 @@ class Optional_priorities extends Model
         'custom_PLO',
         'input_status',
     ];
+
+    protected $table = 'optional_priorities';
+
+    public function course(){
+        return $this->belongsTo('App\Models\Course');
+    }
+
 }

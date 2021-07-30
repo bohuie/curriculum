@@ -16,6 +16,7 @@ class Standard extends Model
     public function learningOutcomes(){
         return $this->belongsToMany(LearningOutcome::class)->using(StandardsOutcomeMap::class); 
     }
+    
 
     public function course() {
         return $this->belongsTo(Course::class, 'standard_category_id', 'standard_category_id');

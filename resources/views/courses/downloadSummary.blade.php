@@ -80,14 +80,14 @@
                     In-person
             @endswitch
             </p>
-            <p><b>Level: </b>{{$courseStandardCategory->sc_name}}</p>
+            <p><b>Level: </b>{{$course->ministryStandardCategory->sc_name}}</p>
         </div>
         <!-- End of Course Info -->
 
         <!-- CLOs -->
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Course Learning Outcomes</h4></div>
-                @if(count($l_outcomes)<1)
+                @if($course->learningOutcomes->count() <1)
                     <div class="alert alert-warning text-center">
                         There are no course learning outcomes set for this course.                     
                     </div>
@@ -98,7 +98,7 @@
                             <th>Course Learning Outcome</th>
                         </tr>
 
-                        @foreach($l_outcomes as $index => $l_outcome)
+                        @foreach($course->learningOutcomes as $index => $l_outcome)
                         <tr>
                             <td class="text-center" style="width:5%" ><strong>{{$index+1}}</strong></td>
                             <td>
@@ -117,7 +117,7 @@
         <!-- Student Assessment Methods -->
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Student Assessment Methods</h4></div>
-                @if(count($a_methods)<1)
+                @if($course->assessmentMethods->count() < 1)
                     <div class="alert alert-warning text-center">
                         There are no student assessment methods set for this course.                     
                     </div>
@@ -129,7 +129,7 @@
                             <th>Weight</th>
                         </tr>
 
-                        @foreach($a_methods as $index => $a_method)
+                        @foreach($course->assessmentMethods as $index => $a_method)
                         <tr>
                             <td class="text-center" style="width:5%" ><strong>{{$index+1}}</strong></td>
                             <td>{{$a_method->a_method}}</td>
@@ -152,7 +152,7 @@
         <!-- Teaching and Learning Activities -->
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Teaching and Learning Activities</h4></div>
-                @if(count($l_activities)<1)
+                @if($course->learningActivities->count() < 1)
                     <div class="alert alert-warning text-center">
                         There are no teaching and learning activities set for this course.                     
                     </div>
@@ -163,7 +163,7 @@
                             <th>Teaching and Learning Activity</th>
                         </tr>
 
-                        @foreach($l_activities as $index => $l_activity)
+                        @foreach($course->learningActivities as $index => $l_activity)
                         <tr>
                             <td class="text-center" style="width:5%" ><strong>{{$index+1}}</strong></td>
                             <td>{{$l_activity->l_activity}}</td>
@@ -177,7 +177,7 @@
         <!-- Course Alignment -->
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Course Alignment</h4></div>
-                @if(count($l_outcomes)<1)
+                @if($course->learningOutcomes->count() < 1)
                     <div class="alert alert-warning text-center">
                         There are no course learning outcomes set for this course.                     
                     </div>
@@ -195,7 +195,7 @@
                                 <th>Teaching and Learning Activity</th>
                             </tr>
 
-                            @foreach($l_outcomes as $index => $l_outcome)
+                            @foreach($course->learningOutcomes as $index => $l_outcome)
                             <tr>
                                 <th class="text-center" style="width:5%">{{$index+1}}</th>
                                 <td>{{$l_outcome->l_outcome}}</td>
@@ -228,12 +228,12 @@
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Program Outcome Maps</h4></div>
             
-            @if($coursePrograms->count() <1 )
+            @if($course->programs->count() <1 )
                 <div class="alert alert-warning text-center">
                     This course does not belong to any programs yet.                     
                 </div>
             @else
-                @foreach ($coursePrograms as $index => $courseProgram)
+                @foreach ($course->programs as $index => $courseProgram)
                 <div style="margin-left:16px; margin-right:16px;">
                     <div class="panel-heading" style="font-weight:bold;text-decoration:underline">
                         <h5>Program {{$index + 1}}. {{$courseProgram->program}}</h5>
@@ -241,7 +241,7 @@
 
                     <div class="panel-body">
                         <h5 class="font-weight:bold">Program Learning Outcomes</h5>
-                        @if ($programsLearningOutcomes[$courseProgram->program_id]->count() < 1)
+                        @if ($courseProgram->programLearningOutcomes->count() < 1)
                             <div class="alert alert-warning text-center">
                                 Program learning outcomes have not been set for this program.                     
                             </div>
@@ -297,7 +297,7 @@
 
                         <h5 class="font-weight:bold">Mapping Scale</h5>
                         <p>The mapping scale indicates the degree to which a program learning outcome is addressed by a course learning outcome.</p>
-                        @if ($programsMappingScales[$courseProgram->program_id]->count() < 1) 
+                        @if ($courseProgram->mappingScaleLevels->count() < 1) 
                             <div class="alert alert-warning text-center">
                                 A mapping scale has not been set for this program.                      
                             </div>
@@ -307,7 +307,7 @@
                                     <th colspan="2">Mapping Scale</th>
                                 </tr>
     
-                                @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScale)
+                                @foreach($courseProgram->mappingScaleLevels as $programMappingScale)
                                 <tr>
                                     <td>
                                         <div style="background-color:{{$programMappingScale->colour}}; height: 10px; width: 10px;"></div>
@@ -333,7 +333,7 @@
                             <table class="table" style="margin:0; width:100%; table-layout:fixed;">
                                 <tr class="info">
                                     <th>CLOs</th>
-                                    <th colspan="{{$programsLearningOutcomes[$courseProgram->program_id]->count()}}">Program Learning Outcomes (PLOs)</th>
+                                    <th colspan="{{$courseProgram->programLearningOutcomes->count()}}">Program Learning Outcomes (PLOs)</th>
                                 </tr>
                                 @if ($courseProgram->ploCategories->count() > 0)
                                     <tr>
@@ -345,18 +345,18 @@
                                     </tr>
                                 @endif
                                 <tr>
-                                    @if ($programsLearningOutcomes[$courseProgram->program_id]->count() > 7)
+                                    @if ($courseProgram->programLearningOutcomes->count() > 7)
                                         <td></td>
-                                        @foreach ($programsLearningOutcomes[$courseProgram->program_id] as $index => $programLearningOutcome)
+                                        @foreach ($courseProgram->programLearningOutcomes as $index => $programLearningOutcome)
                                         <td style="text-align:center;font-size:80%">
                                             {{$index+1}}
                                         </td>
                                         @endforeach
                                     @else 
                                         <td></td>
-                                        @foreach ($programsLearningOutcomes[$courseProgram->program_id] as $index => $programLearningOutcome)
+                                        @foreach ($courseProgram->programLearningOutcomes as $index => $programLearningOutcome)
                                         <td style="height:0; vertical-align: bottom; text-align: left; overflow:hidden;">
-                                            <span @if($programsLearningOutcomes[$courseProgram->program_id]->count() <=4) style="font-size: 100%;"@else style="font-size: 80%;"@endif>
+                                            <span @if($courseProgram->programLearningOutcomes->count() <=4) style="font-size: 100%;"@else style="font-size: 80%;"@endif>
                                                 @if(isset($programLearningOutcome->plo_shortphrase))
                                                 {{$index+1}}.{{$programLearningOutcome->plo_shortphrase}}
                                                 @else
@@ -367,7 +367,7 @@
                                         @endforeach
                                     @endif
                                 </tr>
-                                @foreach($l_outcomes as $clo_index => $l_outcome)
+                                @foreach($course->learningOutcomes as $clo_index => $l_outcome)
                                 <tr>
                                     <td style="height: auto; white-space: nowrap; overflow: hidden;max-width: 8em;">
                                         <span style= "font-size: 80%;">
@@ -379,7 +379,7 @@
                                         </span>
                                     </td>
 
-                                    @foreach($programsLearningOutcomes[$courseProgram->program_id] as $pl_outcome)
+                                    @foreach($courseProgram->programLearningOutcomes as $pl_outcome)
                                         <!-- Check if this PLO has been mapped -->
                                         @if (!array_key_exists($pl_outcome->pl_outcome_id, $courseProgramsOutcomeMaps[$courseProgram->program_id]))
                                         <td></td> 
@@ -389,9 +389,9 @@
                                                 <td></td>
                                             @else 
                                                 <td style="text-align:center;padding:4px;font-size:80%;">
-                                                    <div @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScale) @if($programMappingScale->abbreviation == $courseProgramsOutcomeMaps[$courseProgram->program_id][$pl_outcome->pl_outcome_id][$l_outcome->l_outcome_id]) style="margin:auto;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
-                                                        <p @if($courseProgramsOutcomeMaps[$courseProgram->program_id][$pl_outcome->pl_outcome_id][$l_outcome->l_outcome_id] == 'A') style="color:white;" @endif>
-                                                            {{$courseProgramsOutcomeMaps[$courseProgram->program_id][$pl_outcome->pl_outcome_id][$l_outcome->l_outcome_id]}}
+                                                    <div @foreach($courseProgram->mappingScaleLevels as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$pl_outcome->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="margin:auto;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
+                                                        <p @if($courseProgramsOutcomeMaps[$courseProgram->program_id][$pl_outcome->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation == 'A') style="color:white;" @endif>
+                                                            {{$courseProgramsOutcomeMaps[$courseProgram->program_id][$pl_outcome->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation}}
                                                         </p>
                                                 </div>
                                                 </td>                                            
@@ -421,7 +421,7 @@
                 <div style="margin-left:16px; margin-right:16px;">
 
                     <h5 class="font-weight:bold">Standards</h5>
-                    @if ($courseStandards->count() < 1)
+                    @if ($course->ministryStandardCategory->standards->count() < 1)
                             <div class="alert alert-warning text-center">
                                 Standards have not been set for this program.                            
                             </div>
@@ -432,7 +432,7 @@
                                 <th>Standards</th>            
                             </tr>
                             
-                            @foreach($courseStandards as $index => $standard)
+                            @foreach($course->ministryStandardCategory->standards as $index => $standard)
                             <tr>
                                 <th class="text-center" style="width:5%">{{$index+1}}</th>
                                 <td>
@@ -447,7 +447,7 @@
 
                     <h5 class="font-weight:bold">Standards Mapping Scale</h5>
                     <p>The mapping scale indicates the degree to which a ministry standard is addressed by a course learning outcome.</p>
-                    @if ($courseStandardScales->count() < 1) 
+                    @if ($course->standardScalesCategory->standardScales->count() < 1) 
                         <div class="alert alert-warning text-center">
                             A mapping scale has not been set for this program.                            
                         </div>
@@ -457,7 +457,7 @@
                                 <th colspan="2">Mapping Scale</th>
                             </tr>
         
-                            @foreach($courseStandardScales as $standardScale)
+                            @foreach($course->standardScalesCategory->standardScales as $standardScale)
                             <tr>
                                 <td>
                                     <div style="background-color:{{$standardScale->colour}}; height: 10px; width: 10px;"></div>
@@ -472,7 +472,7 @@
                         </table> 
                     @endif
                             
-                    <h5 class="font-weight:bold">Program Outcome Map: {{$courseStandardCategory->sc_name}}</h5>
+                    <h5 class="font-weight:bold">Program Outcome Map: {{$course->ministryStandardCategory->sc_name}}</h5>
                     <p>This chart shows the alignment of course learning outcomes to ministry standards.</p>
                             
                     @if (count($standardOutcomeMaps)<1)
@@ -483,22 +483,22 @@
                         <table class="table" style="width:100%; table-layout:fixed;">
                             <tr class="info">
                                 <th style="width:25%">Course Learning Outcomes (CLOs)</th>
-                                <th colspan="{{$courseStandards->count()}}">Standards</th>
+                                <th colspan="{{$course->ministryStandardCategory->standards->count()}}">Standards</th>
                             </tr>
         
                             <tr>
-                                @if ($courseStandards->count() > 7)
+                                @if ($course->ministryStandardCategory->standards->count() > 7)
                                     <td></td>
-                                        @foreach ($courseStandards as $index => $standard)
+                                        @foreach ($course->ministryStandardCategory->standards as $index => $standard)
                                             <td style="text-align:center;font-size:80%">
                                                 {{$index+1}}
                                             </td>
                                         @endforeach
                                 @else 
                                     <td></td>
-                                    @foreach ($courseStandards as $index => $standard)
+                                    @foreach ($course->ministryStandardCategory->standards as $index => $standard)
                                         <td style="height:0; vertical-align: bottom; text-align: left; overflow:hidden;">
-                                            <span @if($courseStandards->count() <=4) style="font-size: 100%;"@else style="font-size: 80%;"@endif>
+                                            <span @if($course->ministryStandardCategory->standards->count() <=4) style="font-size: 100%;"@else style="font-size: 80%;"@endif>
                                                 @if(isset($standard->s_shortphrase))
                                                     {{$index+1}}.{{$standard->s_shortphrase}}
                                                 @else
@@ -510,7 +510,7 @@
                                 @endif
                             </tr>
                             
-                            @foreach($l_outcomes as $clo_index => $l_outcome)
+                            @foreach($course->learningOutcomes as $clo_index => $l_outcome)
                                 <tr>
                                     <td style="height: auto; white-space: nowrap; overflow: hidden;
                                             max-width: 8em;">
@@ -522,14 +522,14 @@
                                                 @endif
                                                 </span>
                                     </td>
-                                    @foreach($courseStandards as $standard)
+                                    @foreach($course->ministryStandardCategory->standards as $standard)
                                             <!-- Check if this CLO has been mapped to this PLO -->
                                             @foreach($standardOutcomeMaps as $som)
                                                 @if( $som->standard_id == $standard->standard_id && $som->l_outcome_id == $l_outcome->l_outcome_id )
                                                     <td style="text-align:center;padding:4px;font-size:80%;">
-                                                        <div @foreach($courseStandardScales as $standardScale) @if($standardScale->abbreviation == $som->map_scale_value) style="margin:auto;background-color:{{$standardScale->colour}}"@endif @endforeach>
-                                                            <p @if($som->map_scale_value == 'A') style="color:white;" @endif>
-                                                                {{$som->map_scale_value}}
+                                                        <div @foreach($course->standardScalesCategory->standardScales as $standardScale) @if($standardScale->standard_scale_id == $som->standard_scale_id) style="margin:auto;background-color:{{$standardScale->colour}}"@endif @endforeach>
+                                                            <p @if($som->abbreviation == 'A') style="color:white;" @endif>
+                                                                {{$som->abbreviation}}
                                                             </p>
                                                         </div>
                                                     </td>
@@ -548,7 +548,7 @@
         <!-- Optional Alignment to UBC and Ministry Standards -->
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Optional Alignment to UBC and Ministry Standards</h4></div>
-                @if(count($optional_PLOs)<1)
+                @if($course->optionalPriorities->count() < 1)
                     <div class="alert alert-warning text-center">
                         This course has not aligned with any UBC and Ministry Priorities.                    
                     </div>
@@ -559,7 +559,7 @@
                             <th>Aligned UBC and Ministry Priority</th>
                         </tr>
 
-                        @foreach ($optional_PLOs as $index => $optional_Plo)
+                        @foreach ($course->optionalPriorities as $index => $optional_Plo)
                         <tr>
                             <td class="text-center" style="width:5%" ><strong>{{$index+1}}</strong></td>
                             <td>{{$optional_Plo->custom_PLO}}</td>

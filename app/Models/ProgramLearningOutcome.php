@@ -12,7 +12,7 @@ class ProgramLearningOutcome extends Model
     protected $primaryKey = 'pl_outcome_id';
 
     public function learningOutcomes(){    
-        return $this->belongsToMany(LearningOutcome::class, 'outcome_maps', 'pl_outcome_id', 'l_outcome_id')->using('App\Models\OutcomeMap')->withPivot('map_scale_value')->withTimestamps(); 
+        return $this->belongsToMany(LearningOutcome::class, 'outcome_maps', 'pl_outcome_id', 'l_outcome_id')->using('App\Models\OutcomeMap')->withPivot('map_scale_id')->withTimestamps(); 
     }
 
     public function category()
