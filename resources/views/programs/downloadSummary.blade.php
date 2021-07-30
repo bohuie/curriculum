@@ -140,7 +140,7 @@
                     <p>The mapping scale indicates the degree to which a program learning outcome is addressed by a course learning outcome.</p>
                     <table class="table table-bordered table-sm" style="width: 95%; margin: auto; table-layout:auto;">
                         <tr class="table-primary" style="background-color: #c6e0f5;">
-                            <th class="text-left" colspan="3">Mapping Scale</th>
+                            <th class="text-left" colspan="2">Mapping Scale</th>
                         </tr>
                         <tbody>
                             @foreach($mappingScales as $ms)
@@ -150,17 +150,17 @@
                                         {{$ms->title}}<br>
                                         ({{$ms->abbreviation}})
                                     </td>
-                                    <td colspan="2" style="font-size:10px;">
+                                    <td colspan="1" style="font-size:10px;">
                                         {{$ms->description}}
                                     </td>
                                 </tr>
                             @endforeach
                                 <!--Legend-->
+                                <tr class="table-primary" style="background-color: #c6e0f5;">
+                                    <th class="text-left" colspan="2">Legend</th>
+                                </tr>
                                 <tr style="background-color: #fbfcfc;">
                                     <td style="background-color:#999; height: 30px; width: 30px;">
-                                    </td>
-                                    <td style="width:20%;">
-                                        <span class="mr-5" style="font-size:10px; font-weight: bold;">Tie</span>
                                     </td>
                                     <td style="font-size:10px;">
                                         Occurs when two or more CLOs map to a PLO an equal amount of times.
@@ -170,9 +170,6 @@
                                     <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
                                         Incomplete
                                     </td>
-                                    <td style="width:20%;">
-                                        <span class="mr-5" style="font-size:10px; font-weight: bold;">Incomplete</span>
-                                    </td>
                                     <td style="font-size:10px;">
                                         Occurs when a course has not yet been mapped to the set of PLOs.
                                     </td>
@@ -180,10 +177,6 @@
                                 <tr style="background-color: #fbfcfc;">
                                     <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
                                         N/A
-                                    </td>
-                                    <td style="width:20%;">
-                                        <span style="font-size:10px; font-weight: bold;">N/A</span><br>
-                                        <small class="mr-5" style="font-size:10px;">(Not Applicable)</small>
                                     </td>
                                     <td style="font-size:10px;">
                                         Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.

@@ -91,7 +91,7 @@
                                     <p>The mapping scale indicates the degree to which a program learning outcome is addressed by a course learning outcome.</p>
                                     <table class="table table-bordered table-sm" style="width: 95%; margin: auto; table-layout:auto;">
                                         <tr class="table-primary">
-                                            <th class="text-left" colspan="3">Mapping Scale</th>
+                                            <th class="text-left" colspan="2">Mapping Scale</th>
                                         </tr>
                                         <tbody>
                                             @foreach($mappingScales as $ms)
@@ -101,31 +101,27 @@
                                                         {{$ms->title}}<br>
                                                         ({{$ms->abbreviation}})
                                                     </td>
-                                                    <td colspan="2">
+                                                    <td colspan="1">
                                                         {{$ms->description}}
                                                     </td>
                                                 </tr>
                                             @endforeach
                                                 <!--Legend-->
+                                                <tr class="table-primary">
+                                                    <th class="text-left" colspan="2">Legend</th>
+                                                </tr>
                                                 <tr>
                                                     <td style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;">
                                                     </td>
                                                     <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Tie</span>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when two or more CLOs map to a PLO an equal amount of times.
+                                                        Occurs when two or more CLOs map to a PLO an equal number of times.
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="text-center align-middle">
-                                                        <!--<div class="float-right p-2 text-center" style="background-color:#FFFFFF; height: 60px; border:0.25px solid grey;">-->
                                                         <i class="bi bi-exclamation-circle-fill"></i><br>
                                                             Incomplete
                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Incomplete</span>
                                                     </td>
                                                     <td>
                                                         Occurs when a course has not yet been mapped to the set of PLOs.
@@ -134,11 +130,6 @@
                                                 <tr>
                                                     <td class="text-center align-middle">
                                                         N/A
-                                                    </td>
-                                                    <td>
-                                                        <span style="font-weight: bold;">N/A</span><br>
-                                                        <small class="mr-5">(Not Applicable)</small>
-                                                        
                                                     </td>
                                                     <td>
                                                         Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
