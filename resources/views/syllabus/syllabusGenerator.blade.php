@@ -237,6 +237,8 @@
                         <div class="row" id="coursePrereqs"></div>
                         <!-- Course Corequisites -->
                         <div class="row" id="courseCoreqs"></div>
+                        <!-- Course Contacts -->
+                        <div class="row" id="courseContacts"></div>
                         <!-- Course Structure -->
                         <div class="row" id="courseStructure"></div>
                         <!-- Course Schedule -->
