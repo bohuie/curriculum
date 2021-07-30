@@ -607,8 +607,13 @@
             `;
         
         var officeLocation = `
-            <label for="officeLocation">Office Location</label>
-            <input name = "officeLocation" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->office_location : ''}}">
+            <label for="officeLocation"><span class="requiredField">* </span>Office Location</label>
+            <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['officeLocation']}}"></i>
+            <input name = "officeLocation" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->office_location : ''}}" required>
+            <div class="invalid-tooltip">
+                Please enter your office location.
+            </div>
+
             `;
 
         var courseDescription = `
