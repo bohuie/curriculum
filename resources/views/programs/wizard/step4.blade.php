@@ -418,52 +418,6 @@
                                                     </tr>
                                                 @endforeach
                                             </table>
-                                            <!--Legend-->
-                                            <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black; table-layout:auto;">
-                                                <tr>
-                                                    <th colspan="3" class="" style="border-color: #FFF; background-color:#FFF;"></th>
-                                                </tr>
-                                                <tr class="table-primary" style="background-color: rgba(0, 0, 0, 0.03);">
-                                                    <th colspan="3" class="text-left">Legend</th>
-                                                </tr>
-                                                <tr>
-                                                    <td style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;">
-                                                    </td>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Tie</span>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when two or more CLOs map to a PLO an equal amount of times.
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-center align-middle">
-                                                        <!--<div class="float-right p-2 text-center" style="background-color:#FFFFFF; height: 60px; border:0.25px solid grey;">-->
-                                                        <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                            Incomplete
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Incomplete</span>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when a course has not yet been mapped to the set of PLOs.
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-center align-middle">
-                                                        N/A
-                                                    </td>
-                                                    <td>
-                                                        <span style="font-weight: bold;">N/A</span><br>
-                                                        <small class="mr-5">(Not Applicable)</small>
-                                                        
-                                                    </td>
-                                                    <td>
-                                                        Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
-                                                    </td>
-                                                </tr>
-                                            </table>
                                         @endif
                                     </div>
                                     <!-- end Courses to PLOs frequency Distribution card -->
