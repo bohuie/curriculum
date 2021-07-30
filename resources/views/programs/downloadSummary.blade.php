@@ -156,7 +156,7 @@
                                 </tr>
                             @endforeach
                                 <!--Legend-->
-                                <tr>
+                                <tr style="background-color: #fbfcfc;">
                                     <td style="background-color:#999; height: 30px; width: 30px;">
                                     </td>
                                     <td style="width:20%;">
@@ -166,7 +166,7 @@
                                         Occurs when two or more CLOs map to a PLO an equal amount of times.
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="background-color: #fbfcfc;">
                                     <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
                                         Incomplete
                                     </td>
@@ -177,7 +177,7 @@
                                         Occurs when a course has not yet been mapped to the set of PLOs.
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="background-color: #fbfcfc;">
                                     <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
                                         N/A
                                     </td>
