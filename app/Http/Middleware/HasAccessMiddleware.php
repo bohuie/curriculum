@@ -63,13 +63,12 @@ class HasAccessMiddleware
                         break;
                     case 2:
                         // Editor
-                        $request['isEditor'] = TRUE;
                         break;
                     case 3:
                         // Viewer
                         $request->session()->flash('success', 'RETURN SUMMARY VIEWER ONLY');
                         // return view only syllabus 
-                        return redirect()->route('home');
+                        // return redirect()->route('home');
                         break;
                     default: 
                         // default 

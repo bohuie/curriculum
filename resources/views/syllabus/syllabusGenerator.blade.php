@@ -183,7 +183,7 @@
                             <div class="col">
                                 <label for="officeHour">Office Hours</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
-                                <textarea spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
+                                <textarea spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator" readonly>{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Other Course Staff -->
