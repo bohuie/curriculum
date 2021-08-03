@@ -35,23 +35,8 @@ class SyllabusController extends Controller
     }
 
     public function index($syllabusId = null, Request $request){
-        
-        $isEditor = false;
-        if ($request->isEditor) {
-            $isEditor = true;
-        }
-
-        $user = User::where('id', Auth::id())->first();
-        $myCourses = $user->courses()
-            ->select('courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-            'courses.course_id','courses.course_num','courses.course_title', 'courses.status')
-            ->where([
-                ['course_users.user_id','=',Auth::id()],
-                ['courses.status', '=', 1]
-            ])->orWhere([
-                ['course_users.user_id','=',Auth::id()],
-                ['courses.status', '=', -1]
-            ])->get();
+        $user = User::find(Auth::id());
+        $myCourses = $user->courses;
 
         $inputFieldDescriptions['otherCourseStaff'] = "If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?";
 
@@ -94,6 +79,7 @@ class SyllabusController extends Controller
 
         $inputFieldDescriptions['learningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
         $inputFieldDescriptions['learningAnalytics'] = 'If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?';
+        $inputFieldDescriptions['officeLocation'] = 'Building & Room Number';
 
         // get vancouver campus resources
         $vancouverSyllabusResources = VancouverSyllabusResource::all();
@@ -102,49 +88,33 @@ class SyllabusController extends Controller
 
         // if syllabusId is not null, view for syllabus with syllabusId was requested
         if ($syllabusId != null) {
-            // get the saved syllabus if the current user is a user of this syllabus
-            $syllabus = DB::table('syllabi')->where('id', $syllabusId)
-            ->whereExists(function ($query) use ($syllabusId, $user) {
-                $query->select()->from('syllabi_users')->where([
-                    ['syllabi_users.syllabus_id', '=', $syllabusId],
-                    ['syllabi_users.user_id', '=', $user->id],
-                ]);
-            })->get()->first();
-            
-            // if syllabus was found, return view with the syllabus data
-            if ($syllabus){
-
-                switch ($syllabus->campus) {
-                    case 'O':
-                        // get data specific to okanagan campus
-                        $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
-                        // get selected okanagan syllabus resource
-                        $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
-                        // return view with okanagan syllabus data
-                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
-                    break;
-                    case 'V':
-                        // get data specific to vancouver campus
-                        $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
-                        // get selected vancouver syllabus resource
-                        $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
-                        // return view with vancouver syllabus data
-                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);
-
-                    break;
-
-                    default: 
-                        // return default view 
-                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus);
-
-                }
-
-            // else redirect to the empty syllabus generator view where syllabus id is null
-            } else {
-                return redirect()->route('syllabus')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+            $userPermission = $user->syllabi->where('id', $syllabusId)->first()->pivot->permission;
+            $syllabus = Syllabus::find($syllabusId);
+            // return a view with campus specific info
+            switch ($syllabus->campus) {
+                // Okanagan Campus
+                case 'O':
+                    // get data specific to okanagan campus
+                    $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
+                    // get selected okanagan syllabus resource
+                    $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
+                    // return view with okanagan syllabus data
+                    return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
+                break;
+                // Vancouver campus
+                case 'V':
+                    // get data specific to vancouver campus
+                    $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+                    // get selected vancouver syllabus resource
+                    $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
+                    // return view with vancouver syllabus data
+                    return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);
+                break;
+                default: 
+                    // return default syllabus generator view 
+                    return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus);
             }
-
-        // else return the empty syllabus generator view where syllabus id is null
+        // else syllabus ID doesn't exist, return the empty syllabus generator view
         } else {
             return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
         }
@@ -533,17 +503,26 @@ class SyllabusController extends Controller
      */
     public function destroy(Request $request, $syllabusId)
     {
-        //
-        $syllabus = Syllabus::where('id', $syllabusId)->first();
-
-        if($syllabus->delete()){
-            $request->session()->flash('success','Your syllabus has been deleted');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting your syllabus');
+        // find the syllabus to delete
+        $syllabus = Syllabus::find($syllabusId);
+        // find the current user
+        $currentUser = User::find(Auth::id());
+        // get the current users permission level for the syllabus to delete
+        $currentUserPermission = $currentUser->syllabi->where('id', $syllabusId)->first()->pivot->permission;
+        // if the current user owns the syllabus, try delete it
+        if ($currentUserPermission == 1) {
+            if($syllabus->delete()){
+                $request->session()->flash('success','Your syllabus has been deleted');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting your syllabus');
+            }
+        // else the current user does not own the syllabus, flash an error
+        } else {
+            $request->session()->flash('error','You do not have permission to delete this syllabus');
         }
 
+        // return to the dashboard
         return redirect()->route('home');
-
     }
 
     

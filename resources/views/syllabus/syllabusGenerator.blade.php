@@ -183,7 +183,7 @@
                             <div class="col">
                                 <label for="officeHour">Office Hours</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
-                                <textarea spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
+                                <textarea spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator" readonly>{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Other Course Staff -->
@@ -191,10 +191,11 @@
                             <div class="col">
                                 <label  for="otherCourseStaff">Other Instructional Staff</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['otherCourseStaff']}}"></i>
+                                <span class="requiredBySenate"></span>
                                 <div id="formatStaff" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                 </div>                                            
-                                <textarea id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="E.g. Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;E.g. Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
+                                <textarea id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="E.g. Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;E.g. Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control " form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Class Start Time, Class End Time -->
@@ -236,6 +237,8 @@
                         <div class="row" id="coursePrereqs"></div>
                         <!-- Course Corequisites -->
                         <div class="row" id="courseCoreqs"></div>
+                        <!-- Course Contacts -->
+                        <div class="row" id="courseContacts"></div>
                         <!-- Course Structure -->
                         <div class="row" id="courseStructure"></div>
                         <!-- Course Schedule -->
@@ -249,6 +252,7 @@
                             <div class="col ">
                                 <label for="learningOutcome">Learning Outcomes</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningOutcomes']}}"></i>
+                                <span class="requiredBySenate"></span>
                                 <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
                                 <div id="formatCLOs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
@@ -261,6 +265,7 @@
                             <div class="col">
                                 <label for="learningAssessments">Assessments of Learning</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningAssessments']}}"></i>
+                                <span class="requiredBySenate"></span>
                                 <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                 </div>                                            
@@ -272,6 +277,7 @@
                             <div class="col">
                                 <label for="learningActivities">Learning Activities</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningActivities']}}"></i>
+                                <span class="requiredBySenate"></span>
                                 <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                 </div>                                            
@@ -322,6 +328,7 @@
                             <div class="col">
                                 <label for="learningResources">Learning Resources</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                                <span class="requiredBySenate"></span>
                                 <textarea id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
                             </div>
                         </div>
@@ -600,12 +607,17 @@
             `;
         
         var officeLocation = `
-            <label for="officeLocation">Office Location</label>
-            <input name = "officeLocation" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->office_location : ''}}">
+            <label for="officeLocation"><span class="requiredField">* </span>Office Location</label>
+            <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['officeLocation']}}"></i>
+            <input name = "officeLocation" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->office_location : ''}}" required>
+            <div class="invalid-tooltip">
+                Please enter your office location.
+            </div>
+
             `;
 
         var courseDescription = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="courseDescription">Course Description</label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseDescription']}}"></i>
                 <textarea name = "courseDescription" class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_description : ''}}</textarea>
@@ -613,9 +625,10 @@
             `;
 
         var courseContacts = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="courseContacts">Contacts</label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseContacts']}}"></i>
+                <span class="requiredBySenate"></span>
                 <div id="formatContacts" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
@@ -624,9 +637,10 @@
             `;
 
         var coursePrereqs = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="coursePrereqs">Course Prerequisites</label>
                 <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['coursePrereqs']}}"></i>
+                <span class="requiredBySenate"></span>
                 <div id="formatPrereqs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
@@ -634,9 +648,10 @@
             </div>
             `;
         var courseCoreqs = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="courseCoreqs">Course Corequisites</label>
                 <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseCoreqs']}}"></i>
+                <span class="requiredBySenate"></span>
                 <div id="formatCoreqs"class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false" >
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
@@ -644,7 +659,7 @@
             </div>
             `;
         var courseInstructorBio = `
-            <div class="col">
+            <div class="col mb-3">
                     <label for="courseInstructorBio">Course Instructor Biographical Statement</label>
                     <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['instructorBioStatement']}}"></i>
                     <textarea id = "courseInstructorBio" name = "courseInstructorBio" class ="form-control" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->instructor_bio : ''}}</textarea>
@@ -652,39 +667,47 @@
             `;
 
         var courseSchedule = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="courseSchedule">Course Schedule</label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
+                <span class="requiredBySenate"></span>
                 <textarea name = "courseSchedule" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_schedule : ''}}</textarea>
             </div>
             `;        
         
         var courseStructure = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="courseStructure">Course Structure</label>
                 <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseStructure']}}"></i>
+                <span class="requiredBySenate"></span>
                 <textarea name = "courseStructure" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_structure : ''}}</textarea>
             </div>
             `;
 
         var learningAnalytics = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="learningAnalytics">Learning Analytics</label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['learningAnalytics']}}"></i>                                            
                 <textarea id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
             </div>
             `;
         var courseFormat = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="courseFormat">Course Format</label>
                 <textarea name = "courseFormat" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_format: ''}}</textarea>
             </div>
             `;
         var courseOverview = `
-            <div class="col">
+            <div class="col mb-3">
                 <label for="courseOverview">Course Overview, Content and Objectives</label>
                 <textarea name = "courseOverview" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_overview : ''}}</textarea>
             </div>        
+            `;
+
+        var requiredBySenateLabel = `
+            <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                <button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button> 
+            </span>
             `;
         
         // get campus select element
@@ -706,6 +729,7 @@
             $('#courseInstructorBio').html(courseInstructorBio);
             $('#courseDescription').html(courseDescription);
             $('#learningAnalytics').html(learningAnalytics);
+            $('.requiredBySenate').html(requiredBySenateLabel);
 
             // remove data specific to okanangan campus
             $('#courseFormat').empty();
@@ -731,6 +755,7 @@
             $('#courseInstructorBio').empty();
             $('#courseDescription').empty();
             $('#learningAnalytics').empty();
+            $('.requiredBySenate').empty();
         }
 
         var formatNotes = document.querySelectorAll('.collapsibleNotes').forEach(function(note) {
