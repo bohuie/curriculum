@@ -7,7 +7,7 @@
             <h5 class="text-muted">{{$program->level}}</h5>
         </div>
         <div class="col">
-        @if (!$isEditor) 
+        @if (!$isEditor && !$isViewer) 
             <div class="row">
                 <div class="col">
                         <!-- Edit button -->
@@ -232,6 +232,7 @@
         </div>
 
     </div>
+    @if (! $isViewer) 
     <!-- progress bar -->
     <div class="mt-5">
         <table class="table table-borderless text-center table-sm" style="table-layout: fixed; width: 100%">
@@ -249,6 +250,6 @@
             </tr>
         </table>
     </div>
-
+    @endif
 
 </div>

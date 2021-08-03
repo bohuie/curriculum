@@ -9,6 +9,7 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\PseudoTypes\True_;
 
 class HasAccessMiddleware
 {
@@ -57,9 +58,9 @@ class HasAccessMiddleware
                         break;
                     case 3:
                         // Viewer
-                        $request->session()->flash('success', 'RETURN SUMMARY VIEWER ONLY');
+                        //$request->session()->flash('success', 'RETURN SUMMARY VIEWER ONLY');
                         // return view only syllabus 
-                        return redirect()->route('home');
+                        $request['isViewer'] = TRUE;
                         break;
                     default: 
                         // default 
