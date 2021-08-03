@@ -17,6 +17,7 @@ use App\Models\ProgramUser;
 use App\Models\OutcomeMap;
 use App\Models\ProgramLearningOutcome;
 use Attribute;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -38,6 +39,8 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        //Artisan::call('route:clear', []);
+
         // get the current authenticated user
         $user = User::find(Auth::id());
         // get my programs
