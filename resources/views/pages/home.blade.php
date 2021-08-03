@@ -78,7 +78,81 @@
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
+                                                
                                                 <div class="card-body">
+                                                    <p class="form-text text-muted mb-4">Collaborators can see and edit the program. Collaborators must first register with this web application to be added to a program.
+                                                        By adding a collaborator, a verification email will be sent to their email address.
+                                                        If your collaborator is not registered with this website yet,
+                                                        use the <a href="{{ url('/invite') }}">'Registration Invite' feature to invite them.</a>
+                                                        </p>
+                                                        <form method="POST" action="{{ action('ProgramUserController@store') }}">
+                                                            @csrf
+                                                            <div class="row mb-4">
+                                                                <div class="col-6">
+                                                                    <input id="email" type="email" name="email" class="form-control" placeholder="Collaborator Email" aria-label="email" required>
+                                                                </div>
+                                                                <div class="col-3">
+                                                                    <select class="form-select" name="permission">
+                                                                        <option value="edit" selected>Editor</option>
+                                                                        <option value="view">Viewer</option>
+                                                                    </select>                                                                    
+                                                                </div>
+                                                                <div class="col-3">
+                                                                    <button type="submit" class="btn btn-primary col"><i class="bi bi-plus"></i> Collaborator</button>
+                                                                </div>
+                                                            </div>
+
+                                                            <input type="hidden" class="form-check-input" name="program_id" value={{$program->program_id}}>
+
+                                                        </form>
+                                                        @if ($programUsers[$program->program_id]->count() < 1)
+                                                            <div class="alert alert-warning wizard">
+                                                                <i class="bi bi-exclamation-circle-fill"></i>You have not added any collaborators to this program yet.                    
+                                                            </div>
+                                                        @else
+                                                            <table class="table table-light borderless" >
+                                                                <tr class="table-primary">
+                                                                    <th>Collaborators</th>
+                                                                    <th></th>
+                                                                    <th class="text-center w-25">Actions</th>
+                                                                </tr>
+                                                                @foreach($programUsers[$program->program_id] as $programCollaborator)
+                                                                        <tr>
+                                                                            <td >
+                                                                                <b>{{$programCollaborator->name}} @if ($programCollaborator->email == $user->email) (Me) @endif</b>
+                                                                                <p>{{$programCollaborator->email}}</p>
+                                                                            </td>
+                                                                            <td>@switch ($programCollaborator->pivot->permission) 
+                                                                                    @case(1)
+                                                                                        <b><i>Owner</i></b>
+                                                                                        @break
+                                                                                    @case(2)
+                                                                                        Editor
+                                                                                        @break
+                                                                                    @case(3)
+                                                                                        Viewer
+                                                                                        @break
+                                                                                @endswitch
+                                                                            </td>
+                                                                            @if ($programCollaborator->pivot->permission == 1)
+                                                                                <td></td>
+                                                                            @else
+                                                                                <td class="text-center">
+                                                                                    <form action="{{route('programUser.destroy') }}" method="POST">
+                                                                                        @csrf
+                                                                                        {{method_field('DELETE')}}
+                                                                                        <input type="hidden" class="form-check-input" name="program_id" value={{$program->program_id}}>
+                                                                                        <input type="hidden" class="form-check-input" name="email" value="{{$programCollaborator->email}}">
+                                                                                        <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
+                                                                                    </form>
+                                                                                </td>
+                                                                            @endif
+                                                                        </tr>
+                                                                @endforeach
+                                                            </table>
+                                                        @endif
+                                                </div>
+                                                <!--<div class="card-body">
                                                     <p class="form-text text-muted">Collaborators can see and edit the course. Collaborators must first register with this web application to be added to a course.
                                                         By adding a collaborator, a verification email will be sent to their email address.
                                                         </p>
@@ -144,7 +218,7 @@
                                                         <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
                                                         <button type="submit" class="btn btn-primary col-2 btn-sm">Add</button>
                                                     </div>
-                                                </form>
+                                                </form>-->
                                             </div>
                                         </div>
                                     </div>
