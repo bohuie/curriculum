@@ -165,7 +165,7 @@
                             @endforeach
                                 <!--Legend-->
                                 <tr class="table-primary" style="background-color: #c6e0f5;">
-                                    <th class="text-left" colspan="2">Legend</th>
+                                    <th class="text-left" colspan="2">Additional Denominations</th>
                                 </tr>
                                 <tr style="background-color: #fbfcfc;">
                                     <td style="background-color:#999; height: 30px; width: 30px;">

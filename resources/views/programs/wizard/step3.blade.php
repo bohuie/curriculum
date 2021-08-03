@@ -29,7 +29,7 @@
                             <div class="col">
                                 @if ($programCourses->count() < 1)
                                     <div class="alert alert-warning wizard">
-                                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                    
+                                        <div class="notes"><i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.</div>                    
                                     </div>
                                 @else 
                                     <table class="table table-light table-bordered" >
@@ -38,23 +38,40 @@
                                             <th>Course Code</th>
                                             <th>Term</th>
                                             <th>Assigned</th>
-                                            <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> The course instructor has <b>not</b> mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Mapped:</b> The course instructor has mapped <b>some</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> The course instructor has mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
+                                            <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> The course instructor has <b>not</b> mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Completed:</b> The course instructor has mapped <b>some</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> The course instructor has mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
                                             <th class="text-center">Actions</th>
                                         </tr>
 
                                         @foreach($programCourses as $programCourse)
-                                        <tr >
-                                            <td >
-                                                {{$programCourse->course_title}}
-                                                <br>
-                                                <p class="form-text text-muted">
-                                                    @if($programCourse->pivot->course_required == 1)
-                                                        Required 
-                                                    @elseif($programCourse->pivot->course_required == 0)
-                                                        Not Required 
-                                                    @endif
-                                                </p>                                         
-                                            </td>
+                                        <tr>
+                                            @if($programCourse->pivot->note != NULL)
+                                                <td>
+                                                    {{$programCourse->course_title}}
+                                                    <br>
+                                                    <p class="mb-0 form-text text-muted">
+                                                        @if($programCourse->pivot->course_required == 1)
+                                                            Required 
+                                                        @elseif($programCourse->pivot->course_required == 0)
+                                                            Not Required 
+                                                        @endif
+                                                    </p>
+                                                    <p class="form-text text-muted">
+                                                        <b>Note: </b>{{$programCourse->pivot->note}}   
+                                                    </p>                                    
+                                                </td>
+                                            @else
+                                                <td>
+                                                    {{$programCourse->course_title}}
+                                                    <br>
+                                                    <p class="form-text text-muted">
+                                                        @if($programCourse->pivot->course_required == 1)
+                                                            Required 
+                                                        @elseif($programCourse->pivot->course_required == 0)
+                                                            Not Required 
+                                                        @endif
+                                                    </p>                                   
+                                                </td>
+                                            @endif
                                             <td>
                                                 {{$programCourse->course_code}} {{$programCourse->course_num}}
                                             </td>
@@ -74,7 +91,7 @@
                                                 @elseif ($actualTotalOutcomes[$programCourse->course_id] < $expectedTotalOutcomes[$programCourse->course_id])
                                                     <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Partially Mapped
                                                 @else
-                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Mapped
+                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Completed
                                                 @endif
                                             </td>
                                             <td>
@@ -163,6 +180,24 @@
                                                                                 <small class="form-text text-muted">
                                                                                     Is this course required by the program?
                                                                                 </small>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row">
+                                                                        <label for="required" class="col-md-3 col-form-label text-md-right">Note</label>
+                                                                        <div class="col-md-6">
+
+                                                                            <div class="form">
+                                                                                @if ($programCourse->pivot->note != NULL)
+                                                                                    <textarea name="note" class="form-textarea w-100" rows="2" maxlength="40">{{$programCourse->pivot->note}}</textarea>
+                                                                                @else
+                                                                                    <textarea name="note" class="form-textarea w-100" rows="2" maxlength="40"></textarea>
+                                                                                @endif
+                                                                                <small class="form-text text-muted">
+                                                                                    You may add a note to further categorize courses (E.g. Chemistry Specialization). The note can not be greater than <b>40 characters.</b>
+                                                                                </small>
+                                                                            </div>
+
                                                                         </div>
                                                                     </div>
                                                                     
@@ -565,7 +600,7 @@
 .tooltip-inner {
     text-align: left;
     max-width: 600px;
-    width: 600px; 
+    width: auto; 
 }
 </style>
 @endsection

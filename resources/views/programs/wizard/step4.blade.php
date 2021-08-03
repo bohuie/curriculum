@@ -108,7 +108,7 @@
                                             @endforeach
                                                 <!--Legend-->
                                                 <tr class="table-primary">
-                                                    <th class="text-left" colspan="2">Legend</th>
+                                                    <th class="text-left" colspan="2">Additional Denominations</th>
                                                 </tr>
                                                 <tr>
                                                     <td style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;">
