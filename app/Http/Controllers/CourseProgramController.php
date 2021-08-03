@@ -67,6 +67,7 @@ class CourseProgramController extends Controller
         $courseId = $request->input('course_id');
         $programId = $request->input('program_id');
         $required = $request->input('required');
+        $note = $request->input('note');
         
         $course = Course::where('course_id', $courseId)->first();
 
@@ -75,9 +76,12 @@ class CourseProgramController extends Controller
                 ['course_id' => $courseId, 'program_id' => $programId], 
                 ['course_required' => $required]
             );
-            $request->session()->flash('success', 'Successfully updated required status for: ' .strval($course->course_title));
+
+            CourseProgram::where(['course_id' => $courseId, 'program_id' => $programId])->update(['note' => $note]);
+            
+            $request->session()->flash('success', 'Successfully updated: ' .strval($course->course_title));
         } else {
-            $request->session()->flash('error', 'There was an error updating the required status');
+            $request->session()->flash('error', 'There was an error updating the course');
         }
 
         return redirect()->route('programWizard.step3', $request->input('program_id'));

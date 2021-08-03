@@ -20,7 +20,7 @@ class Program extends Model
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'course_programs', 'program_id', 'course_id')->withPivot('course_required', 'instructor_assigned', 'map_status')->withTimestamps();
+        return $this->belongsToMany(Course::class, 'course_programs', 'program_id', 'course_id')->withPivot('course_required', 'instructor_assigned', 'map_status', 'note')->withTimestamps();
     }
 
     public function mappingScaleLevels()

@@ -61,6 +61,14 @@
         </style>
     </head>
     <body>
+
+        <div style="display:inline-block;">
+            <h3>Program Project: {{$program->program}}</h3>
+            <h5 class="text-muted">{{$program->faculty}}</h5>
+            <h5 class="text-muted">{{$program->department}}</h5>
+            <h5 class="text-muted">{{$program->level}}</h5>
+        </div>
+
         <div class="card">
             <div class="card-header wizard">
                 <div class="w-25" style="display: inline-block;"></div>
@@ -157,7 +165,7 @@
                             @endforeach
                                 <!--Legend-->
                                 <tr class="table-primary" style="background-color: #c6e0f5;">
-                                    <th class="text-left" colspan="2">Legend</th>
+                                    <th class="text-left" colspan="2">Additional Denominations</th>
                                 </tr>
                                 <tr style="background-color: #fbfcfc;">
                                     <td style="background-color:#999; height: 30px; width: 30px;">
