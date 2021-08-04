@@ -61,7 +61,7 @@
                                         <!--UnCategorized PLOs -->
                                         @if($hasUncategorized)
                                             <tr class="table-secondary">
-                                                <th class="text-left" colspan="2">UnCategorized</th>
+                                                <th class="text-left" colspan="2">Uncategorized</th>
                                             </tr>
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
