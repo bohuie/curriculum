@@ -47,6 +47,7 @@ class HasAccessMiddleware
             }
 
         } elseif ($syllabus_id != null) {
+            $syllabus = Syllabus::find($syllabus_id);
             // get all users for the syllabus
             $syllabusUsers = Syllabus::find($syllabus_id)->users;
             // check if the current user belongs to this syllabus
@@ -54,26 +55,7 @@ class HasAccessMiddleware
                 // user does not belong to this syllabus
                 $request->session()->flash('error', 'You do not have access to this syllabus');
                 return redirect()->route('home'); 
-            } else {
-                // get users permission level for this syllabus
-                $userPermission = $syllabusUsers->where('id', Auth::id())->first()->pivot->permission;
-                switch ($userPermission) {
-                    case 1:
-                        // Owner
-                        break;
-                    case 2:
-                        // Editor
-                        break;
-                    case 3:
-                        // Viewer
-                        $request->session()->flash('success', 'RETURN SUMMARY VIEWER ONLY');
-                        // return view only syllabus 
-                        // return redirect()->route('home');
-                        break;
-                    default: 
-                        // default 
-                }
-            }
+            } 
         }
 
         return $next($request);
