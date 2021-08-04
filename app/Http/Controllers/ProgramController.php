@@ -166,15 +166,22 @@ class ProgramController extends Controller
      */
     public function destroy(Request $request, $program_id)
     {
-        //
-        $p = Program::where('program_id', $program_id);
-        
-        if($p->delete()){
-            $request->session()->flash('success','Program has been deleted');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting the program');
+        // find the program to delete
+        $program = Program::find($program_id);
+        // find the current user
+        $currentUser = User::find(Auth::id());
+        //get the current users permission level for the program delete
+        $currentUserPermission = $currentUser->programs->where('program_id', $program_id)->first()->pivot->permission;
+        // if the current user own the program, then try to delete it
+        if ($currentUserPermission == 1) {
+            if($program->delete()){
+                $request->session()->flash('success','Program has been deleted');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the program');
+            }
+        } else {
+            $request->session()->flash('error','You do not have permission to delete this program');
         }
-
         return redirect()->route('home');
     }
 

@@ -145,10 +145,11 @@ class ProgramUserController extends Controller
         //
         $program_id = $request->input('program_id');
         $user_id = $request->input('user_id');
-        $pu = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
+        $user = User::find($user_id);
+        $programUser = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
 
-        if($pu->delete()){
-            $request->session()->flash('success','Administrator has been deleted');
+        if($programUser->delete()){
+            $request->session()->flash('success', $user->name. ' has been deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the user');
         }
