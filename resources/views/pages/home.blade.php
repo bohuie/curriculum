@@ -142,6 +142,7 @@
                                                                                         @csrf
                                                                                         {{method_field('DELETE')}}
                                                                                         <input type="hidden" class="form-check-input" name="program_id" value={{$program->program_id}}>
+                                                                                        <input type="hidden" class="form-check-input" name="user_id" value="{{$programCollaborator->id}}">
                                                                                         <input type="hidden" class="form-check-input" name="email" value="{{$programCollaborator->email}}">
                                                                                         <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
                                                                                     </form>

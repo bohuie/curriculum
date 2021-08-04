@@ -94,7 +94,7 @@ class ProgramUserController extends Controller
             }
 
         } else {
-            $request->session()->flash('error', 'You do not have permission to add collaborators to this syllabus');
+            $request->session()->flash('error', 'You do not have permission to add collaborators to this program');
         }
 
         return redirect()->back();
@@ -142,16 +142,35 @@ class ProgramUserController extends Controller
      */
     public function delete(Request $request)
     {
-        //
-        $program_id = $request->input('program_id');
+        // user trying to remove collaborator
+        $currentUser = User::find(Auth::id());
+        $currentUserPermission = $currentUser->programs->where('program_id', $request->input('program_id'))->first()->pivot->permission;
+        // user to be removed from program
         $user_id = $request->input('user_id');
-        $user = User::find($user_id);
-        $programUser = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
 
-        if($programUser->delete()){
-            $request->session()->flash('success', $user->name. ' has been deleted');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting the user');
+        if ($currentUser->id == (int) $user_id) {
+            $program_id = $request->input('program_id');
+            $programUser = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
+            $user = User::find($user_id);
+            
+            if($programUser->delete()){
+                $request->session()->flash('success', $user->name. ' has been removed');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the user');
+            }
+
+        } else if ($currentUserPermission == 1) {
+            $user = User::find($user_id);
+            $program_id = $request->input('program_id');
+            $programUser = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
+
+            if($programUser->delete()){
+                $request->session()->flash('success', $user->name. ' has been deleted');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the user');
+            }
+        } else {
+            $request->session()->flash('error', 'You do not have permission to remove collaborators to this program');
         }
 
         return redirect()->back();
