@@ -36,6 +36,24 @@ class HasAccessMiddleware
                 // user does not belong to this course
                 $request->session()->flash('error', 'You do not have access to this course');
                 return redirect()->route('home');
+            } else {
+                // get users permission level for this syllabus
+                $userPermission = $courseUsers->where('id', Auth::id())->first()->pivot->permission;
+                switch ($userPermission) {
+                    case 1:
+                        // Owner
+                        break;
+                    case 2:
+                        // Editor
+                        $request['isEditor'] = TRUE;
+                        break;
+                    case 3:
+                        // Viewer
+                        $request['isViewer'] = TRUE;
+                        break;
+                    default: 
+                        // default 
+                }
             }
         } else if ($program_id != null) {
             // get all users for the program

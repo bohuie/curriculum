@@ -125,68 +125,6 @@ class HomeController extends Controller
         return view('pages.home')->with('ProgramUsers', $programUsers);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-        $this->validate($request, [
-            'course_code' => 'required',
-            'course_num' => 'required',
-            'course_title'=> 'required',
-
-            ]);
-
-        $course = new Course;
-        $course->course_title = $request->input('course_title');
-        $course->course_num = $request->input('course_num');
-        $course->course_code =  strtoupper($request->input('course_code'));
-        $course->status = -1;
-        $course->required = $request->input('required');
-        $course->type = $request->input('type');
-
-        $course->delivery_modality = $request->input('delivery_modality');
-        $course->year = $request->input('course_year');
-        $course->semester = $request->input('course_semester');
-        $course->section = $request->input('course_section');
-        $course->standard_category_id = $request->input('standard_category_id');
-
-        if($request->input('type') == 'assigned'){
-
-            $course->assigned = -1;
-
-            if($course->save()){
-                $request->session()->flash('success', 'New course added');
-            }else{
-                $request->session()->flash('error', 'There was an error adding the course');
-            }
-
-            return redirect()->route('programWizard.step3', $request->input('program_id'));
-
-        }else{
-
-            $course->assigned = 1;
-            $course->save();
-
-            $user = User::where('id', $request->input('user_id'))->first();
-            $courseUser = new CourseUser;
-            $courseUser->course_id = $course->course_id;
-            $courseUser->user_id = $user->id;
-            if($courseUser->save()){
-                $request->session()->flash('success', 'New course added');
-            }else{
-                $request->session()->flash('error', 'There was an error adding the course');
-            }
-
-            return redirect()->route('home');
-        }
-
-    }
-
         /**
      * Remove the specified resource from storage.
      *

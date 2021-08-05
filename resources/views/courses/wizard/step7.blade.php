@@ -557,18 +557,21 @@
                         </div>
                     </div>
                 </div>
-
+                @if (!$isViewer)
                 <h6 class="card-subtitle wizard mb-4 text-primary fw-bold text-center">
                     If you have finished mapping this course. Click the <b>finish button</b> to save your work.
                 </h6>
+                @endif
                 <div class="card-footer">
                     <div class="card-body mb-4">
+                        @if (!$isViewer)
                         <a href="{{route('courseWizard.step6', $course->course_id)}}">
                             <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Ministry Standards Mapping</button>
                         </a>
                         <a href="{{route('courses.submit', $course->course_id)}}">
                             <button class="btn btn-sm btn-success col-3 float-right">Finish <i class="bi bi-check2-circle ml-2 fs-6"></i></button>
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>

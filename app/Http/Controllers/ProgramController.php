@@ -78,8 +78,8 @@ class ProgramController extends Controller
         $program->faculty = $request->input('faculty');
         $program->status = -1;
 
-        $programuser = new ProgramUser;
-        $programuser->user_id = $request->input('user_id');
+        $programUser = new ProgramUser;
+        $programUser->user_id = $request->input('user_id');
         
         if($program->save()){
             $request->session()->flash('success', 'New program added');
@@ -87,8 +87,10 @@ class ProgramController extends Controller
             $request->session()->flash('error', 'There was an error Adding the program');
         }
 
-        $programuser->program_id = $program->program_id;
-        $programuser->save();
+        $programUser->program_id = $program->program_id;
+        // assign the creator of the program the owner permission
+        $programUser->permission = 1;
+        $programUser->save();
         
         // $adminRole = Role::where('role','administrator')->first();
         // $user = User::where('id', Auth::id())->first();
