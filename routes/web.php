@@ -33,6 +33,7 @@ Route::get('/about', 'AboutController@index')->name('about');
 
 Route::get('/faq', 'FAQController@index')->name('FAQ');
 Route::get('/terms', 'TermsController@index')->name('terms');
+Route::get('/chart', 'ChartController@index')->name('chart');
 
 // route to view a syllabus
 Route::get('/syllabusGenerator/{syllabusId?}', 'SyllabusController@index')->name('syllabus');
