@@ -219,51 +219,84 @@
                                 @foreach ($myCourses as $index => $course)
                                 <tbody>
                                 <tr>
+                                    <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
                                         <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
-                                        <td>
-                                            <i class="bi bi-exclamation-circle-fill fs-5 text-warning pr-2"></i>In Progress
+                                        <td class="align-middle">
+                                            @if ($progressBar[$course->course_id] == 0)
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @elseif ($progressBar[$course->course_id] == 100)
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @else
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @endif
                                         </td>
 
                                         <td> 
                                             <div class="row">
                                                 <div class="d-flex justify-content-center">
                                                     @if(count($coursesPrograms[$course->course_id]) > 0)
-                                                        <div class="btn bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
+                                                        <div class="bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
                                                             <i class="bi bi-map" style="font-size:x-large; text-align:center;"></i>
                                                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge badge-dark">
                                                                 {{ count($coursesPrograms[$course->course_id]) }}
                                                             </span>
                                                         </div>
                                                     @else
-                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"> <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'></i>None</p>
+                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"><i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'> None</i></p>
                                                     @endif
                                                 </div>
                                             </div>                                           
                                         </td>
                                     @else
+                                        <!-- Courses That have been Completed -->
                                         <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
-                                        <td>
-                                            <i class="bi bi-check-circle-fill fs-5 text-success pr-2"></i>Completed
+                                        <td class="align-middle">
+                                            @if ($progressBar[$course->course_id] == 0)
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @elseif ($progressBar[$course->course_id] == 100)
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @else
+                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            @endif
                                         </td>
+
                                         <td> 
                                             <div class="row">
                                                 <div class="d-flex justify-content-center">
                                                     @if(count($coursesPrograms[$course->course_id]) > 0)
-                                                        <div class="btn bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
+                                                        <div class="bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" title="@foreach($coursesPrograms[$course->course_id] as $i => $courseProgram){{$i + 1}}. {{$courseProgram->program}}<br>@endforeach" data-bs-placement="right">
                                                             <i class="bi bi-map" style="font-size:x-large; text-align:center;"></i>
                                                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge badge-dark">
                                                                 {{ count($coursesPrograms[$course->course_id]) }}
                                                             </span>
                                                         </div>
                                                     @else
-                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"> <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'></i>None</p>
+                                                    <p style="text-align: center; display:inline-block; margin-left:-15px;"><i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title='To map a course to a program, you must first create a program from the "My Programs" section'> None</i></p>
                                                     @endif
                                                 </div>
                                             </div>                                           
@@ -389,6 +422,7 @@
                                         <!-- End of Delete Course Confirmation Modal -->
                                     </td>
                                 </tr>
+
                                 </tbody>
                                 @endforeach
                             </table>

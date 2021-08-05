@@ -50,6 +50,8 @@ Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy'
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
+//PDF for Program summary
+Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
 
 Route::resource('/courses','CourseController');
 
@@ -125,4 +127,3 @@ Route::get('/email','AdminEmailController@index')->name('email');
 Route::post('/email', 'AdminEmailController@send')->name('email.send');
 
 Auth::routes();
-

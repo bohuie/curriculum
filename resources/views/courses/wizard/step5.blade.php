@@ -18,7 +18,7 @@
                 </h3>
                 <div class="card-body">
 
-                    @if (count($l_outcomes) < 1)
+                    @if (count($course->learningOutcomes) < 1)
                         <div class="alert alert-warning wizard">
                             <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
                         </div>
@@ -31,7 +31,7 @@
                         
                         <!-- list of programs this course belongs to -->
                         <div class="jumbotron">
-                            @if (count($coursePrograms) < 1)
+                            @if (count($course->programs) < 1)
                                 <div class="alert alert-warning text-center">
                                     <i class="bi bi-exclamation-circle-fill pr-2 fs-3"></i>
                                     <br>
@@ -42,7 +42,7 @@
                             @else
                                 <div class="programsAccordions" style="width:100%">
 
-                                    @foreach($coursePrograms as $index => $courseProgram)
+                                    @foreach($course->programs as $index => $courseProgram)
                                                 
                                         <!-- Program accordion -->
                                         <div class="accordion" id="programAccordion{{$courseProgram->program_id}}">
@@ -57,7 +57,7 @@
                                                 <div id="collapseProgramAccordion{{$courseProgram->program_id}}" class="accordion-collapse collapse" aria-labelledby="programAccordionHeader{{$courseProgram->program_id}}" data-bs-parent="programAccordion{{$courseProgram->program_id}}">
                                                     <div class="accordion-body">
 
-                                                        @if ($programsMappingScales[$courseProgram->program_id]->count() > 0)
+                                                        @if ($courseProgram->mappingScaleLevels->count() > 0)
                                                                         
                                                             <!-- Mapping scale for this program -->            
                                                             <p>Using the mapping scale provided, identify the alignment between each of your course learning outcomes (CLOs) and the program learning outcomes (PLOs).</p>
@@ -72,7 +72,7 @@
                                                                         </thead>
                                                                         
                                                                         <tbody>
-                                                                            @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScaleLevel)
+                                                                            @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
                                                                                 <tr>
                                                                                     <td style="width:20%">
                                                                                         <div style="background-color:{{$programMappingScaleLevel->colour}}; height: 10px; width: 10px;"></div>
@@ -93,9 +93,10 @@
 
                                                             <!-- list of course learning outcome accordions with mapping form -->
                                                             <div class="cloAccordions mb-4">
-                                                                @foreach($l_outcomes as $index => $courseLearningOutcome)
+                                                                @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
                                                                     <div class="accordion" id="accordionGroup{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                         <div class="accordion-item mb-2">
+                                                                            <!-- CLO accordion header -->
                                                                             <h2 class="accordion-header" id="header{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                                 <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                                     <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
@@ -103,70 +104,123 @@
                                                                             </h2>
 
                                                                             <div id="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                                <!-- CLO accordion body -->
                                                                                 <div class="accordion-body">
 
                                                                                     <form id="{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('OutcomeMapController@store')}}" method="POST">
                                                                                         @csrf
-                                                                                        <input type="hidden" name="program_id" value="{{$courseProgram->program_id}}">
                                                                                         <input type="hidden" name="l_outcome_id" value="{{$courseLearningOutcome->l_outcome_id}}">
 
                                                                                         <div class="card border-white">
                                                                                             <div class="card-body">
                                                                                                 <h5 style="margin-bottom:16px;text-align:center;font-weight: bold;">{{$courseLearningOutcome->l_outcome}}</h5>
 
-                                                                                                    @if ($programsLearningOutcomes[$courseProgram->program_id]->count() > 0) 
+                                                                                                    @if ($courseProgram->programLearningOutcomes->count() > 0) 
 
                                                                                                         <table class="table table-bordered table-sm">
                                                                                                             <thead class="thead-light">
                                                                                                                 <tr class="table-active">
+                                                                                                                    <th class="text-center">#</th>
                                                                                                                     <th>Program Learning Outcomes or Competencies</th>
                                                                                                                     <!-- Mapping Table Levels -->
-                                                                                                                    @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScaleLevel)
+                                                                                                                    @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
                                                                                                                         <th data-toggle="tooltip" title="{{$programMappingScaleLevel->title}}: {{$programMappingScaleLevel->description}}">
                                                                                                                             {{$programMappingScaleLevel->abbreviation}}
                                                                                                                         </th>
                                                                                                                     @endforeach
-                                                                                                                            
-                                                                                                                    <th data-toggle="tooltip" title="Not Aligned">N/A</th>
+                                                                                                                    <th data-toggle="tooltip" title="Not Aligned">N/A</th>    
                                                                                                                 </tr>
-
                                                                                                             </thead>
                                                                                                             
                                                                                                             <tbody>
-                                                                                                                @foreach($programsLearningOutcomes[$courseProgram->program_id] as $pl_outcome)
+                                                                                                                @if ($courseProgram->ploCategories->count() > 0)
+                                                                                                                    @foreach ($courseProgram->ploCategories as $ploCategory) 
                                                                                                                     <tr>
-                                                                                                                        <td>
-                                                                                                                            <b>{{$pl_outcome->plo_shortphrase}}</b>
-                                                                                                                            <br>
-                                                                                                                            {{$pl_outcome->pl_outcome}}
-                                                                                                                        </td>
+                                                                                                                        <td colspan="42" class="table-active">{{$ploCategory->plo_category}}</td>
+                                                                                                                    </tr>
 
-                                                                                                                        @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScaleLevel)
+                                                                                                                        @foreach ($ploCategory->plos as $index => $plo)
+                                                                                                                        <tr>
+                                                                                                                            <td style="width:5%" >{{($index++) + 1}}</td>
+                                                                                                                            <td>
+                                                                                                                                <b>{{$plo->plo_shortphrase}}</b><br>
+                                                                                                                                {{$plo->pl_outcome}}
+                                                                                                                            </td>
+                                                                                                                            @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
+                                                                                                                                <td>
+                                                                                                                                    <div class="form-check">
+                                                                                                                                        <input required class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="{{$programMappingScaleLevel->map_scale_id}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
+                                                                                                                                    </div>
+                                                                                                                                </td>
+                                                                                                                            @endforeach
                                                                                                                             <td>
                                                                                                                                 <div class="form-check">
-                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="{{$programMappingScaleLevel->abbreviation}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_value == $programMappingScaleLevel->abbreviation) checked=checked @endif @endif>
+                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
                                                                                                                                 </div>
                                                                                                                             </td>
+                                                                                                                        </tr>
                                                                                                                         @endforeach
-
-                                                                                                                        <td>
-                                                                                                                            <div class="form-check">
-                                                                                                                                <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="N/A" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_value =='N/A') checked=checked @endif @endif required>
-                                                                                                                            </div>
-                                                                                                                        </td>
-
+                                                                                                                    @endforeach
+                                                                                                                    <tr>
+                                                                                                                        <td class="table-active" colspan="42">Uncategorized PLOs</td>
                                                                                                                     </tr>
-                                                                                                                @endforeach
+                                                                                                                    @foreach ($courseProgram->programLearningOutcomes as $plo) 
+                                                                                                                        @if (!isset($plo->category))
+                                                                                                                        <tr>
+                                                                                                                            <td>{{($index++) + 1}}</td>
+                                                                                                                            <td>
+                                                                                                                                <b>{{$plo->plo_shortphrase}}</b><br>
+                                                                                                                                {{$plo->pl_outcome}}
+                                                                                                                            </td>
+                                                                                                                            @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
+                                                                                                                                <td>
+                                                                                                                                    <div class="form-check">
+                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="{{$programMappingScaleLevel->map_scale_id}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
+                                                                                                                                    </div>
+                                                                                                                                </td>
+                                                                                                                            @endforeach
+                                                                                                                            <td>
+                                                                                                                                <div class="form-check">
+                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                                                </div>
+                                                                                                                            </td>
+                                                                                                                        </tr>
+                                                                                                                        @endif
+                                                                                                                    @endforeach
+                                                                                                                @else 
+                                                                                                                    @foreach($courseProgram->programLearningOutcomes as $index => $pl_outcome)
+                                                                                                                        <tr>
+                                                                                                                            <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>
+                                                                                                                            <td>                                                 
+                                                                                                                                <b>{{$pl_outcome->plo_shortphrase}}</b>
+                                                                                                                                <br>
+                                                                                                                                {{$pl_outcome->pl_outcome}}
+                                                                                                                            </td>
+                                                                                                                            @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
+                                                                                                                                <td>
+                                                                                                                                    <div class="form-check">
+                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="{{$programMappingScaleLevel->map_scale_id}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
+                                                                                                                                    </div>
+                                                                                                                                </td>
+                                                                                                                            @endforeach
+                                                                                                                            <td>
+                                                                                                                                <div class="form-check">
+                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                                                </div>
+                                                                                                                            </td>
+                                                                                                                        </tr>
+                                                                                                                    @endforeach
+                                                                                                                @endif
                                                                                                             </tbody>
-                                                                                                        </table>
-                                                                                                                
+                                                                                                        </table>  
+
                                                                                                         <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
                                                                                                     @else 
                                                                                                         <div class="alert alert-warning text-center">
                                                                                                             <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
                                                                                                         </div>
                                                                                                     @endif
-                                                                                            </div>                                                                                                    
+                                                                                            </div>           
                                                                                         </div>
                                                                                     </form>
                                                                                 </div>

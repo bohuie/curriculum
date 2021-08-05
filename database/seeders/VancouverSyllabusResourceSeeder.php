@@ -16,7 +16,7 @@ class VancouverSyllabusResourceSeeder extends Seeder
     {
         VancouverSyllabusResource::create([
             'id_name' => 'land',
-            'title' => 'Land Acknowledgement',
+            'title' => 'Acknowledgement',
             // 'description' => 'We acknowledge that the UBC Vancouver campus is situated within the traditional, ancestral and unceded territory of the Musqueam.'
         ]);
 

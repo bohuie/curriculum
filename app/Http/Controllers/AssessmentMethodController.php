@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssessmentMethod;
+use App\Models\Course;
 use Illuminate\Http\Request;
+use Throwable;
 
 class AssessmentMethodController extends Controller
 {
@@ -39,59 +41,48 @@ class AssessmentMethodController extends Controller
      */
     public function store(Request $request)
     {
-        //
-
-        $this->validate($request, [
-            'a_method'=> 'required',
-            'weight'=> 'required',
-            ]);
-
-        $weights = $request->input("weight");
-        $methods =  $request->input("a_method");
-        $course_id = $request->input('course_id');
-        $i = 0;
-        $newMethodFlag = false;
-
-        if($method_ids = $request->input('a_method_id')) {
-            $size = count($method_ids);
-            $newMethodFlag = true;
-        }
-
-        /*
-        $sum = 0;
-        foreach($weights as $weight) {
-            $sum += $weight;
-            if($sum > 100) {
-
-                return redirect()->route('courseWizard.step2', $request->input('course_id'))->with('error', 'The total weight of all assessments will exceed 100%');
-            }
-        }
-        */
-        //store the custom assessment method
-
-
-        foreach ($methods as $method) {
-            if($newMethodFlag == true && $i < $size){
-                $am = AssessmentMethod::where('a_method_id', $method_ids[$i])->first();
-                $am->update(array('a_method' => $method,'weight'=> $weights[$i]));
-                $i++;
-                $request->session()->flash('success', 'Student assessment method modified');
-
-            }else {
-                $am = new AssessmentMethod;
-                $am->a_method = $method;
-                $am->weight = $weights[$i];
-                $am->course_id = $course_id;
-                $i++;
-                if($am->save()){
-                    $request->session()->flash('success', 'New student assessment method saved');
-                }else{
-                    $request->session()->flash('error', 'There was an error adding the student assessment method');
+        // try update student assessment methods
+        try {
+            $courseId = $request->input('course_id');
+            $currentMethods = $request->input('current_a_methods');
+            $currentWeights = $request->input('current_weights');
+            $newMethods = $request->input('new_a_methods');
+            $newWeights = $request->input('new_weights');
+            // get the course
+            $course = Course::find($courseId);
+            // get the saved assessment methods for this course
+            $assessmentMethods = $course->assessmentMethods;
+            // update current assessment methods
+            foreach ($assessmentMethods as $assessmentMethod) {
+                if (array_key_exists($assessmentMethod->a_method_id, $currentMethods)) {
+                    // save assessment method weight and title
+                    $assessmentMethod->a_method = $currentMethods[$assessmentMethod->a_method_id];
+                    $assessmentMethod->weight = $currentWeights[$assessmentMethod->a_method_id];
+                    $assessmentMethod->save();
+                } else {
+                    // remove assessment method from course
+                    $assessmentMethod->delete();
                 }
             }
-        }
+            // add new assessment methods
+            if ($newMethods) {
+                foreach ($newMethods as $index => $newMethod) {
+                    $newAssessmentMethod = new AssessmentMethod;
+                    $newAssessmentMethod->a_method = $newMethod;
+                    $newAssessmentMethod->weight = $newWeights[$index];
+                    $newAssessmentMethod->course_id = $courseId;
+                    $newAssessmentMethod->save();
+                }
+            }
 
-        return redirect()->route('courseWizard.step2', $request->input('course_id'));
+            $request->session()->flash('success','Your student assessments methods were updated successfully!');
+        // flash error message if something goes wrong
+        } catch (Throwable $exception) {
+            $request->session()->flash('error', 'There was an error updating your student assessment methods');
+        // return back to student assessment methods step
+        } finally {
+            return redirect()->route('courseWizard.step2', $request->input('course_id'));
+        }
     }
 
 

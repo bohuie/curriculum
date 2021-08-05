@@ -29,7 +29,7 @@
                             <div class="col">
                                 @if ($programCourses->count() < 1)
                                     <div class="alert alert-warning wizard">
-                                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                    
+                                        <div class="notes"><i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.</div>                    
                                     </div>
                                 @else 
                                     <table class="table table-light table-bordered" >
@@ -38,23 +38,40 @@
                                             <th>Course Code</th>
                                             <th>Term</th>
                                             <th>Assigned</th>
-                                            <th>Status</th>
+                                            <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> The course instructor has <b>not</b> mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Completed:</b> The course instructor has mapped <b>some</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> The course instructor has mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
                                             <th class="text-center">Actions</th>
                                         </tr>
 
                                         @foreach($programCourses as $programCourse)
-                                        <tr >
-                                            <td >
-                                                {{$programCourse->course_title}}
-                                                <br>
-                                                <p class="form-text text-muted">
-                                                    @if($programCourse->pivot->course_required == 1)
-                                                        Required 
-                                                    @elseif($programCourse->pivot->course_required == 0)
-                                                        Not Required 
-                                                    @endif
-                                                </p>                                         
-                                            </td>
+                                        <tr>
+                                            @if($programCourse->pivot->note != NULL)
+                                                <td>
+                                                    {{$programCourse->course_title}}
+                                                    <br>
+                                                    <p class="mb-0 form-text text-muted">
+                                                        @if($programCourse->pivot->course_required == 1)
+                                                            Required 
+                                                        @elseif($programCourse->pivot->course_required == 0)
+                                                            Not Required 
+                                                        @endif
+                                                    </p>
+                                                    <p class="form-text text-muted">
+                                                        <b>Note: </b>{{$programCourse->pivot->note}}   
+                                                    </p>                                    
+                                                </td>
+                                            @else
+                                                <td>
+                                                    {{$programCourse->course_title}}
+                                                    <br>
+                                                    <p class="form-text text-muted">
+                                                        @if($programCourse->pivot->course_required == 1)
+                                                            Required 
+                                                        @elseif($programCourse->pivot->course_required == 0)
+                                                            Not Required 
+                                                        @endif
+                                                    </p>                                   
+                                                </td>
+                                            @endif
                                             <td>
                                                 {{$programCourse->course_code}} {{$programCourse->course_num}}
                                             </td>
@@ -62,19 +79,20 @@
                                                 {{$programCourse->year}} {{$programCourse->semester}}
                                             </td>
                                             <td>
-                                            @if(count($programCoursesUsers[$programCourse->course_id]) > 0 )
-                                                <i class="bi bi-check-circle-fill text-success pr-2"></i>Assigned
-                                            @else
-                                                <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Unassigned                                                       
-                                            @endif
-
+                                                @if(count($programCoursesUsers[$programCourse->course_id]) > 0 )
+                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Assigned
+                                                @else
+                                                    <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Unassigned                                                       
+                                                @endif
                                             </td>
                                             <td>
-                                            @if($programCourse->status == -1)
-                                                <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>In Progress
-                                            @else
-                                                <i class="bi bi-check-circle-fill text-success pr-2"></i>Completed
-                                            @endif
+                                                @if($actualTotalOutcomes[$programCourse->course_id] == 0)
+                                                    <i class="bi bi-exclamation-circle-fill text-danger pr-2"></i>Not Mapped
+                                                @elseif ($actualTotalOutcomes[$programCourse->course_id] < $expectedTotalOutcomes[$programCourse->course_id])
+                                                    <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Partially Mapped
+                                                @else
+                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Completed
+                                                @endif
                                             </td>
                                             <td>
                                                 <!-- Delete button -->
@@ -92,7 +110,7 @@
                                                             </div>
 
                                                             <div class="modal-body">
-                                                            Are you sure you want to Remove {{$programCourse->course_code . ' ' . $programCourse->course_num}} ?
+                                                            Are you sure you want to remove {{$programCourse->course_code . ' ' . $programCourse->course_num}} ?
                                                             </div>
 
                                                             <form action="{{route('courses.remove', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
@@ -164,6 +182,24 @@
                                                                                 </small>
                                                                         </div>
                                                                     </div>
+
+                                                                    <div class="form-group row">
+                                                                        <label for="required" class="col-md-3 col-form-label text-md-right">Note</label>
+                                                                        <div class="col-md-6">
+
+                                                                            <div class="form">
+                                                                                @if ($programCourse->pivot->note != NULL)
+                                                                                    <textarea name="note" class="form-textarea w-100" rows="2" maxlength="40">{{$programCourse->pivot->note}}</textarea>
+                                                                                @else
+                                                                                    <textarea name="note" class="form-textarea w-100" rows="2" maxlength="40"></textarea>
+                                                                                @endif
+                                                                                <small class="form-text text-muted">
+                                                                                    You may add a note to further categorize courses (E.g. Chemistry Specialization). The note can not be greater than <b>40 characters.</b>
+                                                                                </small>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
                                                                     
                                                                     <input type="hidden" class="form-input" name="course_id" value="{{$programCourse->course_id}}">
                                                                     <input type="hidden" class="form-input" name="program_id" value="{{$program->program_id}}">
@@ -196,8 +232,8 @@
                                                             </div>
                                                             <div class="container">
                                                                 <p class="form-text text-muted">
-                                                                    Instructors can see and edit the course (not the program). Instructors must first register with this web application to be assigned to a course.
-                                                                    By adding an instructor, a verification email will be sent to their email address. <Strong>You can assign the course to yourself by clicking "Assign to Self"</Strong>.
+                                                                Instructors must first register with this web application to see and edit a course.
+                                                                    By adding an instructor, a verification email will be sent to their email address.
                                                                 </p>
                                                                 <table class="table table-borderless">
 
@@ -254,13 +290,6 @@
 
                                                                     <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
                                                                     <button type="submit" class="btn btn-primary col-2 btn-sm">Assign</button>
-                                                                </form>
-
-                                                                <form method="POST" action="{{route('courses.assign', $programCourse->course_id)}}">
-                                                                    @csrf
-                                                                    <input id="self" type="hidden" class="form-control" name="email" value="{{Auth::User()->email}}">
-                                                                    <input type="hidden" class="form-input" name="program_id" value={{$program->program_id}}>
-                                                                    <button type="submit" style="width:120px" class="btn btn-outline-primary btn-sm" >Assign to Self</button>
                                                                 </form>
                                                                 </div>
                                                         </div>
@@ -386,7 +415,7 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            <label for="course_section" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course
+                                            <label for="course_section" class="col-md-3 col-form-label text-md-right">Course
                                                 Section</label>
 
                                             <div class="col-md-4">
@@ -541,7 +570,7 @@
                 <div class="card-footer">
                     <div class="card-body mb-4">
                         <a href="{{route('programWizard.step2', $program->program_id)}}"><button class="btn btn-sm btn-primary col-3  float-left"><i class="bi bi-arrow-left ml-2"></i> Mapping Scale</button></a>
-                        <a href="{{route('programWizard.step4', $program->program_id)}}"><button class="btn btn-sm btn-primary col-3 float-right">Begin Mapping Program <i class="bi bi-arrow-right ml-2"></i></button></a>
+                        <a href="{{route('programWizard.step4', $program->program_id)}}"><button class="btn btn-sm btn-primary col-3 float-right">Program Overview <i class="bi bi-arrow-right ml-2"></i></button></a>
                     </div>
                 </div>
 
@@ -551,10 +580,11 @@
     </div>
 </div>
 
-<script type="application/javascript" src="{{ asset('js/drag_drop.js') }}">
+<script type="application/javascript">
     $(document).ready(function () {
 
-        $('[data-toggle="tooltip"]').tooltip();
+        // Enables functionality of tool tips
+        $('[data-toggle="tooltip"]').tooltip({html:true});
 
 
         $("form").submit(function () {
@@ -565,4 +595,12 @@
             });
     });
 </script>
+
+<style> 
+.tooltip-inner {
+    text-align: left;
+    max-width: 600px;
+    width: auto; 
+}
+</style>
 @endsection
