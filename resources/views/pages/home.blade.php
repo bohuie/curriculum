@@ -68,7 +68,7 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Add Collaborator Modal -->
+                                    <!-- Add Program Collaborator Modal -->
                                     <div class="modal fade" id="addProgramCollaboratorModal{{$program->program_id}}" tabindex="-1" role="dialog" aria-labelledby="addProgramCollaboratorModalLabel{{$program->program_id}}" aria-hidden="true">
                                         <div class="modal-dialog modal-lg" role="document">
                                             <div class="modal-content">
@@ -156,6 +156,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!--End Program Collaborators-->
 
                                     <!-- Delete Confirmation Modal -->
                                     <div class="modal fade" id="deleteProgram{{$index}}" tabindex="-1" role="dialog" aria-labelledby="deleteProgram{{$index}}" aria-hidden="true">
