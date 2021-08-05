@@ -58,8 +58,6 @@ class HasAccessMiddleware
                         break;
                     case 3:
                         // Viewer
-                        //$request->session()->flash('success', 'RETURN SUMMARY VIEWER ONLY');
-                        // return view only syllabus 
                         $request['isViewer'] = TRUE;
                         break;
                     default: 
