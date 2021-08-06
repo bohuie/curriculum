@@ -192,78 +192,81 @@
                                         </button>
                                     </div>
                                     <div class="card-body">
-                                        <p class="form-text text-muted">Collaborators can see and edit the course. Collaborators must first register with this web application to be added to a course.
-                                            By adding a collaborator, a verification email will be sent to their email address.
-                                            If your collaborator is not registered with this website yet,
-                                            use the "Registration invite" feature to invite them. <a href="{{ url('/invite') }}">re-direct here</a>
-                                            </p>
-
-                                        <table class="table table-borderless">
-
-                                                @if($course->users->count() == 0)
-                                                    <tr class="table-active">
-                                                        <th colspan="2">You have not added any collaborators to this course
-                                                        </th>
-                                                    </tr>
-
-                                                @else
-
-                                                    <tr class="table-active">
-                                                        <th colspan="2">Collaborators</th>
-                                                    </tr>
-                                                    @foreach($course->users as $instructor)
-                                                        @if($instructor->email != $user->email)
-                                                            <tr>
-                                                                <td>{{$instructor->email}}</td>
-                                                                <td>
-                                                                    <form action="{{route('courses.unassign', $course->course_id)}}" method="POST" class="float-right ml-2">
+                                    <p class="form-text text-muted mb-4">Collaborators can see and edit the course. Collaborators must first register with this web application to be added to a course.
+                                        By adding a collaborator, a verification email will be sent to their email address.
+                                        If your collaborator is not registered with this website yet,
+                                        use the <a href="{{ url('/invite') }}">'Registration Invite' feature to invite them.</a>
+                                        </p>
+                                        <form method="POST" action="{{ action('CourseUserController@store', $course->course_id) }}">
+                                            @csrf
+                                            <div class="row mb-4">
+                                                <div class="col-6">
+                                                    <input id="email" type="email" name="email" class="form-control" placeholder="Collaborator Email" aria-label="email" required>
+                                                </div>
+                                                <div class="col-3">
+                                                    <select class="form-select" name="permission">
+                                                        <option value="edit" selected>Editor</option>
+                                                        <option value="view">Viewer</option>
+                                                    </select>                                                                    
+                                                </div>
+                                                <div class="col-3">
+                                                    <button type="submit" class="btn btn-primary col"><i class="bi bi-plus"></i> Collaborator</button>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" class="form-check-input" name="course_id" value={{$course->course_id}}>
+                                        </form>
+                                        @if ($courseUsers[$course->course_id]->count() < 1)
+                                            <div class="alert alert-warning wizard">
+                                                <i class="bi bi-exclamation-circle-fill"></i>You have not added any collaborators to this course yet.                    
+                                            </div>
+                                        @else
+                                            <table class="table table-light borderless" >
+                                                <tr class="table-primary">
+                                                    <th>Collaborators</th>
+                                                    <th></th>
+                                                    <th class="text-center w-25">Actions</th>
+                                                </tr>
+                                                @foreach($courseUsers[$course->course_id] as $courseCollaborator)
+                                                        <tr>
+                                                            <td >
+                                                                <b>{{$courseCollaborator->name}} @if ($courseCollaborator->email == $user->email) (Me) @endif</b>
+                                                                <p>{{$courseCollaborator->email}}</p>
+                                                            </td>
+                                                            <td>@switch ($courseCollaborator->pivot->permission) 
+                                                                    @case(1)
+                                                                        <b><i>Owner</i></b>
+                                                                        @break
+                                                                    @case(2)
+                                                                        Editor
+                                                                        @break
+                                                                    @case(3)
+                                                                        Viewer
+                                                                        @break
+                                                                @endswitch
+                                                            </td>
+                                                            @if ($courseCollaborator->pivot->permission == 1)
+                                                                <td></td>
+                                                            @else
+                                                                <td class="text-center">
+                                                                    <form action="{{route('courses.unassign', $course->course_id) }}" method="POST">
                                                                         @csrf
                                                                         {{method_field('DELETE')}}
-                                                                        <input type="hidden" class="form-check-input" name="program_id" value="{{$course->program_id}}">
-                                                                        <input type="hidden" class="form-check-input" name="email" value="{{$instructor->email}}">
+                                                                        <input type="hidden" class="form-check-input" name="course_id" value={{$course->course_id}}>
+                                                                        <input type="hidden" class="form-check-input" name="user_id" value="{{$courseCollaborator->id}}">
+                                                                        <input type="hidden" class="form-check-input" name="email" value="{{$courseCollaborator->email}}">
                                                                         <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
                                                                     </form>
                                                                 </td>
-                                                            </tr>
-                                                        @endif
-                                                    @endforeach
-
-
-                                                @endif
-                                        </table>
+                                                            @endif
+                                                        </tr>
+                                                @endforeach
+                                            </table>
+                                        @endif
                                     </div>
-
-                                    <form method="POST" action="{{route('courses.assign', $course->course_id)}}">
-                                        @csrf
-                                        <div class="modal-body">
-                                            <div class="form-group row">
-                                                <label for="email" class="col-md-3 col-form-label text-md-right">Collaborator Email</label>
-
-                                                <div class="col-md-7">
-                                                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" autofocus>
-
-                                                    @error('program')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-
-                                            <input type="hidden" class="form-input" name="program_id" value="{{$course->program_id}}">
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary col-2 btn-sm">Assign</button>
-                                        </div>
-                                    </form>
                                 </div>
-
-
-
                             </div>
                         </div>
+                        <!-- End of course collaborator modal -->
                     </div>
                 </div>
 

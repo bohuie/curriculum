@@ -308,9 +308,9 @@ class CourseController extends Controller
         $course = Course::find($course_id);
         // find the current user
         $currentUser = User::find(Auth::id());
-        //get the current users permission level for the program delete
+        //get the current users permission level for the course delete
         $currentUserPermission = $currentUser->courses->where('course_id', $course_id)->first()->pivot->permission;
-        // if the current user own the program, then try to delete it
+        // if the current user own the course, then try to delete it
         if ($currentUserPermission == 1) {
             if($course->delete()){
                 $request->session()->flash('success','Course has been deleted');
@@ -318,7 +318,7 @@ class CourseController extends Controller
                 $request->session()->flash('error', 'There was an error deleting the course');
             }
         } else {
-            $request->session()->flash('error','You do not have permission to delete this program');
+            $request->session()->flash('error','You do not have permission to delete this course');
         }
         return redirect()->route('home');
     }

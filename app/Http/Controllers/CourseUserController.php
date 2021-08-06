@@ -146,7 +146,7 @@ class CourseUserController extends Controller
         // user trying to remove collaborator
         $currentUser = User::find(Auth::id());
         $currentUserPermission = $currentUser->courses->where('course_id', $request->input('course_id'))->first()->pivot->permission;
-        // user to be removed from program
+        // user to be removed from course
         $user_id = $request->input('user_id');
 
         if ($currentUser->id == (int) $user_id) {
@@ -172,7 +172,7 @@ class CourseUserController extends Controller
             }
 
         } else {
-            $request->session()->flash('error', 'You do not have permission to remove collaborators to this program');
+            $request->session()->flash('error', 'You do not have permission to remove collaborators to this course');
         }
 
         return redirect()->back();
