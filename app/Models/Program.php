@@ -29,7 +29,7 @@ class Program extends Model
     }
 
     public function users(){
-        return $this->belongsToMany(User::class, 'program_users', 'program_id', 'user_id');
+        return $this->belongsToMany(User::class, 'program_users', 'program_id', 'user_id')->withPivot('permission');
     }
 
     // Eloquent automatically determines the FK column for the ProgramLearningOutcome model by taking the parent model (program) and suffix it with _id (program_id)
