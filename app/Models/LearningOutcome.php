@@ -8,14 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 // model for CourseLearningOutcomes
 class LearningOutcome extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
+    
+    protected $table = 'learning_outcomes';
 
     protected $primaryKey = 'l_outcome_id';
 
-    protected $fillable = ["l_outcome", "clo_shortphrase"];
+    protected $fillable = ["l_outcome", "clo_shortphrase", "course_id"];
 
     public function course(){
-        return $this->belongsTo('App\Models\Course');
+        return $this->belongsTo('App\Models\Course', 'course_id');
     }
 
     public function assessmentMethods(){

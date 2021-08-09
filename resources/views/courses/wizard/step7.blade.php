@@ -284,7 +284,7 @@
                                                                 <td>
                                                                     <div style="background-color:{{$programMappingScale->colour}}; height: 10px; width: 10px;"></div>
                                                                     {{$programMappingScale->title}}<br>
-                                                                    ({{$programMappingScale->abbreviation}})
+                                                                    ({{$programMappingScale->map_scale_id}})
                                                                 </td>
                                                                 <td>
                                                                     {{$programMappingScale->description}}

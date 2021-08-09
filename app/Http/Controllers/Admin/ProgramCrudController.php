@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\ProgramRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use App\Models\MappingScale;
 
 /**
  * Class ProgramCrudController
@@ -42,7 +43,10 @@ class ProgramCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'program', // The db column name
             'label' => "Program", // Table column heading
-            'type' => 'Text'
+            'type' => 'Text',
+            'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('program_id', 'like', '%'.$searchTerm.'%');
+            }
           ]);
 
         $this->crud->addColumn([
@@ -60,7 +64,10 @@ class ProgramCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'level', // The db column name
             'label' => "Level", // Table column heading
-            'type' => 'Text'
+            'type' => 'Text',
+            'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('level', 'like', '%'.$searchTerm.'%');
+            }
           ]);
         
         $this->crud->addColumn([   // radio
@@ -103,7 +110,8 @@ class ProgramCrudController extends CrudController
         $this->crud->addField([
             'name' => 'program', // The db column name
             'label' => "Program Title", // Table column heading
-            'type' => 'Text'
+            'type' => 'valid_text',
+            'attributes' => [ 'req' => 'true']
           ]);
 
         $this->crud->addField([
@@ -211,6 +219,41 @@ class ProgramCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+        
+        $prgID = filter_input(INPUT_SERVER,'PATH_INFO');        
+        $prgID = explode("/",$prgID)[3];
+        
+        $this->crud->addField([
+                    'name'    => 'MappingScaleLevels',
+                    'type'    => 'check_details',
+                    'label'   => 'Map Scales',
+                    'entity'    => 'mappingScaleLevels', // the method that defines the relationship in your Model
+                    'model'     => "App\Models\MappingScale", // foreign key model
+                    'attribute' => [
+                        'title', // foreign key attribute that is shown to user
+                        'colour',
+                    ],
+                    'category_relation' => 'mapping_scale_categories-mapping_scale_categories_id-msc_title-description', 
+                    //the Entity and foreign key used to categorize the checkboxes, if any. followed by category header and hint respectively
+                    'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
+        ]);
+        
+        $this->crud->addField([
+                    'name'    => 'Courses',
+                    'type'    => 'check_details',
+                    'label'   => 'Courses',
+                    'entity'    => 'courses', // the method that defines the relationship in your Model
+                    'model'     => "App\Models\Course", // foreign key model
+                    'attribute' => [
+                        'course_code', // foreign key attribute that is shown to user
+                        'course_num',
+                        'course_title',
+                    ],
+                    'category_attribute' => 'course_code', //the attribute to group by 
+                    'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
+        ]);
+     
+        
     }
 
     protected function setupShowOperation()

@@ -1312,7 +1312,6 @@
 
 <script type="application/javascript">
     $(document).ready(function () {
-
         // Enables functionality of tool tips
         $('[data-toggle="tooltip"]').tooltip({html:true});
     });

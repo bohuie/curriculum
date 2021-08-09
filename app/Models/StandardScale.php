@@ -13,9 +13,13 @@ class StandardScale extends Model
 
     protected $primaryKey = 'standard_scale_id';
 
-    protected $fillable = ['title', 'abbreviation', 'description', 'colour'];
+    protected $fillable = ['standard_scale_id','scale_category_id','title', 'abbreviation', 'description', 'colour'];
+    
+    public function learningOutcomes(){
+        return $this->belongsToMany(LearningOutcome::class)->using(StandardsOutcomeMap::class); 
+    }
 
     public function standardsScaleCategory() {
-        return $this->belongsTo(StandardsScaleCategory::class, 'ms_scale_category_id', 'ms_scale_category_id');
+        return $this->belongsTo(StandardsScaleCategory::class, 'scale_category_id', 'scale_category_id');
     }
 }

@@ -132,7 +132,7 @@ class HomeController extends Controller
         return view('pages.home')->with('ProgramUsers', $programUsers);
     }
 
-        /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id

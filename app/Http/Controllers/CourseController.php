@@ -226,7 +226,7 @@ class CourseController extends Controller
 
         $outcomeMaps = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->get();
 
 
@@ -391,6 +391,30 @@ class CourseController extends Controller
     {
         $user = User::where('id',Auth::id())->first();
         $course =  Course::find($course_id);
+        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
+                                ->join('users','course_users.user_id',"=","users.id")
+                                ->select('users.email')
+                                ->where('courses.course_id','=',$course_id)->get();
+
+        //for progress bar
+        $lo_count = LearningOutcome::where('course_id', $course_id)->count();
+        $am_count = AssessmentMethod::where('course_id', $course_id)->count();
+        $la_count = LearningActivity::where('course_id', $course_id)->count();
+        $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
+                                ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->where('learning_activities.course_id','=',$course_id)->count();
+        $oAss = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
+                                ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->where('assessment_methods.course_id','=',$course_id)->count();
+        $outcomeMapsCount = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
+                                ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+
+        //
+
         // get all the programs this course belongs to
         $coursePrograms = Course::find($course_id)->programs;
 
@@ -400,7 +424,7 @@ class CourseController extends Controller
             $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
         }
 
-        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_value
+        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
         $courseProgramsOutcomeMaps = array();
         foreach ($programsLearningOutcomes as $programId => $programLearningOutcomes) {
             foreach ($programLearningOutcomes as $programLearningOutcome) {

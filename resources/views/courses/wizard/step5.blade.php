@@ -156,6 +156,9 @@
                                                                                                                             <td>
                                                                                                                                 <div class="form-check">
                                                                                                                                     <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                                                    <!--                                                                                                                                  
+                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="{{$programMappingScaleLevel->abbreviation}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
+                                                                                                                                    -->
                                                                                                                                 </div>
                                                                                                                             </td>
                                                                                                                         </tr>
@@ -163,6 +166,13 @@
                                                                                                                     @endforeach
                                                                                                                     <tr>
                                                                                                                         <td class="table-active" colspan="42">Uncategorized PLOs</td>
+
+                                                                                                                        <td>
+                                                                                                                            <div class="form-check">
+                                                                                                                                <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="N/A" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_id =='N/A') checked=checked @endif @endif required>
+                                                                                                                            </div>
+                                                                                                                        </td>
+
                                                                                                                     </tr>
                                                                                                                     @foreach ($courseProgram->programLearningOutcomes as $plo) 
                                                                                                                         @if (!isset($plo->category))

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Program extends Model
 {
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
@@ -12,22 +13,42 @@ class Program extends Model
 
     protected $primaryKey = 'program_id';
 
-    protected $table = 'programs';
+    protected $table = 'programs';   
+    
 
     protected $fillable = ['program', 'faculty', 'department',  'level', 'status'];
 
     protected $guarded = ['program_id'];
+    
+    
 
     public function courses()
     {
         return $this->belongsToMany(Course::class, 'course_programs', 'program_id', 'course_id')->withPivot('course_required', 'instructor_assigned', 'map_status', 'note')->withTimestamps();
     }
 
+    /* public function mappingScaleLevels()
+    {
+        return $this->hasManyThrough(MappingScale::Class, MappingScaleProgram::Class);
+    }*/
+
     public function mappingScaleLevels()
     {
-        return $this->belongsToMany('App\Models\MappingScale', 'mapping_scale_programs', 'program_id', 'map_scale_id');
+        return $this->belongsToMany(MappingScale::class, 'mapping_scale_programs', 'program_id', 'map_scale_id')->withTimestamps();
     }
-
+    
+    public function mappingScalePrograms()
+    {
+        return $this->hasMany(MappingScaleProgram::class, 'program_id', 'program_id');
+    }
+    
+    /* public function newPivot(Model $parent, array $attributes, $table, $exists, $using = NULL) {
+        if ($parent instanceof Program) {
+            return new MappingScaleProgram($parent, $attributes, $table, $exists, $using = NULL);
+        }
+        return parent::newPivot($parent, $attributes, $table, $exists, $using = NULL);
+    }*/
+    
     public function users(){
         return $this->belongsToMany(User::class, 'program_users', 'program_id', 'user_id')->withPivot('permission');
     }
