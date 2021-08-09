@@ -9,6 +9,7 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\PseudoTypes\True_;
 
 class HasAccessMiddleware
 {
@@ -24,69 +25,76 @@ class HasAccessMiddleware
         $course_id = $request->route()->parameter('course');
         $program_id = $request->route()->parameter('program');
         $syllabus_id = $request->route()->parameter('syllabusId');
-        // get user accessing 
+        // get current user  
+        $user = User::where('id',Auth::id())->first();
 
         if ($course_id != null) {
             // get all users for the course
-            $allCourseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                    ->join('users','course_users.user_id',"=","users.id")
-                                    ->select('course_users.user_id')
-                                    ->where('courses.course_id','=',$course_id)->get();
-            
-            $usersArray = array();
-            $usersArray = $this->populateUsersArray($allCourseUsers, $usersArray);
-
-            if ($this->denyAccess($usersArray)) {
+            $courseUsers = Course::find($course_id)->users;
+            // check if the current user belongs to this course
+            if (!in_array($user->id, $courseUsers->pluck('id')->toArray())) {
+                // user does not belong to this course
                 $request->session()->flash('error', 'You do not have access to this course');
                 return redirect()->route('home');
+            } else {
+                // get users permission level for this syllabus
+                $userPermission = $courseUsers->where('id', Auth::id())->first()->pivot->permission;
+                switch ($userPermission) {
+                    case 1:
+                        // Owner
+                        break;
+                    case 2:
+                        // Editor
+                        $request['isEditor'] = TRUE;
+                        break;
+                    case 3:
+                        // Viewer
+                        $request['isViewer'] = TRUE;
+                        break;
+                    default: 
+                        // default 
+                }
             }
-
-        }else if ($program_id != null) {
+        } else if ($program_id != null) {
             // get all users for the program
-            $allProgramUsers = Program::join('program_users', 'programs.program_id', '=', 'program_users.program_id')
-                                    ->join('users','program_users.user_id', '=', 'users.id')
-                                    ->select('program_users.user_id')
-                                    ->where('programs.program_id', '=', $program_id)->get();
-            
-            $usersArray = array();
-            $usersArray = $this->populateUsersArray($allProgramUsers, $usersArray);
-
-            if ($this->denyAccess($usersArray)) {
-                $request->session()->flash('error', 'You do not have access to this Program');
+            $programUsers = Program::find($program_id)->users;
+            // check if the current user belongs to this program
+            if (!in_array($user->id, $programUsers->pluck('id')->toArray())) {
+                // user does not belong to this program
+                $request->session()->flash('error', 'You do not have access to this program');
                 return redirect()->route('home');
+            } else {
+                // get users permission level for this syllabus
+                $userPermission = $programUsers->where('id', Auth::id())->first()->pivot->permission;
+                switch ($userPermission) {
+                    case 1:
+                        // Owner
+                        break;
+                    case 2:
+                        // Editor
+                        $request['isEditor'] = TRUE;
+                        break;
+                    case 3:
+                        // Viewer
+                        $request['isViewer'] = TRUE;
+                        break;
+                    default: 
+                        // default 
+                }
             }
 
-        }elseif ($syllabus_id != null) {
+        } elseif ($syllabus_id != null) {
+            $syllabus = Syllabus::find($syllabus_id);
             // get all users for the syllabus
-            $allSyllabusUsers = Syllabus::join('syllabi_users', 'syllabi.id', '=', 'syllabi_users.syllabus_id')
-                                    ->join('users', 'syllabi_users.user_id', '=', 'users.id')
-                                    ->select('syllabi_users.user_id')
-                                    ->where('syllabi.id', '=', $syllabus_id)->get();
-            
-            $usersArray = array();
-            $usersArray = $this->populateUsersArray($allSyllabusUsers, $usersArray);
-
-            if ($this->denyAccess($usersArray)) {
-                $request->session()->flash('error', 'You do not have access to this Syllabus');
-                return redirect()->route('home');
-            }
+            $syllabusUsers = Syllabus::find($syllabus_id)->users;
+            // check if the current user belongs to this syllabus
+            if (!in_array($user->id, $syllabusUsers->pluck('id')->toArray())) {
+                // user does not belong to this syllabus
+                $request->session()->flash('error', 'You do not have access to this syllabus');
+                return redirect()->route('home'); 
+            } 
         }
 
         return $next($request);
-    }
-
-    public function populateUsersArray($allUsers, $usersArray) {
-        foreach ($allUsers as $user) {
-            $usersArray[] += $user->user_id; 
-        }
-        return $usersArray;
-    }
-
-    public function denyAccess($usersArray) {
-        $currentUser = User::where('id',Auth::id())->first();
-        // check if current user belongs to the course 
-        if (!in_array($currentUser->id, $usersArray)) {
-            return TRUE;
-        }
     }
 }

@@ -35,14 +35,25 @@ class CourseWizardController extends Controller
         $this->middleware('hasAccess');
     }
 
-    public function step1($course_id)
+    public function step1($course_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('courseWizard.step7', $course_id);
+        }
         //for header
         $user = User::where('id',Auth::id())->first();
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
+        // returns a collection of courses associated with users 
+        $myCourses = $user->courses;
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -60,18 +71,31 @@ class CourseWizardController extends Controller
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
         $course =  Course::where('course_id', $course_id)->first();
 
-        return view('courses.wizard.step1')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount);
+        return view('courses.wizard.step1')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer);
 
     }
 
-    public function step2($course_id)
+    public function step2($course_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('courseWizard.step7', $course_id);        
+        }
+
         //for header
         $user = User::where('id',Auth::id())->first();
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
+        // returns a collection of courses associated with users 
+        $myCourses = $user->courses;
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -91,19 +115,32 @@ class CourseWizardController extends Controller
         $totalWeight = AssessmentMethod::where('course_id', $course_id)->sum('weight');
         $course =  Course::where('course_id', $course_id)->first();
 
-        return view('courses.wizard.step2')->with('a_methods', $a_methods)->with('course', $course)->with("totalWeight", $totalWeight)->with('courseUsers', $courseUsers)->with('user', $user)->with('custom_methods',$custom_methods)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount);
+        return view('courses.wizard.step2')->with('a_methods', $a_methods)->with('course', $course)->with("totalWeight", $totalWeight)->with('courseUsers', $courseUsers)
+        ->with('user', $user)->with('custom_methods',$custom_methods)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer);
 
 
     }
 
-    public function step3($course_id)
+    public function step3($course_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('courseWizard.step7', $course_id);
+        }
         //for header
         $user = User::where('id',Auth::id())->first();
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
+        // returns a collection of courses associated with users 
+        $myCourses = $user->courses;
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -122,18 +159,31 @@ class CourseWizardController extends Controller
         $custom_activities = Custom_learning_activities::select('custom_activities')->get();
         $course =  Course::where('course_id', $course_id)->first();
 
-        return view('courses.wizard.step3')->with('l_activities', $l_activities)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('custom_activities',$custom_activities)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount);
+        return view('courses.wizard.step3')->with('l_activities', $l_activities)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)
+        ->with('custom_activities',$custom_activities)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer);
 
     }
 
-    public function step4($course_id)
+    public function step4($course_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('courseWizard.step7', $course_id);
+        }
         //for header
         $user = User::where('id',Auth::id())->first();
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
+        // returns a collection of courses associated with users 
+        $myCourses = $user->courses;
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
@@ -153,14 +203,31 @@ class CourseWizardController extends Controller
         $l_activities = LearningActivity::where('course_id', $course_id)->get();
         $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
 
-        return view('courses.wizard.step4')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('l_activities', $l_activities)->with('a_methods', $a_methods)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount);
+        return view('courses.wizard.step4')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('l_activities', $l_activities)->with('a_methods', $a_methods)
+        ->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
     // Program Outcome Mapping
-    public function step5($course_id)
+    public function step5($course_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('courseWizard.step7', $course_id);
+        }
         // for header
         $user = User::where('id',Auth::id())->first();
+        // returns a collection of courses associated with users 
+        $myCourses = $user->courses;
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
         $course = Course::find($course_id);
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
@@ -175,13 +242,29 @@ class CourseWizardController extends Controller
                                 ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
 
-        return view('courses.wizard.step5')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount);
+        return view('courses.wizard.step5')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers);
     }
 
-    public function step6($course_id)
+    public function step6($course_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('courseWizard.step7', $course_id);
+        }
         // for header
         $user = User::where('id',Auth::id())->first();
+        // returns a collection of courses associated with users 
+        $myCourses = $user->courses;
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
         $course = Course::find($course_id);
         $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
@@ -228,13 +311,31 @@ class CourseWizardController extends Controller
         "Content from Indigenous scholars and communities and/or equity-seeking and marginalized groups","Inclusion of de-colonial approaches to science through Indigenous and community traditional knowledge and 'authorship'","Knowledge, awareness and skills related to the relationship between climate change and food systems",
         "Climate-related mental health content","Applied learning opportunities grounded in the personal, local and regional community (e.g. flood and wildfire impacted communities in BC)");
 
-        return view('courses.wizard.step6')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('bc_labour_market',$bc_labour_market)->with('shaping_ubc',$shaping_ubc)->with('ubc_mandate_letters',$ubc_mandate_letters)->with('okanagan_2040_outlook',$okanagan_2040_outlook)->with('ubc_indigenous_plan',$ubc_indigenous_plan)->with('ubc_climate_priorities',$ubc_climate_priorities)->with('shaping_ubc_link',$shaping_ubc_link);
+        return view('courses.wizard.step6')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
+        ->with('bc_labour_market',$bc_labour_market)->with('shaping_ubc',$shaping_ubc)->with('ubc_mandate_letters',$ubc_mandate_letters)->with('okanagan_2040_outlook',$okanagan_2040_outlook)
+        ->with('ubc_indigenous_plan',$ubc_indigenous_plan)->with('ubc_climate_priorities',$ubc_climate_priorities)->with('shaping_ubc_link',$shaping_ubc_link)
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers);
     }
     
-    public function step7($course_id)
+    public function step7($course_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            $isViewer = true;
+        }
         //for header
         $user = User::where('id',Auth::id())->first();
+        // returns a collection of courses associated with users 
+        $myCourses = $user->courses;
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
         $course =  Course::find($course_id);
         $oActCount = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
@@ -299,7 +400,9 @@ class CourseWizardController extends Controller
             $assessmentMethodsTotal += $a_method->weight;
         }
         
-        return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)->with('standardsOutcomeMap', $standardsOutcomeMap);
+        return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)
+        ->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)
+        ->with('standardsOutcomeMap', $standardsOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers);
     }
 
 }

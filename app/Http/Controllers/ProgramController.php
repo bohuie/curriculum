@@ -78,8 +78,8 @@ class ProgramController extends Controller
         $program->faculty = $request->input('faculty');
         $program->status = -1;
 
-        $programuser = new ProgramUser;
-        $programuser->user_id = $request->input('user_id');
+        $programUser = new ProgramUser;
+        $programUser->user_id = $request->input('user_id');
         
         if($program->save()){
             $request->session()->flash('success', 'New program added');
@@ -87,8 +87,10 @@ class ProgramController extends Controller
             $request->session()->flash('error', 'There was an error Adding the program');
         }
 
-        $programuser->program_id = $program->program_id;
-        $programuser->save();
+        $programUser->program_id = $program->program_id;
+        // assign the creator of the program the owner permission
+        $programUser->permission = 1;
+        $programUser->save();
         
         // $adminRole = Role::where('role','administrator')->first();
         // $user = User::where('id', Auth::id())->first();
@@ -166,15 +168,22 @@ class ProgramController extends Controller
      */
     public function destroy(Request $request, $program_id)
     {
-        //
-        $p = Program::where('program_id', $program_id);
-        
-        if($p->delete()){
-            $request->session()->flash('success','Program has been deleted');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting the program');
+        // find the program to delete
+        $program = Program::find($program_id);
+        // find the current user
+        $currentUser = User::find(Auth::id());
+        //get the current users permission level for the program delete
+        $currentUserPermission = $currentUser->programs->where('program_id', $program_id)->first()->pivot->permission;
+        // if the current user own the program, then try to delete it
+        if ($currentUserPermission == 1) {
+            if($program->delete()){
+                $request->session()->flash('success','Program has been deleted');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the program');
+            }
+        } else {
+            $request->session()->flash('error','You do not have permission to delete this program');
         }
-
         return redirect()->route('home');
     }
 
