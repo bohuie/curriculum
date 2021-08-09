@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Charts\SampleChart;
-
+use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
+use Database\Seeders\MappingScaleSeeder;
 use Illuminate\Support\Facades\DB;
+use Mockery\Undefined;
 
 class ChartController extends Controller
 {
@@ -50,93 +52,149 @@ class ChartController extends Controller
         $uncatPLOS = ProgramLearningOutcome::where('program_id', $program_id)->whereNull('plo_category_id')->get();
         
         $all_plos = $plos_order->toBase()->merge($uncatPLOS);
-
         //dd($all_plos);
         /*
         2. For loop over the PLOs in program
             - foreach pl_outcome_id as $plo_id in $all_plos
             - here we will have a list of PLOs for a program - in a collection I think
         */
+        $mapScales_ids = array();
+        
         foreach($all_plos as $plo){
             /*
             3. Get map scale ids ($ms_ids)
                 - Query outcome_maps table -> all map_scale_value where pl_outcome_id = $plo_id
                 - here we want a set of map_scale_ids (ex. [1, 1, 2, 3, 3, 1, 2, 2])
             */
-            //NOTE: map_scale_value changed to map_scale_id
-            $ms_ids[$plo->pl_outcome_id] = OutcomeMap::where('pl_outcome_id', $plo->pl_outcome_id)->pluck('map_scale_value');
             
-            // PR testing_and_staging -> data-visualization for new map_scale_id change
-
-            /*
-            4. For loop over the mappings of a PLO
-                - foreach map_scale_id as $ms_id in $ms_ids
-                - here we will want 3 I's, 4 D's, and 2 A's (ex. [I, I, D, A, A, I, D, D]) - in a array? collection?
-
+            $mapScales_ids_perPLO[$plo->pl_outcome_id] = OutcomeMap::where('pl_outcome_id', $plo->pl_outcome_id)->pluck('map_scale_id')->toArray();
+            $mapScales_ids_perPID[$plo->pl_outcome_id] = MappingScaleProgram::where('program_id', $program_id)->pluck('map_scale_id')->toArray();
+        }
+        //dd($mapScales_ids_perPID);
+        /*
+        4. For loop over the mappings of a PLO
+            - foreach map_scale_id as $ms_id in $ms_ids
+            - here we will want 3 I's, 4 D's, and 2 A's (ex. [I, I, D, A, A, I, D, D]) - in a array? collection?
+        */
+        $count_ms_id = array();
+        foreach($mapScales_ids_perPLO as $plOutcomeId => $mapScale_ids){
+            
+            foreach($mapScale_ids as $index => $mapScale_id)
+            {
+                /*
                 5. Get abbreviation ($ms_abbreviation) for current map scale id
                     - Query mapping_scales table -> abbreviation where map_scale_id = $ms_id
                     - this will return I/D/A ... etc.
-
-        */
-
+                
+               */
+                //query for abbreviations
+                $ms_colour = MappingScale::where('map_scale_id', $mapScale_id)->pluck('colour')->first();
+                $ms_abbreviation = MappingScale::where('map_scale_id', $mapScale_id)->pluck('abbreviation')->first();
+                
+                $count_ms = MappingScaleProgram::where('map_scale_id', $mapScale_id)->count();
+                //dd($count_ms);
+                //initialize to 0, this will hold the counts of the map scales
+                $count_ms_id[$plOutcomeId][$mapScale_id]['count'] = 0;
+                //store the map scale's chart background colour
+                $count_ms_id[$plOutcomeId][$mapScale_id]["bg_colour"] = $this->convertHexToRGBA($ms_colour, "0.5");
+                //store the map scale's chart border colour
+                $count_ms_id[$plOutcomeId][$mapScale_id]["border_colour"] = $this->convertHexToRGBA($ms_colour, "1");
+                //store the map scale's abbreviation
+                $count_ms_id[$plOutcomeId][$mapScale_id]["abv"] = $ms_abbreviation;
+            }
+            //dd($count_ms_id);
+            /*
+            6. Get count/frequency of each abbreviation ($count_ms_id)
+            - Get the count of all map_scale_id in the map_scale_category that the current map_scale_id is in.
+            */
+            
+            foreach($mapScale_ids as $index => $mapScale_id)
+            {
+                //dd($mapScales_ids_perPLO[$plOutcomeId]);
+                //if(!(array_key_exists($mapScale_id, $mapScales_ids_perPLO[$plOutcomeId]))){
+                    //$count_ms_id[$plOutcomeId][$mapScale_id] = 0;
+                //}else{
+                    
+                    if($count_ms_id[$plOutcomeId][$mapScale_id]["count"] == 0 ){
+                        $count_ms_id[$plOutcomeId][$mapScale_id]["count"] = 1;
+                    }else{
+                        $count_ms_id[$plOutcomeId][$mapScale_id]["count"] += 1;
+                    }
+                    
+                //}
+            }
+            
         }
-        dd($ms_ids);
+        dd($count_ms_id);
+        $labels = array();
+        foreach($all_plos as $plo){
+            $labels[] = $plo->plo_shortphrase;
+        }
+        //dd($labels);
         
         
         
-
-        $map_scale_ids = DB::table('mapping_scale_programs')->where('program_id', 1)->pluck('map_scale_id');
-        
-        //dd($map_scale_ids);
-
-        //$map_scales = array();
-
-        //foreach($map_scale_ids as $ms_ids){
-            $map_scales = DB::table('mapping_scales')->where('map_scale_id', $map_scale_ids)->get();
-        //}
-        
-        
-        //dd($map_scales);
-
         $chart = new SampleChart;
-        $chart->labels(['I', 'D', 'A', 'N/A']);
-
-        //need to pull these from the categories table but as a test hardcoded.
-        $hex1 = '#80bdff';
-        $hex2= '#1aa7ff';
-        $hex3 = '#0065bd';
-
-        //hex to [r,g,b]
-        list($r1, $g1, $b1) = sscanf($hex1, "#%02x%02x%02x");
-        list($r2, $g2, $b2) = sscanf($hex2, "#%02x%02x%02x");
-        list($r3, $g3, $b3) = sscanf($hex3, "#%02x%02x%02x");
-
-        //[r,g,b] to rgba
-        //background
-        $bgtransp = '0.5';
-        $bg1= 'rgba('.$r1.', '.$g1.', '.$b1.', '.$bgtransp.')';
-        $bg2= 'rgba('.$r2.', '.$g2.', '.$b2.', '.$bgtransp.')';
-        $bg3= 'rgba('.$r3.', '.$g3.', '.$b3.', '.$bgtransp.')';
-        //border
+        //$chart->labels(['PLO1', 'PLO2', 'PLO3', 'PLO4']);
+        $chart->labels($labels);
         
-        $bord1= 'rgba('.$r1.', '.$g1.', '.$b1.', 1)';
-        $bord2= 'rgba('.$r2.', '.$g2.', '.$b2.', 1)';
-        $bord3= 'rgba('.$r3.', '.$g3.', '.$b3.', 1)';
-        
+        foreach($count_ms_id as $poi => $ms){
+            foreach($ms as $ms_id => $msi)
+            {
+                //dd($ms[$ms_id]);
+                //add dataset 1
+                $chart->dataset(
+                    $ms[$ms_id]['abv'],  //dataset name
+                    'bar',       //data (chart) type
+                    [4, 3, 2, 1] //data
+                    )
+                    ->options([
+                    'backgroundColor'=>( $ms[$ms_id]['bg_colour']),
+                    'borderColor'=>( $ms[$ms_id]['border_colour']),
+                ]);
+            }
+        }
+        /*
+        $bg1 = $this->convertHexToRGBA('#80bdff', '0.5');
+        $bg2 = $this->convertHexToRGBA('#1aa7ff', '0.5');
+        $bg3 = $this->convertHexToRGBA('#0065bd', '0.5');
 
-        $chart->dataset('EX101', 'bar',[1, 2, 3, 4])
+        $bord1 = $this->convertHexToRGBA('#80bdff', '1');
+        $bord2 = $this->convertHexToRGBA('#1aa7ff', '1');
+        $bord3 = $this->convertHexToRGBA('#0065bd', '1');
+
+        //add dataset 1
+        $chart->dataset(
+            'I',  //dataset name
+            'bar',       //data (chart) type
+            [4, 3, 2, 1] //data
+            )
             ->options([
-                'backgroundColor'=>([
-                            $bg1,
-                            $bg2,
-                            $bg3,
-                            'rgba(255,255,255, '.$bgtransp.')']),
-            'borderColor'=>([
-                            $bord1,
-                            $bord2,
-                            $bord3,
-                            '#000']),
-                        ]);
+            'backgroundColor'=>($bg1),
+            'borderColor'=>($bord1),
+        ]);
+        //add dataset 2
+        $chart->dataset(
+            'D',  //dataset name
+            'bar',       //data (chart) type
+            [2, 2, 4, 1] //data
+            )
+            ->options([
+            'backgroundColor'=>($bg2),
+            'borderColor'=>($bord2),
+        ]);
+        // add dataset 3
+        $chart->dataset(
+            'A', //dataset name
+            'bar',      //data (chart) type
+            [1, 1, 5, 1] //data
+            )
+            ->options([
+            'backgroundColor'=>($bg3),
+            'borderColor'=>($bord3),
+        ]);
+        */
+        //make the scale always step size (increment) of 1
         $chart->options([
             'scales' => [
                 'yAxes' => [
@@ -146,11 +204,22 @@ class ChartController extends Controller
                         ],
                     ],
                 ],
+                
             ]]);
         $chart->displayLegend(false);
-        $chart->title('My Test Chart', 20, '#666',true, 'Arial');
+        $chart->title('PLO Mapping Chart', 20, '#666', true, 'Arial');
 
 
         return view('pages.chart', compact('chart'));
+    }
+    public function convertHexToRGBA($hexColour, $transparency){
+        
+        //hex to [r,g,b]
+        list($r1, $g1, $b1) = sscanf($hexColour, "#%02x%02x%02x");
+
+        //[r,g,b] to rgba
+        $new_rgb = 'rgba('.$r1.', '.$g1.', '.$b1.', '.$transparency.')';
+
+        return $new_rgb;
     }
 }
