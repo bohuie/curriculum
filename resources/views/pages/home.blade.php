@@ -204,7 +204,7 @@
                             <!-- Displays 'My Programs' -->
                             @if (count($myPrograms->where('userPermission', 2)) > 0)
                             <tr>
-                                <th colspan="6" class="table-secondary">Editable Programs</th>
+                                <th colspan="6" class="table-secondary">Programs I Can Edit</th>
                             </tr>
                             @endif
                             @foreach ($myPrograms->where('userPermission', 2)->values() as $index => $program) 
@@ -242,7 +242,7 @@
                             <!-- Displays 'My Programs' -->
                             @if (count($myPrograms->where('userPermission', 3)) > 0)
                             <tr>
-                                <th colspan="6" class="table-secondary">View Only Programs</th>
+                                <th colspan="6" class="table-secondary">Programs I Can View</th>
                             </tr>
                             @endif
                             @foreach ($myPrograms->where('userPermission', 3)->values() as $index => $program) 
@@ -534,7 +534,7 @@
                                 <!-- Displays 'My Courses' -->
                                 @if (count($myCourses->where('userPermission', 2)) > 0)
                                     <tr>
-                                        <th colspan="8" class="table-secondary">Editable Courses</th>
+                                        <th colspan="8" class="table-secondary">Courses I Can Edit</th>
                                     </tr>
                                 @endif
                                 @foreach ($myCourses->where('userPermission', 2)->values() as $index => $course)
@@ -635,7 +635,7 @@
                                 <!-- Displays 'My Courses' -->
                                 @if (count($myCourses->where('userPermission', 3)) > 0)
                                     <tr>
-                                        <th colspan="8" class="table-secondary">View Only Courses</th>
+                                        <th colspan="8" class="table-secondary">Courses I Can View</th>
                                     </tr>
                                 @endif
                                 @foreach ($myCourses->where('userPermission', 3)->values() as $index => $course)
@@ -943,7 +943,7 @@
                                 <!--Displays MySyllabus-->
                                 @if (count($mySyllabi->where('userPermission', 2)) > 0)
                                     <tr>
-                                        <th colspan="6" class="table-secondary">Editable Syllabi</th>
+                                        <th colspan="6" class="table-secondary">Syllabi I Can Edit</th>
                                     </tr>
                                 @endif
                                 @foreach ($mySyllabi->where('userPermission', 2)->values() as $index => $syllabus)
@@ -977,7 +977,7 @@
                                 <!--Displays MySyllabus-->
                                 @if (count($mySyllabi->where('userPermission', 3)) > 0)
                                     <tr>
-                                        <th colspan="6" class="table-secondary">View Only Syllabi</th>
+                                        <th colspan="6" class="table-secondary">Syllabi I Can View</th>
                                     </tr>
                                 @endif
                                 @foreach ($mySyllabi->where('userPermission', 3)->values() as $index => $syllabus)
