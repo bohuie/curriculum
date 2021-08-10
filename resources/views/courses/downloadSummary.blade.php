@@ -253,19 +253,23 @@
                                 </tr>
                             
                                 @if ($courseProgram->ploCategories->count() > 0)
+                                    <?php $pos = 0 ?>
                                     @foreach ($courseProgram->ploCategories as $ploCategory) 
-                                        <tr>
-                                            <td colspan="2" class="active">{{$ploCategory->plo_category}}</td>
-                                        </tr>
-                                        @foreach ($ploCategory->plos as $index => $plo)
+                                        @if ($ploCategory->plos->count() > 0)
                                             <tr>
-                                                <td style="width:5%" >{{($index++) + 1}}</td>
-                                                <td>
-                                                    <strong>{{$plo->plo_shortphrase}}</strong><br>
-                                                    {{$plo->pl_outcome}}
-                                                </td>
+                                                <td colspan="2" class="active">{{$ploCategory->plo_category}}</td>
                                             </tr>
-                                        @endforeach
+                                            @foreach ($ploCategory->plos as $index => $plo)
+                                                <?php $pos++ ?>
+                                                <tr>
+                                                    <td style="width:5%" >{{$pos}}</td>
+                                                    <td>
+                                                        <strong>{{$plo->plo_shortphrase}}</strong><br>
+                                                        {{$plo->pl_outcome}}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                     @endforeach
                                     <tr>
                                         <td class="active" colspan="2">Uncategorized PLOs</td>
@@ -273,7 +277,7 @@
                                     @foreach ($courseProgram->programLearningOutcomes as $plo) 
                                         @if (!isset($plo->category))
                                             <tr>
-                                                <td>{{($index++) + 1}}</td>
+                                                <td>{{($pos++) + 1}}</td>
                                                 <td>
                                                     <strong>{{$plo->plo_shortphrase}}</strong><br>
                                                     {{$plo->pl_outcome}}
@@ -339,7 +343,9 @@
                                     <tr>
                                         <td></td>
                                         @foreach ($courseProgram->ploCategories as $ploCategory)
-                                            <td class="active" colspan="{{$ploCategory->plos->count()}}">{{$ploCategory->plo_category}}</td>
+                                            @if ($ploCategory->plos->count() > 0)
+                                                <td class="active" colspan="{{$ploCategory->plos->count()}}">{{$ploCategory->plo_category}}</td>
+                                            @endif
                                         @endforeach
                                         <td colspan="{{$courseProgram->programLearningOutcomes->count() - $courseProgram->numPlosCategorized}}"></td>
                                     </tr>

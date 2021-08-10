@@ -320,7 +320,9 @@
                                                         <tr>
                                                             <td></td>
                                                             @foreach ($courseProgram->ploCategories as $ploCategory)
-                                                                <td class="table-active w-auto" colspan="{{$ploCategory->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$ploCategory->plo_category}}</td>
+                                                                @if ($ploCategory->plos->count() > 0)
+                                                                    <td class="table-active w-auto" colspan="{{$ploCategory->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$ploCategory->plo_category}}</td>
+                                                                @endif
                                                             @endforeach
                                                             <td colspan="{{$courseProgram->programLearningOutcomes->count() - $courseProgram->numPlosCategorized}}"></td>
                                                         </tr>
