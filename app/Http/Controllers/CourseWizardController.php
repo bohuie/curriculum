@@ -18,6 +18,8 @@ use App\Models\OutcomeAssessment;
 use App\Models\LearningActivity;
 use App\Models\OptionalPriorities;
 use App\Models\MappingScale;
+use App\Models\OptionalPriorityCategories;
+use App\Models\OptionalPrioritySubcategories;
 use App\Models\PLOCategory;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Standard;
@@ -286,12 +288,21 @@ class CourseWizardController extends Controller
         // get mapping scales associated with course
         $mappingScales = StandardScale::where('scale_category_id', $course->scale_category_id)->get();
 
+        /////////////////////////////
+        $optionalPriorityCategories = OptionalPriorityCategories::all();
+        $optionalPrioritySubcategories = OptionalPrioritySubcategories::all();
+        $optionalPriories = OptionalPriorities::all();
+        //dd($optionalPriorityCategories, $optionalPrioritySubcategories, $optionalPriories);
+        $opStored = CourseOptionalPriorities::where('course_id', $course_id)->pluck('op_id')->toArray();
+        /////////////////////////////
+
         //get optional priorities for each subcategory
         $number_of_optional_priority_subcats = 6;
         $optional_priorities = array();
         for ($i = 1; $i <= $number_of_optional_priority_subcats; $i++) {
             $optional_priorities[] = OptionalPriorities::where('subcat_id', $i)->pluck('optional_priority')->toArray();
         }
+
 
         //retrieve descriptions for the optional priorities which belong to the course being edited
         $course_optional_priorities_op_ids = CourseOptionalPriorities::where('course_id', $course_id)->pluck('op_id');
@@ -301,7 +312,9 @@ class CourseWizardController extends Controller
                                         ->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
                                         ->with('bc_labour_market',$optional_priorities[1])->with('shaping_ubc',$optional_priorities[2])->with('ubc_mandate_letters',$optional_priorities[0])->with('okanagan_2040_outlook',$optional_priorities[3])
                                         ->with('ubc_indigenous_plan',$optional_priorities[4])->with('ubc_climate_priorities',$optional_priorities[5])->with('optional_PLOs',$course_optional_priorities_descriptions)
-                                        ->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers);
+                                        ->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)
+                                        ->with('optionalPriorityCategories', $optionalPriorityCategories)->with('optionalPrioritySubcategories', $optionalPrioritySubcategories)->with('optionalPriories', $optionalPriories)
+                                        ->with('opStored', $opStored);
     }
     
     public function step7($course_id, Request $request)
