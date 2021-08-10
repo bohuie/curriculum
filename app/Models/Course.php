@@ -172,9 +172,10 @@ class Course extends Model
         DB::table('outcome_activities')->whereIn('l_activity_id', $setDel)->delete();
     }
 
-    public function optionalPriorities() {
-        return $this->hasMany(Optional_priorities::class, 'course_id', 'course_id');
+    public function optionalPriorities(){
+        return $this->belongsToMany(OptionalPriorities::class, 'course_optional_priorities', 'course_id', 'op_id');
     }
+
 }
 
 

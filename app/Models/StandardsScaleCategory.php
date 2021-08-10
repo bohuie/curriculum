@@ -23,7 +23,7 @@ class StandardsScaleCategory extends Model
         return $this->hasMany(Course::class, 'scale_category_id', 'scale_category_id');
     }
 
-    public function ministryStandardScales()
+    public function standardScales()
     {        
         return $this->hasMany(StandardScale::class, 'scale_category_id', 'scale_category_id');
     }

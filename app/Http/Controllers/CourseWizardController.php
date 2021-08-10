@@ -20,7 +20,6 @@ use App\Models\OptionalPriorities;
 use App\Models\MappingScale;
 use App\Models\PLOCategory;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Optional_priorities;
 use App\Models\Standard;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;

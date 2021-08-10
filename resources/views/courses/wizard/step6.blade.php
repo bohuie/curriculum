@@ -44,7 +44,7 @@
                                     <!-- Ministry Standards mapping scale -->
                                     <div class="container row">
                                         <div class="col">
-                                            @if(count($course->standardScalesCategory->standardScales)>0)
+                                            @if($course->standardScalesCategory->standardScales->count() > 0)
                                                 <table class="table table-bordered table-sm">
                                                     <thead>
                                                         <tr>
@@ -188,138 +188,7 @@
                         <form id="optinal" action="{{route('storeOptionalPLOs')}}" method="POST">
                             {{ csrf_field() }}
 
-                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
 
-                            <div class="accordion" id="PrioritiesAccordions">
-                                <div class="accordion-item mb-2">
-                                    <h2 class="accordion-header" id="ministryPrioritiesHeader">
-                                        <button class="accordion-button white-arrow program collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinistryPriorities" aria-expanded="false" aria-controls="collapseMinistryPriorities">
-                                            Ministry of Advanced Education and Skills Training
-                                        </button>
-                                    </h2>
-
-                                    <div id="collapseMinistryPriorities" class="accordion-collapse collapse" aria-labelledby="ministryPrioritiesHeader" data-bs-parent="#PrioritiesAccordions">
-                                        <div class="accordion-body">
-                                            <!-- UBCs mandate by the ministry -->
-                                            <h6 class="fw-bold mb-3">UBC's Mandate by the Ministry</h6>
-                                            <p>UBC's mandate letter (see <a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-administration/mandate-letters" target="_blank"><i class="bi bi-box-arrow-up-right"></i> mandate letter here </a>)
-                                                calls for the below, as they relate to curriculum:</p>
-                                            <table class="table table-hover optionalPLO" id="ubcMandate" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                    <th data-field="state" data-checkbox="true"></th>
-                                                    <th data-field="Description">Description</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($ubc_mandate_letters as $index => $letter)
-                                                    <tr>
-                                                    <td>
-
-                                                        @if (in_array($letter,$optional_PLOs))
-                                                            <input type="checkbox" name = "optionalItem[]" value="{{$letter}}" checked>
-                                                        @else
-                                                            <input type="checkbox" name = "optionalItem[]" value="{{$letter}}">
-                                                        @endif
-
-                                                    </td>
-                                                    <td>
-                                                        {!!$letter!!}
-                                                        <!--
-                                                        @if($index == 0)
-                                                            <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                        @elseif($index == 1)
-                                                            <a href="https://cleanbc.gov.bc.ca/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                        @elseif($index == 6)
-                                                            <a href="https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_Labour_Market_Outlook_2019.pdf.aspx" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                        @endif-->
-                                                    </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                            <!-- BC Labour Market -->
-                                            <h6 class="fw-bold mb-3">
-                                                BC's Labour Market: Top skills in Demand
-                                            </h6>
-                                            <p>BC's tops skills in demand,as forecasted to the year 2029 by the <a href="https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_Labour_Market_Outlook_2019.pdf.aspx" target="_blank"><i class="bi bi-box-arrow-up-right"></i> BC Labour Market Outlook (page 46)</a>
-                                                , are the following:
-                                            </p>
-                                            
-                                            <table class="table table-hover optionalPLO" id="LabourMarket" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                    <th data-field="state" data-checkbox="true"></th>
-                                                    <th data-field="Description">Description</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($bc_labour_market as $index => $skill)
-                                                    <tr>
-                                                        <td>
-                                                            @if (in_array($skill,$optional_PLOs))
-                                                                <input type="checkbox" name = "optionalItem[]" value="{{$skill}}" checked>
-                                                            @else
-                                                                <input type="checkbox" name = "optionalItem[]" value="{{$skill}}">
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            
-                                                            {{$skill}}
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-
-                                            <p>Additionally, BC expects <a href="https://www.workbc.ca/Labour-Market-Industry/Jobs-in-Demand/High-Demand-Occupations.aspx" target="_blank"><i class="bi bi-box-arrow-up-right"></i> these occupations to be of "High Opportunity"</a> in the province. Does your course/program align with a High Opportunity Occupation in BC ?
-                                            <select id="highOpportunity" class="highOpportunity">
-                                                <option value="1">Yes</option>
-                                                <option value="0">No</option>
-                                            </select>
-                                        </div>
-                                    </div>                                                                            
-                                </div>
-
-                                <div class="accordion-item mb-2">
-                                    <h2 class="accordion-header" id="UBCPrioritiesHeader">
-                                        <button class="accordion-button white-arrow program collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUBCPriorities" aria-expanded="false" aria-controls="collapseUBCPriorities">
-                                            UBC Strategic Priorities
-                                        </button>
-                                    </h2>
-
-                                    <div id="collapseUBCPriorities" class="accordion-collapse collapse" aria-labelledby="UBCPrioritiesHeader" data-bs-parent="#PrioritiesAccordions">
-                                        <div class="accordion-body">
-                                            <h6 class="fw-bold mt-4 mb-4"><a href="https://strategicplan.ubc.ca/" target="_blank">
-                                                <i class="bi bi-box-arrow-up-right"></i> Shaping UBCs next Century</a>
-                                            </h6>
-
-                                                <table class="table table-hover optionalPLO" id="ubcStrategy" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                    <thead class="thead-light">
-                                                        <tr>
-                                                        <th data-field="state" data-checkbox="true"></th>
-                                                        <th data-field="Description">Description</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($shaping_ubc as $index => $strategy)
-                                                        <tr>
-                                                        <td>
-                                                            @if (in_array($strategy,$optional_PLOs))
-                                                                <input type="checkbox" name= "optionalItem[]" value="{{$strategy}}" checked>
-                                                            @else
-                                                                <input type="checkbox" name= "optionalItem[]" value="{{$strategy}}">
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @php
-                                                                echo $strategy;
-                                                            @endphp
-                                                        </td>
-                                                        </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
 
                                                                     <input type="hidden" name="course_id" value="{{$course->course_id}}">
 
@@ -357,14 +226,7 @@
 
                                                                                             </td>
                                                                                             <td>
-                                                                                                {{$letter}}
-                                                                                                @if($index == 0)
-                                                                                                    <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                                                                @elseif($index == 1)
-                                                                                                    <a href="https://cleanbc.gov.bc.ca/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                                                                @elseif($index == 6)
-                                                                                                    <a href="https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_Labour_Market_Outlook_2019.pdf.aspx" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                                                                @endif
+                                                                                                {!! $letter !!}
                                                                                             </td>
                                                                                             </tr>
                                                                                             @endforeach
@@ -444,11 +306,8 @@
                                                                                                     @endif
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    <a href ="{{$shaping_ubc_link[$index]}}" target="_blank">Strategy {{$index + 1}}: </a>
-                                                                                                    {{$strategy}}
-                                                                                                    @if($index == 17)
-                                                                                                        <a href="https://www.alumni.ubc.ca/about/strategic-plan/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Connecting Forward.</a>
-                                                                                                    @endif
+                                                                                                    {!! $strategy !!}
+                                                                                                    
                                                                                                 </td>
                                                                                                 </tr>
                                                                                                 @endforeach
