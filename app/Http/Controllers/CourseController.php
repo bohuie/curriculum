@@ -464,8 +464,15 @@ class CourseController extends Controller
         foreach ($course->assessmentMethods as $a_method) {
             $assessmentMethodsTotal += $a_method->weight;
         }
+
+        // get subcategories for optional priorities
+        $optionalPriorities = $course->optionalPriorities;
+        $optionalSubcategories = array();
+        foreach ($optionalPriorities as $optionalPriority) {
+            $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
+        }
         
-        $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps')) ;
+        $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
 
         return $pdf->download('summary.pdf');
     }
