@@ -289,13 +289,11 @@ class CourseWizardController extends Controller
         // get mapping scales associated with course
         $mappingScales = StandardScale::where('scale_category_id', $course->scale_category_id)->get();
 
-        /////////////////////////////
         $optionalPriorityCategories = OptionalPriorityCategories::all();
         $optionalPrioritySubcategories = OptionalPrioritySubcategories::all();
         $optionalPriories = OptionalPriorities::all();
         //dd($optionalPriorityCategories, $optionalPrioritySubcategories, $optionalPriories);
         $opStored = CourseOptionalPriorities::where('course_id', $course_id)->pluck('op_id')->toArray();
-        /////////////////////////////
 
         //get optional priorities for each subcategory
         $number_of_optional_priority_subcats = 6;
@@ -303,6 +301,7 @@ class CourseWizardController extends Controller
         for ($i = 1; $i <= $number_of_optional_priority_subcats; $i++) {
             $optional_priorities[] = OptionalPriorities::where('subcat_id', $i)->pluck('optional_priority')->toArray();
         }
+        
 
 
         //retrieve descriptions for the optional priorities which belong to the course being edited

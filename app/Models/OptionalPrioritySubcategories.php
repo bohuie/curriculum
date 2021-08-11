@@ -20,7 +20,7 @@ class OptionalPrioritySubcategories extends Model
         'subcat_name',
         'subcat_desc',
         'cat_id',
-        'sub_postamble'
+        'subcat_postamble'
         //'input_status',
     ];
     

@@ -5,12 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-
 class MappingScale extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\HasIdentifiableAttribute;
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
-    protected $primaryKey = 'map_scale_id';    
+    protected $table = 'mapping_scales';
+    protected $primaryKey = 'map_scale_id';
+    
+    protected $fillable = ['map_scale_id', 'title','abbreviation','description','colour','mapping_scale_categories_id'];
 
     public function programs()
     {

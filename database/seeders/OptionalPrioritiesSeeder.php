@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\OptionalPriorities;
 use App\Models\OptionalPrioritySubcategories;
@@ -10,13 +11,17 @@ use App\Models\OptionalPriorityCategories;
 
 class OptionalPrioritiesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
+        /**
+         * Run the database seeds.
+         *
+         * @return void
+         */
+        public function run()
+        {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::table('optional_priorities')->truncate();
+        DB::table('optional_priority_subcategories')->truncate();
+        DB::table('optional_priority_categories')->truncate();
         //start with categories. there are 2
         $opcat1 = new OptionalPriorityCategories;
         $opcat1->cat_id = 1;
@@ -34,8 +39,8 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->cat_id = 1;
         $osc->subcat_name = "UBC's Mandate by the Ministry";
         $osc->subcat_desc = "UBC's mandate letter (see <a href=\"https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-
-                            administration/mandate-letters\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> mandate letter here </a>)
-                            calls for the below, as they relate to curriculum:";
+                                administration/mandate-letters\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> mandate letter here </a>)
+                                calls for the below, as they relate to curriculum:";
         $osc->subcat_postamble = "";
         $osc->save();
         
@@ -44,8 +49,8 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->cat_id = 1;
         $osc->subcat_name = "BC's Labour Market: Top skills in Demand";
         $osc->subcat_desc = "BC's tops skills in demand,as forecasted to the year 2029 by the <a href=\"https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_
-                            Labour_Market_Outlook_2019.pdf.aspx\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> BC Labour Market Outlook (page 46)</a>
-                            , are the following:";
+                                Labour_Market_Outlook_2019.pdf.aspx\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> BC Labour Market Outlook (page 46)</a>
+                                , are the following:";
         $osc->subcat_postamble = "Additionally, BC expects <a href=\"https://www.workbc.ca/Labour-Market-Industry/Jobs-in-Demand/High-Demand-Occupations.aspx\""
                                 . "target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> these occupations to be of \"High Opportunity\"</a> in the province. 
                                 Does your course/program align with a High Opportunity Occupation in BC ?
@@ -64,7 +69,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->subcat_id = 4;
         $osc->cat_id = 2;
         $osc->subcat_name = "<a href=\"https://okmain.cms.ok.ubc.ca/wp-content/uploads/sites/26/2019/02/UBCO-Outlook-2040.pdf\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
-                                            UBC Okanagan 2040 Outlook</a>";
+                                        UBC Okanagan 2040 Outlook</a>";
         $osc->subcat_desc = "";
         $osc->subcat_postamble = "";
         $osc->save();
@@ -83,7 +88,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->cat_id = 2;
         $osc->subcat_name = "<a href=\"https://bog3.sites.olt.ubc.ca/files/2021/01/4_2021.02_Climate-Emergency-Engagement.pdf\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> UBC's Climate Priorities</a>";
         $osc->subcat_desc = "The <a href=\"https://bog3.sites.olt.ubc.ca/files/2021/01/4_2021.02_Climate-Emergency-Engagement.pdf\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> UBC's Climate Emergency Engagement Report and Recommendations (2021)</a> set out the below curricular examples.
-                                            Programs are encouraged to take these and/or other initiatives that align with the report:";
+                                Programs are encouraged to take these and/or other initiatives that align with the report:";
         $osc->subcat_postamble = "";
         $osc->save();
         
@@ -93,16 +98,16 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->op_id = 1;
         $opp->subcat_id = 1;
         $opp->optional_priority = "Incorporation of the Declaration on the Rights of Indigenous Peoples Act and Calls to Action of the Truth and Reconciliation Commission
-                                  <a href=\"http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf\" target=\"_blank\">( <i class=\"bi bi-box-arrow-up-right\"></i> More 
-                                  Information can be found here)</a>";
+                                <a href=\"http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf\" target=\"_blank\">( <i class=\"bi bi-box-arrow-up-right\"></i> More 
+                                Information can be found here)</a>";
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 2;
         $opp->subcat_id = 1;
         $opp->optional_priority = "Align with CleanBC's plan to a protect our communities towards a more sustainable future
-                                   <a href=\"https://cleanbc.gov.bc.ca/\" target=\"_blank\">( <i class=\"bi bi-box-arrow-up-right\"></i> 
-                                   More Information can be found here)</a>";
+                                <a href=\"https://cleanbc.gov.bc.ca/\" target=\"_blank\">( <i class=\"bi bi-box-arrow-up-right\"></i> 
+                                More Information can be found here)</a>";
         $opp->save();
         
         $opp = new OptionalPriorities;
@@ -128,7 +133,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->subcat_id = 1;
         $opp->optional_priority = "Respond to the reskilling needs of British Columbians to support employment and career transitions";
         $opp->save();
-       
+        
         $opp = new OptionalPriorities;
         $opp->op_id = 7;
         $opp->subcat_id = 1;
@@ -201,141 +206,141 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->op_id = 18;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-1-great-people/\" target=\"_blank\">Strategy 1: </a>
-                                  Great People: Attract, engage and retain a diverse global community of outstanding students, faculty and staff.";
+                                        Great People: Attract, engage and retain a diverse global community of outstanding students, faculty and staff.";
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 19;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-2-inspiring-spaces/\" target=\"_blank\">Strategy 2: </a>
-                                  Inspiring Spaces: Create welcoming physical and virtual spaces to advance collaboration, innovation and community development.";
+                                        Inspiring Spaces: Create welcoming physical and virtual spaces to advance collaboration, innovation and community development.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 20;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-3-thriving-communities/\" target=\"_blank\">Strategy 3: </a>Thriving Communities: 
-                                   Support the ongoing development of sustainable, healthy and connected campuses and communities, consistent with the 20-Year Sustainability 
-                                   Strategy and the developing Wellbeing Strategy.";
+                                        Support the ongoing development of sustainable, healthy and connected campuses and communities, consistent with the 20-Year Sustainability 
+                                        Strategy and the developing Wellbeing Strategy.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 21;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-4-inclusive-excellence/\" target=\"_blank\">Strategy 4: </a>
-                                  Inclusive Excellence: Cultivate a diverse community that creates and sustains equitable and inclusive campuses.";
+                                        Inclusive Excellence: Cultivate a diverse community that creates and sustains equitable and inclusive campuses.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 22;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-5-systems-renewal/\" target=\"_blank\">Strategy 5: </a>Systems Renewal:
-                                  Transform university-level systems and processes to facilitate collaboration, innovation and agility.";
+                                        Transform university-level systems and processes to facilitate collaboration, innovation and agility.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 23;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-6-collaborative-clusters/\" target=\"_blank\">Strategy 6: </a>
-                                                    Collaborative Clusters: Enable interdisciplinary clusters of research excellence in pursuit of societal impact.";
+                                                Collaborative Clusters: Enable interdisciplinary clusters of research excellence in pursuit of societal impact.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 24;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-7-research-support/\" target=\"_blank\">Strategy 7: </a>
-                                  Research Support: Strengthen shared infrastructure and resources to support research excellence.";
+                                Research Support: Strengthen shared infrastructure and resources to support research excellence.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 25;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-8-student-research/\" target=\"_blank\">Strategy 8: </a>
-                                  Student Research: Broaden access to, and enhance, student research experiences.";
+                                        Student Research: Broaden access to, and enhance, student research experiences.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 26;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-9-knowledge-exchange/\" target=\"_blank\">Strategy 9: </a>
-                                  Knowledge Exchange: Improve the ecosystem that supports the translation of research into action.";
+                                        Knowledge Exchange: Improve the ecosystem that supports the translation of research into action.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 27;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-10-research-culture/\" target=\"_blank\">Strategy 10: </a>
-                                  Research Culture: Foster a strong and diverse research culture that embraces the highest standards of integrity, collegiality and service.";
+                                        Research Culture: Foster a strong and diverse research culture that embraces the highest standards of integrity, collegiality and service.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 28;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-11-education-renewal/\" target=\"_blank\">Strategy 11: </a>
-                                  Education Renewal: Facilitate sustained program renewal and improvements in teaching effectiveness.";
+                                        Education Renewal: Facilitate sustained program renewal and improvements in teaching effectiveness.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 29;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-12-program-redesign/\" target=\"_blank\">Strategy 12: </a>
-                                  Program Redesign: Reframe undergraduate academic program design in terms of learning outcomes and competencies.";
+                                        Program Redesign: Reframe undergraduate academic program design in terms of learning outcomes and competencies.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 30;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-13-practical-learning/\" target=\"_blank\">Strategy 13: </a>
-                                  Practical Learning: Expand experiential, work-integrated and extended learning opportunities for students, faculty, staff and alumni.";
+                                        Practical Learning: Expand experiential, work-integrated and extended learning opportunities for students, faculty, staff and alumni.";
         $opp->save();
         
-         $opp = new OptionalPriorities;
+        $opp = new OptionalPriorities;
         $opp->op_id = 31;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-14-interdisciplinary-education/\" target=\"_blank\">Strategy 14: </a>
-                                  Interdisciplinary Education: Facilitate the development of integrative, problem-focused learning.";
+                                        Interdisciplinary Education: Facilitate the development of integrative, problem-focused learning.";
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 32;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-15-student-experience/\" target=\"_blank\">Strategy 15: </a>
-                                  Student Experience: Strengthen undergraduate and graduate student communities and experience.";
+                                        Student Experience: Strengthen undergraduate and graduate student communities and experience.";
         $opp->save();
         $opp = new OptionalPriorities;
         $opp->op_id = 33;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-16-public-relevance/\" target=\"_blank\">Strategy 16: </a>
-                                  Public Relevance: Deepen the relevance and public impact of UBC research and education.";
+                                        Public Relevance: Deepen the relevance and public impact of UBC research and education.";
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 34;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-17-indigenous-engagement/\" target=\"_blank\">Strategy 17: </a>
-                                  Indigenous Engagement: Support the objectives and actions of the renewed Indigenous Strategic Plan.";
+                                        Indigenous Engagement: Support the objectives and actions of the renewed Indigenous Strategic Plan.";
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 35;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-18-alumni-engagement/\" target=\"_blank\">Strategy 18: </a>
-                                  Alumni Engagement: Reach, inspire and engage alumni through lifelong enrichment, consistent with the alumniUBC strategic plan,
-                                  <a href=\"https://www.alumni.ubc.ca/about/strategic-plan/\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> Connecting Forward.</a>";
+                                        Alumni Engagement: Reach, inspire and engage alumni through lifelong enrichment, consistent with the alumniUBC strategic plan,
+                                        <a href=\"https://www.alumni.ubc.ca/about/strategic-plan/\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> Connecting Forward.</a>";
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 36;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-19-global-networks/\" target=\"_blank\">Strategy 19: </a>
-                                  Global Networks: Build and sustain strategic global networks, notably around the Pacific Rim, that enhance impact.";
+                                        Global Networks: Build and sustain strategic global networks, notably around the Pacific Rim, that enhance impact.";
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 37;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-20-co-ordinated-engagement/\" target=\"_blank\">Strategy 20: </a>
-                                  Co-ordinated Engagement: Co-create with communities the principles and effective practices of engagement, and establish supporting infrastructure.";
+                                        Co-ordinated Engagement: Co-create with communities the principles and effective practices of engagement, and establish supporting infrastructure.";
         $opp->save();
         
         $opp = new OptionalPriorities;
@@ -451,5 +456,6 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->subcat_id = 6;
         $opp->optional_priority = "Applied learning opportunities grounded in the personal, local and regional community (e.g. flood and wildfire impacted communities in BC)";
         $opp->save();
-    }
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
 }

@@ -31,6 +31,9 @@ class OptionalPriorityCrudController extends CrudController
         CRUD::setModel(\App\Models\OptionalPriorities::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/optional-priority');
         CRUD::setEntityNameStrings('optional priority', 'optional priorities');
+
+        // Hide the preview button 
+        $this->crud->denyAccess('show');
     }
 
     /**
@@ -51,21 +54,15 @@ class OptionalPriorityCrudController extends CrudController
             }
         ]);
 
-        // Subcategory
-        /*$this->crud->addColumn([
-            'name' => 'subcat_desc', // The db column name
-            'label' => "Subcategory desc",// Table column heading
-            'type' => 'Text'
-        ]);*/
-        $this->crud->addColumn([
-            'name' => 'subcat_id', // The db column name
-            'label' => 'Subcat ID',// Table column heading
-            'type' => 'number',
-            'searchLogic' => function($query, $column, $searchTerm){
-                $query ->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
+         $this->crud->addColumn([
+            'name' => 'optional_priority', // The db column name
+            'label' => "Optional Priority",// Table column heading
+            'type' => 'text',
+             'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('optional_priority', 'like', '%'.$searchTerm.'%');
             }
         ]);
-        $removeHTML = strip_tags('subcat_name');
+        
         $this->crud->addColumn([
             'label' => 'Subcategory Name',// Table column heading
             'type' => 'strip_select',
@@ -74,25 +71,20 @@ class OptionalPriorityCrudController extends CrudController
             'attribute' => $removeHTML,
             'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
-       
-        // Category
-        /*$this->crud->addColumn([
-            'name' => 'cat_name', // The db column name
-            'label' => "Category Name",// Table column heading
-            'type' => 'Text'
-         ]);*/
-
-        /* $this->crud->addColumn([
-            'name' => 'cat_desc', // The db column name
-            'label' => "Category desc",// Table column heading
-            'type' => 'Text'
-        ]);*/
         
         $this->crud->addColumn([
-            'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
-            'type' => 'strip_text',
+            'name' => 'subcat_id', // The db column name
+            'label' => 'Subcat ID',// Table column heading
+            'type' => 'number',
+            'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
+            }
         ]);
+        
+        
+        
+        
+        
     }
 
     /**
@@ -117,7 +109,7 @@ class OptionalPriorityCrudController extends CrudController
         ]);*/
         $this->crud->addField([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
+            'label' => "Optional Priority&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
             'type' => 'valid_textarea',
             'attributes' => [ 'req' => 'true']
         ]);
@@ -177,7 +169,7 @@ class OptionalPriorityCrudController extends CrudController
         ]);
         $this->crud->addField([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
+            'label' => "Optional Priority&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
             'type' => 'valid_textarea',
             'attributes' => [ 'req' => 'true']
         ]);
@@ -235,7 +227,7 @@ class OptionalPriorityCrudController extends CrudController
 
     }
     
-     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
 
     public function destroy($id)
     {

@@ -31,6 +31,7 @@ class SubcategoriesCrudController extends CrudController
         CRUD::setModel(\App\Models\OptionalPrioritySubcategories::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/subcategories');
         CRUD::setEntityNameStrings('subcategories', 'subcategories');
+        $this->crud->denyAccess('show');
     }
 
     /**
@@ -96,7 +97,7 @@ class SubcategoriesCrudController extends CrudController
 
         $this->crud->addField([
             'label' => 'Category Name',// Table column heading
-            'type' => 'select',
+            'type' => 'strip_select',
             'name' => 'cat_id', // The db column name
             'entity' =>'optionalPriorityCategory',
             'attribute' =>'cat_name',
@@ -106,7 +107,7 @@ class SubcategoriesCrudController extends CrudController
 
         $this->crud->addField([
             'name'=>'subcat_name',
-            'label'=>'Subcategory Name',
+            'label'=>'Subcategory Name&nbsp;&nbsp;<span style=color:red>*</span>',
             'type'=>'valid_textarea',
             'req' => 'true',
             'attributes' => [ 'req' => 'true']
@@ -114,7 +115,7 @@ class SubcategoriesCrudController extends CrudController
 
         $this->crud->addField([
             'name'=>'subcat_desc',
-            'label'=>'Subcategory Description',
+            'label'=>'Subcategory Description&nbsp;&nbsp;<span style=color:red>*</span>',
             'type'=>'textarea',
             'req' => 'true',
             'attributes' => [ 'req' => 'true']
@@ -164,14 +165,14 @@ class SubcategoriesCrudController extends CrudController
         
         $this->crud->addField([
             'name'=>'subcat_name',
-            'label'=>'Subcategory Name',
+            'label'=>'Subcategory Name&nbsp;&nbsp;<span style=color:red>*</span>',
             'type'=>'valid_textarea',
             'attributes' => [ 'req' => 'true']
         ]);
 
         $this->crud->addField([
             'name'=>'subcat_desc',
-            'label'=>'Subcategory Description',
+            'label'=>'Subcategory Description&nbsp;&nbsp;<span style=color:red>*</span>',
             'type'=>'textarea',
             'attributes' => [ 'req' => 'true']
         ]);

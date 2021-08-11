@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\CourseOptionalPriorities;
+use App\Models\OptionalPriorities;
+
 
 class OptionalPriorities extends Controller
 {
@@ -33,14 +34,12 @@ class OptionalPriorities extends Controller
             DB::table('course_optional_priorities')->whereNotIn('op_id',$optionalPLOs_op_ids)->where('course_id',$course_id)->delete();
 
             // Loop to insert them to the table
-            foreach($optionalPLOs_op_ids as $optionalPLO_op_id) {
-                if(! (DB::table('course_optional_priorities')->where('op_id',$optionalPLO_op_id)->where('course_id',$course_id)->first())) {
-                    $ops = CourseOptionalPriorities::create([
-                        'op_id' => $optionalPLO_op_id,
-                        'course_id' => $course_id,
-                        'created_at' => null,
-                        'updated_at' => null,
-                    ]);
+            foreach($optionalPLOs as $optionalPLO) {
+                if(! (DB::table('course_optional_priorities')->where('op_id',$optionalPLO)->where('course_id',$course_id)->first())) {
+                    $ops = new \App\Models\CourseOptionalPriorities();
+                    $ops->course_id = $course_id;
+                    $ops->op_id = $optionalPLO;
+                    //$ops->input_status = 0;
                     if($ops->save()){
                         $request->session()->flash('success', 'Alignment to UBC/Ministry priorities updated.');
                     }else{

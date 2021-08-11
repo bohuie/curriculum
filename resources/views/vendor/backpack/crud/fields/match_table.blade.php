@@ -52,8 +52,8 @@
                     @foreach( $field['columns'] as $column )
                     <?php $colname = explode('-', $column)[0];
                     if($colname == "id")$colname = "";?>
-                    <th style="font-weight: 600!important;">
-                        {{ $colname }}
+                    <th style="font-weight: 600!important;<?php echo (isset(explode('-', $column)[3])) ? "width:".explode('-', $column)[3]."%;" : "" ?>" >
+                        {{ $colname }}<?php $details = explode('-', $column);echo isset($details[2]) ? "&nbsp;&nbsp;<span style=\"color:red\">*</span>" : ""?>
                     </th>
                     @endforeach
                     <th class="text-center"> {{-- <i class="la la-sort"></i> --}} </th>
