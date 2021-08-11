@@ -20,12 +20,12 @@ class OptionalPrioritySubcategories extends Model
         'subcat_name',
         'subcat_desc',
         'cat_id',
-        'sub_postamble'
+        'subcat_postamble'
         //'input_status',
     ];
     
-    public function OptionalPriority(){
-        return $this-> hasMany(OptionalPriority::class,'subcat_id','subcat_id');
+    public function OptionalPriorities(){
+        return $this-> hasMany(OptionalPriorities::class,'subcat_id','subcat_id');
     }
     public function OptionalPriorityCategories(){
         return $this->belongsTo(OptionalPriorityCategories::class, 'cat_id','cat_id');

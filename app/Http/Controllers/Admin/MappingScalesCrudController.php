@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\MappingScalesRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class UserCrudController
+ * Class MappingScalesCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class UserCrudController extends CrudController
+class MappingScalesCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
-        CRUD::setEntityNameStrings('user', 'users');
+        CRUD::setModel(\App\Models\MappingScales::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/mapping-scales');
+        CRUD::setEntityNameStrings('mapping scales', 'mapping scales');
 
         // Hide the preview button 
         $this->crud->denyAccess('show');
@@ -42,13 +42,15 @@ class UserCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::column('name');
-        CRUD::column('email');
-        // CRUD::column('email_verified_at');
-        // CRUD::column('password');
-        // CRUD::column('remember_token');
-        CRUD::column('created_at');
-        CRUD::column('updated_at');
+        CRUD::column('title');
+        CRUD::column('abbreviation');
+        CRUD::column('colour');
+
+
+            //'wrapper'=> ['class' => 'form-group col-md-2'],
+            /*'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('cat_id', 'like', '%'.$searchTerm.'%');
+            }*/
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -65,13 +67,26 @@ class UserCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(UserRequest::class);
-
-        CRUD::field('name');
-        CRUD::field('email');
-        // CRUD::field('email_verified_at');
-        CRUD::field('password');
-        // CRUD::field('remember_token');
+        $this->crud->addField([
+            'name' => 'title',
+            'label' => 'Title',
+            'type' => 'text'
+        ]);
+        $this->crud->addField([
+            'name' => 'abbreviation',
+            'label' => 'Abbreviation',
+            'type' => 'text'
+        ]);
+        $this->crud->addField([
+            'name' => 'description',
+            'label' => 'Description',
+            'type' => 'text'
+        ]);
+        $this->crud->addField([
+            'name' => 'colour',
+            'label' => 'Colour',
+            'type' => 'color_picker'
+        ]);
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
@@ -88,19 +103,27 @@ class UserCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        //$this->setupCreateOperation();
+        $this->crud->addField([
+            'name' => 'title',
+            'label' => 'Title',
+            'type' => 'text'
+        ]);
+        $this->crud->addField([
+            'name' => 'abbreviation',
+            'label' => 'Abbreviation',
+            'type' => 'text'
+        ]);
+        $this->crud->addField([
+            'name' => 'description',
+            'label' => 'Description',
+            'type' => 'text'
+        ]);
+        $this->crud->addField([
+            'name' => 'colour',
+            'label' => 'Colour',
+            'type' => 'color_picker'
+        ]);
     }
-    
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
 
-    public function destroy($id)
-    {
-        $this->crud->hasAccessOrFail('delete');
-        //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
-        $userID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $userID = explode("/",$userID)[3];
-        DB::table('user_roles')->where('user_id', $userID)->delete();
-        
-        return $this->crud->delete($id);
-    }
 }

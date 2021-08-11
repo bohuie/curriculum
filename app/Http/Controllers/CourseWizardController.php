@@ -277,12 +277,22 @@ class CourseWizardController extends Controller
         // get mapping scales associated with course
         $mappingScales = StandardScale::where('scale_category_id', $course->scale_category_id)->get();
 
-        //get optional priorities for each subcategory
-        $number_of_optional_priority_subcats = 6;
-        $optional_priorities = array();
-        for ($i = 1; $i <= $number_of_optional_priority_subcats; $i++) {
-            $optional_priorities[] = OptionalPriorities::where('subcat_id', $i)->pluck('optional_priority')->toArray();
+        //OPTIONAL PRIORITIES
+        $op = \App\Models\OptionalPriorityCategories::all()->toArray();
+        $checked = \App\Models\CourseOptionalPriorities::where('course_id',$course_id)->get()->toArray();
+        $ch = [];
+        foreach($checked as $check)$ch[$check['op_id']] = true;
+        foreach($op as $key => $cat){
+            $op[$key] = json_decode(json_encode($op[$key]),true);
+            $op[$key]['sub'] = \App\Models\OptionalPrioritySubcategories::where('cat_id',$cat['cat_id'])->get()->toArray();
+            foreach($op[$key]['sub'] as $key2 => $sub){
+                $op[$key]['sub'][$key2] = json_decode(json_encode($op[$key]['sub'][$key2]),true);
+                $op[$key]['sub'][$key2]['opp'] = \App\Models\OptionalPriorities::where('subcat_id',$sub['subcat_id'])->get()->toArray();
+                foreach($op[$key]['sub'][$key2]['opp'] as $key3 => $opp)
+                    if(isset($ch[$opp['op_id']])) $op[$key]['sub'][$key2]['opp'][$key3]['chk'] = true;
+            }
         }
+       
 
         //retrieve descriptions for the optional priorities which belong to the course being edited
         $course_optional_priorities_op_ids = CourseOptionalPriorities::where('course_id', $course_id)->pluck('op_id');
@@ -290,9 +300,10 @@ class CourseWizardController extends Controller
 
         return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)->with('courseUsers', $courseUsers)->with('user', $user)
                                         ->with('lo_count',$lo_count)->with('am_count', $am_count)->with('la_count', $la_count)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
-                                        ->with('bc_labour_market',$optional_priorities[1])->with('shaping_ubc',$optional_priorities[2])->with('ubc_mandate_letters',$optional_priorities[0])->with('okanagan_2040_outlook',$optional_priorities[3])
-                                        ->with('ubc_indigenous_plan',$optional_priorities[4])->with('ubc_climate_priorities',$optional_priorities[5])->with('optional_PLOs',$course_optional_priorities_descriptions)
+                                        ->with('optional_priorities',$op)->with('optional_PLOs',$optional_PLOs)
+
                                         ->with('standard_outcomes', $standard_outcomes);
+       
     }
     
     public function step7($course_id)
@@ -390,7 +401,7 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->get();
-        $optional_PLOs = Optional_priorities::where('course_id', $course_id)->get();
+        $optional_PLOs = DB::table('course_optional_priorities')->where('course_id', $course_id)->get();
 
         $assessmentMethodsTotal = 0;
         foreach ($a_methods as $a_method) {

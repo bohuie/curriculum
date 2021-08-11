@@ -51,7 +51,7 @@ class StandardCategory extends Model
         });
         foreach($jdata as $row){
             $id = -1;
-            if(property_exists($row, "standard_id")){
+            if(property_exists($row, "standard_id") && $row->standard_id != ""){
                 $id = $row->standard_id;
             }
             if(in_array($id, $setScales))

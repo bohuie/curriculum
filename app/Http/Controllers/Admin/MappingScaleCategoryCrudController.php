@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\StandardsScaleCategoryRequest;
+use App\Http\Requests\MappingScaleCategoryRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\DB;
+
 /**
- * Class StandardsScaleCategoryCrudController
+ * Class MappingScaleCategoryCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class StandardsScaleCategoryCrudController extends CrudController
+class MappingScaleCategoryCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,11 +27,9 @@ class StandardsScaleCategoryCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\StandardsScaleCategory::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/standards-scale-category');
-        CRUD::setEntityNameStrings('standards scale category', 'standards scale categories');
-
-        // Hide the preview button 
+        CRUD::setModel(\App\Models\MappingScaleCategory::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/mapping-scale-category');
+        CRUD::setEntityNameStrings('mapping scale category', 'mapping scale categories');
         $this->crud->denyAccess('show');
     }
 
@@ -42,7 +41,7 @@ class StandardsScaleCategoryCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::column('name');
+        CRUD::column('msc_title');
         CRUD::column('description');
 
         /**
@@ -60,11 +59,11 @@ class StandardsScaleCategoryCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(StandardsScaleCategoryRequest::class);
+        CRUD::setValidation(MappingScaleCategoryRequest::class);
 
-        $this->crud->addField([
-            'name' => 'name', // The db column name
-            'label' => "Standard Scale Category Name&nbsp;&nbsp;<span style=color:red>*</span>", // Table column heading
+       $this->crud->addField([
+            'name' => 'msc_title', // The db column name
+            'label' => "Category name&nbsp;&nbsp;<span style=color:red>*</span>", // Table column heading
             'type' => 'valid_text',
             'attributes' => [
                         'req' => 'true',
@@ -79,6 +78,7 @@ class StandardsScaleCategoryCrudController extends CrudController
                         'req' => 'true',
                         ],
          ]);
+
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
@@ -94,97 +94,63 @@ class StandardsScaleCategoryCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-              $this->crud->addField([
-            'name' => 'name', // The db column name
-            'label' => "Standard Scale Category Name&nbsp;&nbsp;<span style=color:red>*</span>", // Table column heading
-            'type' => 'valid_text',
-            'attributes' => [
-                  'req' => 'true',
-                  ],
-         ]);
-              
-         $this->crud->addField([
-            'name' => 'description', // The db column name
-            'label' => "Description", // Table column heading
-            'type' => 'Text'
-         ]);
+        $this->setupCreateOperation();
         
         $this->crud->addField([   // repeatable
-            'name'  => 'Scaletable',
+            'name'  => 'Mappingtable',
             'label' => 'Scales',
             'type'  => 'repeatable',
-            'entity' => 'ministryStandardScales',
+            'entity' => 'MappingScales',
             
             'fields' => [
-                [
-                    'name'    => 'standard_scale_id',
+                 [
+                    'name'    => 'map_scale_id',
                     'type'    => 'Text',
-                    'label'   => 'Id',
-                    'attributes' => ['disabled' => 'true'],
+                    'label'   => '',
+                    'attributes' => ['disabled' => 'true', 'hidden' => true],
+                    
+                ],
+                [
+                    'name' => 'title',
+                    'label' => 'Title&nbsp;&nbsp;<span style=\"color:red\">*</span>',
+                    'type' => 'text',
+                    'attributes' => [
+                        'req' => 'true',
+                        ],
+                    'wrapper' => ['class' => 'form-group col-md-7'],
+                ],
+                [
+                    'name' => 'abbreviation',
+                    'label' => 'Abbreviation&nbsp;&nbsp;<span style=\"color:red\">*</span>',
+                    'type' => 'text',
+                    'attributes' => [
+                        'req' => 'true',
+                        ],
                     'wrapper' => ['class' => 'form-group col-md-2'],
                 ],
                 [
-                    'name'    => 'title',
-                    'type'    => 'Text',
-                    'label'   => 'Title&nbsp;&nbsp;<span style=color:red>*</span>',
-                    'attributes' => [
-                        'req' => 'true',
-                        ],
-                    'wrapper' => ['class' => 'form-group col-md-5'],
+                    'name' => 'colour',
+                    'label' => 'Colour',
+                    'type' => 'color_picker',
+                    'wrapper' => ['class' => 'form-group col-md-3'],
                 ],
                 [
-                    'name'    => 'abbreviation',
-                    'type'    => 'text',
-                    'label'   => 'Abbreviation&nbsp;&nbsp;<span style=color:red>*</span>',
+                    'name' => 'description',
+                    'label' => 'Description&nbsp;&nbsp;<span style=\"color:red\">*</span>',
+                    'type' => 'text',
                     'attributes' => [
                         'req' => 'true',
                         ],
-                    'wrapper' => ['class' => 'form-group col-md-3'],
-                    
-                ],   
-                /*[
-                    'name'    => 'colour',
-                    'type'    => 'text',
-                    'label'   => 'Colour',
-                    'wrapper' => ['class' => 'form-group col-md-3'],
-                    
-                ], */
-                [
-                    'name'    => 'colour',
-                    'type'    => 'color_picker',
-                    'label'   => 'Colour',
-                    'default'              => '#000000',
-                    'wrapper' => ['class' => 'form-group col-md-2'],
-                ], 
-                [
-                    'name'    => 'description',
-                    'type'    => 'textarea',
-                    'label'   => 'Description&nbsp;&nbsp;<span style=color:red>*</span>',  
-                    'attributes' => [
-                        'req' => 'true',
-                        ],
-                ], 
+                ],
+                
             ],
-
-            // optional
+             // optional
             'new_item_label'  => 'Add Group', // customize the text of the button
             'init_rows' => 0, // number of empty rows to be initialized, by default 1
             'min_rows' => 0, // minimum rows allowed, when reached the "delete" buttons will be hidden
             'max_rows' => 10 // maximum rows allowed, when reached the "new item" button will be hidden
 
         ]);
-    }
-    
-     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
-
-    public function destroy($id)
-    {
-        $this->crud->hasAccessOrFail('delete');
-        //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
-        $sscID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $sscID = explode("/",$sscID)[3];
-        $r = DB::table('standard_scales')->where('scale_category_id', '=', $sscID)->delete();
-        //this deletes the course record itself.
-        return $this->crud->delete($id);
+        
     }
 }

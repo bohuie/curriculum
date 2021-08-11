@@ -522,7 +522,7 @@
                                     @foreach ($optional_PLOs as $index => $optional_Plo)
                                     <tr>
                                         <td style="width:5%" >{{$index+1}}</td>
-                                        <td>{{$optional_Plo->custom_PLO}}</td>
+                                        <td>{{$optional_Plo->optional_priority}}</td>
                                     </tr>
                                     @endforeach
                                 </table>

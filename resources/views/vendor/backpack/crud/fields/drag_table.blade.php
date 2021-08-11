@@ -1,10 +1,10 @@
-<!-- Backpack Table Field Type, plus a little something... -->
+<!-- Backpack Table Field Type, rows are draggable... -->
 
 <?php
     $max = isset($field['max']) && (int) $field['max'] > 0 ? $field['max'] : -1;
     $min = isset($field['min']) && (int) $field['min'] > 0 ? $field['min'] : -1;
     $item_name = strtolower(isset($field['entity_singular']) && ! empty($field['entity_singular']) ? $field['entity_singular'] : $field['label']);
-    
+
     $items = old(square_brackets_to_dots($field['name'])) ?? $field['value'] ?? $field['default'] ?? '';
 
     // make sure no matter the attribute casting
@@ -23,7 +23,7 @@
     if (! isset($field['columns'])) {
         $field['columns'] = ['value' => 'Value'];
     }
-   
+
     $field['wrapper'] = $field['wrapper'] ?? $field['wrapperAttributes'] ?? [];
     $field['wrapper']['data-field-type'] = 'table';
     $field['wrapper']['data-field-name'] = $field['name'];
@@ -43,17 +43,16 @@
             data-maxErrorTitle="{{trans('backpack::crud.table_cant_add', ['entity' => $item_name])}}"
             data-maxErrorMessage="{{trans('backpack::crud.table_max_reached', ['max' => $max])}}">
 
-    <div class="array-container form-group">
+    <div ondrop="drop(event)" ondragover="allowDrop(event)" class="array-container form-group">
 
-        <table class="table table-sm table-striped m-b-0">
+        <table  class="table table-sm table-striped m-b-0 dragtable">
 
             <thead>
                 <tr>
                     @foreach( $field['columns'] as $column )
-                    <?php $details = explode('-', $column);
-                    $colname = $details[0];                    
+                    <?php $colname = explode('-', $column)[0];
                     if($colname == "id")$colname = "";?>
-                    <th style="font-weight: 600!important;">
+                    <th style="font-weight: 600!important;<?php echo (isset(explode('-', $column)[3])) ? "width:".explode('-', $column)[3]."%;" : "" ?>">
                         {{ $colname }}<?php $details = explode('-', $column);echo isset($details[2]) ? "&nbsp;&nbsp;<span style=\"color:red\">*</span>" : ""?>
                     </th>
                     @endforeach
@@ -64,34 +63,23 @@
 
             <tbody class="table-striped items sortableOptions">
 
-                <tr class="array-row clonable" style="display: none;">
+                <tr class="array-row clonable" style="display: none;" draggable="true" ondragstart="drag(event)">
                     @foreach( $field['columns'] as $column => $label)
                     <?php $details = explode('-', $label);                    
-                    $isreq = (isset($details[2])) ? "treq=true" : "";                    
-                    $totalcol = (isset($details[1]) && $details[1] == "number") ? " totaled_".$column."_" : "" ?>
+                    $isreq = (isset($details[2])) ? "treq=true" : "" ?>
                     <td>
-                        <input class="form-control form-control-sm{{ $totalcol }}"  <?php   $typ =  "type=" . explode('-',$label)[1]; ?> {{ $typ }} {{ $isreq }} data-cell-name="item.{{ $column }}">
+                        <span><input draggable="true" ondragstart="notDragged(event)" class="form-control form-control-sm" <?php   $typ =  "type=" . explode('-',$label)[1]; ?> {{ $typ }} {{ $isreq }} data-cell-name="item.{{ $column }}"></span>
                     </td>
                     @endforeach
                     <td>
-                        <span class="btn btn-sm btn-light sort-handle pull-right"><span class="sr-only">sort item</span><i class="la la-sort" role="presentation" aria-hidden="true"></i></span>
+                        <span><span draggable="true" ondragstart="notDragged(event)" class="btn btn-sm btn-light sort-handle pull-right"><span class="sr-only">sort item</span><i class="la la-sort" role="presentation" aria-hidden="true"></i></span></span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-light removeItem" type="button"><span class="sr-only">delete item</span><i class="la la-trash" role="presentation" aria-hidden="true"></i></button>
+                        <span><button draggable="true" ondragstart="notDragged(event)" class="btn btn-sm btn-light removeItem" type="button"><span class="sr-only">delete item</span><i class="la la-trash" role="presentation" aria-hidden="true"></i></button></span>
                     </td>
-                </tr>            
-            </tbody>
-            <tfoot>
-                <tr>
-                @foreach( $field['columns'] as $column => $label)
-                    <?php $coltype = explode('-', $label)[1];
-                    if($coltype == "number")$coltype = "<label>Total:</label><input disabled type=\"number\" id=\"total_".$column."_\">";
-                    else $coltype = "";
-                    ?>  
-                <td>{!! $coltype !!}</td>
-                @endforeach
                 </tr>
-            </tfoot>
+
+            </tbody>
 
         </table>
 
@@ -114,28 +102,12 @@
     @php
         $crud->markFieldTypeAsLoaded($field);
     @endphp
-    
-     {{-- FIELD CSS - will be loaded in the after_styles section --}}
-    @push('crud_fields_styles')
-        <!-- accordion css-->
-         <style>
-             .crudribbon{
-                 color:rgb(255, 255, 255,1.0);
-             }
-            h4.crudribbon a:visited{
-                color:white !important;
-            }
-            h4.crudribbon a:link{
-                color:white !important;
-            }
-        </style>
-    @endpush
 
     {{-- FIELD JS - will be loaded in the after_scripts section --}}
     @push('crud_fields_scripts')
         {{-- YOUR JS HERE --}}
         <script type="text/javascript" src="{{ asset('packages/jquery-ui-dist/jquery-ui.min.js') }}"></script>
-        
+
         <script>
             function bpFieldInitTableElement(element) {
                 var $tableWrapper = element.parent('[data-field-type=table]');
@@ -206,9 +178,10 @@
                         updateTableFieldJson();
                     }
                 });
-
+                
                 function addItem() {
-                    $tableWrapper.find('tbody').append($tableWrapper.find('tbody .clonable').clone().show().removeClass('clonable'));
+                    $tableWrapper.find('tbody').append($tableWrapper.find('tbody .clonable').clone().show().removeClass('clonable').attr('id', "dragrow_" + String(Math.floor(Math.random() * 10))+ String(Math.floor(Math.random() * 10)) + String(Math.floor(Math.random() * 10))));
+                   
                 }
 
                 $tableWrapper.on('click', '.removeItem', function() {
@@ -254,43 +227,70 @@
             }
         </script>
         <script>
-        $(document).ready(function(){
-            let test = $('input[class*="totaled"]');
-            $(document).on('change', 'input[class*="totaled"]' ,function(e){
-                //finds the name of the totaled column eg. weight
-                let totaltype = $(e.target).attr('class').match('totaled_.*_')
-                totaltype = totaltype[0].split("_")[1];
-                //sums up all columns in this class and writes the value to the total in that column
-                let cols = $('input[class*="totaled_' + totaltype + '_"]');
-                let totalVal = 0;
-                $.each(cols,function(key, value){
-                    if(value.value)totalVal += parseInt(value.value);
-                });
-                document.getElementById("total_" + totaltype + "_").value = totalVal;
-            });
-            $(document).on('submit', 'form', function(e){
-                let stopSubmit = false;
-                let eleList = Array.prototype.slice.call(document.querySelectorAll('tr[class=array-row] td input[treq=true]'));
-                let eL2 = Array.prototype.slice.call(document.querySelectorAll('textarea[req=true], input[req=true]'));
-                eleList.push.apply(eleList,eL2);
-                eleList.forEach((ele) => {
-                    if((ele.type != "checkbox") && ele.value.length == 0){                        
-                        stopSubmit = true;                        
-                    }
-                });                
-                if(stopSubmit){
-                    e.preventDefault(); 
-                    alert("one or more fields requires input before submission");
-                    document.querySelector('button[type=submit]').disabled = false;
+            function allowDrop(ev) {
+              ev.preventDefault();
+            }
+            
+            function notDragged(ev){
+              //triggers when child element gets dragged (object is to prevent it)
+              ev.preventDefault();
+              let test = 0;
+            }
+
+            function drag(ev) {
+              ev.dataTransfer.setData("Text", ev.target.id);
+            }
+
+            function drop(ev) {
+              var data = ev.dataTransfer.getData("Text");
+              let trg = 0;
+              if(ev.target.classList.contains('form_group'))trg = ev.target;
+              else trg = $(ev.target).closest('div.form-group')[0];
+              trg.children[0].children[1].appendChild(document.getElementById(data));
+              ev.preventDefault();
+              let field_name = "ProgramOC";
+             // var container_holder = $('[data-repeatable-holder='+field_name+']');
+                   //container_holder.append(new_field_group);
+                  // after appending to the container we reassure row numbers
+                  //setupElementRowsNumbers(container_holder);
+                  // we also setup the custom selectors in the elements so we can use dependant functionality
+                  //setupElementCustomSelectors(container_holder);
+                  // increment the container current number of rows by +1
+                  //updateRepeatableRowCount(container_holder, 1);
+              //initializeFieldsWithJavascript(container_holder);
+              let test = $("input[class='array-json']");
+              $("input[class='array-json']").each(updateTableFieldJsonOnDrag);
+              let testVal = repeatableInputToObj(field_name);
+              $("input[name='ProgramOC']").val(JSON.stringify(testVal));
+              
+            }
+            function updateTableFieldJsonOnDrag(ind,element) {
+                    var $tableWrapper = $(element).parent('[data-field-type=table]');
+                    var $rows = $tableWrapper.find('tbody tr').not('.clonable');
+                    var $hiddenField = $tableWrapper.find('input.array-json');
+
+                    var json = '[';
+                    var otArr = [];
+                    var tbl2 = $rows.each(function(i) {
+                        x = $(this).children().closest('td').find('input');
+                        var itArr = [];
+                        x.each(function() {
+                            if(this.value.length > 0) {
+                                var key = $(this).attr('data-cell-name').replace('item.','');
+                                itArr.push('"' + key + '":' + JSON.stringify(this.value));
+                            }
+                        });
+                        otArr.push('{' + itArr.join(',') + '}');
+                    })
+                    json += otArr.join(",") + ']';
+
+                    var totalRows = $rows.length;
+
+                    $hiddenField.val( totalRows ? json : null );
                 }
-            })
-            
-                
-            
-        });
         </script>
+        
     @endpush
 @endif
 {{-- End of Extra CSS and JS --}}
 {{-- ########################################## --}}
-

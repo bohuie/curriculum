@@ -53,7 +53,7 @@ class StandardsScaleCategory extends Model
         });
         foreach($jdata as $row){
             $id=-1;
-            if(property_exists($row, "standard_scale_id")){
+            if(property_exists($row, "standard_scale_id") && $row->standard_scale_id != ""){
                 $id = $row->standard_scale_id;
             }
             if(in_array($id, $setScales))

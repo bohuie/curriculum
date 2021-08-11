@@ -31,6 +31,9 @@ class OptionalPriorityCrudController extends CrudController
         CRUD::setModel(\App\Models\OptionalPriorities::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/optional-priority');
         CRUD::setEntityNameStrings('optional priority', 'optional priorities');
+
+        // Hide the preview button 
+        $this->crud->denyAccess('show');
     }
 
     /**
@@ -51,12 +54,24 @@ class OptionalPriorityCrudController extends CrudController
             }
         ]);
 
-        // Subcategory
-        /*$this->crud->addColumn([
-            'name' => 'subcat_desc', // The db column name
-            'label' => "Subcategory desc",// Table column heading
-            'type' => 'Text'
-        ]);*/
+         $this->crud->addColumn([
+            'name' => 'optional_priority', // The db column name
+            'label' => "Optional Priority",// Table column heading
+            'type' => 'text',
+             'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('optional_priority', 'like', '%'.$searchTerm.'%');
+            }
+        ]);
+        
+        $this->crud->addColumn([
+            'label' => 'Subcategory Name',// Table column heading
+            'type' => 'strip_select',
+            'name' => 'subcat_id', // The db column name
+            'entity' =>'OptionalPrioritySubcategories',
+            'attribute' => 'subcat_name',
+            'model' => 'App\Models\OptionalPrioritySubcategories',
+        ]);
+        
         $this->crud->addColumn([
             'name' => 'subcat_id', // The db column name
             'label' => 'Subcat ID',// Table column heading
@@ -65,34 +80,11 @@ class OptionalPriorityCrudController extends CrudController
                 $query ->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
             }
         ]);
-        $removeHTML = strip_tags('subcat_name');
-        $this->crud->addColumn([
-            'label' => 'Subcategory Name',// Table column heading
-            'type' => 'strip_select',
-            'name' => 'OptionalPrioritySubcategories', // The db column name
-            'entity' =>'OptionalPrioritySubcategories',
-            'attribute' => $removeHTML,
-            'model' => 'App\Models\OptionalPrioritySubcategories',
-        ]);
-       
-        // Category
-        /*$this->crud->addColumn([
-            'name' => 'cat_name', // The db column name
-            'label' => "Category Name",// Table column heading
-            'type' => 'Text'
-         ]);*/
-
-        /* $this->crud->addColumn([
-            'name' => 'cat_desc', // The db column name
-            'label' => "Category desc",// Table column heading
-            'type' => 'Text'
-        ]);*/
         
-        $this->crud->addColumn([
-            'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
-            'type' => 'strip_text',
-        ]);
+        
+       
+       
+       
     }
 
     /**
@@ -117,7 +109,7 @@ class OptionalPriorityCrudController extends CrudController
         ]);*/
         $this->crud->addField([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
+            'label' => "Optional Priority&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
             'type' => 'valid_textarea',
             'attributes' => [ 'req' => 'true']
         ]);
@@ -177,7 +169,7 @@ class OptionalPriorityCrudController extends CrudController
         ]);
         $this->crud->addField([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
+            'label' => "Optional Priority&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
             'type' => 'valid_textarea',
             'attributes' => [ 'req' => 'true']
         ]);
@@ -191,8 +183,8 @@ class OptionalPriorityCrudController extends CrudController
 
         $this->crud->addField([
             'label' => 'Subcategory Name',// Table column heading
-            'type' => 'select',
-            'name' => 'OptionalPrioritySubcategories', // The db column name
+            'type' => 'strip_select',
+            'name' => 'subcat_id', // The db column name
             'entity' =>'OptionalPrioritySubcategories',
             'attribute' =>'subcat_name',
             'model' => "App\Models\OptionalPrioritySubcategories",

@@ -79,7 +79,7 @@ class Course extends Model
             return !(in_array($element, $nSc));
         });
         foreach($jdata as $row){
-            if(property_exists($row, "l_outcome_id")){
+            if(property_exists($row, "l_outcome_id") && $row->l_outcome_id != ""){
                 $id = $row->l_outcome_id;
                 if(in_array($id, $setCLOs))
                     LearningOutcome::where('l_outcome_id', $id)->update(['clo_shortphrase' => $row->clo_shortphrase, 'l_outcome' => $row->l_outcome]);
@@ -119,7 +119,7 @@ class Course extends Model
             return !(in_array($element, $nSc));
         });
         foreach($jdata as $row){
-            if(property_exists($row, "a_method_id")){
+            if(property_exists($row, "a_method_id") && $row->a_method_id != ""){
                 $id = $row->a_method_id;
                 if(in_array($id, $setAMs))
                     AssessmentMethod::where('a_method_id', $id)->update(['weight' => $row->weight, 'a_method' => $row->a_method]);
@@ -156,7 +156,7 @@ class Course extends Model
             return !(in_array($element, $nSc));
         });
         foreach($jdata as $row){
-            if(property_exists($row, "l_activity_id")){
+            if(property_exists($row, "l_activity_id") && $row->l_activity_id != ""){
                 $id = $row->l_activity_id;
                 if(in_array($id, $setLAs))
                     LearningActivity::where('l_activity_id', $id)->update(['l_activity' => $row->l_activity]);

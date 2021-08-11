@@ -10,6 +10,8 @@ class PLOCategory extends Model
     use HasFactory;
 
     protected $primaryKey = 'plo_category_id';
+    
+     protected $fillable = ['program_id','plo_category','program_id'];
 
     public function plos()
     {

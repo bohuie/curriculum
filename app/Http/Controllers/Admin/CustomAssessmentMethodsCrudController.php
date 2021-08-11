@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\CustomAssessmentMethodsRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class UserCrudController
+ * Class CustomAssessmentMethodsCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class UserCrudController extends CrudController
+class CustomAssessmentMethodsCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,12 +26,9 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
-        CRUD::setEntityNameStrings('user', 'users');
-
-        // Hide the preview button 
-        $this->crud->denyAccess('show');
+        CRUD::setModel(\App\Models\CustomAssessmentMethods::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/custom-assessment-methods');
+        CRUD::setEntityNameStrings('custom assessment methods', 'custom assessment methods');
     }
 
     /**
@@ -42,14 +39,23 @@ class UserCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::column('name');
-        CRUD::column('email');
-        // CRUD::column('email_verified_at');
-        // CRUD::column('password');
-        // CRUD::column('remember_token');
-        CRUD::column('created_at');
-        CRUD::column('updated_at');
-
+         $this->crud->addColumn([
+            'name' => 'custom_method_id', // The db column name
+            'label' => "Id", // Table column heading
+            'type' => 'number',
+            'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('custom_method_id', 'like', '%'.$searchTerm.'%');
+            }
+          ]);
+        
+        $this->crud->addColumn([
+            'name' => 'custom_methods', // The db column name
+            'label' => "Assessment Method", // Table column heading
+            'type' => 'Text',
+            'searchLogic' => function($query, $column, $searchTerm){
+                $query ->orWhere('custom_methods', 'like', '%'.$searchTerm.'%');
+            }
+          ]);
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
@@ -65,13 +71,16 @@ class UserCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(UserRequest::class);
+        CRUD::setValidation(CustomAssessmentMethodsRequest::class);
 
-        CRUD::field('name');
-        CRUD::field('email');
-        // CRUD::field('email_verified_at');
-        CRUD::field('password');
-        // CRUD::field('remember_token');
+        CRUD::addField([
+            'name'  => 'custom_methods',
+            'type' => 'valid_text',
+            'label' => 'Assessment Method',
+            'attributes' => [
+                'req' => true
+            ],
+        ]);
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
@@ -89,18 +98,5 @@ class UserCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
-    }
-    
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
-
-    public function destroy($id)
-    {
-        $this->crud->hasAccessOrFail('delete');
-        //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
-        $userID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $userID = explode("/",$userID)[3];
-        DB::table('user_roles')->where('user_id', $userID)->delete();
-        
-        return $this->crud->delete($id);
     }
 }

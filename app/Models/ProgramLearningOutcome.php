@@ -10,6 +10,8 @@ class ProgramLearningOutcome extends Model
     use HasFactory;
 
     protected $primaryKey = 'pl_outcome_id';
+    
+    protected $fillable = ['program_id', 'pl_outcome', 'plo_shortphrase','pl_outcome_id','plo_category_id'];
 
     public function learningOutcomes(){    
         return $this->belongsToMany(LearningOutcome::class, 'outcome_maps', 'pl_outcome_id', 'l_outcome_id')->using('App\Models\OutcomeMap')->withPivot('map_scale_value')->withTimestamps(); 
