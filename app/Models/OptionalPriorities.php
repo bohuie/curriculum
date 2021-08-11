@@ -17,10 +17,10 @@ class OptionalPriorities extends Model
     //protected $guarded = ['op_id']; //its guarded or fillable, one or the other
     protected $fillable = ['op_id', 'subcat_id','optional_priority'];
     
-    public function OptionalPrioritySubcategories(){
-        return $this -> belongsTo(OptionalPrioritySubcategories::class, 'subcat_id', 'subcat_id');
+    public function optionalPrioritySubcategory(){
+        return $this->belongsTo(OptionalPrioritySubcategories::class, 'subcat_id', 'subcat_id');
     }
-    public function CourseOptionalPriorities(){
-        return $this -> belongsToMany(CourseOptionalPriorities::class, 'op_id', 'op_id');
+    public function courses(){
+        return $this->belongsToMany(Course::class, 'course_optional_priorities', 'op_id', 'course_id');
     }
 }

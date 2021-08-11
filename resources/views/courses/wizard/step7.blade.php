@@ -549,12 +549,18 @@
                                         <th >#</th>
                                         <th>Aligned UBC and Ministry Priority</th>
                                     </tr>
-
-                                    @foreach ($course->optionalPriorities as $index => $optional_Plo)
-                                    <tr>
-                                        <td style="width:5%" >{{$index+1}}</td>
-                                        <td>{{$optional_Plo->custom_PLO}}</td>
-                                    </tr>
+                                    @foreach ($optionalSubcategories as $optionalSubcategory)
+                                        <tr>
+                                            <th colspan="2" class="table-secondary">{!! $optionalSubcategory->subcat_name !!}</th>
+                                        </tr>
+                                        @foreach ($course->optionalPriorities as $index => $optional_Plo)
+                                            @if ($optionalSubcategory->subcat_id == $optional_Plo->subcat_id)
+                                                <tr>
+                                                    <td style="width:5%" >{{$index + 1}}</td>
+                                                    <td>{!! $optional_Plo->optional_priority !!}</td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
                                     @endforeach
                                 </table>
                             @endif
