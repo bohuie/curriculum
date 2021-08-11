@@ -66,9 +66,9 @@ class StandardCategoryCrudController extends CrudController
             'attributes' => [
                         'req' => 'true',
                         ],
-         ]);
+        ]);
         
-      
+    
     }
 
     /**
@@ -87,7 +87,7 @@ class StandardCategoryCrudController extends CrudController
                         'req' => 'true',
                         ],
             'type' => 'valid_text'
-         ]);
+        ]);
         
         $this->crud->addField([   // repeatable
             'name'  => 'Standardtable',
@@ -132,7 +132,7 @@ class StandardCategoryCrudController extends CrudController
         ]);
     }
     
-     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
 
     public function destroy($id)
     {

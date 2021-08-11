@@ -85,13 +85,13 @@ class SubcategoriesCrudController extends CrudController
     {
         CRUD::setValidation(SubcategoriesRequest::class);
         $subid = \DB::table('optional_priority_subcategories')->count();
-       /* $this->crud->addField([
+        /* $this->crud->addField([
             'name'=>'subcat_id',
             'label'=>'Subcategory ID',
             'type' => 'number',
             'default' =>$subid+1,
             'attributes'=>['readonly'=>'readonly',
-                           ],
+                            ],
         ]);*/
 
         $this->crud->addField([
@@ -119,8 +119,8 @@ class SubcategoriesCrudController extends CrudController
             'req' => 'true',
             'attributes' => [ 'req' => 'true']
         ]);
-       
-       
+        
+        
         $this->crud->addField([
             'name'=>'subcat_postamble',
             'label'=>'Subcategory Postamble',
@@ -150,7 +150,7 @@ class SubcategoriesCrudController extends CrudController
             'type' => 'number',
             'default' =>$subid+1,
             'attributes'=>['readonly'=>'readonly',
-                           ],
+                            ],
         ]);*/ //this is an autoincrement field, the crud panel will create the record and it will be generated at that point.
         
         $this->crud->addField([
@@ -224,7 +224,7 @@ class SubcategoriesCrudController extends CrudController
 
     }
     
-     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
 
     public function destroy($id)
     {

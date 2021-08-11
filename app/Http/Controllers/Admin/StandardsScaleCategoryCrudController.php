@@ -66,16 +66,16 @@ class StandardsScaleCategoryCrudController extends CrudController
             'attributes' => [
                         'req' => 'true',
                         ],
-         ]);
+        ]);
 
-         $this->crud->addField([
+        $this->crud->addField([
             'name' => 'description', // The db column name
             'label' => "Description", // Table column heading
             'type' => 'textarea',
-             'attributes' => [
+            'attributes' => [
                         'req' => 'true',
                         ],
-         ]);
+        ]);
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
@@ -91,20 +91,20 @@ class StandardsScaleCategoryCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-              $this->crud->addField([
+            $this->crud->addField([
             'name' => 'name', // The db column name
             'label' => "Standard Scale Category Name", // Table column heading
             'type' => 'valid_text',
             'attributes' => [
-                  'req' => 'true',
-                  ],
-         ]);
-              
-         $this->crud->addField([
+                    'req' => 'true',
+                    ],
+        ]);
+        
+        $this->crud->addField([
             'name' => 'description', // The db column name
             'label' => "Description", // Table column heading
             'type' => 'Text'
-         ]);
+        ]);
         
         $this->crud->addField([   // repeatable
             'name'  => 'Scaletable',
@@ -169,7 +169,7 @@ class StandardsScaleCategoryCrudController extends CrudController
         ]);
     }
     
-     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
 
     public function destroy($id)
     {

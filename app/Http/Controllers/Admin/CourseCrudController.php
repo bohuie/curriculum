@@ -225,7 +225,7 @@ class CourseCrudController extends CrudController
                 // the key will be stored in the db, the value will be shown as label; 
                 'O' => "Online",
                 'I' => "In Person",
-                'B' => "Blended"
+                'B' => "Hybrid"
             ],
             'default'     => 'I',
             // optional
@@ -280,10 +280,10 @@ class CourseCrudController extends CrudController
             'label'       => 'Semester',
             'type'        => 'radio',
             'options'     => [
-                'W1' => "Winter",
-                'W2' => "Spring",
-                'S1' => "Summer I",
-                "S2" => "Summer II"
+                'W1' => "Winter Term 1",
+                'W2' => "Winter Term 2",
+                'S1' => "Summer Term 1",
+                "S2" => "Summer Term 2"
             ],
             'default'     => 'W1',
             'inline'       => true,

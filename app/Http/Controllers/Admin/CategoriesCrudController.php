@@ -77,13 +77,13 @@ class CategoriesCrudController extends CrudController
         CRUD::setValidation(CategoriesRequest::class);
        // $catId = \DB::table('optional_priority_categories')->count();
         
-       /* $this->crud->addField([
+        /* $this->crud->addField([
             'name'=>'cat_id',
             'label'=>'Category ID',
             'type' =>'number',
             'default'=>$catId+1,
             'attributes'=>['readonly'=>'readonly',
-                           ],
+                            ],
         ]);*/
 
         $this->crud->addField([
@@ -112,8 +112,7 @@ class CategoriesCrudController extends CrudController
             'name'=>'cat_id',
             'label'=>'Category ID',
             'type' =>'number',            
-            'attributes'=>['readonly'=>'readonly',
-                           ],
+            'attributes'=>['readonly'=>'readonly',],
         ]);
 
         $this->crud->addField([
