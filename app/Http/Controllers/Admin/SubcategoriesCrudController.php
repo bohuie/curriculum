@@ -98,7 +98,7 @@ class SubcategoriesCrudController extends CrudController
             'label' => 'Category Name',// Table column heading
             'type' => 'select',
             'name' => 'cat_id', // The db column name
-            'entity' =>'OptionalPriorityCategories',
+            'entity' =>'optionalPriorityCategory',
             'attribute' =>'cat_name',
             'model' => 'App\Models\OptionalPriorityCategories',
         ]);
@@ -157,7 +157,7 @@ class SubcategoriesCrudController extends CrudController
             'label' => 'Category Name',// Table column heading
             'type' => 'select',
             'name' => 'cat_id', // The db column name
-            'entity' =>'OptionalPriorityCategories',
+            'entity' =>'optionalPriorityCategory',
             'attribute' =>'cat_name',
             'model' => 'App\Models\OptionalPriorityCategories',
         ]);
@@ -196,8 +196,8 @@ class SubcategoriesCrudController extends CrudController
         $this->crud->addColumn([
             'label' => 'Category Name',// Table column heading
             'type' => 'select',
-            'name' => 'OptionalPriorityCategories', // The db column name
-            'entity' =>'OptionalPriorityCategories',
+            'name' => 'optionalPriorityCategory', // The db column name
+            'entity' =>'optionalPriorityCategory',
             'attribute' =>'cat_name',
             'model' => 'App\Models\OptionalPriorityCategories',
         ]);

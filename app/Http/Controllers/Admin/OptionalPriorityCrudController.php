@@ -69,10 +69,10 @@ class OptionalPriorityCrudController extends CrudController
         $this->crud->addColumn([
             'label' => 'Subcategory Name',// Table column heading
             'type' => 'strip_select',
-            'name' => 'OptionalPrioritySubcategories', // The db column name
-            'entity' =>'OptionalPrioritySubcategories',
+            'name' => 'optionalPrioritySubcategory', // The db column name
+            'entity' =>'optionalPrioritySubcategory',
             'attribute' => $removeHTML,
-            'model' => 'App\Models\OptionalPrioritySubcategories',
+            'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
        
         // Category
@@ -147,7 +147,7 @@ class OptionalPriorityCrudController extends CrudController
             'label' => "Subcategory Name",// Table column heading
             'type' => 'select',
             'name' => 'subcat_id', // The db column name
-            'entity' =>'OptionalPrioritySubcategories',
+            'entity' =>'optionalPrioritySubcategory',
             'attribute' =>'subcat_name',
             'model' => "App\Models\OptionalPrioritySubcategories",
         ]);
@@ -192,8 +192,8 @@ class OptionalPriorityCrudController extends CrudController
         $this->crud->addField([
             'label' => 'Subcategory Name',// Table column heading
             'type' => 'select',
-            'name' => 'OptionalPrioritySubcategories', // The db column name
-            'entity' =>'OptionalPrioritySubcategories',
+            'name' => 'optionalPrioritySubcategory', // The db column name
+            'entity' =>'optionalPrioritySubcategory',
             'attribute' =>'subcat_name',
             'model' => "App\Models\OptionalPrioritySubcategories",
         ]);
@@ -228,7 +228,7 @@ class OptionalPriorityCrudController extends CrudController
             'label' => 'Subcategory Name',// Table column heading
             'type' => 'select',
             'name' => 'subcat_name', // The db column name
-            'entity' =>'OptionalPrioritySubcategories',
+            'entity' =>'optionalPrioritySubcategory',
             'attribute' =>'subcat_name',
             'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
