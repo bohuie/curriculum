@@ -54,13 +54,13 @@ class OptionalPriorityCrudController extends CrudController
             }
         ]);
 
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name' => 'optional_priority', // The db column name
             'label' => "Optional Priority",// Table column heading
             'type' => 'text',
-             'searchLogic' => function($query, $column, $searchTerm){
+            'searchLogic' => function($query, $column, $searchTerm){
                 $query ->orWhere('optional_priority', 'like', '%'.$searchTerm.'%');
-            }
+            },
         ]);
         
         $this->crud->addColumn([
@@ -68,7 +68,7 @@ class OptionalPriorityCrudController extends CrudController
             'type' => 'strip_select',
             'name' => 'optionalPrioritySubcategory', // The db column name
             'entity' =>'optionalPrioritySubcategory',
-            'attribute' => $removeHTML,
+            'attribute' => 'subcat_name',
             'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
         
