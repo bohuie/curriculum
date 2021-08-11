@@ -403,6 +403,7 @@ class CourseWizardController extends Controller
 
         // get subcategories for optional priorities
         $optionalPriorities = $course->optionalPriorities;
+        $optionalSubcategories = array();
         foreach ($optionalPriorities as $optionalPriority) {
             $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
         }
