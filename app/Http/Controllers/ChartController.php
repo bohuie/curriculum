@@ -125,35 +125,135 @@ class ChartController extends Controller
             }
             
         }
-        dd($count_ms_id);
+        //dd($count_ms_id);
         $labels = array();
         foreach($all_plos as $plo){
             $labels[] = $plo->plo_shortphrase;
         }
-        //dd($labels);
-        
         
         
         $chart = new SampleChart;
         //$chart->labels(['PLO1', 'PLO2', 'PLO3', 'PLO4']);
         $chart->labels($labels);
         
+        //stores count at the map scale id index
+        //form: [PLO1_count, PLO2_count, PLO3_count, PLO4_count]
+        $counts = array();
+        $counts[0]= [0,0,1,0]; //N/A
+        $counts[1]= [2,0,0,0]; //I
+        $counts[2]= [0,2,1,1]; //D
+        $counts[3]= [0,0,0,1]; //A
+
+        //stores background colours at the map scale id index
+        $bg_colours = array();
+        $bg_colours[0]= 'rgb(255,255,255, 0.5)'; //N/A
+        $bg_colours[1]= 'rgb(255,0,0, 0.5)'; //I
+        $bg_colours[2]= 'rgb(0,255,0, 0.5)'; //D
+        $bg_colours[3]= 'rgb(0,0,255, 0.5)'; //A
+
+        //stores border colours at the map scale id index
+        $border_colours = array();
+        $border_colours[0]= 'rgb(255,255,255, 1)'; //N/A
+        $border_colours[1]= 'rgb(255,0,0, 1)'; //I
+        $border_colours[2]= 'rgb(0,255,0, 1)'; //D
+        $border_colours[3]= 'rgb(0,0,255, 1)'; //A
+
+        //stores abbreviations at the map scale id index
+        $abvs = array();
+        $abvs[0]= 'N/A'; //N/A
+        $abvs[1]= 'I'; //I
+        $abvs[2]= 'D'; //D
+        $abvs[3]= 'A'; //A
+
+        $mapScaleIDS = [0,1,2,3]; // we need to get this. These are the array indices
+        
+        $output = array(); //output array with organized data
+
+        foreach($mapScaleIDS as $mapScaleID){
+            $output[$mapScaleID] = array(
+                'count' => $counts[$mapScaleID],
+                'bg_colour' => $bg_colours[$mapScaleID],
+                'border_colour' => $border_colours[$mapScaleID],
+                'abv' => $abvs[$mapScaleID],
+            );
+        }
+        
+        //initialize data array of arrays in form of [PLO1_count, PLO2_count, PLO3_count, PLO4_count, etc.]
+        /*
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        This is the form we want
+        $data = array(
+            //N/A
+            0 => array(
+                'count' => [0,0,1,0],
+                'bg_colour' => 'rgb(255,255,255, 0.5)',
+                'border_colour' => 'rgb(0,0,0, 1)', //WHITE
+                'abv' => 'N/A',
+            ),
+            //I
+            1 => array(
+                'count' => [2,0,0,0],
+                'bg_colour' => 'rgb(255,0,0, 0.5)',
+                'border_colour' => 'rgb(255,0,0, 1)', //RED
+                'abv' => 'I',
+            ),
+            //D
+            2 => array(
+                'count' => [0,2,1,1],
+                'bg_colour' => 'rgb(0,255,0, 0.5)',
+                'border_colour' => 'rgb(0,255,0, 1)', //GREEN
+                'abv' => 'D',
+            ),
+            //A
+            3 => array(
+                'count' => [0,0,0,1],
+                'bg_colour' => 'rgb(0,0,255, 0.5)',
+                'border_colour' => 'rgb(0,0,255, 1)', // BLUE
+                'abv' => 'A',
+            )
+        );
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        */
+        
+        
+
+        // foreach plo (first index in count_ms_id)
+        // *** Maybe we do a switch statement here? *** 
+        
+        /*
         foreach($count_ms_id as $poi => $ms){
-            foreach($ms as $ms_id => $msi)
-            {
+            
                 //dd($ms[$ms_id]);
                 //add dataset 1
                 $chart->dataset(
-                    $ms[$ms_id]['abv'],  //dataset name
+                    $ms['abv'],  //dataset name (map scale abriev)
                     'bar',       //data (chart) type
-                    [4, 3, 2, 1] //data
+                    $data[$idx] //data
                     )
                     ->options([
-                    'backgroundColor'=>( $ms[$ms_id]['bg_colour']),
-                    'borderColor'=>( $ms[$ms_id]['border_colour']),
+                    'backgroundColor'=>( $ms['bg_colour']),
+                    'borderColor'=>( $ms['border_colour']),
                 ]);
-            }
-        }
+            $idx += 1;
+        }*/
+        
+        
+        foreach($output as $dataset){
+        
+            //dd($dataset);
+                //add dataset 1
+                $chart->dataset(
+                    $dataset['abv'],  //dataset name
+                    'bar',       //data (chart) type
+                    $dataset['count'] //data
+                )
+                ->options([
+                    'backgroundColor'=>( $dataset['bg_colour']),
+                    'borderColor'=>( $dataset['border_colour']),
+                ]);
+            
+        }/**/
+
         /*
         $bg1 = $this->convertHexToRGBA('#80bdff', '0.5');
         $bg2 = $this->convertHexToRGBA('#1aa7ff', '0.5');
@@ -213,10 +313,8 @@ class ChartController extends Controller
         return view('pages.chart', compact('chart'));
     }
     public function convertHexToRGBA($hexColour, $transparency){
-        
         //hex to [r,g,b]
         list($r1, $g1, $b1) = sscanf($hexColour, "#%02x%02x%02x");
-
         //[r,g,b] to rgba
         $new_rgb = 'rgba('.$r1.', '.$g1.', '.$b1.', '.$transparency.')';
 
