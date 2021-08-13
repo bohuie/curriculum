@@ -318,116 +318,123 @@ class CourseCrudController extends CrudController
             foreach($LAs as $la)array_push($setOfLA,$la->l_activity_id); 
             
             $this->crud->addField([   // relationship
-             'label' => "Course Learning Outcomes",
-             'type' => "match_table",
+                'label' => "Course Learning Outcomes",
+                'type' => "match_table",
              //'name' => 'learningOutcomes', // the method on your model that defines the relationship   
               'name' => 'CLOtable', //name of the getter/setter in course model 
-             'columns' => [     
-                 'l_outcome_id' => 'id-hidden',
-                 'l_outcome'    => 'Learning Outcome (Shortphrase)-text-req-30',   //4th arguement sets the columnspan of the column
-                 'clo_shortphrase'    => 'Course Learning Outcome-text-req-70',
-             ],
-             'max'     => 20,
-             'min'     => 0,
-             
-           ]);
-           
-          
-           /*$this->crud->addField([   // relationship
-             'label' => "Assessment Methods",
-
-             'type' => "assess_table",
-
-             //'name' => 'assessmentMethods', // the method on your model that defines the relationship
-             'name' => 'AMtable', //name of the getter/setter in course model 
-             'default' => 'testing default string',
-             
-             'ajax' => true,  
-             'columns' => [   
-                 'a_method_id' => 'id-hidden',
-                 'a_method'        => 'Assessment Method-text-req',
-                 'weight'          => 'Weight (%)-number-req',
-             ],
-             
-             'max'     => 20,
-             
-             'min'     => 0,
-             
-           ]);*/
+            'columns' => [     
+                'l_outcome_id' => 'id-hidden',
+                'l_outcome'    => 'Learning Outcome (Shortphrase)-text-req-30',   //4th arguement sets the columnspan of the column
+                'clo_shortphrase'    => 'Course Learning Outcome-text-req-70',
+            ],
+            'max'     => 20,
+            'min'     => 0,
             
-            $this->crud->addField([   // relationship
-             'label' => "Assessment Methods",
-             'type' => "assess_repeatable",
-             //'name' => 'assessmentMethods', // the method on your model that defines the relationship
-             'name' => 'AMtable', //name of the getter/setter in course model 
-             'default' => 'testing default string',
-             
-             'ajax' => true,  
-             'fields' => [  
-                 [
-                   'name' => 'a_method_id',
-                   'label' => 'ID',
-                   'type' => 'hidden',
-                   
-                 ],
-                 [
-                   'name' => 'a_method',
-                   'label' => 'Assessment Method&nbsp;&nbsp;<span style=color:red>*</span>',
-                   'type' => 'list_select', 
-                   'model' => 'App\Models\Custom_assessment_methods',
-                   'attribute' => 'custom_methods',
-                   'foreign-ref' => 'custom_methods', //the column from which the strings are pulled
-                   'attributes' => [ 'req' => 'true' ],  //this is actually an input, not a select. 
-                   'wrapper' => ['class' => 'hidden-label form-group col-sm-9'],
-                   'lclass' => 'form-group col-sm-9', //label class
-                 ],
-                 [
-                   'name' => 'weight',
-                   'label' => 'Weight (%)&nbsp;&nbsp;<span style=color:red>*</span>',
-                   'type' => 'number',
-                   'attributes' => [ 'req' => 'true' ],
-                   'wrapper' => ['class' => 'totaled_weight_ hidden-label form-group col-sm-3'],
-                     'lclass' => 'form-group col-sm-3', //label class
-                 ],                 
-             ],
-             
-             'max'     => 5,
-             
-             'min'     => 0,
-             
-           ]);
-           $total = DB::table('assessment_methods')->select('weight')->where('course_id',$crsID)->sum('weight');
-           
-            $this->crud->addField([   // the total for the assessment methods field. required for the script in the assess_repeatable
-             'label' => "Total Weight",
-
-             'type' => "number",
-             
-             'name' => 'totalweight', //name of the getter/setter in course model 
-             'default' => $total,
-             'wrapper' => ['class' => 'total_weight_ form-group col-sm-3']
             ]);
             
             
-             
+           /*$this->crud->addField([   // relationship
+            'label' => "Assessment Methods",
+
+            'type' => "assess_table",
+
+            //'name' => 'assessmentMethods', // the method on your model that defines the relationship
+            'name' => 'AMtable', //name of the getter/setter in course model 
+            'default' => 'testing default string',
+            
+            'ajax' => true,  
+            'columns' => [   
+                'a_method_id' => 'id-hidden',
+                'a_method'        => 'Assessment Method-text-req',
+                'weight'          => 'Weight (%)-number-req',
+            ],
+            
+            'max'     => 20,
+            
+            'min'     => 0,
+            
+        ]);*/
+            
+            $this->crud->addField([   // relationship
+                'label' => "Assessment Methods",
+                'type' => "assess_repeatable",
+                //'name' => 'assessmentMethods', // the method on your model that defines the relationship
+                'name' => 'AMtable', //name of the getter/setter in course model 
+                'default' => 'testing default string',
+                
+                'ajax' => true,  
+                'fields' => [  
+                    [
+                    'name' => 'a_method_id',
+                    'label' => 'ID',
+                    'type' => 'hidden',
+                    ],
+                    [
+                    'name' => 'a_method',
+                    'label' => 'Assessment Method&nbsp;&nbsp;<span style=color:red>*</span>',
+                    'type' => 'list_select', 
+                    'model' => 'App\Models\Custom_assessment_methods',
+                    'attribute' => 'custom_methods',
+                    'foreign-ref' => 'custom_methods', //the column from which the strings are pulled
+                    'attributes' => [ 'req' => 'true' ],  //this is actually an input, not a select. 
+                    'wrapper' => ['class' => 'hidden-label form-group col-sm-9'],
+                    'lclass' => 'form-group col-sm-9', //label class
+                    ],
+                    [
+                    'name' => 'weight',
+                    'label' => 'Weight (%)&nbsp;&nbsp;<span style=color:red>*</span>',
+                    'type' => 'number',
+                    'attributes' => [ 'req' => 'true' ],
+                    'wrapper' => ['class' => 'totaled_weight_ hidden-label form-group col-sm-3'],
+                        'lclass' => 'form-group col-sm-3', //label class
+                    ],                 
+                ],
+                'max'     => 5,
+                'min'     => 0,
+                
+            ]);
+            $total = DB::table('assessment_methods')->select('weight')->where('course_id',$crsID)->sum('weight');
+            
+            $this->crud->addField([   // the total for the assessment methods field. required for the script in the assess_repeatable
+                'label' => "Total Weight",
+                'type' => "number",
+             'name' => 'totalweight', //name of the getter/setter in course model 
+                'default' => $total,
+                'wrapper' => ['class' => 'total_weight_ form-group col-sm-3']
+            ]);
+            
+            
+
             $this->crud->addField([   // relationship
                 'label' => "Teaching and Learning Activities",
-                'type' => "match_table",
-             //'name' => 'learningActivities', // the method on your model that defines the relationship
-             'name' => 'LAtable', //name of the getter/setter in course model  
-             'ajax' => true,  
-             'columns' => [     
-                 'l_activity_id' => 'id-hidden',
-                 'l_activity'        => 'Teaching and Learning Activity-text-req',                
-             ],
-             
-             'max'     => 20,
-             
-             'min'     => 0,
-             
-           ]);
-                      
-           $req =  $this->crud->getRequest()->request->all();
+                'type' => "assess_repeatable",
+                //'name' => 'learningActivities', // the method on your model that defines the relationship
+                'name' => 'LAtable', //name of the getter/setter in course model  
+                'ajax' => true,  
+                'fields' => [  
+                    [
+                    'name' => 'l_activity_id',
+                    'label' => 'ID',
+                    'type' => 'hidden',
+
+                    ],
+                    [
+                    'name' => 'l_activity',
+                    'label' => 'learning Activity&nbsp;&nbsp;<span style=color:red>*</span>',
+                    'type' => 'list_select', 
+                    'model' => 'App\Models\Custom_learning_activities',
+                    'attribute' => 'custom_activities',
+                    'foreign-ref' => 'custom_activities', //the column from which the strings are pulled
+                    'attributes' => [ 'req' => 'true' ],  //works because this is actually an input, not a select. 
+                    'wrapper' => ['class' => 'hidden-label form-group col-sm-10'],
+                    'lclass' => 'form-group col-sm-10', //label class
+                    ],
+                ],
+                'max'     => 10,
+                'min'     => 0,
+            ]);
+
+            $req =  $this->crud->getRequest()->request->all();
            //course alignment
            //create a table, fill the fields using custom code. each checkbox has a name with (oas|oac)-cID-aID (where aID is the other ID type)
            ///start with a row for each CLO
@@ -438,36 +445,36 @@ class CourseCrudController extends CrudController
                     . "<tr><th>Course Learning Outcomes or Competencies</th><th>Student Assessment Methods</th><th>Teaching and Learning Activities</th></tr>";
                         
            //by getting the set of ids for la and am, i can query only those oas and oac that belong to this course (not referenced directly by courseID)
-           $chkStyle = "style=\"outline:1px double black;\"";
-           $OAS = DB::table('outcome_assessments')->whereIn('a_method_id',  $setOfAM)->get();
-           $OAC = DB::table('outcome_activities')->whereIn('l_activity_id', $setOfLA)->get();
-           foreach($CLOs as $clo){
-               $cID = $clo->l_outcome_id;
-               $tRow = "<tr class=\"alignrow\" id=\"align-$cID\"><td id=\clo-$cID\">".$clo->clo_shortphrase."</td>";
-               //now a column with checkboxes for the outcome assessments and for the outcome activities
-               //each row in the db on either of those tables is a box that is ticked on this html table
-               //outcome_assessments
-               $amStr = "<ul>";
-               foreach($AMs as $am){                   
-                   $amID = $am->a_method_id;
-                   $oas = $OAS->where('a_method_id', '=', $amID)->where('l_outcome_id', '=', $cID);
-                   $ckd = (count($oas)> 0)?"checked":"";
-                   $amStr .= "<li>". $am->a_method ."&nbsp;&nbsp;<input type=\"checkbox\" $chkStyle name=\"outcomea-oas-$cID-$amID\" $ckd></li>";
-               }
-               $tRow .= "<td id=\am-$cID\">$amStr</td>";
-               //now the outcome_activities
-               $laStr = "<ul>";
-               foreach($LAs as $la){                   
-                   $laID = $la->l_activity_id;
-                   $oac = $OAC->where('l_activity_id', '=', $laID)->where('l_outcome_id', '=', $cID);
-                   $ckd = (count($oac)> 0)?"checked":"";
-                   $laStr .= "<li>". $la->l_activity ."&nbsp;&nbsp;<input type=\"checkbox\" $chkStyle name=\"outcomea-oac-$cID-$laID\" $ckd></li>";
-               }
-               $tRow .= "<td id=\am-$cID\">$laStr</ul></td></tr>";
-               $custHTML .= $tRow;  
-           }
-           $custHTML .= "</table></fieldset>";
-           
+            $chkStyle = "style=\"outline:1px double black;\"";
+            $OAS = DB::table('outcome_assessments')->whereIn('a_method_id',  $setOfAM)->get();
+            $OAC = DB::table('outcome_activities')->whereIn('l_activity_id', $setOfLA)->get();
+            foreach($CLOs as $clo){
+                $cID = $clo->l_outcome_id;
+                $tRow = "<tr class=\"alignrow\" id=\"align-$cID\"><td id=\clo-$cID\">".$clo->clo_shortphrase."</td>";
+                //now a column with checkboxes for the outcome assessments and for the outcome activities
+                //each row in the db on either of those tables is a box that is ticked on this html table
+                //outcome_assessments
+                $amStr = "<ul>";
+                foreach($AMs as $am){                   
+                    $amID = $am->a_method_id;
+                    $oas = $OAS->where('a_method_id', '=', $amID)->where('l_outcome_id', '=', $cID);
+                    $ckd = (count($oas)> 0)?"checked":"";
+                    $amStr .= "<li>". $am->a_method ."&nbsp;&nbsp;<input type=\"checkbox\" $chkStyle name=\"outcomea-oas-$cID-$amID\" $ckd></li>";
+                }
+                $tRow .= "<td id=\am-$cID\">$amStr</td>";
+                //now the outcome_activities
+                $laStr = "<ul>";
+                foreach($LAs as $la){                   
+                    $laID = $la->l_activity_id;
+                    $oac = $OAC->where('l_activity_id', '=', $laID)->where('l_outcome_id', '=', $cID);
+                    $ckd = (count($oac)> 0)?"checked":"";
+                    $laStr .= "<li>". $la->l_activity ."&nbsp;&nbsp;<input type=\"checkbox\" $chkStyle name=\"outcomea-oac-$cID-$laID\" $ckd></li>";
+                }
+                $tRow .= "<td id=\am-$cID\">$laStr</ul></td></tr>";
+                $custHTML .= $tRow;  
+            }
+            $custHTML .= "</table></fieldset>";
+            
            $this->crud->addField([   // relationship
             'label' => 'Course Alignment',
             'type' => 'custom_html',
@@ -512,12 +519,12 @@ class CourseCrudController extends CrudController
                             . "let ch = document.getElementById(&quot;";
             $accFoo2 = "&quot;);\n"
                             . "ch.hidden = !(ch.hidden);\n"
-                          . "})();\"";      
+                            . "})();\"";      
             $delFoo1 = "onClick=\"(function(){\n"
                             . "$(&quot;tr[id=cp_";
             $delFoo2 = "_";
             $delFoo3 = "] td input&quot;).prop(&quot;checked&quot;, false)\n"
-                          . "})();\"";
+                            . "})();\"";
             
             foreach ($Progs as $program){ 
                 $PFunc = $accFoo1."plomap_".$program->program_id.$accFoo2;
