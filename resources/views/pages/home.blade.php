@@ -17,7 +17,12 @@
                 border-color: #1E90FF;">
                     <div class="card-title bg-primary p-3">
                         <h3 style="color: white;">
-                        Programs         
+                        Programs
+                        
+                        <button id="programHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#exampleModalToggle">
+                            <i class="bi bi-question-circle text-white"></i>
+                        </button>
+                        @include('layouts.guide')
 
                         <div style="float:right;">
                             <button style="border: none; background: none; outline: none;" data-toggle="modal" data-target="#createProgramModal">
@@ -267,7 +272,12 @@
                 border-color: #1E90FF;">
                     <div class="card-title bg-primary p-3">
                         <h3 style="color: white;">
-                        Courses         
+                        Courses
+                        
+                        <button id="coursesHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#exampleModalToggle">
+                            <i class="bi bi-question-circle text-white"></i>
+                        </button>
+                        @include('layouts.guide')
 
                         <div style="float:right;">
                             <button style="border: none; background: none; outline: none;" data-toggle="modal" data-target="#createCourseModal">
@@ -1315,6 +1325,10 @@
         // Enables functionality of tool tips
         $('[data-toggle="tooltip"]').tooltip({html:true});
     });
+
+    $('somthingdumb').on('click', function(){
+        
+    })
 </script>
 
 <style> 
