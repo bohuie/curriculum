@@ -19,9 +19,11 @@
                         <h3 style="color: white;">
                         Programs
                         
-                        <button id="programHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#exampleModalToggle">
-                            <i class="bi bi-question-circle text-white"></i>
-                        </button>
+                        <div style="float:right;">
+                            <button id="programHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
                         @include('layouts.guide')
 
                         <div style="float:right;">
@@ -274,9 +276,11 @@
                         <h3 style="color: white;">
                         Courses
                         
-                        <button id="coursesHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#exampleModalToggle">
-                            <i class="bi bi-question-circle text-white"></i>
-                        </button>
+                        <div style="float:right;">
+                            <button id="coursesHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
                         @include('layouts.guide')
 
                         <div style="float:right;">
@@ -754,7 +758,14 @@
                 border-color: #1E90FF;">
                     <div class="card-title bg-primary p-3">
                         <h3 style="color: white;">
-                        Syllabi         
+                        Syllabi
+                        
+                        <div style="float:right;">
+                            <button id="syllabiHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
+                        @include('layouts.guide')
 
                         <div style="float:right;">
                             <a href="{{route('syllabus')}}">
