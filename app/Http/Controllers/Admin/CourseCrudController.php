@@ -304,8 +304,8 @@ class CourseCrudController extends CrudController
       //following part is only available once the course record is created        
 
         $crsID = filter_input(INPUT_SERVER,'PATH_INFO');
-        
-            $crsID = explode("/",$crsID)[3];
+            $crsID = explode("/",$crsID);
+            $crsID = $crsID[count($crsID) - 2];
             $crsData = Course::where('course_id', '=', $crsID)->get()[0];
             $CLOs =  \App\Models\LearningOutcome::where('course_id', '=', $crsID)->get();
             $AMs = DB::table('assessment_methods')->where('course_id', '=', $crsID)->get();

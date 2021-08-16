@@ -230,7 +230,8 @@ class ProgramCrudController extends CrudController
         $this->setupCreateOperation();
         
         $prgID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $prgID = explode("/",$prgID)[3];
+        $prgID = explode("/",$prgID);
+        $prgID = $prgID[count($prgID) - 2];
         
         $this->crud->addField([
                     'name'    => 'ProgramOC',
