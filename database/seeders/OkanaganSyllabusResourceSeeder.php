@@ -42,32 +42,7 @@ class OkanaganSyllabusResourceSeeder extends Seeder
             // http://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,41,90,1014
             // "
         ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'health',
-            'title' => 'Health and Wellness',
-            // 'description' => 'At UBC Okanagan health services to students are provided by Health and Wellness.  Nurses, physicians and counsellors provide health care and counselling related to physical health, emotional/mental health and sexual/reproductive health concerns. As well, health promotion, education and research activities are provided to the campus community.  If you require assistance with your health, please contact Health and Wellness for more information or to book an appointment.
-
-            // UNC 337 	250.807.9270
-            // email: healthwellness.okanagan@ubc.ca
-            // Web: www.students.ok.ubc.ca/health-wellness
-            // ',
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'safewalk',
-            'title' => 'Safewalk',
-            // 'description' => "Don't want to walk alone at night?  Not too sure how to get somewhere on campus?  Call Safewalk at 250-807-8076. 
-            // For more information, see: www.security.ok.ubc.ca
-            // ",
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'student',
-            'title' => 'Student Learning Hub',
-            // 'description' => 'The Student Learning Hub (LIB 237) is your go-to resource for free math, science, writing, and language learning support. The Hub welcomes undergraduate students from all disciplines and year levels to access a range of supports that include tutoring in math, sciences, languages, and writing, as well as help with study skills and learning strategies. For more information, please visit the Hub’s website (https://students.ok.ubc.ca/student-learning-hub/) or call 250-807-9185.',
-        ]);
-
+        
         OkanaganSyllabusResource::create([
             'id_name' => 'disability',
             'title' => 'UBC Okanagan Disability Resource Centre',
@@ -91,9 +66,37 @@ class OkanaganSyllabusResourceSeeder extends Seeder
         ]);
 
         OkanaganSyllabusResource::create([
+            'id_name' => 'health',
+            'title' => 'Health and Wellness',
+            // 'description' => 'At UBC Okanagan health services to students are provided by Health and Wellness.  Nurses, physicians and counsellors provide health care and counselling related to physical health, emotional/mental health and sexual/reproductive health concerns. As well, health promotion, education and research activities are provided to the campus community.  If you require assistance with your health, please contact Health and Wellness for more information or to book an appointment.
+
+            // UNC 337 	250.807.9270
+            // email: healthwellness.okanagan@ubc.ca
+            // Web: www.students.ok.ubc.ca/health-wellness
+            // ',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'student',
+            'title' => 'Student Learning Hub',
+            // 'description' => 'The Student Learning Hub (LIB 237) is your go-to resource for free math, science, writing, and language learning support. The Hub welcomes undergraduate students from all disciplines and year levels to access a range of supports that include tutoring in math, sciences, languages, and writing, as well as help with study skills and learning strategies. For more information, please visit the Hub’s website (https://students.ok.ubc.ca/student-learning-hub/) or call 250-807-9185.',
+        ]);
+
+
+
+
+        OkanaganSyllabusResource::create([
             'id_name' => 'copyright',
             'title' => '© Copyright Statement',
             // 'description' => 'All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'safewalk',
+            'title' => 'Safewalk',
+            // 'description' => "Don't want to walk alone at night?  Not too sure how to get somewhere on campus?  Call Safewalk at 250-807-8076. 
+            // For more information, see: www.security.ok.ubc.ca
+            // ",
         ]);
 
     }

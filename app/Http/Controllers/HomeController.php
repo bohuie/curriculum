@@ -64,6 +64,8 @@ class HomeController extends Controller
             $syllabus['userPermission'] = $syllabus->pivot->permission;
             return $syllabus;
         })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
+
+
         // returns a collection of programs associated with courses (Programs Icon)
         $coursesPrograms = array();
         foreach ($myCourses as $course) {

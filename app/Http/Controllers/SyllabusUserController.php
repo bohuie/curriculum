@@ -10,6 +10,7 @@ use App\Mail\NotifySyllabusUserMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class SyllabusUserController extends Controller
 {
@@ -47,48 +48,76 @@ class SyllabusUserController extends Controller
      */
     public function store(Request $request, $syllabusId)
     {   
+        // get the current user
         $currentUser = User::find(Auth::id());
+        // get the current user permission
         $currentUserPermission = $currentUser->syllabi->where('id', $syllabusId)->first()->pivot->permission;
-        // if the current user is the owner, try add the given collaborator
+        // keep track of errors
+        $errorMessages = array();
+        // if the current user is the owner, save the collaborators and their permissions
         if ($currentUserPermission == 1 ) {
-            // validate request 
-            $validator = $this->validate($request, [
-                'email'=> 'required',
-                'email'=> 'exists:users,email',
-                'permission' => 'required',
-                ]);
-            // find the syllabus
+            $currentPermissions = ($request->input('current_permissions')) ? $request->input('current_permissions') : array();
+            $newCollabs = $request->input('new_collabs');
+            $newPermissions = $request->input('new_permissions');
+            // get the syllabus
             $syllabus = Syllabus::find($syllabusId);
-            // find the given collaborator by their email
-            $user = User::where('email', $request->input('email'))->first();
-            // get their given permission level
-            $permission = $request->input('permission');
-            // create a new collaborator
-            SyllabusUser::updateOrCreate(
-                ['syllabus_id' => $syllabus->id, 'user_id' => $user->id],
-            );
-            // find the newly created or updated syllabus user
-            $syllabusUser = SyllabusUser::where([
-                ['syllabus_id', $syllabus->id],
-                ['user_id', $user->id]
-            ])->first();
-            // set this syllabus user permission level
-            switch ($permission) {
-                case 'edit':
-                    $syllabusUser->permission = 2;
-                break;
-                case 'view':
-                    $syllabusUser->permission = 3;
-                break;
+            // get the saved collaborators for this syllabus, but not the owner
+            $savedSyllabusUsers = SyllabusUser::where([['syllabus_id', '=', $syllabus->id], ['permission', '!=', 1]])->get();
+            // update current collaborators for this syllabus
+            foreach ($savedSyllabusUsers as $savedSyllabusUser) {
+                if (array_key_exists($savedSyllabusUser->user_id, $currentPermissions)) {
+                    $this->update($savedSyllabusUser, $currentPermissions);
+                } else {
+                    // remove old collaborator from course, make sure it's not the owner
+                    if ($savedSyllabusUser->permission != 1) {
+                        $this->destroy($savedSyllabusUser);
+                    }
+                }
             }
-            // save this syllabus user
-            if($syllabusUser->save()){
-                Mail::to($user->email)->send(new NotifySyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
-                $request->session()->flash('success', $user->email . ' was successfully added to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
-            }else{
-                $request->session()->flash('error', 'There was an error adding ' . $user->email . ' to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
+            // add new collaborators
+            if ($newCollabs) {
+                foreach ($newCollabs as $index => $newCollab) {
+                    // find the newCollab by their email
+                    $user = User::where('email', $newCollab)->first();
+                    // if the user has registered with the tool, add the new collab
+                    if ($user) {
+                        // make sure the current user (aka owner), does not try to add themselves with a permission level 
+                        if ($user->email != $currentUser->email) {
+                            // get their given permission level
+                            $permission = $newPermissions[$index];
+                            // create a new collaborator
+                            $syllabusUser = SyllabusUser::updateOrCreate(
+                                ['syllabus_id' => $syllabus->id, 'user_id' => $user->id],
+                            );
+                            // set this syllabus user permission level
+                            switch ($permission) {
+                                case 'edit':
+                                    $syllabusUser->permission = 2;
+                                break;
+                                case 'view':
+                                    $syllabusUser->permission = 3;
+                                break;
+                            }
+                            if($syllabusUser->save()){
+                                Mail::to($user->email)->send(new NotifySyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
+                            } else {
+                                array_push($errorMessages, 'There was an error adding ' . $user->email . ' to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
+                            }
+                        }
+                    } else {
+                        array_push($errorMessages, $newCollab . " has not registered on this site. ");
+                    }
+                }
             }
-        // else the current user is not the owner, flash an error
+
+            if (count($errorMessages) > 0) {
+                $request->session()->flash('error', array_reduce($errorMessages, function($message, $error) {
+                    $message = $message . $error;
+                }));
+            } else {
+                $request->session()->flash('success', 'Your changes were saved successfully!');
+            }
+        // else the current user does not own this syllabus
         } else {
             $request->session()->flash('error', 'You do not have permission to add collaborators to this syllabus');
         }
@@ -121,14 +150,24 @@ class SyllabusUserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SyllabusUser $syllabusUser)
+    public function update(SyllabusUser $syllabusUser, $permissions)
     {
-        //
-
+        // update permissions for current collaborators
+        switch ($permissions[$syllabusUser->user_id]) {
+            case 'edit':
+                $syllabusUser->permission = 2;
+            break;
+            
+            case 'view':
+                $syllabusUser->permission = 3;
+            break;
+        }
+        
+        $syllabusUser->save();
+        
     }
 
     /**
@@ -137,18 +176,15 @@ class SyllabusUserController extends Controller
      * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $syllabusId)
+    public function destroy(SyllabusUser $syllabusUser)
     {
-        $user = User::where('email', $request->input('email'))->first();
-
-        $syllabusUser = SyllabusUser::where('syllabus_id', $syllabusId)->where('user_id', $user->id);
-
-        if($syllabusUser->delete()){
-            $request->session()->flash('success', $user->email.' removed successfully');
-        }else{
-            $request->session()->flash('error', 'There was an error removing ' . $user->email);
+        // get the current user
+        $currentUser = User::find(Auth::id());
+        // get the current user permission
+        $currentUserPermission = SyllabusUser::where([['syllabus_id', $syllabusUser->syllabus_id], ['user_id', $currentUser->id]])->first()->permission;
+        // if the current user is the owner, delete the given syllabus collaborator
+        if ($currentUserPermission == 1 ) {
+            $syllabusUser->delete();
         }
-
-        return redirect()->back();
     }
 }
