@@ -61,23 +61,23 @@ class MappingScaleCategoryCrudController extends CrudController
     {
         CRUD::setValidation(MappingScaleCategoryRequest::class);
 
-       $this->crud->addField([
+        $this->crud->addField([
             'name' => 'msc_title', // The db column name
             'label' => "Category name&nbsp;&nbsp;<span style=color:red>*</span>", // Table column heading
             'type' => 'valid_text',
             'attributes' => [
                         'req' => 'true',
                         ],
-         ]);
+        ]);
 
-         $this->crud->addField([
+        $this->crud->addField([
             'name' => 'description', // The db column name
             'label' => "Description&nbsp;&nbsp;<span style=color:red>*</span>", // Table column heading
             'type' => 'textarea',
-             'attributes' => [
+                'attributes' => [
                         'req' => 'true',
                         ],
-         ]);
+        ]);
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
@@ -103,7 +103,7 @@ class MappingScaleCategoryCrudController extends CrudController
             'entity' => 'MappingScales',
             
             'fields' => [
-                 [
+                [
                     'name'    => 'map_scale_id',
                     'type'    => 'Text',
                     'label'   => '',
@@ -112,7 +112,7 @@ class MappingScaleCategoryCrudController extends CrudController
                 ],
                 [
                     'name' => 'title',
-                    'label' => 'Title&nbsp;&nbsp;<span style=\"color:red\">*</span>',
+                    'label' => 'Title&nbsp;&nbsp;<span style=color:red>*</span>',
                     'type' => 'text',
                     'attributes' => [
                         'req' => 'true',
@@ -121,7 +121,7 @@ class MappingScaleCategoryCrudController extends CrudController
                 ],
                 [
                     'name' => 'abbreviation',
-                    'label' => 'Abbreviation&nbsp;&nbsp;<span style=\"color:red\">*</span>',
+                    'label' => 'Abbreviation&nbsp;&nbsp;<span style=color:red>*</span>',
                     'type' => 'text',
                     'attributes' => [
                         'req' => 'true',
@@ -136,7 +136,7 @@ class MappingScaleCategoryCrudController extends CrudController
                 ],
                 [
                     'name' => 'description',
-                    'label' => 'Description&nbsp;&nbsp;<span style=\"color:red\">*</span>',
+                    'label' => 'Description&nbsp;&nbsp;<span style=color:red>*</span>',
                     'type' => 'text',
                     'attributes' => [
                         'req' => 'true',
@@ -149,7 +149,6 @@ class MappingScaleCategoryCrudController extends CrudController
             'init_rows' => 0, // number of empty rows to be initialized, by default 1
             'min_rows' => 0, // minimum rows allowed, when reached the "delete" buttons will be hidden
             'max_rows' => 10 // maximum rows allowed, when reached the "new item" button will be hidden
-
         ]);
         
     }
