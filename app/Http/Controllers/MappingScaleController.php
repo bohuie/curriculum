@@ -136,18 +136,20 @@ class MappingScaleController extends Controller
      */
     public function destroy(Request $request, $map_scale_id)
     {
-        //
-        if($map_scale_id == 1 || $map_scale_id == 2 || $map_scale_id == 3){
-            $msp = MappingScaleProgram::where('program_id', $request->input('program_id'))
-                                        ->where('map_scale_id', $map_scale_id);
+        $map_scale = MappingScale::where('map_scale_id', $map_scale_id)->first();
+        $mapping_scale_categories_id = $map_scale->mapping_scale_categories_id;
+
+        if ($mapping_scale_categories_id != null) {
+            // if the mapping scale is null delete from the mapping scale program
+            $msp = MappingScaleProgram::where('program_id', $request->input('program_id'))->where('map_scale_id', $map_scale_id);
+          
             if($msp->delete()){
                 $request->session()->flash('success', 'Mapping scale level deleted');
             }else{
                 $request->session()->flash('error', 'There was an error deleting the mapping scale level');
             }
-
-        }else{    
-
+        } else {
+            // if the mapping scale does not belong to a category the delete from mapping scales
             $ms = MappingScale::where('map_scale_id', $map_scale_id)->first();
         
             if($ms->delete()){
@@ -155,47 +157,38 @@ class MappingScaleController extends Controller
             }else{
                 $request->session()->flash('error', 'There was an error deleting the mapping scale level');
             }
-
         }
         
         return redirect()->route('programWizard.step2', $request->input('program_id'));
     }
 
-    public function default(Request $request)
-    {
-        //
-        $msp = MappingScaleProgram::where('program_id',  $request->input('program_id') )->get();
-        //dd($msp);
-
-        foreach($msp as $m){
+    public function addDefaultMappingScale(Request $request) {
+        $mapping_scale_categories_id = $request->input('mapping_scale_categories_id');
+        
+        // Return currently mapped scales for a program
+        $msp = MappingScaleProgram::join('mapping_scales', 'mapping_scale_programs.map_scale_id', '=', 'mapping_scales.map_scale_id')->where('program_id',  $request->input('program_id') )->get();
+        // loops through mapping scales
+        foreach($msp as $m) {
             $ms = MappingScale::where('map_scale_id', $m->map_scale_id)->first();
-            if($m->map_scale_id == 1 || $m->map_scale_id == 2 || $m->map_scale_id == 3){
+            if ($m->mapping_scale_categories_id != null) {
                 $ms->programs()->detach($request->input('program_id'));
-            }else{
-                $ms->delete();
             }
         }
 
-        $msp1 = new MappingScaleProgram;
-        $msp1->map_scale_id = 1;
-        $msp1->program_id = $request->input('program_id');
-        $msp1->save();
-
-        $msp2 = new MappingScaleProgram;
-        $msp2->map_scale_id = 2;
-        $msp2->program_id = $request->input('program_id');
-        $msp2->save();
-
-        $msp3 = new MappingScaleProgram;
-        $msp3->map_scale_id = 3;
-        $msp3->program_id = $request->input('program_id');
-        
-        if($msp3->save()){
-            $request->session()->flash('success', 'default mapping scale value set');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting the plo category');
+        $mappingScales = MappingScale::where('mapping_scale_categories_id', $mapping_scale_categories_id)->get();
+        // add mapping scales to mapping scale programs
+        foreach ($mappingScales as $mappingScale) {
+            $msp = new MappingScaleProgram;
+            $msp->map_scale_id = $mappingScale->map_scale_id;
+            $msp->program_id = $request->input('program_id');
+            
+            if($msp->save()){
+                $request->session()->flash('success', 'Default mapping scale value set');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the plo category');
+            }
         }
-        
+
         return redirect()->route('programWizard.step2', $request->input('program_id'));
     }
 }

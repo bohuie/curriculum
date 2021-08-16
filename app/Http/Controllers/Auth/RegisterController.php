@@ -13,6 +13,8 @@ use App\Rules\GoogleRecaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 
+use App\Http\Controllers\Auth\Redirect;
+
 class RegisterController extends Controller
 {
     /*
@@ -52,10 +54,10 @@ class RegisterController extends Controller
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
-    {
+    {    
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users','allowed_domain'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'g-recaptcha-response' => ['required', new GoogleRecaptcha],
         ]);
@@ -82,8 +84,20 @@ class RegisterController extends Controller
         return $user;
     }
 
+    /*
+    //Limits email domain to be only UBC  
+    protected function checkEmail(array $data)
+    {
+        $email = $data['email'];
+        $substr = substr($email, -6);
+        if (strtolower($substr) !== "ubc.ca") {
+            // redirect to register page with an error  
+            return view('auth.register');
+        }
+    }
+    */
 
-       /**
+    /**
      * Handle a registration request for the application.
      *
      * @param  \Illuminate\Http\Request  $request

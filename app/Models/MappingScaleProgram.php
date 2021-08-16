@@ -12,4 +12,14 @@ class MappingScaleProgram extends Model
     protected $primaryKey = ['map_scale_id','program_id'];
 
     public $incrementing = false;
+    
+    public function mappingScales()
+    {
+        return $this->belongsTo(MappingScale::Class);
+    }
+    
+    public function programs()
+    {
+        return $this->belongsTo(Program::Class);
+    }
 }

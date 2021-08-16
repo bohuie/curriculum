@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 use App\Mail\NotifyProgramAdminMail;
+use App\Models\Program;
 use Illuminate\Support\Facades\Mail;
 
-use Illuminate\Support\Facades\DB;
 
 class ProgramUserController extends Controller
 {
@@ -48,29 +48,53 @@ class ProgramUserController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $this->validate($request, [
-            'email'=> 'required',
-            'email'=> 'exists:users,email',
-            ]);
+        // get user accessing function
+        $currentUser = User::find(Auth::id());
+        $currentUserPermission = $currentUser->programs->where('program_id', $request->input('program_id'))->first()->pivot->permission;
+        if ($currentUserPermission == 1) {
+            // Validate request 
+            $validator = $this->validate($request, [
+                'email'=> 'required',
+                'email'=> 'exists:users,email',
+                'permission' => 'required'
+                ]);
 
-        $user = User::where('email', $request->input('email'))->first();
+            // get user
+            $user = User::where('email', $request->input('email'))->first();
+            // get program id
+            $program_id = $request->input('program_id');
+            // get program
+            $program = Program::where('program_id',$program_id)->first();
+            //get permission
+            $permission = $request->input('permission');
+            // create a new collaborator
+            ProgramUser::updateOrCreate(
+                ['program_id' => $program_id, 'user_id' => $user->id ]
+            );
+            // find the newly created or updated program user
+            $programUser = ProgramUser::where([
+                ['program_id', $program_id],
+                ['user_id', $user->id]
+            ])->first();
+            // Set the program users permission level
+            switch ($permission) {
+                case 'edit':
+                    $programUser->permission = 2;
+                break;
+                case 'view':
+                    $programUser->permission = 3;
+                break;
+            }
 
-        // $pu = new ProgramUser;
-        // $pu->program_id = $request->input('program_id');
-        // $pu->user_id = $user->id;
+            if($programUser->save()){
+                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));
+                $request->session()->flash('success', $user->email . ' was successfully added to program ' .$program->program);
+            }else{
+                $request->session()->flash('error', 'There was an error adding the Collaborator');
+            }
 
-
-        $pu = DB::table('program_users')->updateOrInsert(
-            ['program_id' => $request->input('program_id'), 'user_id' => $user->id ]
-        );
-
-        if($user->save()){
-            Mail::to($user->email)->send(new NotifyProgramAdminMail());
-
-            $request->session()->flash('success', 'Collabarator added');
-        }else{
-            $request->session()->flash('error', 'There was an error adding the Collabarator');
+        } else {
+            $request->session()->flash('error', 'You do not have permission to add collaborators to this program');
         }
 
         return redirect()->back();
@@ -116,18 +140,39 @@ class ProgramUserController extends Controller
      * @param  \App\Models\ProgramUser  $programUser
      * @return \Illuminate\Http\Response
      */
-    public function delete(Request $request, $program_id, $user_id)
+    public function delete(Request $request)
     {
-        //
-        $pu = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
+        // user trying to remove collaborator
+        $currentUser = User::find(Auth::id());
+        $currentUserPermission = $currentUser->programs->where('program_id', $request->input('program_id'))->first()->pivot->permission;
+        // user to be removed from program
+        $user_id = $request->input('user_id');
 
-        if($pu->delete()){
-            $request->session()->flash('success','Administrator has been deleted');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting the user');
+        if ($currentUser->id == (int) $user_id) {
+            $program_id = $request->input('program_id');
+            $programUser = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
+            $user = User::find($user_id);
+            
+            if($programUser->delete()){
+                $request->session()->flash('success', $user->name. ' has been removed');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the user');
+            }
+
+        } else if ($currentUserPermission == 1) {
+            $user = User::find($user_id);
+            $program_id = $request->input('program_id');
+            $programUser = ProgramUser::where('program_id', $program_id)->where('user_id', $user_id);
+
+            if($programUser->delete()){
+                $request->session()->flash('success', $user->name. ' has been deleted');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the user');
+            }
+        } else {
+            $request->session()->flash('error', 'You do not have permission to remove collaborators to this program');
         }
 
         return redirect()->back();
-
     }
 }

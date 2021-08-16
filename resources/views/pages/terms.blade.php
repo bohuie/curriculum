@@ -7,13 +7,9 @@
             <div class="container">
                     <h1>Terms of Use</h1>                                                  
                     <p class="lead">
-                    The information gathered on the UBC Curriculum MAP website is collected under the authority of section 26(e) of the British Columbia Freedom of Information and Protection of Privacy Act.
+                    The information gathered on the UBC Curriculum MAP website is collected under the authority of section 26(e) of the British Columbia <a href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96165_02" target="_blank" title="FIPPA">Freedom of Information and Protection of Privacy Act</a>.
                     <br><br>
                     Information entered by website users will only be used for the intended purposes of allowing instructors and departments to make informed decisions about course/program design and enhance the overall student learning experience. 
-                    
-                    <!-- Commented out until wording is finalized.
-                    Information entered by users will not be accessed, viewed, or evaluated by any other party or UBC unit. 
-                    -->
                     Website users retain authorship of information entered, and as such have ownership and responsibility for content. 
                     Specific permission for access to content may be sought for the purpose of evaluating and improving the UBC Curriculum MAP tool. 
                     Any data entered into the UBC Curriculum MAP website is stored on secure UBC Servers.

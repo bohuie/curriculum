@@ -48,7 +48,7 @@ class InviteController extends Controller
         }
 
         if( DB::table('users')->where('email', $invite->email)->first()) {
-            return redirect()->route('requestInvitation')->with('error', $invite->email. " is already a reigstered user. You can now add them as collaboratr to your course/program.");
+            return redirect()->route('requestInvitation')->with('error', $invite->email. " is already a registered user. You can now add them as collaborator to your course/program.");
         }
 
         $invite->generateToken();

@@ -29,6 +29,9 @@ class UserCrudController extends CrudController
         CRUD::setModel(\App\Models\User::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
         CRUD::setEntityNameStrings('user', 'users');
+
+        // Hide the preview button 
+        $this->crud->denyAccess('show');
     }
 
     /**
@@ -86,5 +89,18 @@ class UserCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+    
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
+
+    public function destroy($id)
+    {
+        $this->crud->hasAccessOrFail('delete');
+        //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
+        $userID = filter_input(INPUT_SERVER,'PATH_INFO');        
+        $userID = explode("/",$userID)[3];
+        DB::table('user_roles')->where('user_id', $userID)->delete();
+        
+        return $this->crud->delete($id);
     }
 }

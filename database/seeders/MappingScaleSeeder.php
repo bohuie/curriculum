@@ -16,8 +16,11 @@ class MappingScaleSeeder extends Seeder
      */
     public function run()
     {
-        //
+
+        // Default map_scale_id set: 1- 3 
         $ms1 = new MappingScale;
+        $ms1->map_scale_id = 1;
+        $ms1->mapping_scale_categories_id = 1;
         $ms1->title = "Introduced";
         $ms1->abbreviation = "I";
         $ms1->description = "Key ideas, concepts or skills related to the learning outcome are demonstrated at an introductory level. Learning activities focus on basic knowledge, skills, and/or competencies and entry-level complexity.";
@@ -25,6 +28,8 @@ class MappingScaleSeeder extends Seeder
         $ms1->save();
 
         $ms2 = new MappingScale;
+        $ms2->map_scale_id = 2;
+        $ms2->mapping_scale_categories_id = 1;
         $ms2->title = "Developing";
         $ms2->abbreviation = "D";
         $ms2->description = "Learning outcome is reinforced with feedback; students demonstrate the outcome at an increasing level of proficiency. Learning activities concentrate on enhancing and strengthening existing knowledge and skills as well as expanding complexity.";
@@ -32,112 +37,75 @@ class MappingScaleSeeder extends Seeder
         $ms2->save();
 
         $ms3 = new MappingScale;
+        $ms3->map_scale_id = 3;
+        $ms3->mapping_scale_categories_id = 1;
         $ms3->title = "Advanced";
         $ms3->abbreviation = "A";
         $ms3->description = "Students demonstrate the learning outcomes with a high level of independence, expertise and sophistication expected upon graduation. Learning activities focus on and integrate the use of content or skills in multiple.";
         $ms3->colour = "#0065bd";
         $ms3->save();
 
-        $msp1 = new MappingScaleProgram;
-        $msp1->map_scale_id = 1;
-        $msp1->program_id = 1;
-        $msp1->save();
+        // New map_scale_id set: 4 - 7
 
-        $msp2 = new MappingScaleProgram;
-        $msp2->map_scale_id = 2;
-        $msp2->program_id = 1;
-        $msp2->save();
+        $ms4 = new MappingScale;
+        $ms4->mapping_scale_categories_id = 2;
+        $ms4->title = "Principle";
+        $ms4->abbreviation = "P";
+        $ms4->description = "Makes a significant contribution to the degree";
+        $ms4->colour = "#80bdff";
+        $ms4->save();
 
-        $msp3 = new MappingScaleProgram;
-        $msp3->map_scale_id = 3;
-        $msp3->program_id = 1;
-        $msp3->save();
+        $ms5 = new MappingScale;
+        $ms5->mapping_scale_categories_id = 2;
+        $ms5->title = "Secondary";
+        $ms5->abbreviation = "S";
+        $ms5->description = "Contributes less significantly towards the degree requirements";
+        $ms5->colour = "#1aa7ff";
+        $ms5->save();
 
-        ////////////////////////////////////////////////////////////
-
-        $msp4 = new MappingScaleProgram;
-        $msp4->map_scale_id = 1;
-        $msp4->program_id = 2;
-        $msp4->save();
-
-        $msp5 = new MappingScaleProgram;
-        $msp5->map_scale_id = 2;
-        $msp5->program_id = 2;
-        $msp5->save();
-
-        $msp6 = new MappingScaleProgram;
-        $msp6->map_scale_id = 3;
-        $msp6->program_id = 2;
-        $msp6->save();
-
-        ////////////////////////////////////////////////////////////
-
-        $msp7 = new MappingScaleProgram;
-        $msp7->map_scale_id = 1;
-        $msp7->program_id = 3;
-        $msp7->save();
-
-        $msp8 = new MappingScaleProgram;
-        $msp8->map_scale_id = 2;
-        $msp8->program_id = 3;
-        $msp8->save();
+        $ms6 = new MappingScale;
+        $ms6->mapping_scale_categories_id = 2;
+        $ms6->title = "Major Contributor";
+        $ms6->abbreviation = "Ma";
+        $ms6->description = "Major contribution towards the degree requirement";
+        $ms6->colour = "#0065bd";
+        $ms6->save();
         
-        $msp9 = new MappingScaleProgram;
-        $msp9->map_scale_id = 3;
-        $msp9->program_id = 3;
-        $msp9->save();
+        $ms7 = new MappingScale;
+        $ms7->mapping_scale_categories_id = 2;
+        $ms7->title = "Minor Contributor";
+        $ms7->abbreviation = "Mi";
+        $ms7->description = "Minor contribution towards the degree requirement";
+        $ms7->colour = "#843976";
+        $ms7->save();
 
-        /////////////////////////////////////////////////////////////
+        // New map_scale_id set: 8
 
-        // $ms4 = new MappingScale;
-        // $ms4->title = "Introduced";
-        // $ms4->abbreviation = "I";
-        // $ms4->description = "Key ideas, concepts or skills related to the learning outcome are demonstrated at an introductory level. Learning activities focus on basic knowledge, skills, and/or competencies and entry-level complexity.";
-        // $ms4->colour = "#0065bd";
-        // $ms4->program_id = 2;
-        // $ms4->save();
+        $ms8 = new MappingScale;
+        $ms8->mapping_scale_categories_id = 3;
+        $ms8->title = "Yes";
+        $ms8->abbreviation = "Y";
+        $ms8->description = "The course outcome is aligned with the program-level learning outcome.";
+        $ms8->colour = "#80bdff";
+        $ms8->save();
 
-        // $ms5 = new MappingScale;
-        // $ms5->title = "Developing";
-        // $ms5->abbreviation = "D";
-        // $ms5->description = "Learning outcome is reinforced with feedback; students demonstrate the outcome at an increasing level of proficiency. Learning activities concentrate on enhancing and strengthening existing knowledge and skills as well as expanding complexity.";
-        // $ms5->colour = "#1aa7ff";
-        // $ms5->program_id = 2;
-        // $ms5->save();
+        // New map_scale_id set: 9 - 10
 
-        // $ms6 = new MappingScale;
-        // $ms6->title = "Advanced";
-        // $ms6->abbreviation = "A";
-        // $ms6->description = "Students demonstrate the learning outcomes with a high level of independence, expertise and sophistication expected upon graduation. Learning activities focus on and integrate the use of content or skills in multiple.";
-        // $ms6->colour = "#80bdff";
-        // $ms6->program_id = 2;
-        // $ms6->save();
+        $ms9 = new MappingScale;
+        $ms9->mapping_scale_categories_id =4;
+        $ms9->title = "Foundations";
+        $ms9->abbreviation = "F";
+        $ms9->description = "Foundational knowledge is emphasized, including information, discrete facts, concepts, or basic skills. There may or may not be evidence of learning from participants.";
+        $ms9->colour = "#80bdff";
+        $ms9->save();
 
-        // /////////////////////////////////////////////////////////////
-
-        // $ms7 = new MappingScale;
-        // $ms7->title = "Introduced";
-        // $ms7->abbreviation = "I";
-        // $ms7->description = "Key ideas, concepts or skills related to the learning outcome are demonstrated at an introductory level. Learning activities focus on basic knowledge, skills, and/or competencies and entry-level complexity.";
-        // $ms7->colour = "#0065bd";
-        // $ms7->program_id = 3;
-        // $ms7->save();
-
-        // $ms8 = new MappingScale;
-        // $ms8->title = "Developing";
-        // $ms8->abbreviation = "D";
-        // $ms8->description = "Learning outcome is reinforced with feedback; students demonstrate the outcome at an increasing level of proficiency. Learning activities concentrate on enhancing and strengthening existing knowledge and skills as well as expanding complexity.";
-        // $ms8->colour = "#1aa7ff";
-        // $ms8->program_id = 3;
-        // $ms8->save();
-
-        // $ms9 = new MappingScale;
-        // $ms9->title = "Advanced";
-        // $ms9->abbreviation = "A";
-        // $ms9->description = "Students demonstrate the learning outcomes with a high level of independence, expertise and sophistication expected upon graduation. Learning activities focus on and integrate the use of content or skills in multiple.";
-        // $ms9->colour = "#80bdff";
-        // $ms9->program_id = 3;
-        // $ms9->save();
+        $ms10 = new MappingScale;
+        $ms10->mapping_scale_categories_id = 4;
+        $ms10->title = "Extensions";
+        $ms10->abbreviation = "E";
+        $ms10->description = "Learning goes beyond the foundational level to make connections between facts or ideas, relating knowledge to personal experience, understanding multiple perspectives, and/or analyzing information. Participants evidence their learning in one or more ways.";
+        $ms10->colour = "#1aa7ff";
+        $ms10->save();
 
     }
 }

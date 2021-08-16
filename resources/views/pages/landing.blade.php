@@ -184,7 +184,7 @@
             <div class="col-md">
                 <h1><strong>Questions ?</strong></h1>
                 <p class="lead">
-                    If you have questions about the Curriculum MAP, please contact <a href="mailto:laura.prada@ubc.ca" target="_blank">laura.prada@ubc.ca</a> at the <a href="https://provost.ok.ubc.ca/" target="_blank">Office of the Provost and Vice-President Academic, UBC Okanagan campus</a>.
+                    If you have questions about the Curriculum MAP, please contact <a href="mailto:laura.prada@ubc.ca" target="_blank">laura.prada@ubc.ca</a> at the <a href="https://provost.ok.ubc.ca/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Office of the Provost and Vice-President Academic, UBC Okanagan campus</a>.
                 </p>
 
             </div>

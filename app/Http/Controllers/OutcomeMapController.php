@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ProgramLearningOutcome;
 use App\Models\LearningOutcome;
 use App\Models\Course;
+use App\Models\OutcomeMap;
+use App\Models\Program;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -43,26 +45,21 @@ class OutcomeMapController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'map' => 'required',
+            ]);
 
-        $course_id = $request->input('course_id');
-
-        $l_outcome = LearningOutcome::where('l_outcome_id', $request->input('l_outcome_id'))->first();
-        $course =  Course::where('course_id', $course_id)->first();
-        $pl_outcomes = ProgramLearningOutcome::where('program_id', $course->program_id)->get();
-
-        $arr = $request->input('map');
-        foreach($pl_outcomes as $pl_outcome){
-            $outcomeMap = DB::table('outcome_maps')->updateOrInsert(
-                ['pl_outcome_id' =>$pl_outcome->pl_outcome_id , 'l_outcome_id' => $l_outcome->l_outcome_id ],
-                ['map_scale_value' => $arr[$l_outcome->l_outcome_id][$pl_outcome->pl_outcome_id]]
-            );
+        $outcomeMap = $request->input('map');
+        foreach ($outcomeMap as $cloId => $ploToScaleIds) {
+            foreach (array_keys($ploToScaleIds) as $ploId) {
+                DB::table('outcome_maps')->updateOrInsert(
+                    ['pl_outcome_id' => $ploId, 'l_outcome_id' => $cloId],
+                    ['map_scale_id' => $outcomeMap[$cloId][$ploId]]
+                );
+            }
         }
-
+        
         return redirect()->back()->with('success', 'Your answers have been saved successfully.');
-
-        // return response()->json(["success" => true]);
-
-
     }
 
     /**
