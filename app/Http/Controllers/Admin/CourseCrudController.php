@@ -8,6 +8,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Course;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Class CourseCrudController
@@ -49,7 +50,7 @@ class CourseCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'course_code', // The db column name
             'label' => "Course Code", // Table column heading
-            'type' => 'Text',
+            'type' => 'text',
             'searchLogic' => function($query, $column, $searchTerm){
                 $query ->orWhere('course_code', 'like', '%'.$searchTerm.'%');
             }
@@ -67,7 +68,7 @@ class CourseCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'course_title', // The db column name
             'label' => "Course Title", // Table column heading
-            'type' => 'Text',
+            'type' => 'text',
             'searchLogic' => function($query, $column, $searchTerm){
                 $query ->orWhere('course_title', 'like', '%'.$searchTerm.'%');
             }
@@ -122,7 +123,7 @@ class CourseCrudController extends CrudController
         $this->crud->addField([
             'name' => 'course_code', // The db column name
             'label' => "Course<br>Code&nbsp;&nbsp;<span style=\"color:red\">*</span>", // Table column heading
-            'type' => 'Text',
+            'type' => 'text',
             'attributes' => [ 'req' => 'true',
                             'size' => '4',
                             'maxlength' => '4'],            
@@ -241,9 +242,9 @@ class CourseCrudController extends CrudController
         
         $this->crud->addField([
             'name' => 'standard_category_id', // The db column name
-            'label' => "Ministry Standards<br>Category", // Table column heading
+            'label' => "Standard <br>Category", // Table column heading
             'type' => 'select',
-            'entity' => 'ministryStandardCategory', // the method that defines the relationship in your Model
+            'entity' => 'standardCategory', // the method that defines the relationship in your Model
             'attribute' => "sc_name", // foreign key attribute that is shown to user (identifiable attribute)
             'model' => "App\Models\StandardCategory", // foreign key Eloquent model         
             'wrapper' => ['class' => 'form-group col-md-5'],
@@ -301,11 +302,11 @@ class CourseCrudController extends CrudController
     {   
         $this->setupCreateOperation();
         
-      //following part is only available once the course record is created        
+      //following part is only available once the course record is created   
+      
 
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');
-            $crsID = explode("/",$crsID);
-            $crsID = $crsID[count($crsID) - 2];
+            $crsID = request()->route()->parameter('id');
+        
             $crsData = Course::where('course_id', '=', $crsID)->get()[0];
             $CLOs =  \App\Models\LearningOutcome::where('course_id', '=', $crsID)->get();
             $AMs = DB::table('assessment_methods')->where('course_id', '=', $crsID)->get();
@@ -729,7 +730,7 @@ class CourseCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'course_code', // The db column name
             'label' => "Course Code", // Table column heading
-            'type' => 'Text'
+            'type' => 'text'
         ]);
 
         $this->crud->addColumn([
@@ -741,7 +742,7 @@ class CourseCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'course_title', // The db column name
             'label' => "Course Title", // Table column heading
-            'type' => 'Text'
+            'type' => 'text'
         ]);
 
         $this->crud->addColumn([
@@ -796,8 +797,7 @@ class CourseCrudController extends CrudController
     {
         $this->crud->hasAccessOrFail('delete');
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $crsID = explode("/",$crsID)[3];
+        $crsID = request()->route()->parameter('id');
         //first get the relevant ids
         $CLOs =  \App\Models\LearningOutcome::where('course_id', '=', $crsID)->get();        
         $setOfCLO = [];

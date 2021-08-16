@@ -58,8 +58,7 @@ class Program extends Model
         return $this->hasMany(PLOCategory::class, 'program_id', 'program_id');
     }
     public function getProgramOCAttribute(){
-        $prgID = filter_input(INPUT_SERVER,'PATH_INFO');
-        $prgID = explode("/",$prgID)[3];
+        $prgID = request()->route()->parameter('id');       
         $ploCats =  \App\Models\PLOCategory::where('program_id', '=', $prgID)->get()->toArray();
         for($i = 0; $i < count($ploCats); $i++){
             $ploCats[$i]['programOutcome'] = json_encode(\App\Models\ProgramLearningOutcome::
@@ -74,9 +73,9 @@ class Program extends Model
         return json_encode($ploCats);
     }
     
-    public function setProgramOCAttribute($value){      
-        $prgID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $prgID = explode("/",$prgID)[3];
+    public function setProgramOCAttribute($value){    
+          
+        $prgID = request()->route()->parameter('id');       
         $jdata = json_decode($value);    
         if(!is_array($jdata))$jdata = [];  
         //**********
