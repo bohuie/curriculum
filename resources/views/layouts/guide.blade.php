@@ -67,6 +67,7 @@
                         <!--End Nav Bar-->
                         <!--Content Area-->
                         <div class="update-content col-md-8">
+                            <!--Loads Content here-->
                         </div>
 
                     </div>
@@ -99,6 +100,21 @@
     </div>
 </div>
 
+<!--W3 Modal-->
+<div id="modal01" class="modal modal-zoom" onclick="this.style.display='none'">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-black" id="exampleModalToggleLabel2" style="color: black;">Picture</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-black" style="color: black;">
+                <img id="img01" style="width:100%">
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // functions that load in the user guides
     function setProgram() {
@@ -121,7 +137,7 @@
             <p>info for programers</p>
             <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" style="color: white;">Open second modal</button>
 
-            <img src="{{asset('img/team/kieran-200x200.png')}}" style="border-radius: 50%;">
+            <img src="{{asset('img/team/kieran-200x200.png')}}" style="border-radius: 50%;" onclick="onClick(this)">
 
             <p>info for programers</p>
             <br>
@@ -155,7 +171,7 @@
             <h3 style="margin-top:2%;">Categories</h3>
             <br>
             <p class="help-p" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required.</p>
-            <img class="center" src="{{asset('img/guide/plo_categories.png')}}">
+            <img class="center" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
         `);
     }
 
@@ -254,6 +270,11 @@
     $('#programCoursesHelp').on('click', setProgramCourses);
     $('#programOverviewHelp').on('click', setProgramOverview);
 
+    function onClick(element) {
+        document.getElementById("img01").src = element.src;
+        document.getElementById("modal01").style.display = "block";
+    }
+
 </script>
 <style>
     a{
@@ -284,5 +305,8 @@
     border-bottom: solid 2px #0055b7;
     }
     
+    .modal-zoom{
+        z-index: 1061;
+    }
 
 </style>
