@@ -581,11 +581,11 @@ class CourseCrudController extends CrudController
                     $map = $OCmaps->where('l_outcome_id', $exKey[1])->where('pl_outcome_id', $exKey[2]);
                     //if not entry already exists in DB, enter it. otherwise update it, as the value may have changed
                     if(!($map->count() > 0))
-                        DB::table('outcome_maps')->insert(['l_outcome_id'=>$exKey[1],'pl_outcome_id'=>$exKey[2],'map_scale_value'=>$val[0]]);
+                        DB::table('outcome_maps')->insert(['l_outcome_id'=>$exKey[1],'pl_outcome_id'=>$exKey[2],'map_scale_id'=>$val[0]]);
                     else{
                         \App\Models\OutcomeMap::where('l_outcome_id', $exKey[1])
                                                 ->where('pl_outcome_id', $exKey[2])
-                                                ->update(['map_scale_value'=>$val[0]]);
+                                                ->update(['map_scale_id'=>$val[0]]);
                     foreach($setDelcp as $key => $val)
                         if($val->l_outcome_id == $exKey[1] && $val->pl_outcome_id == $exKey[2])
                             unset ($setDelcp[$key]); //this list is then deleted after those buttons checked are updated 
