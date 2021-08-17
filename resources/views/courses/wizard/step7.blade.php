@@ -218,28 +218,36 @@
                                                     </tr>
 
                                                     @if ($courseProgram->ploCategories->count() > 0)
-                                                        @foreach ($courseProgram->ploCategories as $ploCategory) 
-                                                        <tr>
-                                                            <td colspan="2" class="table-active">{{$ploCategory->plo_category}}</td>
-                                                        </tr>
+                                                        <?php $pos = 0 ?>
 
-                                                            @foreach ($ploCategory->plos as $index => $plo)
-                                                            <tr>
-                                                                <td style="width:5%" >{{($index++) + 1}}</td>
-                                                                <td>
-                                                                    <b>{{$plo->plo_shortphrase}}</b><br>
-                                                                    {{$plo->pl_outcome}}
-                                                                </td>
-                                                            </tr>
-                                                            @endforeach
+                                                        @foreach ($courseProgram->ploCategories as $ploCategory) 
+                                                            @if ($ploCategory->plos->count() > 0)
+                                                                <tr>
+                                                                    <td colspan="2" class="table-active">{{$ploCategory->plo_category}}</td>
+                                                                </tr>
+                                                                @foreach ($ploCategory->plos as $plo)
+                                                                <?php $pos++ ?>
+                                                                <tr>
+                                                                    <td style="width:5%" >{{$pos}}</td>
+                                                                    <td>
+                                                                        <b>{{$plo->plo_shortphrase}}</b><br>
+                                                                        {{$plo->pl_outcome}}
+                                                                    </td>
+                                                                </tr>
+                                                                @endforeach
+                                                            @endif
                                                         @endforeach
-                                                        <tr>
-                                                            <td class="table-active" colspan="2">Uncategorized PLOs</td>
-                                                        </tr>
+                                                        <?php $hasRan = FALSE ?>
                                                         @foreach ($courseProgram->programLearningOutcomes as $plo) 
                                                             @if (!isset($plo->category))
+                                                                @if (! $hasRan)
+                                                                    <tr>
+                                                                        <td class="table-active" colspan="2">Uncategorized PLOs</td>
+                                                                    </tr>
+                                                                    <?php $hasRan = TRUE ?>
+                                                                @endif
                                                             <tr>
-                                                                <td>{{($index++) + 1}}</td>
+                                                                <td>{{($pos++) + 1}}</td>
                                                                 <td>
                                                                     <b>{{$plo->plo_shortphrase}}</b><br>
                                                                     {{$plo->pl_outcome}}
@@ -247,7 +255,10 @@
                                                             </tr>
                                                             @endif
                                                         @endforeach   
-                                                    @else                                                 
+                                                    @else
+                                                        <tr>
+                                                            <td class="table-active" colspan="42">Uncategorized PLOs</td>
+                                                        </tr>                                         
                                                         @foreach($courseProgram->programLearningOutcomes as $index => $pl_outcome)
 
                                                         <tr>
@@ -284,7 +295,7 @@
                                                                 <td>
                                                                     <div style="background-color:{{$programMappingScale->colour}}; height: 10px; width: 10px;"></div>
                                                                     {{$programMappingScale->title}}<br>
-                                                                    ({{$programMappingScale->abbreviation}})
+                                                                    ({{$programMappingScale->map_scale_id}})
                                                                 </td>
                                                                 <td>
                                                                     {{$programMappingScale->description}}
@@ -316,9 +327,10 @@
                                                         <tr>
                                                             <td></td>
                                                             @foreach ($courseProgram->ploCategories as $ploCategory)
-                                                                <td class="table-active w-auto" colspan="{{$ploCategory->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$ploCategory->plo_category}}</td>
+                                                                @if ($ploCategory->plos->count() > 0)
+                                                                    <td class="table-active w-auto" colspan="{{$ploCategory->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$ploCategory->plo_category}}</td>
+                                                                @endif
                                                             @endforeach
-                                                            <td colspan="{{$courseProgram->programLearningOutcomes->count() - $courseProgram->numPlosCategorized}}"></td>
                                                         </tr>
                                                     @endif
                                                     <tr>
@@ -543,12 +555,18 @@
                                         <th >#</th>
                                         <th>Aligned UBC and Ministry Priority</th>
                                     </tr>
-
-                                    @foreach ($course->optionalPriorities as $index => $optional_Plo)
-                                    <tr>
-                                        <td style="width:5%" >{{$index+1}}</td>
-                                        <td>{{$optional_Plo->custom_PLO}}</td>
-                                    </tr>
+                                    @foreach ($optionalSubcategories as $optionalSubcategory)
+                                        <tr>
+                                            <th colspan="2" class="table-secondary">{!! $optionalSubcategory->subcat_name !!}</th>
+                                        </tr>
+                                        @foreach ($course->optionalPriorities as $index => $optional_Plo)
+                                            @if ($optionalSubcategory->subcat_id == $optional_Plo->subcat_id)
+                                                <tr>
+                                                    <td style="width:5%" >{{$index + 1}}</td>
+                                                    <td>{!! $optional_Plo->optional_priority !!}</td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
                                     @endforeach
                                 </table>
                             @endif
@@ -557,18 +575,21 @@
                         </div>
                     </div>
                 </div>
-
+                @if (!$isViewer)
                 <h6 class="card-subtitle wizard mb-4 text-primary fw-bold text-center">
                     If you have finished mapping this course. Click the <b>finish button</b> to save your work.
                 </h6>
+                @endif
                 <div class="card-footer">
                     <div class="card-body mb-4">
+                        @if (!$isViewer)
                         <a href="{{route('courseWizard.step6', $course->course_id)}}">
                             <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Ministry Standards Mapping</button>
                         </a>
                         <a href="{{route('courses.submit', $course->course_id)}}">
                             <button class="btn btn-sm btn-success col-3 float-right">Finish <i class="bi bi-check2-circle ml-2 fs-6"></i></button>
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>

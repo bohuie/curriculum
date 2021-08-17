@@ -61,7 +61,7 @@
                                         <!--UnCategorized PLOs -->
                                         @if($hasUncategorized)
                                             <tr class="table-secondary">
-                                                <th class="text-left" colspan="2">UnCategorized</th>
+                                                <th class="text-left" colspan="2">Uncategorized</th>
                                             </tr>
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
@@ -432,9 +432,11 @@
         </div>
             <div class="card-footer">
                 <div class="card-body mb-4">
-                    <a href="{{route('programWizard.step3', $program->program_id)}}">
-                        <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
-                    </a>
+                    @if (! $isViewer)
+                        <a href="{{route('programWizard.step3', $program->program_id)}}">
+                            <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
+                        </a>
+                    @endif
                 </div>
             </div> 
     </div>

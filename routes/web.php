@@ -25,7 +25,6 @@ Route::get('/', function () {
 Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/home', 'HomeController@store')->name('home.store');
 //Route::delete('/home/{course}/unassign', 'HomeController@destroy')->name('home.destroy');
 Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
 
@@ -53,6 +52,7 @@ Route::get('/programs/{program}/submit','ProgramController@submit')->name('progr
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
 
 Route::resource('/courses','CourseController');
+Route::post('/courses', 'CourseController@store')->name('courses.store');
 
 Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
 Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');

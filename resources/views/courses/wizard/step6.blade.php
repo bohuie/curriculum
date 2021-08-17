@@ -44,7 +44,7 @@
                                     <!-- Ministry Standards mapping scale -->
                                     <div class="container row">
                                         <div class="col">
-                                            @if(count($course->standardScalesCategory->standardScales)>0)
+                                            @if($course->standardScalesCategory->standardScales->count() > 0)
                                                 <table class="table table-bordered table-sm">
                                                     <thead>
                                                         <tr>
@@ -86,85 +86,76 @@
 
                                         <!-- list of course learning outcome accordions with mapping form -->
                                         <div class="cloAccordions mb-4">
-                                                                    @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
-                                                                        <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                            <div class="accordion-item mb-2">
-                                                                                <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                    <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                        <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
-                                                                                    </button>
-                                                                                </h2>
-
-                                                                                <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                    <div class="accordion-body">
-
-                                                                                        <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
-                                                                                            @csrf
-
-                                                                                            <div class="card border-white">
-                                                                                                <div class="card-body">
-                                                                                                    <h5 style="margin-bottom:16px;text-align:center;font-weight: bold;">{{$courseLearningOutcome->l_outcome}}</h5>
-
-                                                                                                        @if ($course->standardOutcomes->count() > 0) 
-
-                                                                                                            <table class="table table-bordered table-sm">
-                                                                                                                <thead class="thead-light">
-                                                                                                                    <tr class="table-active">
-                                                                                                                        <th>Standards</th>
-                                                                                                                        <!-- Mapping Table Levels -->
-                                                                                                                        @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
-                                                                                                                            <th data-toggle="tooltip" title="{{$mappingScaleLevel->title}}: {{$mappingScaleLevel->description}}">
-                                                                                                                                {{$mappingScaleLevel->abbreviation}}
-                                                                                                                            </th>
-                                                                                                                        @endforeach
-                                                                                                                        
-                                                                                                                        <th data-toggle="tooltip" title="Not Aligned">N/A</th>
-                                                                                                                    </tr>
-
-                                                                                                                </thead>
-                                                                                                                
-                                                                                                                <tbody>
-                                                                                                                    @foreach($course->standardOutcomes as $standard_outcome)
-                                                                                                                        <tr>
-                                                                                                                            <td>
-                                                                                                                                <b>{{$standard_outcome->s_shortphrase}}</b>
-                                                                                                                                <br>
-                                                                                                                                {!! $standard_outcome->s_outcome !!}
-                                                                                                                            </td>
-
-                                                                                                                            @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
-                                                                                                                                <td>
-                                                                                                                                    <div class="form-check">
-                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="{{$mappingScaleLevel->standard_scale_id}}" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == $mappingScaleLevel->standard_scale_id) checked=checked @endif @endif>
-                                                                                                                                    </div>
-                                                                                                                                </td>
-                                                                                                                            @endforeach
-
-                                                                                                                            <td>
-                                                                                                                                <div class="form-check">
-                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @endif required>
-                                                                                                                                </div>
-                                                                                                                            </td>
-
-                                                                                                                        </tr>
-                                                                                                                    @endforeach
-                                                                                                                </tbody>
-                                                                                                            </table>
-                                                                                                            <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
-                                                                                                        @else 
-                                                                                                            <div class="alert alert-warning text-center">
-                                                                                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
+                                            @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
+                                                <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                    <div class="accordion-item mb-2">
+                                                        <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                            <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                            <div class="accordion-body">
+                                                                <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
+                                                                    @csrf
+                                                                    <div class="card border-white">
+                                                                        <div class="card-body">
+                                                                            <h5 style="margin-bottom:16px;text-align:center;font-weight: bold;">{{$courseLearningOutcome->l_outcome}}</h5>
+                                                                                @if ($course->standardOutcomes->count() > 0) 
+                                                                                    <table class="table table-bordered table-sm">
+                                                                                        <thead class="thead-light">
+                                                                                            <tr class="table-active">
+                                                                                                <th>Standards</th>
+                                                                                                <!-- Mapping Table Levels -->
+                                                                                                @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
+                                                                                                    <th data-toggle="tooltip" title="{{$mappingScaleLevel->title}}: {{$mappingScaleLevel->description}}">
+                                                                                                        {{$mappingScaleLevel->abbreviation}}
+                                                                                                    </th>
+                                                                                                @endforeach
+                                                                                                
+                                                                                                <th data-toggle="tooltip" title="Not Aligned">N/A</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        
+                                                                                        <tbody>
+                                                                                            @foreach($course->standardOutcomes as $standard_outcome)
+                                                                                                <tr>
+                                                                                                    <td>
+                                                                                                        <b>{{$standard_outcome->s_shortphrase}}</b>
+                                                                                                        <br>
+                                                                                                        {!! $standard_outcome->s_outcome !!}
+                                                                                                    </td>
+                                                                                                    @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
+                                                                                                        <td>
+                                                                                                            <div class="form-check">
+                                                                                                                <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="{{$mappingScaleLevel->standard_scale_id}}" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == $mappingScaleLevel->standard_scale_id) checked=checked @endif @endif>
                                                                                                             </div>
-                                                                                                        @endif
-                                                                                                </div>                                                                                                    
-                                                                                            </div>
-                                                                                        </form>
+                                                                                                        </td>
+                                                                                                    @endforeach
+                                                                                                    <td>
+                                                                                                        <div class="form-check">
+                                                                                                            <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            @endforeach
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                    <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
+                                                                                @else 
+                                                                                    <div class="alert alert-warning text-center">
+                                                                                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
                                                                                     </div>
-                                                                                </div>                                                                            
-                                                                            </div>
-                                                                        </div>
-                                                                
-                                                                    @endforeach
+                                                                                @endif
+                                                                        </div>                                                                                                    
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>                                                                            
+                                                    </div>
+                                                </div>
+                                        
+                                            @endforeach
                                         </div>
                                     </div>
                             @endif
@@ -178,252 +169,73 @@
                                     Select, from the below UBC and/or Ministry priorities and strategies, the items that align strongly with your course. This is <b>optional</b>.                                   
                                 </h6>
 
-                                <div class="jumbotron pt-4">
-                                    <h4 class="mb-4">Alignment with UBC/Ministry Priorities</h4>
+                    <div class="jumbotron pt-4">
+                        <h4 class="mb-4">Alignment with UBC/Ministry Priorities</h4>
+                        
+                        <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
+                            Note: Remember to click save once you are done.
+                        </h6>
 
-                                    <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
-                                        Note: Remember to click save once you are done.
-                                    </h6>
-                                                                
-                                    <form id="optinal" action="{{route('storeOptionalPLOs')}}" method="POST">
-                                                                    {{ csrf_field() }}
+                        <!--Accordion-->
+                        <form id="optinal" action="{{route('storeOptionalPLOs')}}" method="POST">
+                            {{ csrf_field() }}
 
-                                                                    <input type="hidden" name="course_id" value="{{$course->course_id}}">
-
-                                                                    <div class="accordion" id="PrioritiesAccordions">
-                                                                        <div class="accordion-item mb-2">
-                                                                            <h2 class="accordion-header" id="ministryPrioritiesHeader">
-                                                                                <button class="accordion-button white-arrow program collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinistryPriorities" aria-expanded="false" aria-controls="collapseMinistryPriorities">
-                                                                                    Ministry of Advanced Education and Skills Training
-                                                                                </button>
-                                                                            </h2>
-
-                                                                            <div id="collapseMinistryPriorities" class="accordion-collapse collapse" aria-labelledby="ministryPrioritiesHeader" data-bs-parent="#PrioritiesAccordions">
-                                                                                <div class="accordion-body">
-                                                                                    <!-- UBCs mandate by the ministry -->
-                                                                                    <h6 class="fw-bold mb-3">UBC's Mandate by the Ministry</h6>
-                                                                                    <p>UBC's mandate letter (see <a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-administration/mandate-letters" target="_blank"><i class="bi bi-box-arrow-up-right"></i> mandate letter here </a>)
-                                                                                        calls for the below, as they relate to curriculum:</p>
-                                                                                    <table class="table table-hover optionalPLO" id="ubcMandate" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                                                        <thead class="thead-light">
-                                                                                            <tr>
-                                                                                            <th data-field="state" data-checkbox="true"></th>
-                                                                                            <th data-field="Description">Description</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                            @foreach ($ubc_mandate_letters as $index => $letter)
-                                                                                            <tr>
-                                                                                            <td>
-
-                                                                                                @if (in_array($letter, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
-                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$letter}}" checked>
-                                                                                                @else
-                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$letter}}">
-                                                                                                @endif
-
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                {{$letter}}
-                                                                                                @if($index == 0)
-                                                                                                    <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                                                                @elseif($index == 1)
-                                                                                                    <a href="https://cleanbc.gov.bc.ca/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                                                                @elseif($index == 6)
-                                                                                                    <a href="https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_Labour_Market_Outlook_2019.pdf.aspx" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>
-                                                                                                @endif
-                                                                                            </td>
-                                                                                            </tr>
-                                                                                            @endforeach
-                                                                                        </tbody>
-                                                                                    </table>
-                                                                                    <!-- BC Labour Market -->
-                                                                                    <h6 class="fw-bold mb-3">
-                                                                                        BC's Labour Market: Top skills in Demand
-                                                                                    </h6>
-                                                                                    <p>BC's tops skills in demand,as forecasted to the year 2029 by the <a href="https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_Labour_Market_Outlook_2019.pdf.aspx" target="_blank"><i class="bi bi-box-arrow-up-right"></i> BC Labour Market Outlook (page 46)</a>
-                                                                                        , are the following:
-                                                                                    </p>
-                                                                                    
-                                                                                    <table class="table table-hover optionalPLO" id="LabourMarket" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                                                        <thead class="thead-light">
-                                                                                            <tr>
-                                                                                            <th data-field="state" data-checkbox="true"></th>
-                                                                                            <th data-field="Description">Description</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                            @foreach ($bc_labour_market as $index => $skill)
-                                                                                            <tr>
-                                                                                                <td>
-                                                                                                    @if (in_array($skill,$course->optionalPriorities->pluck('custom_PLO')->toArray()))
-                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$skill}}" checked>
-                                                                                                    @else
-                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$skill}}">
-                                                                                                    @endif
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    
-                                                                                                    {{$skill}}
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                            @endforeach
-                                                                                        </tbody>
-                                                                                    </table>
-
-                                                                                    <p>Additionally, BC expects <a href="https://www.workbc.ca/Labour-Market-Industry/Jobs-in-Demand/High-Demand-Occupations.aspx" target="_blank"><i class="bi bi-box-arrow-up-right"></i> these occupations to be of "High Opportunity"</a> in the province. Does your course/program align with a High Opportunity Occupation in BC ?
-                                                                                    <select id="highOpportunity" class="highOpportunity">
-                                                                                        <option value="1">Yes</option>
-                                                                                        <option value="0">No</option>
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>                                                                            
-                                                                        </div>
-
-                                                                        <div class="accordion-item mb-2">
-                                                                            <h2 class="accordion-header" id="UBCPrioritiesHeader">
-                                                                                <button class="accordion-button white-arrow program collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUBCPriorities" aria-expanded="false" aria-controls="collapseUBCPriorities">
-                                                                                    UBC Strategic Priorities
-                                                                                </button>
-                                                                            </h2>
-
-                                                                            <div id="collapseUBCPriorities" class="accordion-collapse collapse" aria-labelledby="UBCPrioritiesHeader" data-bs-parent="#PrioritiesAccordions">
-                                                                                <div class="accordion-body">
-                                                                                    <h6 class="fw-bold mt-4 mb-4"><a href="https://strategicplan.ubc.ca/" target="_blank">
-                                                                                        <i class="bi bi-box-arrow-up-right"></i> Shaping UBCs next Century</a>
-                                                                                    </h6>
-
-                                                                                        <table class="table table-hover optionalPLO" id="ubcStrategy" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                                                            <thead class="thead-light">
-                                                                                                <tr>
-                                                                                                <th data-field="state" data-checkbox="true"></th>
-                                                                                                <th data-field="Description">Description</th>
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                @foreach ($shaping_ubc as $index => $strategy)
-                                                                                                <tr>
-                                                                                                <td>
-                                                                                                    @if (in_array($strategy, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
-                                                                                                        <input type="checkbox" name= "optionalItem[]" value="{{$strategy}}" checked>
-                                                                                                    @else
-                                                                                                        <input type="checkbox" name= "optionalItem[]" value="{{$strategy}}">
-                                                                                                    @endif
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <a href ="{{$shaping_ubc_link[$index]}}" target="_blank">Strategy {{$index + 1}}: </a>
-                                                                                                    {{$strategy}}
-                                                                                                    @if($index == 17)
-                                                                                                        <a href="https://www.alumni.ubc.ca/about/strategic-plan/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Connecting Forward.</a>
-                                                                                                    @endif
-                                                                                                </td>
-                                                                                                </tr>
-                                                                                                @endforeach
-                                                                                            </tbody>
-                                                                                        </table>
-
-                                                                                        <h6 class="fw-bold mt-4 mb-4">
-                                                                                            <a href="https://okmain.cms.ok.ubc.ca/wp-content/uploads/sites/26/2019/02/UBCO-Outlook-2040.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i>
-                                                                                            UBC Okanagan 2040 Outlook
-                                                                                            </a>
-                                                                                        </h6>
-
-                                                                                        <table class="table table-hover optionalPLO" id="ubc_2024Outlook" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                                                            <thead class="thead-light">
-                                                                                                <tr>
-                                                                                                <th data-field="state" data-checkbox="true"></th>
-                                                                                                <th data-field="Description">Description</th>
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                @foreach ($okanagan_2040_outlook as $index => $outlook)
-                                                                                                <tr>
-                                                                                                <td>
-                                                                                                    @if (in_array($outlook, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
-                                                                                                        <input type="checkbox" name= "optionalItem[]" value="{{$outlook}}" checked>
-                                                                                                    @else
-                                                                                                        <input type="checkbox" name= "optionalItem[]" value="{{$outlook}}">
-                                                                                                    @endif
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    {{$outlook}}
-                                                                                                </td>
-                                                                                                </tr>
-                                                                                                @endforeach
-                                                                                            </tbody>
-                                                                                        </table>
-
-                                                            <h6 class="fw-bold mt-4 mb-4">
-                                                                <a href="https://indigenous.ubc.ca/indigenous-engagement/indigenous-strategic-plan/" target="_blank"><i class="bi bi-box-arrow-up-right"></i>
-                                                                    UBC's Indigenous Strategic Plan (2020)
-                                                                </a>
-                                                            </h6>
-
-                                                            <table class="table table-hover optionalPLO" id="IndigenousPlan" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                                <thead class="thead-light">
-                                                                    <tr>
-                                                                        <th data-field="state" data-checkbox="true"></th>
-                                                                        <th data-field="Description">Description</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @foreach ($ubc_indigenous_plan as $index => $plan)
-                                                                    <tr>
+                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
+                            <div class="accordion" id="PrioritiesAccordions">
+                                @foreach($optionalPriorityCategories as $optionalPriorityCategory)
+                                    <div class="accordion-item mb-2">
+                                        <h2 class="accordion-header" id="ministryPrioritiesHeader">
+                                            <button class="accordion-button white-arrow program collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}" aria-expanded="false" aria-controls="collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}">
+                                                {{$optionalPriorityCategory->cat_name}}
+                                            </button>
+                                        </h2>
+                                        <div id="collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}" class="accordion-collapse collapse" aria-labelledby="ministryPrioritiesHeader" data-bs-parent="#PrioritiesAccordions">
+                                            <div class="accordion-body">
+                                                <!--Subcat Name-->
+                                                <!--Subcat Desc-->
+                                                @foreach ($optionalPrioritySubcategories as $subCatId => $optionalPrioritySubcategory)
+                                                    @if ($optionalPriorityCategory->cat_id == $optionalPrioritySubcategory->cat_id) 
+                                                        <h6 class="fw-bold mb-3">{!! $optionalPrioritySubcategory->subcat_name !!}</h6>
+                                                        <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
+                                                        <!--optional Priorities for subcategory-->
+                                                        <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
+                                                            <thead class="thead-light">
+                                                                <tr>
+                                                                <th data-field="state" data-checkbox="true"></th>
+                                                                <th data-field="Description">Description</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($optionalPriories as $optionalPriority)
+                                                                    @if ($optionalPrioritySubcategory->subcat_id == $optionalPriority->subcat_id) 
+                                                                        <tr>
                                                                         <td>
-                                                                            @if (in_array($plan, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
-                                                                                <input type="checkbox" name= "optionalItem[]" value="{{$plan}}" checked>
+                                                                            @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}" checked>
                                                                             @else
-                                                                                <input type="checkbox" name= "optionalItem[]" value="{{$plan}}">
+                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
                                                                             @endif
                                                                         </td>
                                                                         <td>
-                                                                            {{$plan}}
+                                                                            {!! $optionalPriority->optional_priority !!}
                                                                         </td>
-                                                                    </tr>
-                                                                    @endforeach
-                                                                </tbody>
-                                                            </table>
-
-                                                            <h6 class="fw-bold mt-4 mb-4">
-                                                                <a href="https://bog3.sites.olt.ubc.ca/files/2021/01/4_2021.02_Climate-Emergency-Engagement.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> UBC's Climate Priorities</a>
-                                                            </h6>
-                                                            <p>The <a href="https://bog3.sites.olt.ubc.ca/files/2021/01/4_2021.02_Climate-Emergency-Engagement.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> UBC's Climate Emergency Engagement Report and Recommendations (2021)</a> set out the below curricular examples.
-                                                            Programs are encouraged to take these and/or other initiatives that align with the report:
-                                                            </p>
-
-                                                            <table class="table table-hover optionalPLO" id="climate_priorities" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                                <thead class="thead-light">
-                                                                    <tr>
-                                                                        <th data-field="state" data-checkbox="true"></th>
-                                                                        <th data-field="Description">Description</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @foreach ($ubc_climate_priorities as $index => $climate)
-                                                                    <tr>
-                                                                        <td>
-                                                                            @if (in_array($climate, $course->optionalPriorities->pluck('custom_PLO')->toArray()))
-                                                                                <input type="checkbox" name= "optionalItem[]" value="{{$climate}}" checked>
-                                                                            @else
-                                                                                <input type="checkbox" name= "optionalItem[]" value="{{$climate}}">
-                                                                            @endif
-                                                                        </td>
-                                                                        <td>
-                                                                            {{$climate}}
-                                                                        </td>
-                                                                    </tr>
-                                                                    @endforeach
-                                                                </tbody>
-                                                            </table>                                               
-                                                        </div>
-                                                    </div>                                                                            
-                                                </div>
+                                                                        </tr>
+                                                                    @endif
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                        <p>{!! $optionalPrioritySubcategory->subcat_postamble !!}</p>
+                                                    @endif
+                                                @endforeach
                                             </div>
-
-                                        <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2">Save</button>
-                                    </form>
-                                </div>                            
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
+                            <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2">Save</button>
+                        </form>
+                        <!--End Accordion-->
+
                             <!-- End of optional priorities -->
                         </div>
                     </div>
@@ -512,9 +324,6 @@
         //             });
         //         }
         //     });
-
-
-
 
         // });
     });

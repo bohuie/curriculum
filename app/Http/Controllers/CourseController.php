@@ -118,6 +118,8 @@ class CourseController extends Controller
             $courseUser = new CourseUser;
             $courseUser->course_id = $course->course_id;
             $courseUser->user_id = $user->id;
+            // assign the creator of the course the owner permission
+            $courseUser->permission = 1;
 
             //Store and associate in the course_programs table
             $courseProgram = new CourseProgram;
@@ -145,6 +147,8 @@ class CourseController extends Controller
             $courseUser = new CourseUser;
             $courseUser->course_id = $course->course_id;
             $courseUser->user_id = $user->id;
+            // assign the creator of the course the owner permission
+            $courseUser->permission = 1;
             if($courseUser->save()){
                 $request->session()->flash('success', 'New course added');
             }else{
@@ -222,7 +226,7 @@ class CourseController extends Controller
 
         $outcomeMaps = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->get();
 
 
@@ -301,39 +305,24 @@ class CourseController extends Controller
      */
     public function destroy(Request $request, $course_id)
     {
-        //
-        $c = Course::where('course_id', $course_id)->first();
-        $type = $c->type;
-
-        if($c->delete()){
-            $request->session()->flash('success','Course has been deleted');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting the course');
+        // find the course to delete 
+        $course = Course::find($course_id);
+        // find the current user
+        $currentUser = User::find(Auth::id());
+        //get the current users permission level for the course delete
+        $currentUserPermission = $currentUser->courses->where('course_id', $course_id)->first()->pivot->permission;
+        // if the current user own the course, then try to delete it
+        if ($currentUserPermission == 1) {
+            if($course->delete()){
+                $request->session()->flash('success','Course has been deleted');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting the course');
+            }
+        } else {
+            $request->session()->flash('error','You do not have permission to delete this course');
         }
-        
         return redirect()->route('home');
     }
-
-    // public function status(Request $request, $course_id)
-    // {
-    //     //
-    //     $c = Course::where('course_id', $course_id)->first();
-
-    //     if($c->status == -1){
-    //         $c->status = 1;
-    //     }else if($c->status == 1){
-    //         $c->status = -1;
-    //     }
-
-    //     if($c->save()){
-    //         $request->session()->flash('success','Course status has been updated');
-    //     }else{
-    //         $request->session()->flash('error', 'There was an error updating the course status');
-    //     }
-
-    //     return redirect()->route('programWizard.step3', $c->program_id);
-    // }
-
     
     public function submit(Request $request, $course_id)
     {
@@ -402,6 +391,30 @@ class CourseController extends Controller
     {
         $user = User::where('id',Auth::id())->first();
         $course =  Course::find($course_id);
+        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
+                                ->join('users','course_users.user_id',"=","users.id")
+                                ->select('users.email')
+                                ->where('courses.course_id','=',$course_id)->get();
+
+        //for progress bar
+        $lo_count = LearningOutcome::where('course_id', $course_id)->count();
+        $am_count = AssessmentMethod::where('course_id', $course_id)->count();
+        $la_count = LearningActivity::where('course_id', $course_id)->count();
+        $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
+                                ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->where('learning_activities.course_id','=',$course_id)->count();
+        $oAss = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
+                                ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->where('assessment_methods.course_id','=',$course_id)->count();
+        $outcomeMapsCount = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
+                                ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+
+        //
+
         // get all the programs this course belongs to
         $coursePrograms = Course::find($course_id)->programs;
 
@@ -411,7 +424,7 @@ class CourseController extends Controller
             $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
         }
 
-        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_value
+        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
         $courseProgramsOutcomeMaps = array();
         foreach ($programsLearningOutcomes as $programId => $programLearningOutcomes) {
             foreach ($programLearningOutcomes as $programLearningOutcome) {
@@ -451,8 +464,15 @@ class CourseController extends Controller
         foreach ($course->assessmentMethods as $a_method) {
             $assessmentMethodsTotal += $a_method->weight;
         }
+
+        // get subcategories for optional priorities
+        $optionalPriorities = $course->optionalPriorities;
+        $optionalSubcategories = array();
+        foreach ($optionalPriorities as $optionalPriority) {
+            $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
+        }
         
-        $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps')) ;
+        $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
 
         return $pdf->download('summary.pdf');
     }
