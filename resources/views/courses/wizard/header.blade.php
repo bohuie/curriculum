@@ -332,7 +332,7 @@
                         <td><a class="btn @if (Route::current()->getName() == 'courseWizard.step5') btn-primary @else @if ($outcomeMapsCount < 1) btn-secondary @else btn-success @endif @endif" href="{{route('courseWizard.step5', $course->course_id)}}"
                                 style="width: 30px; height: 30px; padding: 6px 0px; border-radius: 15px; text-align: center; font-size: 12px; line-height: 1.42857;">
                                 <b>5</b> </a></td>
-                        <td><a class="btn @if (Route::current()->getName() == 'courseWizard.step6') btn-primary @else @if ($outcomeMapsCount < 1) btn-secondary @else btn-success @endif @endif" href="{{route('courseWizard.step6', $course->course_id)}}"
+                        <td><a class="btn @if (Route::current()->getName() == 'courseWizard.step6') btn-primary @else @if ($standardsOutcomeMapCount < 1) btn-secondary @else btn-success @endif @endif" href="{{route('courseWizard.step6', $course->course_id)}}"
                                 style="width: 30px; height: 30px; padding: 6px 0px; border-radius: 15px; text-align: center; font-size: 12px; line-height: 1.42857;">
                                 <b>6</b> </a></td>
                         <td><a class="btn @if (Route::current()->getName() == 'courseWizard.step7') btn-primary @else btn-secondary @endif" href="{{route('courseWizard.step7', $course->course_id)}}"
