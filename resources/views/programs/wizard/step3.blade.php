@@ -14,7 +14,7 @@
 
                 <div class="card-body">
                     <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        Input the required and non-required courses for this program (to the best of your knowledge). <strong>All courses need to have at least one assigned instructor to be mapped to a program.</strong> 
+                        Input the required and non-required courses for this program (to the best of your knowledge).
                     </h6>
                     
                     <div class="row mb-2">
@@ -37,7 +37,6 @@
                                             <th class="w-25">Course Title</th>
                                             <th>Course Code</th>
                                             <th>Term</th>
-                                            <th>Assigned</th>
                                             <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> The course instructor has <b>not</b> mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Completed:</b> The course instructor has mapped <b>some</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> The course instructor has mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
                                             <th class="text-center">Actions</th>
                                         </tr>
@@ -77,13 +76,6 @@
                                             </td>
                                             <td>
                                                 {{$programCourse->year}} {{$programCourse->semester}}
-                                            </td>
-                                            <td>
-                                                @if(count($programCoursesUsers[$programCourse->course_id]) > 0 )
-                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Assigned
-                                                @else
-                                                    <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Unassigned                                                       
-                                                @endif
                                             </td>
                                             <td>
                                                 @if($actualTotalOutcomes[$programCourse->course_id] == 0)
