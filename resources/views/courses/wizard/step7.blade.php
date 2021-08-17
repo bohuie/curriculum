@@ -237,11 +237,15 @@
                                                                     @endforeach
                                                             @endif
                                                         @endforeach
-                                                        <tr>
-                                                            <td class="table-active" colspan="2">Uncategorized PLOs</td>
-                                                        </tr>
+                                                        <?php $hasRan = FALSE ?>
                                                         @foreach ($courseProgram->programLearningOutcomes as $plo) 
                                                             @if (!isset($plo->category))
+                                                                @if (! $hasRan)
+                                                                    <tr>
+                                                                        <td class="table-active" colspan="2">Uncategorized PLOs</td>
+                                                                    </tr>
+                                                                    <?php $hasRan = TRUE ?>
+                                                                @endif
                                                             <tr>
                                                                 <td>{{($pos++) + 1}}</td>
                                                                 <td>
@@ -251,7 +255,10 @@
                                                             </tr>
                                                             @endif
                                                         @endforeach   
-                                                    @else                                                 
+                                                    @else
+                                                        <tr>
+                                                            <td class="table-active" colspan="42">Uncategorized PLOs</td>
+                                                        </tr>                                         
                                                         @foreach($courseProgram->programLearningOutcomes as $index => $pl_outcome)
 
                                                         <tr>
