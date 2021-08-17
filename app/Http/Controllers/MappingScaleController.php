@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
+use App\Models\OutcomeMap;
+use App\Models\ProgramLearningOutcome;
 use Illuminate\Http\Request;
 
 class MappingScaleController extends Controller
@@ -142,7 +144,7 @@ class MappingScaleController extends Controller
         if ($mapping_scale_categories_id != null) {
             // if the mapping scale is null delete from the mapping scale program
             $msp = MappingScaleProgram::where('program_id', $request->input('program_id'))->where('map_scale_id', $map_scale_id);
-          
+        
             if($msp->delete()){
                 $request->session()->flash('success', 'Mapping scale level deleted');
             }else{
@@ -164,6 +166,16 @@ class MappingScaleController extends Controller
 
     public function addDefaultMappingScale(Request $request) {
         $mapping_scale_categories_id = $request->input('mapping_scale_categories_id');
+        
+        // Delete outcome maps if they exist
+        $programLearningOutcomes = ProgramLearningOutcome::where('program_id', $request->input('program_id'))->pluck('pl_outcome_id')->toArray();
+        if (count($programLearningOutcomes) > 0) {
+            foreach ($programLearningOutcomes as $programLearningOutcome) {
+                if (OutcomeMap::where('pl_outcome_id', $programLearningOutcome)->exists()) {
+                    OutcomeMap::where('pl_outcome_id', $programLearningOutcome)->delete();
+                }
+            }
+        }
         
         // Return currently mapped scales for a program
         $msp = MappingScaleProgram::join('mapping_scales', 'mapping_scale_programs.map_scale_id', '=', 'mapping_scales.map_scale_id')->where('program_id',  $request->input('program_id') )->get();
