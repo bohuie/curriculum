@@ -30,7 +30,7 @@
 
                     <div class="d-flex justify-content-end">
                                 <!-- Show default mapping scale button  -->
-                                <button type="button" class="btn btn-outline-secondary btn-sm m-1" data-toggle="modal" data-target=".bd-example-modal-lg">Show Default Mapping Scales</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm m-1" data-toggle="modal" data-target=".mapping-scales">Show Default Mapping Scales</button>
                                 <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target="#addMSModal" style="background-color:#002145; color:white;">
                                     <i class="bi bi-plus pr-2"></i>My Own Mapping Scale Level
                                 </button>
@@ -39,8 +39,8 @@
                     <div class="row mb-3 container">
                         <div class="float-left">
                             <!-- Modal -->
-                            <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
+                            <div class="modal fade mapping-scales" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Default Mapping Scale</h5>
@@ -51,40 +51,40 @@
                                         <div class="modal-body">
                                         <!-- Loops through all mapping scale categories, as well as the associated mapping scales -->
                                         @foreach($msCategories as $msCategory)
-                                            <div>
-                                            <table class="table table-bordered table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="2">{{$msCategory->msc_title}}</th>
-                                                    </tr>
-                                                </thead>
-                                                
-                                                <tbody>
-                                                    @foreach ($mscScale as $ms)
-                                                        @if ($msCategory->mapping_scale_categories_id == $ms->mapping_scale_categories_id)
-                                                            <tr>
-                                                
-                                                                <td style="width:20%">
-                                                                    <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
-                                                                    {{$ms->title}}<br>
-                                                                    ({{$ms->abbreviation}})
-                                                                </td>
-                                                                <td>
-                                                                    {{$ms->description}}
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    @endforeach
-                                                </tbody>
-                                                </table>
-                                                <form action="{{route('mappingScale.addDefaultMappingScale')}}" method="POST" >
-                                                    @csrf
-                                                    <input type="hidden" class="form-check-input" name="mapping_scale_categories_id" value="{{$msCategory->mapping_scale_categories_id}}">
-                                                    <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
-                                                    <button type="submit" style="width:250px; background-color:#002145;color:white; margin-bottom:4%; margin-top:1%;" class="btn btn-secondary btn-sm float-right">+ Import Mapping Scales</button>
-                                                </form>
+                                            <div class="card m-4">
+                                                <h5 class="card-header">{{$msCategory->msc_title}}</h5>
+                                                <div class="card-body">
+                                                    <p>{{$msCategory->description}}</p>
+                                                    <table class="table table-bordered table-sm">
+                                                        <tbody>
+                                                            @foreach ($mscScale as $ms)
+                                                                @if ($msCategory->mapping_scale_categories_id == $ms->mapping_scale_categories_id)
+                                                                    <tr>
+                                                                        <td style="width:20%">
+                                                                            <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
+                                                                            {{$ms->title}}<br>
+                                                                            ({{$ms->abbreviation}})
+                                                                        </td>
+                                                                        <td>
+                                                                            {{$ms->description}}
+                                                                        </td>
+                                                                    </tr>
+                                                                @endif
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                    <form action="{{route('mappingScale.addDefaultMappingScale')}}" method="POST" >
+                                                        @csrf
+                                                        <input type="hidden" class="form-check-input" name="mapping_scale_categories_id" value="{{$msCategory->mapping_scale_categories_id}}">
+                                                        <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
+                                                        <button type="submit" style="width:250px; background-color:#002145;color:white; margin-bottom:4%; margin-top:1%;" class="btn btn-secondary btn-sm float-right">+ Import Mapping Scales</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         @endforeach
+                                        </div>
+                                        <div class="modal-footer text-center" style="display: inline;">
+                                            <small class="text-center">Mapping scales inspired from <a href="https://taylorinstitute.ucalgary.ca/curriculum-links">UofC Curriculum Links</a></small>
                                         </div>
                                     </div>
                                 </div>

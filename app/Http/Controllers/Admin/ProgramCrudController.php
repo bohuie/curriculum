@@ -229,8 +229,7 @@ class ProgramCrudController extends CrudController
     {
         $this->setupCreateOperation();
         
-        $prgID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $prgID = explode("/",$prgID)[3];
+        $prgID = request()->route()->parameter('id');
         
         $this->crud->addField([
                     'name'    => 'ProgramOC',
@@ -361,8 +360,7 @@ class ProgramCrudController extends CrudController
     {
         $this->crud->hasAccessOrFail('delete');
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
-        $prgID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $prgID = explode("/",$prgID)[3];
+        $prgID = request()->route()->parameter('id');
         //first get the relevant ids
         $PLOs =  \App\Models\ProgramLearningOutcome::where('program_id', '=', $prgID)->get();        
         $setOfPLO = [];

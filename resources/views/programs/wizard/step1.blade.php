@@ -214,6 +214,7 @@
                             @else
                                 <table class="table table-light table-bordered table" style="width: 100%; margin: auto; table-layout:auto;">
                                     <tbody>
+                                        <?php $count = 0 ?>
                                         <!--Categories for PLOs -->
                                         @foreach ($ploCategories as $plo)
                                             @if ($plo->plo_category != NULL)
@@ -238,7 +239,8 @@
                                             @foreach($ploProgramCategories as $index => $ploCat)
                                                 @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                     <tr>
-                                                        <td colspan="2">
+                                                        <td class="text-center">{{++$count}}</td>
+                                                        <td>
                                                             <span style="font-weight: bold;">{{$ploCat->plo_shortphrase}}</span><br>
                                                             {{$ploCat->pl_outcome}}
                                                         </td>
@@ -374,7 +376,8 @@
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                             <tr>
-                                                <td colspan="2">
+                                                <td class="text-center">{{++$count}}</td>
+                                                <td>
                                                     <span style="font-weight: bold;">{{$unCatplo->plo_shortphrase}}</span><br>
                                                     {{$unCatplo->pl_outcome}}
                                                 </td>
