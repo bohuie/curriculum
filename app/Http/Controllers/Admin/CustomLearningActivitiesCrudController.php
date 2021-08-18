@@ -29,6 +29,9 @@ class CustomLearningActivitiesCrudController extends CrudController
         CRUD::setModel(\App\Models\CustomLearningActivities::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/custom-learning-activities');
         CRUD::setEntityNameStrings('custom learning activities', 'custom learning activities');
+        
+        // Hide the preview button 
+        $this->crud->denyAccess('show');
     }
 
     /**
