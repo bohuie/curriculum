@@ -292,14 +292,11 @@ class ProgramCrudController extends CrudController
         
         $this->crud->addField([
                     'name'    => 'Courses',
-                    'type'    => 'select_categorical',
+                    'type'    => 'select2_multiple',
                     'label'   => 'Courses',
                     'entity'    => 'courses', // the method that defines the relationship in your Model
                     'model'     => "App\Models\Course", // foreign key model                    
-                    'attribute' => [
-                        'course_code', // foreign key attribute that is shown to user
-                        'course_num',                        
-                    ],
+                    'attribute' => 'course_title',
                     'tooltip'  => 'course_title', //this will show up when mousing over items
                     'group_by_cat' => 'course_code', //the attribute to group by 
                     'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
