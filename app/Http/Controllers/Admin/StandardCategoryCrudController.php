@@ -94,7 +94,7 @@ class StandardCategoryCrudController extends CrudController
         ]);
         
         $this->crud->addField([   // repeatable
-            'name'  => 'Standard table',
+            'name'  => 'Standardtable', //NO SPACE!!!
             'label' => 'Standards',
             'type'  => 'repeatable',
             'entity' => 'standards',
@@ -129,7 +129,7 @@ class StandardCategoryCrudController extends CrudController
             ],
 
             // optional
-            'new_item_label'  => 'Add Group', // customize the text of the button
+            'new_item_label'  => 'Add Standard', // customize the text of the button
             'init_rows' => 0, // number of empty rows to be initialized, by default 1
             'min_rows' => 0, // minimum rows allowed, when reached the "delete" buttons will be hidden
             'max_rows' => 10 // maximum rows allowed, when reached the "new item" button will be hidden
@@ -143,8 +143,7 @@ class StandardCategoryCrudController extends CrudController
     {
         $this->crud->hasAccessOrFail('delete');
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
-        $scID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $scID = explode("/",$scID)[3];
+        $scID = request()->route()->parameter('id');
         $r = DB::table('standards')->where('standard_category_id', '=', $scID)->delete();
         //this deletes the course record itself.
         return $this->crud->delete($id);

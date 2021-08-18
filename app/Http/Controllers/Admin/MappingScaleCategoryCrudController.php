@@ -145,7 +145,7 @@ class MappingScaleCategoryCrudController extends CrudController
                 
             ],
              // optional
-            'new_item_label'  => 'Add Group', // customize the text of the button
+            'new_item_label'  => 'Add Scale', // customize the text of the button
             'init_rows' => 0, // number of empty rows to be initialized, by default 1
             'min_rows' => 0, // minimum rows allowed, when reached the "delete" buttons will be hidden
             'max_rows' => 10 // maximum rows allowed, when reached the "new item" button will be hidden

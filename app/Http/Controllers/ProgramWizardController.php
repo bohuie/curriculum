@@ -462,12 +462,18 @@ class ProgramWizardController extends Controller
             foreach($dist as $courseId => $d) {
                 $weight = 0;
                 $tieResults = array();
+                $id = NULL;
                 //count the number of times a mapping scales appears for a program learning outcome 
-                foreach($d as $mapScaleWeight) {
+                foreach($d as $ms_Id => $mapScaleWeight) {
                     //check if the current ($mapScaleWeight) > than the previously stored value
                     if ($weight < $mapScaleWeight) {
                         $weight = $mapScaleWeight;
-                    } else if ($weight == $mapScaleWeight) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
+                        $id = $ms_Id;
+                    }
+                }
+                // Check if the largest weighted value ties with another value
+                foreach($d as $ms_Id => $mapScaleWeight) {
+                    if ($weight == $mapScaleWeight && $id != $ms_Id) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
                         $tieResults = array_keys($d, $weight);
                     }
                 }

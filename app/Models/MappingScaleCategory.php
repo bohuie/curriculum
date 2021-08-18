@@ -23,16 +23,14 @@ class MappingScaleCategory extends Model
         return $this->hasMany(MappingScale::class, 'mapping_scale_categories_id', 'mapping_scale_categories_id');
     }
     
-     public function getMappingtableAttribute(){
-        $catID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $catID = explode("/",$catID)[3];
+    public function getMappingtableAttribute(){
+        $catID = request()->route()->parameter('id');
         $test = DB::table('mapping_scales')->where('mapping_scale_categories_id', $catID)->get();
         return json_encode($test);
     }
     
-     public function setMappingtableAttribute($value){
-        $catID = filter_input(INPUT_SERVER,'PATH_INFO'); 
-        $catID = explode("/",$catID)[3];
+    public function setMappingtableAttribute($value){
+        $catID = request()->route()->parameter('id');
         $jdata = json_decode($value);
         if(!is_array($jdata))$jdata = [];
         $existingScales = MappingScale::where('mapping_scale_categories_id', $catID)->get();

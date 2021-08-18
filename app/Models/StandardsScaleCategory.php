@@ -29,15 +29,13 @@ class StandardsScaleCategory extends Model
     }
     
     public function getScaletableAttribute(){
-        $catID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $catID = explode("/",$catID)[3];
+        $catID = request()->route()->parameter('id');
         $test = DB::table('standard_scales')->where('scale_category_id', $catID)->get();
         return json_encode($test);
     }
     
-     public function setScaletableAttribute($value){
-        $catID = filter_input(INPUT_SERVER,'PATH_INFO'); 
-        $catID = explode("/",$catID)[3];
+    public function setScaletableAttribute($value){
+        $catID = request()->route()->parameter('id');
         $jdata = json_decode($value);
         if(!is_array($jdata))$jdata = [];
         $existingScales = StandardScale::where('scale_category_id', $catID)->get();

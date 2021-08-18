@@ -303,7 +303,7 @@ class CourseCrudController extends CrudController
         $this->setupCreateOperation();
         
       //following part is only available once the course record is created   
-      
+    
 
             $crsID = request()->route()->parameter('id');
         
@@ -390,6 +390,7 @@ class CourseCrudController extends CrudController
                         'lclass' => 'form-group col-sm-3', //label class
                     ],                 
                 ],
+                'new_item_label'  => 'Add Assessment Method', // customize the text of the button
                 'max'     => 5,
                 'min'     => 0,
                 
@@ -421,7 +422,7 @@ class CourseCrudController extends CrudController
                     ],
                     [
                     'name' => 'l_activity',
-                    'label' => 'learning Activity&nbsp;&nbsp;<span style=color:red>*</span>',
+                    'label' => 'Teaching and Learning Activity&nbsp;&nbsp;<span style=color:red>*</span>',
                     'type' => 'list_select', 
                     'model' => 'App\Models\Custom_learning_activities',
                     'attribute' => 'custom_activities',
@@ -431,6 +432,7 @@ class CourseCrudController extends CrudController
                     'lclass' => 'form-group col-sm-10', //label class
                     ],
                 ],
+                'new_item_label'  => 'Add Teaching and Learning Activity', // customize the text of the button
                 'max'     => 10,
                 'min'     => 0,
             ]);
