@@ -31,7 +31,6 @@
                         <table class="table table-hover dashBoard">
                             <thead>
                                 <tr>
-                                    <th scope="col"></th>
                                     <th scope="col">Program</th>
                                     <th scope="col">Faculty and Department/School</th>
                                     <th scope="col">Level</th>
@@ -41,14 +40,13 @@
                             </thead>
                             @if (count($myPrograms->where('userPermission', 1)) > 0)
                                 <tr>
-                                    <th colspan="6" class="table-secondary">My Programs</th>
+                                    <th colspan="5" class="table-secondary">My Programs</th>
                                 </tr>
                             @endif
                             <!-- Displays 'My Programs' -->
                             @foreach ($myPrograms->where('userPermission', 1)->values() as $index => $program) 
                             <tbody>
                             <tr>
-                                <th scope="row">{{$index + 1}}</th>
                                 <td><a href="{{route('programWizard.step1', $program->program_id)}}">{{$program->program}}</a></td>
                                 <td>{{$program->faculty}} </td>
                                 <td>{{$program->level}}</td>
@@ -209,7 +207,6 @@
                             @foreach ($myPrograms->where('userPermission', 2)->values() as $index => $program) 
                             <tbody>
                             <tr>
-                                <th scope="row">{{$index + 1}}</th>
                                 <td><a href="{{route('programWizard.step1', $program->program_id)}}">{{$program->program}}</a></td>
                                 <td>{{$program->faculty}} </td>
                                 <td>{{$program->level}}</td>
@@ -247,7 +244,6 @@
                             @foreach ($myPrograms->where('userPermission', 3)->values() as $index => $program) 
                             <tbody>
                             <tr>
-                                <th scope="row">{{$index + 1}}</th>
                                 <td><a href="{{route('programWizard.step1', $program->program_id)}}">{{$program->program}}</a></td>
                                 <td>{{$program->faculty}} </td>
                                 <td>{{$program->level}}</td>
@@ -281,7 +277,6 @@
                             <table class="table table-hover dashBoard">
                                 <thead>
                                 <tr>
-                                    <th scope="col"></th>
                                     <th scope="col">Course Title</th>
                                     <th scope="col">Course Code</th>
                                     <th scope="col">Term</th>
@@ -295,7 +290,7 @@
                                 <!-- Displays 'My Courses' -->
                                 @if (count($myCourses->where('userPermission', 1)) > 0)
                                     <tr>
-                                        <th colspan="8" class="table-secondary">My Courses</th>
+                                        <th colspan="7" class="table-secondary">My Courses</th>
                                     </tr>
                                 @endif
                                 @foreach ($myCourses->where('userPermission', 1)->values() as $index => $course)
@@ -303,7 +298,6 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
@@ -344,7 +338,6 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
@@ -533,7 +526,7 @@
                                 <!-- Displays 'My Courses' -->
                                 @if (count($myCourses->where('userPermission', 2)) > 0)
                                     <tr>
-                                        <th colspan="8" class="table-secondary">Courses I Can Edit</th>
+                                        <th colspan="7" class="table-secondary">Courses I Can Edit</th>
                                     </tr>
                                 @endif
                                 @foreach ($myCourses->where('userPermission', 2)->values() as $index => $course)
@@ -541,7 +534,6 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
@@ -582,7 +574,6 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
@@ -634,7 +625,7 @@
                                 <!-- Displays 'My Courses' -->
                                 @if (count($myCourses->where('userPermission', 3)) > 0)
                                     <tr>
-                                        <th colspan="8" class="table-secondary">Courses I Can View</th>
+                                        <th colspan="7" class="table-secondary">Courses I Can View</th>
                                     </tr>
                                 @endif
                                 @foreach ($myCourses->where('userPermission', 3)->values() as $index => $course)
@@ -642,7 +633,6 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
@@ -683,7 +673,6 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <th scope="row">{{$index + 1}}</th>
                                         <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
@@ -760,7 +749,6 @@
                             <table class="table table-hover dashBoard">
                                 <thead>
                                 <tr>
-                                    <th scope="col"></th>
                                     <th scope="col">Course Title</th>
                                     <th scope="col">Course Code</th>
                                     <th scope="col">Term</th>
@@ -771,7 +759,7 @@
                                 <!--Displays MySyllabus-->
                                 @if (count($mySyllabi->where('userPermission', 1)) > 0)
                                     <tr>
-                                        <th colspan="6" class="table-secondary">My Syllabi</th>
+                                        <th colspan="5" class="table-secondary">My Syllabi</th>
                                     </tr>
                                 @endif
                                 @foreach ($mySyllabi->where('userPermission', 1)->values() as $index => $syllabus)
@@ -779,10 +767,6 @@
                                 <!-- Displays 'My Courses' -->
                                 <tbody>
                                 <tr>
-                                    <!-- index -->
-                                    <th scope="row">
-                                        {{$index + 1}}
-                                    </th>
                                     <!-- course title -->
                                     <td>
                                         <a href="{{route('syllabus', $syllabus->id)}}">{{$syllabus->course_title}}</a>
@@ -863,10 +847,6 @@
                                 <!-- Displays 'My Courses' -->
                                 <tbody>
                                 <tr>
-                                    <!-- index -->
-                                    <th scope="row">
-                                        {{$index + 1}}
-                                    </th>
                                     <!-- course title -->
                                     <td>
                                         <a href="{{route('syllabus', $syllabus->id)}}">{{$syllabus->course_title}}</a>
@@ -897,10 +877,6 @@
                                 <!-- Displays 'My Courses' -->
                                 <tbody>
                                 <tr>
-                                    <!-- index -->
-                                    <th scope="row">
-                                        {{$index + 1}}
-                                    </th>
                                     <!-- course title -->
                                     <td>
                                         <a href="{{route('syllabus', $syllabus->id)}}">{{$syllabus->course_title}}</a>

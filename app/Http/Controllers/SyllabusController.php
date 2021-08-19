@@ -562,18 +562,20 @@ class SyllabusController extends Controller
             ]);
 
         $course_id = $request->course_id;
+        $course = Course::find($course_id);
         // get relevant course info for import into Syllabus Generator
-        $courseInfo = Course::select('course_code', 'course_num', 'course_title', 'year', 'semester')->where('course_id', '=', $course_id)->first();
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $a_methods = $course->assessmentMethods;
+        $l_outcomes = $course->learningOutcomes;
+        $l_activities = $course->learningActivities;
         // put courseInfo, assessment methods and CLOs in the return object
-        $data['c_title'] = $courseInfo->course_title;
-        $data['c_code'] = $courseInfo->course_code;
-        $data['c_num'] = $courseInfo->course_num;
-        $data['c_year'] = $courseInfo->year;
-        $data['c_term'] = $courseInfo->semester;
+        $data['c_title'] = $course->course_title;
+        $data['c_code'] = $course->course_code;
+        $data['c_num'] = $course->course_num;
+        $data['c_year'] = $course->year;
+        $data['c_term'] = $course->semester;
         $data['a_methods'] = $a_methods;
         $data['l_outcomes'] = $l_outcomes;
+        $data['l_activities'] = $l_activities;
 
         $data = json_encode($data);
         return $data;

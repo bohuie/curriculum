@@ -80,7 +80,7 @@
                     In-person
             @endswitch
             </p>
-            <p><b>Level: </b>{{$course->ministryStandardCategory->sc_name}}</p>
+            <p><b>Level: </b>{{$course->standardCategory->sc_name}}</p>
         </div>
         <!-- End of Course Info -->
 
@@ -427,7 +427,7 @@
                 <div style="margin-left:16px; margin-right:16px;">
 
                     <h5 class="font-weight:bold">Standards</h5>
-                    @if ($course->ministryStandardCategory->standards->count() < 1)
+                    @if ($course->standardCategory->standards->count() < 1)
                             <div class="alert alert-warning text-center">
                                 Standards have not been set for this program.                            
                             </div>
@@ -438,7 +438,7 @@
                                 <th>Standards</th>            
                             </tr>
                             
-                            @foreach($course->ministryStandardCategory->standards as $index => $standard)
+                            @foreach($course->standardCategory->standards as $index => $standard)
                             <tr>
                                 <th class="text-center" style="width:5%">{{$index+1}}</th>
                                 <td>
@@ -478,7 +478,7 @@
                         </table> 
                     @endif
                             
-                    <h5 class="font-weight:bold">Program Outcome Map: {{$course->ministryStandardCategory->sc_name}}</h5>
+                    <h5 class="font-weight:bold">Program Outcome Map: {{$course->standardCategory->sc_name}}</h5>
                     <p>This chart shows the alignment of course learning outcomes to ministry standards.</p>
                             
                     @if (count($standardOutcomeMaps)<1)
@@ -489,22 +489,22 @@
                         <table class="table" style="width:100%; table-layout:fixed;">
                             <tr class="info">
                                 <th style="width:25%">Course Learning Outcomes (CLOs)</th>
-                                <th colspan="{{$course->ministryStandardCategory->standards->count()}}">Standards</th>
+                                <th colspan="{{$course->standardCategory->standards->count()}}">Standards</th>
                             </tr>
         
                             <tr>
-                                @if ($course->ministryStandardCategory->standards->count() > 7)
+                                @if ($course->standardCategory->standards->count() > 7)
                                     <td></td>
-                                        @foreach ($course->ministryStandardCategory->standards as $index => $standard)
+                                        @foreach ($course->standardCategory->standards as $index => $standard)
                                             <td style="text-align:center;font-size:80%">
                                                 {{$index+1}}
                                             </td>
                                         @endforeach
                                 @else 
                                     <td></td>
-                                    @foreach ($course->ministryStandardCategory->standards as $index => $standard)
+                                    @foreach ($course->standardCategory->standards as $index => $standard)
                                         <td style="height:0; vertical-align: bottom; text-align: left; overflow:hidden;">
-                                            <span @if($course->ministryStandardCategory->standards->count() <=4) style="font-size: 100%;"@else style="font-size: 80%;"@endif>
+                                            <span @if($course->standardCategory->standards->count() <=4) style="font-size: 100%;"@else style="font-size: 80%;"@endif>
                                                 @if(isset($standard->s_shortphrase))
                                                     {{$index+1}}.{{$standard->s_shortphrase}}
                                                 @else
@@ -528,7 +528,7 @@
                                                 @endif
                                                 </span>
                                     </td>
-                                    @foreach($course->ministryStandardCategory->standards as $standard)
+                                    @foreach($course->standardCategory->standards as $standard)
                                             <!-- Check if this CLO has been mapped to this PLO -->
                                             @foreach($standardOutcomeMaps as $som)
                                                 @if( $som->standard_id == $standard->standard_id && $som->l_outcome_id == $l_outcome->l_outcome_id )

@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 
 use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
+use Illuminate\Support\Facades\DB;
 
 class MappingScaleSeeder extends Seeder
 {
@@ -16,6 +17,19 @@ class MappingScaleSeeder extends Seeder
      */
     public function run()
     {
+
+        /* 
+            * this is a workaround to create the N/A mapping scale with id 0
+        */
+        MappingScale::create([
+            'map_scale_id' => 100,
+            'title' => 'Not Applicable',
+            'abbreviation' => 'N/A',
+            'description' => 'Not Applicable',
+            'colour' => '#ffffff',
+        ]);
+        // update N/A mapping scale id to 0 
+        MappingScale::where('map_scale_id', 100)->update(['map_scale_id' => 0]);
 
         // Default map_scale_id set: 1- 3 
         $ms1 = new MappingScale;

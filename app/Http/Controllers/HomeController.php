@@ -18,6 +18,7 @@ use App\Models\OptionalPriorities;
 use App\Models\ProgramUser;
 use App\Models\OutcomeMap;
 use App\Models\ProgramLearningOutcome;
+use App\Models\Standard;
 use Attribute;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -118,7 +119,10 @@ class HomeController extends Controller
             if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() > 0) {
                 $count++;
             }
-            $progressBar[$courseId] = intval(round(($count / 6) * 100));
+            if (Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count()) {
+                $count++;
+            }
+            $progressBar[$courseId] = intval(round(($count / 7) * 100));
             $count = 0;
         }
 

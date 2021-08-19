@@ -45,7 +45,7 @@ class Course extends Model
         return $this->belongsTo(StandardsScaleCategory::class, 'scale_category_id', 'scale_category_id');
     }
 
-    public function ministryStandardCategory() {
+    public function standardCategory() {
         return $this->belongsTo(StandardCategory::class, 'standard_category_id', 'standard_category_id');
     }
 
@@ -59,14 +59,12 @@ class Course extends Model
     
     //these are for the tables of child records on the course crud controller
     public function getCLOtableAttribute(){
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');
-        $crsID = explode("/",$crsID)[3];
+        $crsID = request()->route()->parameter('id');
         $CLOs =  \App\Models\LearningOutcome::where('course_id', '=', $crsID)->get();
         return json_encode($CLOs);
     }
     public function setCLOtableAttribute($value){
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $crsID = explode("/",$crsID)[3];
+        $crsID = request()->route()->parameter('id');
         $crsData = Course::where('course_id', '=', $crsID)->get()[0];
         $existingCLOs =  \App\Models\LearningOutcome::where('course_id', '=', $crsID)->get();
         $jdata = json_decode($value);    
@@ -99,14 +97,12 @@ class Course extends Model
     }
     
     public function getAMtableAttribute(){
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');
-        $crsID = explode("/",$crsID)[3];
+        $crsID = request()->route()->parameter('id');
         $AMs = \App\Models\AssessmentMethod::where('course_id', '=', $crsID)->get();
         return json_encode($AMs);
     }
     public function setAMtableAttribute($value){
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $crsID = explode("/",$crsID)[3];
+        $crsID = request()->route()->parameter('id');
         $crsData = Course::where('course_id', '=', $crsID)->get()[0];
         $existingAMs = \App\Models\AssessmentMethod::where('course_id', '=', $crsID)->get();
         $jdata = json_decode($value);  
@@ -136,14 +132,12 @@ class Course extends Model
     }
     
     public function getLAtableAttribute(){
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');
-        $crsID = explode("/",$crsID)[3];
+        $crsID = request()->route()->parameter('id');
         $LAs =  \App\Models\LearningActivity::where('course_id', '=', $crsID)->get();
         return json_encode($LAs);
     }
     public function setLAtableAttribute($value){
-        $crsID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $crsID = explode("/",$crsID)[3];
+        $crsID = request()->route()->parameter('id');
         $crsData = Course::where('course_id', '=', $crsID)->get()[0];
         $existingLAs =  \App\Models\LearningActivity::where('course_id', '=', $crsID)->get();
         $jdata = json_decode($value);   
