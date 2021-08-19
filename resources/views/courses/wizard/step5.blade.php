@@ -49,7 +49,7 @@
                                             <div class="accordion-item mb-2">
                                                 <!-- Program accordion header -->
                                                 <h2 class="accordion-header fs-2" id="programAccordionHeader{{$courseProgram->program_id}}">
-                                                    <button class="accordion-button collapsed program white-arrow border border-danger" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProgramAccordion{{$courseProgram->program_id}}" aria-expanded="false" aria-controls="collapseProgramAccordion{{$courseProgram->program_id}}">
+                                                    <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProgramAccordion{{$courseProgram->program_id}}" aria-expanded="false" aria-controls="collapseProgramAccordion{{$courseProgram->program_id}}">
                                                         <b>{{$index + 1}}</b>. {{$courseProgram->program}}
                                                         @if ($outcomeMapsCountPerProgram[$courseProgram->program_id] == ($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count()))
                                                             &emsp;&emsp;<b class="text-success">({{$outcomeMapsCountPerProgram[$courseProgram->program_id]}} / {{($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count())}}) {{number_format((float)($outcomeMapsCountPerProgram[$courseProgram->program_id]/($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count())*100),2, '.', '')}}% </b>
