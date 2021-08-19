@@ -7,6 +7,10 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Validator;
+use App\Rules\GoogleRecaptcha;
+use Illuminate\Http\Request;
+
 class LoginController extends Controller
 {
     /*
@@ -28,7 +32,7 @@ class LoginController extends Controller
      * @var string
      */
 
-   
+
     
     protected $redirectTo = RouteServiceProvider::HOME;
     
@@ -41,5 +45,14 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+            /*'g-recaptcha-response' => ['required', new GoogleRecaptcha],*/  //this is commented for use on localhost as captcha does not work on local instance.
+        ]);
     }
 }

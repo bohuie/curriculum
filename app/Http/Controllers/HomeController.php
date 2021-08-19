@@ -2,11 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssessmentMethod;
 use Illuminate\Http\Request;
 use App\Models\Course;
+use App\Models\CourseOptionalPriorities;
+use App\Models\CourseProgram;
+use App\Models\Program;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\CourseUser;
+use App\Models\LearningActivity;
+use App\Models\LearningOutcome;
+use App\Models\OptionalPriorities;
+use App\Models\ProgramUser;
+use App\Models\OutcomeMap;
+use App\Models\ProgramLearningOutcome;
+use App\Models\Standard;
+use Attribute;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -25,108 +40,105 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $user = User::where('id', Auth::id())->first();
+        //Artisan::call('route:clear', []);
 
-        $activeCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-                ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-                ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-                ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-                'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-                ->where([
-                    ['course_users.user_id','=',Auth::id()],
-                    ['courses.status', '=', 1]
-                ])->orWhere([
-                    ['course_users.user_id','=',Auth::id()],
-                    ['courses.status', '=', -1]
-                ])->get();
+        // get the current authenticated user
+        $user = User::find(Auth::id());
+        // get my programs
+        $myPrograms = $user->programs->map(function ($program) {
+            $program['timeSince'] = $this->timeSince(time() - strtotime($program->updated_at));
+            $program['userPermission'] = $program->pivot->permission;
+            return $program;
+        })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
 
-        $programs = User::join('program_users', 'users.id', '=', 'program_users.user_id')
-        ->join('programs', 'program_users.program_id', "=", 'programs.program_id')
-        ->select('programs.program_id','programs.program', 'programs.faculty', 'programs.level', 'programs.department', 'programs.status')
-        ->where('program_users.user_id','=',Auth::id())
-        ->get();
-
-        $user = User::where('id', Auth::id())->first();
-
-        /*
-        $courseUsers = array();
-        foreach($activeCourses as $course){
-            $courseUsers[] =
-            Course::join('course_users','courses.course_id',"=","course_users.course_id")
-            ->join('users','course_users.user_id',"=","users.id")
-            ->select('users.email')
-            ->where('courses.course_id','=',$course->course_id)->get();
+        // get my courses
+        $myCourses = $user->courses->map(function ($course) {
+            $course['timeSince'] = $this->timeSince(time() - strtotime($course->updated_at));
+            $course['userPermission'] = $course->pivot->permission;
+            return $course;
+        })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
+        // get my syllabi
+        $mySyllabi = $user->syllabi->map(function ($syllabus) {
+            $syllabus['timeSince'] = $this->timeSince(time() - strtotime($syllabus->updated_at));
+            $syllabus['userPermission'] = $syllabus->pivot->permission;
+            return $syllabus;
+        })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
+        // returns a collection of programs associated with courses (Programs Icon)
+        $coursesPrograms = array();
+        foreach ($myCourses as $course) {
+            $coursePrograms = $course->programs;
+            $coursesPrograms[$course->course_id] = $coursePrograms;
         }
-        */
+        // returns a collection of programs associated with users (Collaborators Icon) 
+        $programUsers = array();
+        foreach ($myPrograms as $program) {
+            $programsUsers = $program->users()->get();
+            $programUsers[$program->program_id] = $programsUsers;
+        }
+        // returns a collection of courses associated with users 
+        $courseUsers = array();
+        foreach ($myCourses as $course) {
+            $coursesUsers = $course->users()->get();
+            $courseUsers[$course->course_id] = $coursesUsers;
+        }
+        // get the associated users for every one of this users syllabi
+        $syllabiUsers = array();
+        foreach ($mySyllabi as $syllabus) {
+            $syllabusUsers = $syllabus->users;
+            $syllabiUsers[$syllabus->id] = $syllabusUsers;
+        }
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
 
-        return view('pages.home')->with("activeCourses",$activeCourses)->with("activeProgram",$programs)->with('user', $user);
+        //for progress bar
+        $progressBar = array();
+        $count = 0;
+        foreach($myCourses as $course) {
+            // get course id for each course
+            $courseId = $course->course_id;
+            // gets the count for each step used to check if progress has been made
+            if (LearningOutcome::where('course_id', $courseId)->count() > 0) {
+                $count++;
+            }
+            if (AssessmentMethod::where('course_id', $courseId)->count() > 0) {
+                $count++;
+            }
+            if (LearningActivity::where('course_id', $courseId)->count() > 0) {
+                $count++;
+            }
+            if (LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_activities.course_id','=',$courseId)->count() > 0) {
+                $count++;
+            }
+            if (AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')->where('assessment_methods.course_id','=',$courseId)->count() > 0) {
+                $count++;
+            }
+            if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() > 0) {
+                $count++;
+            }
+            if (Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count()) {
+                $count++;
+            }
+            $progressBar[$courseId] = intval(round(($count / 7) * 100));
+            $count = 0;
+        }
+
+        // return dashboard view
+        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar);
+    }
+
+
+    public function getProgramUsers($program_id) {
+        
+        $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
+                                ->select('users.email','program_users.user_id','program_users.program_id')
+                                ->where('program_users.program_id','=',$program_id)->get();
+        
+        return view('pages.home')->with('ProgramUsers', $programUsers);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-        $this->validate($request, [
-            'course_code' => 'required',
-            'course_num' => 'required',
-            'course_title'=> 'required',
-
-            ]);
-
-        $course = new Course;
-        $course->program_id = $request->input('program_id');
-        $course->course_title = $request->input('course_title');
-        $course->course_num = $request->input('course_num');
-        $course->course_code =  strtoupper($request->input('course_code'));
-        $course->status = -1;
-        $course->required = $request->input('required');
-        $course->type = $request->input('type');
-
-        $course->delivery_modality = $request->input('delivery_modality');
-        $course->year = $request->input('course_year');
-        $course->semester = $request->input('course_semester');
-        $course->section = $request->input('course_section');
-
-        if($request->input('type') == 'assigned'){
-
-            $course->assigned = -1;
-
-            if($course->save()){
-                $request->session()->flash('success', 'New course added');
-            }else{
-                $request->session()->flash('error', 'There was an error adding the course');
-            }
-
-            return redirect()->route('programWizard.step3', $request->input('program_id'));
-
-        }else{
-
-            $course->assigned = 1;
-            $course->save();
-
-            $user = User::where('id', $request->input('user_id'))->first();
-            $courseUser = new CourseUser;
-            $courseUser->course_id = $course->course_id;
-            $courseUser->user_id = $user->id;
-            if($courseUser->save()){
-                $request->session()->flash('success', 'New course added');
-            }else{
-                $request->session()->flash('error', 'There was an error adding the course');
-            }
-
-            return redirect()->route('home');
-        }
-
-    }
-
-        /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -165,5 +177,31 @@ class HomeController extends Controller
         }
 
         return redirect()->route('home');
+    }
+
+    /*
+        Helper function that returns a human readable format of the time since 
+        @param Number $sinceSeconds is the current time minus a datetime
+        @return String 
+    */    
+    function timeSince($sinceSeconds) {
+        $chunks = array(
+            array(60 * 60 * 24 * 365 , 'year'),
+            array(60 * 60 * 24 * 30 , 'month'),
+            array(60 * 60 * 24 * 7, 'week'),
+            array(60 * 60 * 24 , 'day'),
+            array(60 * 60 , 'hour'),
+            array(60 , 'min'),
+            array(1 , 'second')
+        );
+    
+        for ($i = 0, $j = count($chunks); $i < $j; $i++) {
+            $seconds = $chunks[$i][0];
+            $name = $chunks[$i][1];
+            if (($count = floor($sinceSeconds / $seconds)) != 0) {
+                break;
+            }
+        }    
+        return ($count == 1) ? '1 '. $name . ' ago' : "$count {$name}s ago";
     }
 }

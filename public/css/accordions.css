@@ -3,7 +3,22 @@
     width:100%; /* fill the div */
 }
 
-.card-header {
+.accordion-button.program {
+    background-color: #002145;
+    color: white;
+}
+
+.accordion-button.clo {
+    background-color: #40B4E5;
+    color: white;
+}
+
+/* change fill value for program accordion icon color */
+.accordion-button.white-arrow::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");  
+}
+
+/* .card-header {
     background-color: #002145; /*UBC branding*/
     height: 75px;
 }
@@ -14,7 +29,7 @@
 
 .card-header:hover .accordion-title{
     color: white;
-}
+} */
 
 .accordion-title {
     color: white;

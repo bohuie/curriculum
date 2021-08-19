@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseOptionalPriorities;
 use Illuminate\Http\Request;
-use App\Models\Optional_priorities;
+use Illuminate\Support\Facades\DB;
+//use App\Models\OptionalPriorities;
+
 
 class OptionalPriorities extends Controller
 {
@@ -21,34 +24,32 @@ class OptionalPriorities extends Controller
             ]);
 
         $course_id = $request->input('course_id');
-        $optionalPLOs = $request->input('optionalItem');
+        $optionalPLOs_op_ids = $request->input('optionalItem');
         
-
         // Check If Any PLO's have been selected 
-        if ($optionalPLOs == !NULL) {
+        if ($optionalPLOs_op_ids != NULL) {
+            // Get op_id's from optionalPLOs
+            //$optionalPLOs_op_ids = DB::table('optional_priorities')->whereIn('optional_priority',$optionalPLOs)->pluck('op_id');
+
             // Delete all OptionalPLO's not checked (Selected).
-            Optional_priorities::whereNotIn('custom_PLO',$optionalPLOs)->where('course_id',$course_id)->delete();
+            DB::table('course_optional_priorities')->whereNotIn('op_id',$optionalPLOs_op_ids)->where('course_id',$course_id)->delete();
 
             // Loop to insert them to the table
-            foreach($optionalPLOs as $optionalPLO) {
-                if(! (Optional_priorities::where('custom_PLO',$optionalPLO)->where('course_id',$course_id)->first())) {
-                    $ops = new Optional_priorities();
-                    $ops->course_id = $course_id;
-                    $ops->custom_PLO = $optionalPLO;
-                    $ops->input_status = 0;
-                    if($ops->save()){
-                        $request->session()->flash('success', 'Alignment to UBC/Ministry priorities updated.');
-                    }else{
-                        $request->session()->flash('error', 'There was an error updating the alignment to UBC/Ministry priorities.');
-                    }
-                }
+            foreach($optionalPLOs_op_ids as $optionalPLO) {
+                CourseOptionalPriorities::updateOrCreate(['course_id' => $course_id, 'op_id' => $optionalPLO]);
+            }
+            
+            if(count($optionalPLOs_op_ids) == CourseOptionalPriorities::where('course_id', $course_id)->count()) {
+                $request->session()->flash('success', 'Alignment to UBC/Ministry priorities updated.');
+            }else{
+                $request->session()->flash('error', 'There was an error updating the alignment to UBC/Ministry priorities.');
             }
         } else {
             // Remove Any PLO's based on their course ID
-            Optional_priorities::where('course_id',$course_id)->delete();
+            DB::table('course_optional_priorities')->where('course_id',$course_id)->delete();
             $request->session()->flash('success', 'Alignment to UBC/Ministry priorities updated.');
         }
 
-        return redirect()->route('courseWizard.step5', $request->input('course_id'));
+        return redirect()->route('courseWizard.step6', $request->input('course_id'));
     }
 }

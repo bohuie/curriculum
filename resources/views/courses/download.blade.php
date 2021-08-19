@@ -8600,7 +8600,7 @@
 
         <div class="mt-2 mb-3">
             <p class="float-right">{{date("Y-m-d")}}</p>
-            <h1>Course Summary</h1>
+            <h3>{{$course->course_code}}{{$course->course_num}}: Course Summary</h3>
             <p><b>Course:</b> {{$course->year}} {{$course->semester}} {{$course->course_code}}{{$course->course_num}} {{$course->section}}
             - {{$course->course_title}}</p>
             <p><b>Delivery modality:</b>
@@ -8615,11 +8615,10 @@
                     In-person
             @endswitch
             </p>
-            <p><b>Program Project:</b> {{$program->program}}</p>
+            <!-- <p><b>Program Project:</b> {{$program->program}}</p> -->
             <p><b>Faculty/School:</b> {{$program->faculty}}</p>
             <p><b>Department:</b> {{$program->department}}</p>
             <p><b>Level: </b>{{$program->level}}</p>
-
         </div>
 
 

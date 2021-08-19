@@ -155,7 +155,7 @@
                                     name="delivery_modality" required autofocus>
                                         <option value="O">online</option>
                                         <option value="I">in-person</option>
-                                        <option value="B">blended</option>
+                                        <option value="B">Hybrid</option>
 
                                     @error('delivery_modality')
                                     <span class="invalid-feedback" role="alert">
@@ -220,7 +220,7 @@
                 <table class="table">
                     <tbody>
                         @foreach($activeCourses as $course)
-                            @if($course->program_id == 1 ?? $course->program_id == 2 ?? $course->program_id == 3 )
+                           
                                 <tr class="border">
                                     <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->year}} {{$course->semester}}
                                         {{$course->course_code}}{{$course->course_num}} {{$course->section}}
