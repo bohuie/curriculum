@@ -14,6 +14,19 @@ class StandardScaleSeeder extends Seeder
      */
     public function run()
     {
+    /* 
+        * this is a workaround to create the N/A standard scale with id 0
+    */
+    StandardScale::create([
+        'standard_scale_id' => 100,
+        'title' => 'Not Applicable',
+        'abbreviation' => 'N/A',
+        'description' => 'Not Applicable',
+        'colour' => '#ffffff',
+    ]);
+    // update N/A standard scale id to 0 
+    StandardScale::where('standard_scale_id', 100)->update(['standard_scale_id' => 0]);
+
     // Default Mapping Scales
     $ms1 = new StandardScale;
     $ms1->scale_category_id = 1;

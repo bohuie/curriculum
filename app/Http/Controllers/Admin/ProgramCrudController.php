@@ -53,19 +53,19 @@ class ProgramCrudController extends CrudController
             'searchLogic' => function($query, $column, $searchTerm){
                 $query ->orWhere('program_id', 'like', '%'.$searchTerm.'%');
             }
-          ]);
+        ]);
 
         $this->crud->addColumn([
             'name' => 'faculty', // The db column name
             'label' => "Faculty/School", // Table column heading
             'type' => 'Text'
-          ]);
+        ]);
         
         $this->crud->addColumn([
             'name' => 'department', // The db column name
             'label' => "Department", // Table column heading
             'type' => 'Text'
-          ]);
+        ]);
 
         $this->crud->addColumn([
             'name' => 'level', // The db column name
@@ -74,7 +74,7 @@ class ProgramCrudController extends CrudController
             'searchLogic' => function($query, $column, $searchTerm){
                 $query ->orWhere('level', 'like', '%'.$searchTerm.'%');
             }
-          ]);
+        ]);
         
         $this->crud->addColumn([   // radio
             'name'        => 'status', // the name of the db column
@@ -118,7 +118,7 @@ class ProgramCrudController extends CrudController
             'label' => "Program Title&nbsp;&nbsp;<span style=\"color:red\">*</span>", // Table column heading
             'type' => 'valid_text',
             'attributes' => [ 'req' => 'true']
-          ]);
+        ]);
 
         $this->crud->addField([
             'name' => 'faculty', // The db column name
@@ -141,7 +141,7 @@ class ProgramCrudController extends CrudController
                         "Other" => "Other"
                     ],
             'wrapper' => ['class' => 'form-group col-md-6'],
-          ]);
+        ]);
         
         $this->crud->addField([
             'name' => 'department', // The db column name
@@ -163,7 +163,7 @@ class ProgramCrudController extends CrudController
                 "Other" => "Other"
             ],
             'wrapper' => ['class' => 'form-group col-md-6'],
-          ]);
+        ]);
 
         $this->crud->addField([   // CustomHTML
             'name'  => 'helper',
@@ -183,7 +183,7 @@ class ProgramCrudController extends CrudController
                 
             ],
             'wrapper' => ['class' => 'form-group col-md-4'],
-          ]);
+        ]);
         
         $this->crud->addField([   // radio
             'name'        => 'status', // the name of the db column
@@ -209,7 +209,7 @@ class ProgramCrudController extends CrudController
             'attribute'    => 'email', // foreign key attribute that is shown to user
             'model'        => "App\Models\User", // foreign key model
             'wrapper' => ['class' => 'form-group col-md-4'],
-         ]);
+        ]);
         
 
         /**
@@ -234,7 +234,7 @@ class ProgramCrudController extends CrudController
         $this->crud->addField([
                     'name'    => 'ProgramOC',
                     'type'    => 'drag_repeatable',
-                    'label'   => 'Program Outcome<br>Mapping',
+                    'label'   => 'Program Outcome Mapping',
                     'ajax'    => true,
                     'fields' => [
                         [
@@ -244,7 +244,7 @@ class ProgramCrudController extends CrudController
                             'attributes' => [
                                             'hidden' => 'true',
                                             ],
-                             'wrapper' => ['class' => 'form-group col-sm-2'],
+                            'wrapper' => ['class' => 'form-group col-sm-2'],
                         ],
                         [
                             'name'  => 'plo_category',
@@ -265,10 +265,12 @@ class ProgramCrudController extends CrudController
                                 'pl_outcome'        => 'Program learning Outcome-text-treq'
                             ],
                             'wrapper' => ['class' => 'hidden-label form-group col-sm-12'],
+                            
                             'max' => 20,
                             'min' => 0,
                         ],
-                    ]
+                    ],
+                    'new_item_label'  => 'Add PLO Category', // customize the text of the button
                     
         ]);
         
@@ -290,19 +292,16 @@ class ProgramCrudController extends CrudController
         
         $this->crud->addField([
                     'name'    => 'Courses',
-                    'type'    => 'select_categorical',
+                    'type'    => 'select2_multiple',
                     'label'   => 'Courses',
                     'entity'    => 'courses', // the method that defines the relationship in your Model
                     'model'     => "App\Models\Course", // foreign key model                    
-                    'attribute' => [
-                        'course_code', // foreign key attribute that is shown to user
-                        'course_num',                        
-                    ],
+                    'attribute' => 'course_title',
                     'tooltip'  => 'course_title', //this will show up when mousing over items
                     'group_by_cat' => 'course_code', //the attribute to group by 
                     'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
         ]);
-       
+    
     }
 
     protected function setupShowOperation()
@@ -311,25 +310,25 @@ class ProgramCrudController extends CrudController
             'name' => 'program', // The db column name
             'label' => "Program", // Table column heading
             'type' => 'Text'
-          ]);
+        ]);
 
         $this->crud->addColumn([
             'name' => 'faculty', // The db column name
             'label' => "Faculty/School", // Table column heading
             'type' => 'Text'
-          ]);
+        ]);
         
         $this->crud->addColumn([
             'name' => 'department', // The db column name
             'label' => "Department", // Table column heading
             'type' => 'Text'
-          ]);
+        ]);
 
         $this->crud->addColumn([
             'name' => 'level', // The db column name
             'label' => "Level", // Table column heading
             'type' => 'Text'
-          ]);
+        ]);
         
         $this->crud->addColumn([   // radio
             'name'        => 'status', // the name of the db column
@@ -353,7 +352,7 @@ class ProgramCrudController extends CrudController
             'entity'       => 'users', // the method that defines the relationship in your Model
             'attribute'    => 'email', // foreign key attribute that is shown to user
             'model'        => App\Models\User::class, // foreign key model
-         ]);
+        ]);
     }
     
     public function destroy($id)

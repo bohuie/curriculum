@@ -77,7 +77,14 @@
                                                         @csrf
                                                         <input type="hidden" class="form-check-input" name="mapping_scale_categories_id" value="{{$msCategory->mapping_scale_categories_id}}">
                                                         <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
-                                                        <button type="submit" style="width:250px; background-color:#002145;color:white; margin-bottom:4%; margin-top:1%;" class="btn btn-secondary btn-sm float-right">+ Import Mapping Scales</button>
+                                                        <div class="row">
+                                                            <div class="col-md-8 text-center">
+                                                                <p style="color: #e3342f; margin: auto;">If you have an existing mapping scale it will be deleted and replaced with the scale above.</p>
+                                                            </div>
+                                                            <div class="col-md-4 text-center" style="margin: auto;">
+                                                                <button type="submit" style="background-color:#002145;color:white;" class="btn btn-secondary btn-sm">+ Import Mapping Scale</button>
+                                                            </div>
+                                                        </div>
                                                     </form>
                                                 </div>
                                             </div>

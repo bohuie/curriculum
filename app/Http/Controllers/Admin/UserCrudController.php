@@ -97,8 +97,7 @@ class UserCrudController extends CrudController
     {
         $this->crud->hasAccessOrFail('delete');
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
-        $userID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $userID = explode("/",$userID)[3];
+        $userID = request()->route()->parameter('id');
         DB::table('user_roles')->where('user_id', $userID)->delete();
         
         return $this->crud->delete($id);
