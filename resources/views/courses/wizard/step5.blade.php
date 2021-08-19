@@ -49,8 +49,13 @@
                                             <div class="accordion-item mb-2">
                                                 <!-- Program accordion header -->
                                                 <h2 class="accordion-header fs-2" id="programAccordionHeader{{$courseProgram->program_id}}">
-                                                    <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProgramAccordion{{$courseProgram->program_id}}" aria-expanded="false" aria-controls="collapseProgramAccordion{{$courseProgram->program_id}}">
-                                                        <b>{{$index + 1}}</b>. {{$courseProgram->program}}                                                
+                                                    <button class="accordion-button collapsed program white-arrow border border-danger" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProgramAccordion{{$courseProgram->program_id}}" aria-expanded="false" aria-controls="collapseProgramAccordion{{$courseProgram->program_id}}">
+                                                        <b>{{$index + 1}}</b>. {{$courseProgram->program}}
+                                                        @if ($outcomeMapsCountPerProgram[$courseProgram->program_id] == ($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count()))
+                                                            &emsp;&emsp;<b class="text-success">({{$outcomeMapsCountPerProgram[$courseProgram->program_id]}} / {{($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count())}}) {{number_format((float)($outcomeMapsCountPerProgram[$courseProgram->program_id]/($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count())*100),2, '.', '')}}% </b>
+                                                        @else
+                                                        &emsp;&emsp;<b>({{$outcomeMapsCountPerProgram[$courseProgram->program_id]}} / {{($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count())}}) {{number_format((float)($outcomeMapsCountPerProgram[$courseProgram->program_id]/($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count())*100),2, '.', '')}}% </b>
+                                                        @endif
                                                     </button>
                                                 </h2>
                                                 <!-- Program Accordion body -->
@@ -83,7 +88,6 @@
                                                                                     <td>
                                                                                         {{$programMappingScaleLevel->description}}
                                                                                     </td>
-
                                                                                 </tr>
                                                                             @endforeach
                                                                         </tbody>
@@ -98,8 +102,15 @@
                                                                         <div class="accordion-item mb-2">
                                                                             <!-- CLO accordion header -->
                                                                             <h2 class="accordion-header" id="header{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                    <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                                                @if ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] == $courseProgram->programLearningOutcomes()->count())
+                                                                                    <button class="accordion-button white-arrow clo collapsed bg-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                                        <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                                                        &emsp;&emsp;<b>({{ $outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] }} / {{ $courseProgram->programLearningOutcomes()->count() }}) {{ ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100 }}%</b>
+                                                                                    @else
+                                                                                    <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                                        <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                                                        &emsp;&emsp;<b>({{ $outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] }} / {{ $courseProgram->programLearningOutcomes()->count() }}) {{ ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100 }}%</b>
+                                                                                    @endif
                                                                                 </button>
                                                                             </h2>
 
@@ -368,6 +379,10 @@
     }
 
 </script>
+<style>
+    h3 span{width:32%;display:inline-block;}
+    h3 span:last-child { text-align:right }
+</style>
 
 
 @endsection

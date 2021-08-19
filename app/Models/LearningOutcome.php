@@ -36,4 +36,8 @@ class LearningOutcome extends Model
     public function standardOutcomeMap() {
         return $this->belongsToMany(Standard::class, 'standards_outcome_maps','l_outcome_id', 'standard_id')->using(StandardsOutcomeMap::class)->withPivot('standard_scale_id')->withTimeStamps();
     }
+
+    public function outcomeMap() {
+        return $this->belongsToMany(ProgramLearningOutcome::class, 'outcome_maps','l_outcome_id', 'pl_outcome_id')->using(OutcomeMap::class)->withPivot('map_scale_id')->withTimeStamps();
+    }
 }
