@@ -59,7 +59,7 @@ class CourseCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'course_num', // The db column name
             'label' => "Course Number", // Table column heading
-            'type' => 'number',
+            'type' => 'text',
             'searchLogic' => function($query, $column, $searchTerm){
                 $query ->orWhere('course_num', 'like', '%'.$searchTerm.'%');
             }
@@ -133,7 +133,7 @@ class CourseCrudController extends CrudController
         $this->crud->addField([
             'name' => 'course_num', // The db column name
             'label' => "Course<br>Number&nbsp;&nbsp;<span style=\"color:red\">*</span>", // Table column heading
-            'type' => 'number',
+            'type' => 'text',
             'attributes' => [ 'req' => 'true',
                             'size' => '3',
                             'maxlength' => '3'],
