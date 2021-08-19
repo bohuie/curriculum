@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\MappingScaleCategory;
 use Illuminate\Database\Seeder;
 
-class MappingScaleCategories extends Seeder
+class MappingScaleCategoriesSeeder extends Seeder
 {
     /**
      * Run the database seeds.

@@ -421,18 +421,19 @@
                             <!--End tab-content-->
                         </div>
                         <!--End card-body-->
+
+                        <div class="card-footer">
+                            <div class="card-body mb-4">
+                                @if (! $isViewer)
+                                    <a href="{{route('programWizard.step3', $program->program_id)}}">
+                                        <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
+                                    </a>
+                                @endif
+                            </div>
+                        </div> 
             </div>
             <!--End card-->
         </div>
-            <div class="card-footer">
-                <div class="card-body mb-4">
-                    @if (! $isViewer)
-                        <a href="{{route('programWizard.step3', $program->program_id)}}">
-                            <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
-                        </a>
-                    @endif
-                </div>
-            </div> 
     </div>
 </div>
 
