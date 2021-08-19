@@ -176,7 +176,7 @@
                                 </tr>
                                 <tr style="background-color: #fbfcfc;">
                                     <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
-                                        Incomplete
+                                        &#63;
                                     </td>
                                     <td style="font-size:10px;">
                                         Occurs when a course has not yet been mapped to the set of PLOs.
@@ -287,7 +287,7 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                Incomplete
+                                                &#63;
                                             </td>
                                         @endif
                                     @endif
@@ -313,7 +313,7 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                Incomplete
+                                                &#63;
                                             </td>
                                         @endif
                                     @endif
@@ -415,7 +415,7 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                Incomplete
+                                                &#63;
                                             </td>
                                         @endif
                                     @endif
@@ -441,7 +441,7 @@
                                             @endif
                                         @else
                                             <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                Incomplete
+                                                &#63;
                                             </td>
                                         @endif
                                     @endif

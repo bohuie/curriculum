@@ -27,15 +27,13 @@ class StandardCategory extends Model
     }
     
     public function getStandardtableAttribute(){
-        $catID = filter_input(INPUT_SERVER,'PATH_INFO');        
-        $catID = explode("/",$catID)[3];
+        $catID = request()->route()->parameter('id');
         $test = DB::table('standards')->where('standard_category_id', $catID)->get();
         return json_encode($test);
     }
     
-     public function setStandardtableAttribute($value){
-        $catID = filter_input(INPUT_SERVER,'PATH_INFO'); 
-        $catID = explode("/",$catID)[3];
+    public function setStandardtableAttribute($value){
+        $catID = request()->route()->parameter('id');
         $jdata = json_decode($value);
         if(!is_array($jdata))$jdata = [];
         $existingScales = Standard::where('standard_category_id', $catID)->get();

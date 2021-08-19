@@ -33,58 +33,58 @@ class LearningOutcomeCrudController extends CrudController{
         $this->crud->denyAccess('show');
     }
     
-     protected function setupCreateOperation()
+    protected function setupCreateOperation()
     {
         CRUD::setValidation(\App\Http\Requests\LearningOutcomeRequest::class);
         
-         $this->crud->addField([
+        $this->crud->addField([
             'name' => 'clo_shortphrase', // The db column name
             'label' => "CLO Shortphrase&nbsp;&nbsp;<span style=\"color:red\">*</span>", // Table column heading
             'type' => 'Text'
-         ]);
-         
-         $this->crud->addField([
+        ]);
+        
+        $this->crud->addField([
             'name' => 'l_outcome', // The db column name
             'label' => "Learning Outcome&nbsp;&nbsp;<span style=\"color:red\">*</span>", // Table column heading
             'type' => 'Text'
-         ]);
+        ]);
         
     }
     
-      protected function setupInlineCreateOperation()
+    protected function setupInlineCreateOperation()
     {
         CRUD::setValidation(\App\Http\Requests\LearningOutcomeRequest::class);
         
-         $this->crud->addField([
+        $this->crud->addField([
             'name' => 'clo_shortphrase', // The db column name
             'label' => "CLO Shortphrase&nbsp;&nbsp;<span style=\"color:red\">*</span>", // Table column heading
             'type' => 'Text'
-         ]);
-         
-         $this->crud->addField([
+        ]);
+        
+        $this->crud->addField([
             'name' => 'l_outcome', // The db column name
             'label' => "Learning Outcome&nbsp;&nbsp;<span style=\"color:red\">*</span>", // Table column heading
             'type' => 'Text'
-         ]);         
-         $req =  $this->crud->getRequest()->request->all();
-         $val = null;
-         if(isset($req['main_form_fields'])){
-             foreach($req['main_form_fields'] as $f){
-                 if(isset($f['name']) && $f['name'] == "course_id"){
-                     $val = $f['value'];
-                 }
-             }
-         }
-         else{
-             $val = $req['course_id'];
-         }
-         
+        ]);         
+        $req =  $this->crud->getRequest()->request->all();
+        $val = null;
+        if(isset($req['main_form_fields'])){
+            foreach($req['main_form_fields'] as $f){
+                if(isset($f['name']) && $f['name'] == "course_id"){
+                    $val = $f['value'];
+                }
+            }
+        }
+        else{
+            $val = $req['course_id'];
+        }
+        
          //takes the value directly from parameters the second time. so confusing
-           $this->crud->addField([
+        $this->crud->addField([
             'name' => 'course_id', // The db column name
             'value' => $val, // Table column heading 'value' => (isset($req['main_form_fields'])) ? $req['main_form_fields'][12]['value'] : $req['course_id']
             'type' => 'hidden'
-         ]);
+        ]);
         
     }
 }

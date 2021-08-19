@@ -83,7 +83,7 @@
                                 <!-- Campus dropdown -->
                                 <div class="row justify-content-end mr-4 position-relative">
                                     <label for="campus" class="col-auto col-form-label requiredField">*</label>
-                                    <select class="form-select form-select-sm text-center col-5" id="campus" name="campus" form="sylabusGenerator" required>
+                                    <select class="form-select form-select-sm col-5" id="campus" name="campus" form="sylabusGenerator" required>
                                         <option disabled selected value=""> -- Campus -- </option>
                                         <option value="O">UBC Okanagan</option>
                                         <option value="V">UBC Vancouver</option>
@@ -139,8 +139,9 @@
                                 </div>
                             </div>
                             <div class="col-3">
-                                <label for="courseSemester"><span class="requiredField">* </span>Course Term</label>
-                                <select id="courseSemester" class="form-control" name="courseSemester" required>
+                                <label for="courseSemester" class="form-label"><span class="requiredField">* </span>Course Term</label>
+                                <select id="courseSemester" class="form-select" name="courseSemester" required>
+                                    <option disabled selected value=""> -- Year -- </option>
                                     <option value="W1" {{!empty($syllabus) ? (($syllabus->course_term == 'W1') ? 'selected=true' : '') : ''}}>Winter Term 1</option>
                                     <option value="W2" {{!empty($syllabus) ? (($syllabus->course_term == 'W2') ? 'selected=true' : '') : ''}}>Winter Term 2</option>
                                     <option value="S1" {{!empty($syllabus) ? (($syllabus->course_term == 'S1') ? 'selected=true' : '') : ''}}>Summer Term 1</option>
@@ -153,7 +154,8 @@
                             </div>
                             <div class="col-2">
                                 <label for="courseYear"><span class="requiredField">* </span>Course Year</label>
-                                <select id="courseYear" class="form-control" name="courseYear">
+                                <select id="courseYear" class="form-select" name="courseYear" required>
+                                    <option disabled selected value=""> -- Term -- </option>
                                     <option value="2021" {{!empty($syllabus) ? (($syllabus->course_year == '2021') ? 'selected=true' : '') : ''}}>2021</option>
                                     <option value="2022" {{!empty($syllabus) ? (($syllabus->course_year == '2022') ? 'selected=true' : '') : ''}}>2022</option>
                                     <option value="2023" {{!empty($syllabus) ? (($syllabus->course_year == '2023') ? 'selected=true' : '') : ''}}>2023</option>
@@ -458,6 +460,16 @@
                 'X-CSRF-Token': '{{ csrf_token() }}',
             },
         }).done(function(data) {
+            // get fields we want to populate
+            var c_title_input = $('#courseTitle');
+            var c_code_input = $('#courseCode');
+            var c_num_input = $('#courseNumber');
+            var c_year_input = $('#courseYear');
+            var c_term_input = $('#courseSemester');
+            var a_method_input = $('#learningAssessments');
+            var l_outcome_input = $('#learningOutcome');
+            var l_activities_input = $('#learningActivities');
+            // get saved data 
             var decode_data = JSON.parse(data);
             var c_title = decode_data['c_title'];
             var c_code = decode_data['c_code'];
@@ -466,31 +478,30 @@
             var c_term = decode_data['c_term'];
             var a_methods = decode_data['a_methods'];
             var l_outcomes = decode_data['l_outcomes'];
+            var l_activities = decode_data['l_activities'];
+            // format saved data
             var a_methods_text = "";
             var l_outcomes_text = "";
-
+            var l_activities_text = "";
             a_methods.forEach(element => {
                 a_methods_text += element.a_method + " " + element.weight + "%\n";
             });
-
             for(var i = 0; i < l_outcomes.length; i++) {
                 l_outcomes_text += (i+1) + ". " + l_outcomes[i].l_outcome + "\n";
             }
-            var c_title_input = $('#courseTitle');
-            var c_code_input = $('#courseCode');
-            var c_num_input = $('#courseNumber');
-            var c_year_input = $('#courseYear');
-            var c_term_input = $('#courseSemester');
-            var a_method_input = $('#learningAssessments');
-            var l_outcome_input = $('#learningOutcome');
-
+            for(var i = 0; i < l_activities.length; i++) {
+                l_activities_text += l_activities[i].l_activity + "\n";
+            }
+            // import saved and formatted data
             c_title_input.val(c_title);
             c_code_input.val(c_code);
             c_num_input.val(c_num);
+
             c_year_input.val(c_year);
             c_term_input.val(c_term);
             a_method_input.val(a_methods_text);
             l_outcome_input.val(l_outcomes_text);
+            l_activities_input.val(l_activities_text);
         });
     }
 

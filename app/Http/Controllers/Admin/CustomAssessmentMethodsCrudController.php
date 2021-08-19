@@ -29,6 +29,9 @@ class CustomAssessmentMethodsCrudController extends CrudController
         CRUD::setModel(\App\Models\CustomAssessmentMethods::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/custom-assessment-methods');
         CRUD::setEntityNameStrings('custom assessment methods', 'custom assessment methods');
+        
+        // Hide the preview button 
+        $this->crud->denyAccess('show');
     }
 
     /**

@@ -119,9 +119,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="text-center align-middle">
-                                                        <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                            Incomplete
-                                                        </div>
+                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                     </td>
                                                     <td>
                                                         Occurs when a course has not yet been mapped to the set of PLOs.
@@ -243,8 +241,7 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
@@ -271,8 +268,7 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
@@ -381,8 +377,7 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
@@ -409,8 +404,7 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
@@ -427,18 +421,19 @@
                             <!--End tab-content-->
                         </div>
                         <!--End card-body-->
+
+                        <div class="card-footer">
+                            <div class="card-body mb-4">
+                                @if (! $isViewer)
+                                    <a href="{{route('programWizard.step3', $program->program_id)}}">
+                                        <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
+                                    </a>
+                                @endif
+                            </div>
+                        </div> 
             </div>
             <!--End card-->
         </div>
-            <div class="card-footer">
-                <div class="card-body mb-4">
-                    @if (! $isViewer)
-                        <a href="{{route('programWizard.step3', $program->program_id)}}">
-                            <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
-                        </a>
-                    @endif
-                </div>
-            </div> 
     </div>
 </div>
 
