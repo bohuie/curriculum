@@ -7,10 +7,15 @@
             @include('programs.wizard.header')
 
             <div class="card">
-                <h3 class="card-header wizard" >
-                    Program Overview
-                </h3>
-
+                <div class="card-header wizard">
+                    <div class="w-25" style="display: inline-block;"></div>
+                    <h3 style="display: inline-block;">Program Overview</h3>
+                    <a class="float-right w-25" href="{{route('programs.pdf', $program->program_id)}}" style="display: inline-block;">
+                        <button class="btn btn-primary col mr-5" onclick="{{route('programs.pdf', $program->program_id)}}" style="display: inline-block;">
+                            Download PDF<i class="bi bi-download pl-2" style="display: inline-block;"></i>
+                        </button>
+                    </a>
+                </div>
                         
                         <!-- Program Learning Outcomes -->
                         <div class="card-body">
@@ -23,7 +28,7 @@
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no program learning outcomes for this program.                  
                                 </div>
                             @else
-                                <p>Program-level learning outcomes (PLO&#39;s) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
+                                <p>Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
                                 <table class="table table-light table-bordered table" style="width: 95%; margin: auto; table-layout:auto;">
                                     <tr class="table-primary">
                                         <th class="text-left" colspan="2">Program Learning Outcome</th>
@@ -56,7 +61,7 @@
                                         <!--UnCategorized PLOs -->
                                         @if($hasUncategorized)
                                             <tr class="table-secondary">
-                                                <th class="text-left" colspan="2">UnCategorized</th>
+                                                <th class="text-left" colspan="2">Uncategorized</th>
                                             </tr>
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
@@ -96,11 +101,38 @@
                                                         {{$ms->title}}<br>
                                                         ({{$ms->abbreviation}})
                                                     </td>
-                                                    <td>
+                                                    <td colspan="1">
                                                         {{$ms->description}}
                                                     </td>
                                                 </tr>
                                             @endforeach
+                                                <!--Legend-->
+                                                <tr class="table-primary">
+                                                    <th class="text-left" colspan="2">Additional Denominations</th>
+                                                </tr>
+                                                <tr>
+                                                    <td style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;">
+                                                    </td>
+                                                    <td>
+                                                        Occurs when two or more CLOs map to a PLO an equal number of times.
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center align-middle">
+                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+                                                    </td>
+                                                    <td>
+                                                        Occurs when a course has not yet been mapped to the set of PLOs.
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center align-middle">
+                                                        N/A
+                                                    </td>
+                                                    <td>
+                                                        Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
+                                                    </td>
+                                                </tr>
                                         </tbody>
                                     </table>
                                 @endif
@@ -152,7 +184,7 @@
                                                     @endforeach
                                                     <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
                                                     @if($hasUncategorized)
-                                                        <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLO&#39;s</th>
+                                                        <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
                                                     @endif
                                                 </tr>
 
@@ -209,8 +241,7 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
@@ -237,51 +268,13 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
                                                         @endforeach
                                                     </tr>
                                                 @endforeach
-                                            </table>
-                                            <!--Legend-->
-                                            <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black; table-layout:auto;">
-                                                <tr class="table-primary" style="background-color: rgba(0, 0, 0, 0.03);">
-                                                    <th colspan="2" class="text-left">Legend</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Tie</span>
-                                                        <div class="float-right" style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;"></div>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when two or more CLO's map to a PLO an equal amount of times.
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Incomplete</span>
-                                                        <div class="float-right p-2 text-center" style="background-color:#FFFFFF; height: 60px; border:0.25px solid grey;">
-                                                        <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                            Incomplete
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when a course has not yet been mapped to the set of PLO's.
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">N/A</span><br>
-                                                        <small>(Not Applicable)</small>
-                                                        <div class="float-right text-center align-middle p-2" style="background-color:#FFFFFF; height: 50px; width: 50px; border:0.25px solid grey;">N/A</div>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
-                                                    </td>
-                                                </tr>
                                             </table>
                                         @endif
                                     </div>  
@@ -327,7 +320,7 @@
                                                     @endforeach
                                                     <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
                                                     @if($hasUncategorized)
-                                                        <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLO&#39;s</th>
+                                                        <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
                                                     @endif
                                                 </tr>
 
@@ -384,8 +377,7 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
@@ -412,51 +404,13 @@
 
                                                                 @else
                                                                     <td class="text-center align-middle" style="background-color: white;">
-                                                                    <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                                        Incomplete
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                                     </td>
                                                                 @endif
                                                             @endif
                                                         @endforeach
                                                     </tr>
                                                 @endforeach
-                                            </table>
-                                            <!--Table Legend-->
-                                            <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black; table-layout:auto;">
-                                                <tr class="table-primary" style="background-color: rgba(0, 0, 0, 0.03);">
-                                                    <th colspan="2" class="text-left">Legend</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Tie</span>
-                                                        <div class="float-right" style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;"></div>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when two or more CLO's map to a PLO an equal amount of times.
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">Incomplete</span>
-                                                        <div class="float-right p-2 text-center" style="background-color:#FFFFFF; height: 60px; border:0.25px solid grey;">
-                                                        <i class="bi bi-exclamation-circle-fill"></i><br>
-                                                            Incomplete
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when a course has not yet been mapped to the set of PLO's.
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <span class="mr-5" style="font-weight: bold;">N/A</span><br>
-                                                        <small>(Not Applicable)</small>
-                                                        <div class="float-right text-center align-middle p-2" style="background-color:#FFFFFF; height: 50px; width: 50px; border:0.25px solid grey;">N/A</div>
-                                                    </td>
-                                                    <td>
-                                                        Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
-                                                    </td>
-                                                </tr>
                                             </table>
                                         @endif
                                     </div>
@@ -467,16 +421,19 @@
                             <!--End tab-content-->
                         </div>
                         <!--End card-body-->
+
+                        <div class="card-footer">
+                            <div class="card-body mb-4">
+                                @if (! $isViewer)
+                                    <a href="{{route('programWizard.step3', $program->program_id)}}">
+                                        <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
+                                    </a>
+                                @endif
+                            </div>
+                        </div> 
             </div>
             <!--End card-->
         </div>
-            <div class="card-footer">
-                <div class="card-body mb-4">
-                    <a href="{{route('programWizard.step3', $program->program_id)}}">
-                        <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
-                    </a>
-                </div>
-            </div> 
     </div>
 </div>
 

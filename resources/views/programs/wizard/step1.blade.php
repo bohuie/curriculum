@@ -10,20 +10,20 @@
             <div class="card">
 
                 <h3 class="card-header wizard" >
-                    Program Learning Outcomes (PLO&#39;s)
+                    Program Learning Outcomes (PLOs)
                 </h3>
 
                 <div class="card-body">
 
                     <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        Program-level learning outcomes (PLO&#39;s) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.
-                        You can add, edit and delete program outcomes. <strong>It is recommended that a program has 6 - 8 PLO&#39;s max</strong>. You can also add program outcome categories to group outcomes.                    
+                        Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.
+                        You can add, edit and delete program outcomes. <strong>It is recommended that a program has 6 - 8 PLOs max</strong>. You can also add program outcome categories to group outcomes.                    
                     </h6>
 
 
                     <div class="card m-3">
                         <h5 class="card-header wizard text-start">
-                            Categories (Can be used to group PLO&#39;s)
+                            Categories (Can be used to group PLOs)
                             <button type="button" class="btn bg-primary text-white btn-sm col-2 float-right" data-toggle="modal" data-target="#addCategoryModal">
                                 <i class="bi bi-plus pr-2"></i>PLO Category
                             </button>
@@ -191,7 +191,7 @@
                     <!-- Program Learning Outcomes -->
                     <div class="card m-3">
                         <h5 class="card-header wizard text-start">
-                            Program Learning Outcomes (PLO&#39;s)
+                            Program Learning Outcomes (PLOs)
                             <button type="button" class="btn bg-primary text-white btn-sm col-2 float-right" data-toggle="modal" data-target="#addPLOModal">
                                 <i class="bi bi-plus pr-2"></i>PLO
                             </button>
@@ -205,6 +205,7 @@
                             @else
                                 <table class="table table-light table-bordered table" style="width: 100%; margin: auto; table-layout:auto;">
                                     <tbody>
+                                        <?php $count = 0 ?>
                                         <!--Categories for PLOs -->
                                         @foreach ($ploCategories as $plo)
                                             @if ($plo->plo_category != NULL)
@@ -229,7 +230,8 @@
                                             @foreach($ploProgramCategories as $index => $ploCat)
                                                 @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                     <tr>
-                                                        <td colspan="2">
+                                                        <td class="text-center">{{++$count}}</td>
+                                                        <td>
                                                             <span style="font-weight: bold;">{{$ploCat->plo_shortphrase}}</span><br>
                                                             {{$ploCat->pl_outcome}}
                                                         </td>
@@ -356,7 +358,7 @@
                                         <!--UnCategorized PLOs -->
                                         @if($hasUncategorized)
                                             <tr>
-                                                <th class="text-left" colspan="3" style="background-color: #ebebeb;">Uncategorized PLO&#39;s</th>
+                                                <th class="text-left" colspan="3" style="background-color: #ebebeb;">Uncategorized PLOs</th>
                                             </tr>
                                             <tr class="table-primary">
                                                 <th class="text-left" colspan="2">Program Learning Outcome</th>
@@ -365,7 +367,8 @@
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                             <tr>
-                                                <td colspan="2">
+                                                <td class="text-center">{{++$count}}</td>
+                                                <td>
                                                     <span style="font-weight: bold;">{{$unCatplo->plo_shortphrase}}</span><br>
                                                     {{$unCatplo->pl_outcome}}
                                                 </td>

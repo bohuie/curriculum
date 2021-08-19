@@ -11,6 +11,7 @@
         "php": "^7.3",
         "backpack/crud": "4.1.*",
         "barryvdh/laravel-dompdf": "^0.9.0",
+        "doctrine/dbal": "2.12.1",
         "dompdf/dompdf": "^1.0",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",

@@ -47,15 +47,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function courses(){
-        return $this->belongsToMany('App\Models\Course', 'course_users', 'user_id', 'course_id');
+        return $this->belongsToMany('App\Models\Course', 'course_users', 'user_id', 'course_id')->withPivot('permission');
     }
 
     public function programs(){
-        return $this->belongsToMany('App\Models\Program', 'program_users', 'user_id', 'program_id',);
+        return $this->belongsToMany('App\Models\Program', 'program_users', 'user_id', 'program_id',)->withPivot('permission');
     }
 
     public function syllabi(){
-        return $this->belongsToMany('App\Models\syllabus\Syllabus', 'syllabi_users', 'user_id', 'syllabus_id',);
+        return $this->belongsToMany('App\Models\syllabus\Syllabus', 'syllabi_users', 'user_id', 'syllabus_id')->withPivot('permission');
     }
 
     public function hasAnyRoles($roles){

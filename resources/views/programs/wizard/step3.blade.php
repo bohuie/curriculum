@@ -14,7 +14,7 @@
 
                 <div class="card-body">
                     <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        Input the required and non-required courses for this program (to the best of your knowledge). <strong>All courses need to have at least one assigned instructor to be mapped to a program.</strong> 
+                        Input the required and non-required courses for this program (to the best of your knowledge).
                     </h6>
                     
                     <div class="row mb-2">
@@ -29,7 +29,7 @@
                             <div class="col">
                                 @if ($programCourses->count() < 1)
                                     <div class="alert alert-warning wizard">
-                                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                    
+                                        <div class="notes"><i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.</div>                    
                                     </div>
                                 @else 
                                     <table class="table table-light table-bordered" >
@@ -37,24 +37,40 @@
                                             <th class="w-25">Course Title</th>
                                             <th>Course Code</th>
                                             <th>Term</th>
-                                            <th>Assigned</th>
-                                            <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> A course instructor has not mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Mapped:</b> A course instructor has not mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> A course instructor has mapped all of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
+                                            <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> The course instructor has <b>not</b> mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Completed:</b> The course instructor has mapped <b>some</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> The course instructor has mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
                                             <th class="text-center">Actions</th>
                                         </tr>
 
                                         @foreach($programCourses as $programCourse)
-                                        <tr >
-                                            <td >
-                                                {{$programCourse->course_title}}
-                                                <br>
-                                                <p class="form-text text-muted">
-                                                    @if($programCourse->pivot->course_required == 1)
-                                                        Required 
-                                                    @elseif($programCourse->pivot->course_required == 0)
-                                                        Not Required 
-                                                    @endif
-                                                </p>                                         
-                                            </td>
+                                        <tr>
+                                            @if($programCourse->pivot->note != NULL)
+                                                <td>
+                                                    {{$programCourse->course_title}}
+                                                    <br>
+                                                    <p class="mb-0 form-text text-muted">
+                                                        @if($programCourse->pivot->course_required == 1)
+                                                            Required 
+                                                        @elseif($programCourse->pivot->course_required == 0)
+                                                            Not Required 
+                                                        @endif
+                                                    </p>
+                                                    <p class="form-text text-muted">
+                                                        <b>Note: </b>{{$programCourse->pivot->note}}   
+                                                    </p>                                    
+                                                </td>
+                                            @else
+                                                <td>
+                                                    {{$programCourse->course_title}}
+                                                    <br>
+                                                    <p class="form-text text-muted">
+                                                        @if($programCourse->pivot->course_required == 1)
+                                                            Required 
+                                                        @elseif($programCourse->pivot->course_required == 0)
+                                                            Not Required 
+                                                        @endif
+                                                    </p>                                   
+                                                </td>
+                                            @endif
                                             <td>
                                                 {{$programCourse->course_code}} {{$programCourse->course_num}}
                                             </td>
@@ -62,19 +78,12 @@
                                                 {{$programCourse->year}} {{$programCourse->semester}}
                                             </td>
                                             <td>
-                                                @if(count($programCoursesUsers[$programCourse->course_id]) > 0 )
-                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Assigned
-                                                @else
-                                                    <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Unassigned                                                       
-                                                @endif
-                                            </td>
-                                            <td>
                                                 @if($actualTotalOutcomes[$programCourse->course_id] == 0)
                                                     <i class="bi bi-exclamation-circle-fill text-danger pr-2"></i>Not Mapped
                                                 @elseif ($actualTotalOutcomes[$programCourse->course_id] < $expectedTotalOutcomes[$programCourse->course_id])
                                                     <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Partially Mapped
                                                 @else
-                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Mapped
+                                                    <i class="bi bi-check-circle-fill text-success pr-2"></i>Completed
                                                 @endif
                                             </td>
                                             <td>
@@ -165,6 +174,24 @@
                                                                                 </small>
                                                                         </div>
                                                                     </div>
+
+                                                                    <div class="form-group row">
+                                                                        <label for="required" class="col-md-3 col-form-label text-md-right">Note</label>
+                                                                        <div class="col-md-6">
+
+                                                                            <div class="form">
+                                                                                @if ($programCourse->pivot->note != NULL)
+                                                                                    <textarea name="note" class="form-textarea w-100" rows="2" maxlength="40">{{$programCourse->pivot->note}}</textarea>
+                                                                                @else
+                                                                                    <textarea name="note" class="form-textarea w-100" rows="2" maxlength="40"></textarea>
+                                                                                @endif
+                                                                                <small class="form-text text-muted">
+                                                                                    You may add a note to further categorize courses (E.g. Chemistry Specialization). The note can not be greater than <b>40 characters.</b>
+                                                                                </small>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
                                                                     
                                                                     <input type="hidden" class="form-input" name="course_id" value="{{$programCourse->course_id}}">
                                                                     <input type="hidden" class="form-input" name="program_id" value="{{$program->program_id}}">
@@ -185,7 +212,7 @@
                                                 Assign Instructor
                                                 </button>
 
-                                                <!-- Assign Instructor Modal -->
+                                                <!-- Assign Instructor Modal
                                                 <div class="modal fade" id="assignInstructorModal{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="assignInstructorModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg" role="document">
                                                         <div class="modal-content">
@@ -211,7 +238,7 @@
                                                                                         <td>{{$programCourseUser->email}}</td>
                                                                                         <td>
                                                                                             <form action="{{route('courses.unassign', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
-                                                                                                <!-- TODO: unassign on user id not email -->
+                                                                                                
                                                                                                 @csrf
                                                                                                 {{method_field('DELETE')}}
                                                                                                 <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
@@ -258,7 +285,98 @@
                                                                 </form>
                                                                 </div>
                                                         </div>
+                                                    </div>-->
+                                                    <!-- Collaborator Modal -->
+                                                    <div class="modal fade" id="assignInstructorModal{{$programCourse->course_id}}" tabindex="-1" role="dialog"
+                                                        aria-labelledby="assignInstructorModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="assignInstructorModalLabel">Add Collaborators to
+                                                                        Course: {{$programCourse->course_title}}</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <div class="card-body">
+                                                                <p class="form-text text-muted mb-4">Collaborators can see and edit the course. Collaborators must first register with this web application to be added to a course.
+                                                                    By adding a collaborator, a verification email will be sent to their email address.
+                                                                    If your collaborator is not registered with this website yet,
+                                                                    use the <a href="{{ url('/invite') }}">'Registration Invite' feature to invite them.</a>
+                                                                    </p>
+                                                                    <form method="POST" action="{{ action('CourseUserController@store', $programCourse->course_id) }}">
+                                                                        @csrf
+                                                                        <div class="row mb-4">
+                                                                            <div class="col-6">
+                                                                                <input id="email" type="email" name="email" class="form-control" placeholder="Collaborator Email" aria-label="email" required>
+                                                                            </div>
+                                                                            <div class="col-3">
+                                                                                <select class="form-select" name="permission">
+                                                                                    <option value="edit" selected>Editor</option>
+                                                                                    <option value="view">Viewer</option>
+                                                                                </select>                                                                    
+                                                                            </div>
+                                                                            <div class="col-3">
+                                                                                <button type="submit" class="btn btn-primary col"><i class="bi bi-plus"></i> Collaborator</button>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <input type="hidden" class="form-check-input" name="course_id" value={{$programCourse->course_id}}>
+
+                                                                    </form>
+                                                                    @if ($programCoursesUsers[$programCourse->course_id]->count() < 1)
+                                                                        <div class="alert alert-warning wizard">
+                                                                            <i class="bi bi-exclamation-circle-fill"></i>You have not added any collaborators to this course yet.                    
+                                                                        </div>
+                                                                    @else
+                                                                        <table class="table table-light borderless" >
+                                                                            <tr class="table-primary">
+                                                                                <th>Collaborators</th>
+                                                                                <th></th>
+                                                                                <th class="text-center w-25">Actions</th>
+                                                                            </tr>
+                                                                            @foreach($programCoursesUsers[$programCourse->course_id] as $courseCollaborator)
+                                                                                    <tr>
+                                                                                        <td >
+                                                                                            <b>{{$courseCollaborator->name}} @if ($courseCollaborator->email == $user->email) (Me) @endif</b>
+                                                                                            <p>{{$courseCollaborator->email}}</p>
+                                                                                        </td>
+                                                                                        <td>@switch ($courseCollaborator->pivot->permission) 
+                                                                                                @case(1)
+                                                                                                    <b><i>Owner</i></b>
+                                                                                                    @break
+                                                                                                @case(2)
+                                                                                                    Editor
+                                                                                                    @break
+                                                                                                @case(3)
+                                                                                                    Viewer
+                                                                                                    @break
+                                                                                            @endswitch
+                                                                                        </td>
+                                                                                        @if ($courseCollaborator->pivot->permission == 1)
+                                                                                            <td></td>
+                                                                                        @else
+                                                                                            <td class="text-center">
+                                                                                                <form action="{{route('courses.unassign', $programCourse->course_id) }}" method="POST">
+                                                                                                    @csrf
+                                                                                                    {{method_field('DELETE')}}
+                                                                                                    <input type="hidden" class="form-check-input" name="course_id" value={{$programCourse->course_id}}>
+                                                                                                    <input type="hidden" class="form-check-input" name="user_id" value="{{$courseCollaborator->id}}">
+                                                                                                    <input type="hidden" class="form-check-input" name="email" value="{{$courseCollaborator->email}}">
+                                                                                                    <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
+                                                                                                </form>
+                                                                                            </td>
+                                                                                        @endif
+                                                                                    </tr>
+                                                                            @endforeach
+                                                                        </table>
+                                                                    @endif
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <!-- End of course collaborator modal -->
                                                 </div>
                                             </td>                                        
                                         </tr>
@@ -565,7 +683,7 @@
 .tooltip-inner {
     text-align: left;
     max-width: 600px;
-    width: 600px; 
+    width: auto; 
 }
 </style>
 @endsection

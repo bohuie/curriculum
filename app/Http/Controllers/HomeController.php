@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AssessmentMethod;
 use Illuminate\Http\Request;
 use App\Models\Course;
+use App\Models\CourseOptionalPriorities;
 use App\Models\CourseProgram;
 use App\Models\Program;
 use App\Models\User;
@@ -13,10 +14,13 @@ use Illuminate\Support\Facades\Log;
 use App\Models\CourseUser;
 use App\Models\LearningActivity;
 use App\Models\LearningOutcome;
+use App\Models\OptionalPriorities;
 use App\Models\ProgramUser;
 use App\Models\OutcomeMap;
 use App\Models\ProgramLearningOutcome;
+use App\Models\Standard;
 use Attribute;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -38,21 +42,27 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        //Artisan::call('route:clear', []);
+
         // get the current authenticated user
         $user = User::find(Auth::id());
         // get my programs
         $myPrograms = $user->programs->map(function ($program) {
             $program['timeSince'] = $this->timeSince(time() - strtotime($program->updated_at));
+            $program['userPermission'] = $program->pivot->permission;
             return $program;
         })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
+
         // get my courses
         $myCourses = $user->courses->map(function ($course) {
             $course['timeSince'] = $this->timeSince(time() - strtotime($course->updated_at));
+            $course['userPermission'] = $course->pivot->permission;
             return $course;
         })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
         // get my syllabi
         $mySyllabi = $user->syllabi->map(function ($syllabus) {
             $syllabus['timeSince'] = $this->timeSince(time() - strtotime($syllabus->updated_at));
+            $syllabus['userPermission'] = $syllabus->pivot->permission;
             return $syllabus;
         })->sortByDesc('updated_at')->values(); // Values is used to reset the index for sort statement
         // returns a collection of programs associated with courses (Programs Icon)
@@ -107,7 +117,10 @@ class HomeController extends Controller
             if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() > 0) {
                 $count++;
             }
-            $progressBar[$courseId] = intval(round(($count / 6) * 100));
+            if (Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count()) {
+                $count++;
+            }
+            $progressBar[$courseId] = intval(round(($count / 7) * 100));
             $count = 0;
         }
 
@@ -126,68 +139,6 @@ class HomeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-        $this->validate($request, [
-            'course_code' => 'required',
-            'course_num' => 'required',
-            'course_title'=> 'required',
-
-            ]);
-
-        $course = new Course;
-        $course->course_title = $request->input('course_title');
-        $course->course_num = $request->input('course_num');
-        $course->course_code =  strtoupper($request->input('course_code'));
-        $course->status = -1;
-        $course->required = $request->input('required');
-        $course->type = $request->input('type');
-
-        $course->delivery_modality = $request->input('delivery_modality');
-        $course->year = $request->input('course_year');
-        $course->semester = $request->input('course_semester');
-        $course->section = $request->input('course_section');
-        $course->standard_category_id = $request->input('standard_category_id');
-
-        if($request->input('type') == 'assigned'){
-
-            $course->assigned = -1;
-
-            if($course->save()){
-                $request->session()->flash('success', 'New course added');
-            }else{
-                $request->session()->flash('error', 'There was an error adding the course');
-            }
-
-            return redirect()->route('programWizard.step3', $request->input('program_id'));
-
-        }else{
-
-            $course->assigned = 1;
-            $course->save();
-
-            $user = User::where('id', $request->input('user_id'))->first();
-            $courseUser = new CourseUser;
-            $courseUser->course_id = $course->course_id;
-            $courseUser->user_id = $user->id;
-            if($courseUser->save()){
-                $request->session()->flash('success', 'New course added');
-            }else{
-                $request->session()->flash('error', 'There was an error adding the course');
-            }
-
-            return redirect()->route('home');
-        }
-
-    }
-
-        /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
