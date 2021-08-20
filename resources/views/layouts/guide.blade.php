@@ -129,14 +129,19 @@
         $("#guideModal .modal-title").text('Programs Guide');
         // Body
         $("#guideModal .update-content").html(`
-                <h2 class="my-3"><u>Programs</u></h2>
-                <h2 class="text-center my-3">How to Create a Program</h2>
-                <p class="help-p my-3" style="font-size:18px;">The programs section displays all programs that you have either created or have been invited to collaborate on. If there are no visible programs you can create a program by selecting the plus button on the right side of this tool tip.</p>
-                <img class="img center my-3" src="{{asset('/img/guide/ProgramHeaderAnnotated.png')}}" onclick="onClick(this)">
-                <p class="help-p my-3" style="font-size:18px;">To create a program, you must fill out the following form shown below.</p>
-                <img class="img center border border-dark my-3" src="{{asset('/img/guide/CreateProgramModal.PNG')}}" onclick="onClick(this)">
-                <p class="help-p my-3" style="font-size:18px;">Once you have created you program you can click on the name as shown in the picture below. This link will bring you to the next step in creating your program.</p>
-                <img class="img center my-3" src="{{asset('/img/guide/CreatedProgramAnnotated.png')}}" onclick="onClick(this)">
+            <h2 class="mb-4 head"><u>Programs</u></h2>
+            <br>
+            <h2 class="text-center mb-4">How to Create a Program</h2>
+            <p class="help-p my-3" style="font-size:18px;">The programs section displays all programs that you have either created or have been invited to collaborate on. If there are no visible programs you can create a program by selecting the plus button on the right side of this tool tip.</p>
+            <img class="img center" src="{{asset('/img/guide/ProgramHeaderAnnotated.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">To create a program, you must fill out the following form shown below after clicking on the plus icon.</p>
+            <img class="img center" src="{{asset('/img/guide/CreateProgramModal.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">Once you have created you program you can click on the name as shown in the picture below. This link will bring you to the next step in creating your program.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreatedProgramAnnotated.png')}}" onclick="onClick(this)">
+            <br>
+            <button class="btn btn-primary float-right" onclick="setPLO()" style="color: white;">Program Learning Outcomes (Step 1) <i class="bi bi-arrow-right mr-2"></i></button>
         `);
     }
 
@@ -153,11 +158,20 @@
         $("#guideModal .modal-title").text('Program Learning Outcomes Guide');
         // Body
         $("#guideModal .update-content").html(`
-            <h3 style="margin-top:2%; margin-bottom: 5%;">Program Learning Outcomes (Step 1)</h3>
-            <h3 style="margin-top:2%;">Categories</h3>
+            <h2 class="mb-4 head"><u>Program Learning Outcomes (Step 1)</u></h2>
             <br>
-            <p class="help-p" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required.</p>
-            <img class="img center" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
+            <h2 class="text-center mb-4">Categories</h2>
+            <p class="help-p my-3" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required.</p>
+            <img class="img center my-3" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
+            <br>
+            <h2 class="text-center mb-4">Program Learning Outcomes</h2>
+            <p class="help-p my-3" style="font-size:18px;">Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramLearningOutcome.PNG')}}" onclick="onClick(this)">
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setProgram()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Programs</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setMS()" style="color: white;">Mapping Scales (Step 2) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -278,7 +292,8 @@
     }
     .update-content{
         max-height:714px; 
-        overflow-y: scroll; 
+        overflow-y: scroll;
+        background-color: #fafafa;
     }
     .center {
         display: block;
@@ -293,13 +308,18 @@
     .modal-zoom{
         z-index: 1061;
     }
-
     .img{
         cursor: pointer;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        padding-top: 0;
+        padding-bottom: 0;
     }
-    
+
     .modal-xl{
         max-width: 1450px;
+    }
+    .head{
+        color: #002145;
     }
 
 </style>
