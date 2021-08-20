@@ -141,7 +141,7 @@
             <p class="help-p my-3" style="font-size:18px;">Once you have created you program you can click on the name as shown in the picture below. This link will bring you to the next step in creating your program.</p>
             <img class="img center my-3" src="{{asset('/img/guide/CreatedProgramAnnotated.png')}}" onclick="onClick(this)">
             <br>
-            <button class="btn btn-primary float-right" onclick="setPLO()" style="color: white;">Program Learning Outcomes (Step 1) <i class="bi bi-arrow-right mr-2"></i></button>
+            <button class="btn btn-primary float-right w-50" onclick="setPLO()" style="color: white;">Program Learning Outcomes (Step 1) <i class="bi bi-arrow-right mr-2"></i></button>
         `);
     }
 
@@ -160,13 +160,23 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Program Learning Outcomes (Step 1)</u></h2>
             <br>
-            <h2 class="text-center mb-4">Categories</h2>
-            <p class="help-p my-3" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required.</p>
+            <h2 class="text-center mb-4">How to Create a Category</h2>
+            <p class="help-p my-3" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required. To create a category, click the '+ PLO Category' button as shown below.</p>
             <img class="img center my-3" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
             <br>
-            <h2 class="text-center mb-4">Program Learning Outcomes</h2>
-            <p class="help-p my-3" style="font-size:18px;">Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
+            <p class="help-p my-3" style="font-size:18px;">After you click on the button to create a category you will be prompted with the following form to fill out.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCategoryModal.PNG')}}" onclick="onClick(this)">
+            <br>
+            <br>
+            <h2 class="text-center mb-4">How to Create a Program Learning Outcomes</h2>
+            <p class="help-p my-3" style="font-size:18px;">Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study. To create a Program Learning Outcome, click the '+ PLO' button as shown below.</p>
             <img class="img center my-3" src="{{asset('/img/guide/ProgramLearningOutcome.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">After you click on the button to create a program learning outcome you will be prompted with the following form to fill out.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreatePLOModal.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">You can add this program learning outcome to a category by selecting from the dropdown list shown below, or you can choose ‘None’ if you would like to leave it uncategorized. You may change any of the information after you save it by selecting the ‘Edit’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CategoryDropdown.png')}}" onclick="onClick(this)">
             <br>
             <div class="row">
                 <div class="col"><button class="btn btn-primary float-left w-100" onclick="setProgram()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Programs</button></div>
