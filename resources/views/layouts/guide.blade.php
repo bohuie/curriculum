@@ -10,7 +10,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <!--Nav Bar-->
-                        <div class="col-md-4">
+                        <div class="col-md-4" style="border-right: 1px solid grey;">
                             <nav>
                                 <ol style="list-style-type: none; font-size:medium; list-style: none; padding-left: 0;">
                                     <li>
@@ -66,7 +66,7 @@
                         </div>
                         <!--End Nav Bar-->
                         <!--Content Area-->
-                        <div class="update-content col-md-8">
+                        <div class="update-content col-md-8 p-5">
                             <!--Loads Content here-->
                         </div>
 
@@ -103,13 +103,12 @@
 <!--W3 Modal-->
 <div id="modal01" class="modal modal-zoom" onclick="this.style.display='none'">
     <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-black" id="exampleModalToggleLabel2" style="color: black;">Picture</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+        <div class="modal-content bg-dark">
             <div class="modal-body text-black" style="color: black;">
                 <img id="img01" style="width:100%">
+            </div>
+            <div class="modal-footer text-center" style="display: inline-block;">
+                <p class="text-light m-0"><small>Click Anywhere To Minimize The Image</small></p>
             </div>
         </div>
     </div>
@@ -130,27 +129,14 @@
         $("#guideModal .modal-title").text('Programs Guide');
         // Body
         $("#guideModal .update-content").html(`
-            <h3 style="margin-top:2%;">Programs</h3>
-            <br>
-            <p class="help-p" style="font-size:18px;">The programs section displays all programs that you have either created or have been invited to collaborate on. If there are no visible programs you can create a program by selecting the plus button on the right side of this tool tip.</p>
-            <br>
-            <p>info for programers</p>
-            <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" style="color: white;">Open second modal</button>
-
-            <img src="{{asset('img/team/kieran-200x200.png')}}" style="border-radius: 50%;" onclick="onClick(this)">
-
-            <p>info for programers</p>
-            <br>
-            <p>info for programers</p>
-            <br>
-            <p>info for programers</p>
-            <img src="{{asset('img/team/kieran-200x200.png')}}" style="border-radius: 50%;">
-            <p>info for programers</p>
-            <br>
-            <p>info for programers</p>
-            <br>
-            <p>info for programers</p>
-            <img src="{{asset('img/team/kieran-200x200.png')}}" style="border-radius: 50%;">
+                <h2 class="my-3"><u>Programs</u></h2>
+                <h2 class="text-center my-3">How to Create a Program</h2>
+                <p class="help-p my-3" style="font-size:18px;">The programs section displays all programs that you have either created or have been invited to collaborate on. If there are no visible programs you can create a program by selecting the plus button on the right side of this tool tip.</p>
+                <img class="img center my-3" src="{{asset('/img/guide/ProgramHeaderAnnotated.png')}}" onclick="onClick(this)">
+                <p class="help-p my-3" style="font-size:18px;">To create a program, you must fill out the following form shown below.</p>
+                <img class="img center border border-dark my-3" src="{{asset('/img/guide/CreateProgramModal.PNG')}}" onclick="onClick(this)">
+                <p class="help-p my-3" style="font-size:18px;">Once you have created you program you can click on the name as shown in the picture below. This link will bring you to the next step in creating your program.</p>
+                <img class="img center my-3" src="{{asset('/img/guide/CreatedProgramAnnotated.png')}}" onclick="onClick(this)">
         `);
     }
 
@@ -171,7 +157,7 @@
             <h3 style="margin-top:2%;">Categories</h3>
             <br>
             <p class="help-p" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required.</p>
-            <img class="center" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
+            <img class="img center" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
         `);
     }
 
@@ -291,9 +277,8 @@
         font-size: 18px;
     }
     .update-content{
-        max-height:607px; 
+        max-height:714px; 
         overflow-y: scroll; 
-        border-left: 1px solid grey;
     }
     .center {
         display: block;
@@ -302,11 +287,19 @@
         width: 100%;
     }
     .selected-attribute{
-    border-bottom: solid 2px #0055b7;
+        border-bottom: solid 2px #0055b7;
     }
     
     .modal-zoom{
         z-index: 1061;
+    }
+
+    .img{
+        cursor: pointer;
+    }
+    
+    .modal-xl{
+        max-width: 1450px;
     }
 
 </style>

@@ -1040,17 +1040,17 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label for="faculty" class="col-md-3 col-form-label text-md-right">Faculty/School</label>
+                                                    <label for="faculty" class="col-md-3 col-form-label text-md-right"><span class="requiredField">* </span>Faculty/School</label>
                                                     <div class="col-md-8">
-                                                        <select id='faculty' class="custom-select" name="faculty" required>
-                                                            <option disabled selected hidden>Open this select menu</option>
+                                                        <select id='faculty' class="custom-select" name="faculty" required autofocus>
+                                                            <option disabled selected hidden value="" label="Open this select menu"></option>
                                                             <option value="School of Engineering">School of Engineering</option>
-                                                            <option value="Okanagan School of Education">Okanagan School of Education </option>
-                                                            <option value="Faculty of Arts and Social Sciences">Faculty of Arts and Social Sciences </option>
+                                                            <option value="Okanagan School of Education">Okanagan School of Education</option>
+                                                            <option value="Faculty of Arts and Social Sciences">Faculty of Arts and Social Sciences</option>
                                                             <option value="Faculty of Creative and Critical Studies">Faculty of Creative and Critical Studies</option>
-                                                            <option value="Faculty of Science">Faculty of Science </option>
+                                                            <option value="Faculty of Science">Faculty of Science</option>
                                                             <option value="School of Health and Exercise Sciences">School of Health and Exercise Sciences</option>
-                                                            <option value="School of Nursing">School of Nursing </option>
+                                                            <option value="School of Nursing">School of Nursing</option>
                                                             <option value="School of Social Work">School of Social Work</option>
                                                             <option value="Faculty of Management">Faculty of Management</option>
                                                             <option value="Faculty of Medicine">Faculty of Medicine</option>
