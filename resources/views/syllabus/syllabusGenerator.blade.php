@@ -5,7 +5,7 @@
 
 <div id="app">
     <div class="home">
-        <div class="card">
+        <div class="card mt-4">
             <div class="card-header wizard text-start">
                 <h2>
                     Syllabus Generator 

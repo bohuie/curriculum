@@ -3,7 +3,7 @@
 
 @section('content')
 
-<div class="card">
+<div class="card mt-4">
     <!-- header -->
     <div class="card-header wizard ">
         <h4>
