@@ -24,9 +24,9 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => true]);
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/dashboard', 'HomeController@index')->name('home');
 //Route::delete('/home/{course}/unassign', 'HomeController@destroy')->name('home.destroy');
-Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
+Route::get('/dashboard/{course}/submit','CourseController@submit')->name('home.submit');
 
 Route::get('/about', 'AboutController@index')->name('about');
 
