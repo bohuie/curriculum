@@ -36,25 +36,25 @@
                                         <!--Sub-Categories For Courses-->
                                         <ol class="ol-inner" style="list-style-type: none;">
                                             <li>
-                                                <a class="courses-guide">Course Learning Outcomes (Step 1)</a>
+                                                <a class="clo-guide">Course Learning Outcomes (Step 1)</a>
                                             </li>
                                             <li>
-                                                <a class="syllabi-guide">Student Assessment Methods (Step 2)</a>
+                                                <a class="sam-guide">Student Assessment Methods (Step 2)</a>
                                             </li>
                                             <li>
-                                                <a class="courses-guide">Teaching and Learning Activities (Step 3)</a>
+                                                <a class="tla-guide">Teaching and Learning Activities (Step 3)</a>
                                             </li>
                                             <li>
-                                                <a class="syllabi-guide">Course Alignment (Step 4)</a>
+                                                <a class="courseAlignment-guide">Course Alignment (Step 4)</a>
                                             </li>
                                             <li>
-                                                <a class="syllabi-guide">Program Outcome Mapping (Step 5)</a>
+                                                <a class="programOutcomeMapping-guide">Program Outcome Mapping (Step 5)</a>
                                             </li>
                                             <li>
-                                                <a class="courses-guide">Standards and Strategic Priorities (Step 6)</a>
+                                                <a class="standards-guide">Standards and Strategic Priorities (Step 6)</a>
                                             </li>
                                             <li>
-                                                <a class="syllabi-guide">Course Summary (Step 7)</a>
+                                                <a class="courseSummary-guide">Course Summary (Step 7)</a>
                                             </li>
                                         </ol>
                                     </li>
@@ -118,12 +118,24 @@
     // functions that load in the user guides
     function setProgram() {
         // remove attributes
+        $("#guideModal .programs-guide").removeClass('selected-attribute');
         $("#guideModal .plo-guide").removeClass('selected-attribute');
         $("#guideModal .ms-guide").removeClass('selected-attribute');
         $("#guideModal .programCourses-guide").removeClass('selected-attribute');
         $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
         // add attributes
         $("#guideModal .programs-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
 
         // Header
         $("#guideModal .modal-title").text('Programs Guide');
@@ -148,11 +160,23 @@
     function setPLO() {
         // remove attributes
         $("#guideModal .programs-guide").removeClass('selected-attribute');
+        $("#guideModal .plo-guide").removeClass('selected-attribute');
         $("#guideModal .ms-guide").removeClass('selected-attribute');
         $("#guideModal .programCourses-guide").removeClass('selected-attribute');
         $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
         // add attribute
         $("#guideModal .plo-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
 
         // Header
         $("#guideModal .modal-title").text('Program Learning Outcomes Guide');
@@ -189,46 +213,107 @@
         // remove attributes
         $("#guideModal .programs-guide").removeClass('selected-attribute');
         $("#guideModal .plo-guide").removeClass('selected-attribute');
+        $("#guideModal .ms-guide").removeClass('selected-attribute');
         $("#guideModal .programCourses-guide").removeClass('selected-attribute');
         $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
         // add attribute
         $("#guideModal .ms-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
 
         // Header
         $("#guideModal .modal-title").text('Mapping Scale Guide');
         // Body
         $("#guideModal .update-content").html(`
-            <h3 style="margin-top:2%; margin-bottom: 5%;">Mapping Scale (Step 2)</h3>
-            
+            <h2 class="mb-4 head"><u>Mapping Scale (Step 2)</u></h2>
+            <br>
+            <h2 class="text-center mb-4">How to Add a Predefined Mapping Scale</h2>
+            <p class="help-p my-3" style="font-size:18px;">The mapping scale is the scale that will be used to indicate the degree to which a program-level learning outcome is addressed by a course outcome, or the degree of alignment between the course outcome and program-level learning outcome.</p>
+            <p class="help-p my-3" style="font-size:18px;">There are two ways to add mapping scales to a program, the first involves importing a set of predefined mapping scales. This can be accomplished by clicking the 'Show Default Mapping Scales' button as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateDefaultMappingScale.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">After you will see the following prompt, as shown below. From the prompt, you can select from a set of Default Mapping Scales to add to your program by clicking the ‘+ Import Mapping Scale' button. As a side note if you have previously imported a set of default mapping scales it will be overwritten by the set you are trying to add.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ImportMappingScaleModal.png')}}" onclick="onClick(this)">
+            <br>
+            <br>
+            <h2 class="text-center mb-4">How to Add a Custom Mapping Scale</h2>
+            <p class="help-p my-3" style="font-size:18px;">The second method of adding a mapping scale involves creating a custom scale. This can be accomplished by clicking the ‘+ my own Mapping Scale Level’ button, as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCustomMappingScale.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">After selecting the button, you will be prompted with the following form to fill out as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCustomMS.PNG')}}" onclick="onClick(this)">
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setPLO()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Program Learning Outcomes (Step 1)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setProgramCourses()" style="color: white;">Courses (Step 3) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
     function setProgramCourses() {
         // remove attributes
         $("#guideModal .programs-guide").removeClass('selected-attribute');
-        $("#guideModal .programs-guide").removeClass('selected-attribute');
+        $("#guideModal .plo-guide").removeClass('selected-attribute');
         $("#guideModal .ms-guide").removeClass('selected-attribute');
+        $("#guideModal .programCourses-guide").removeClass('selected-attribute');
         $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
         // add attribute
         $("#guideModal .programCourses-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
 
         // Header
         $("#guideModal .modal-title").text('Courses Guide');
         // Body
         $("#guideModal .update-content").html(`
-            <h3 style="margin-top:2%; margin-bottom: 5%;">Courses (Step 3)</h3>
-            
+            <h2 class="mb-4 head"><u>Courses (Step 3)</u></h2>
+            <br>
+
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setMS()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Mapping Scales (Step 2)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setProgramOverview()" style="color: white;">Program Overview (Step 4) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
     function setProgramOverview() {
         // remove attributes
         $("#guideModal .programs-guide").removeClass('selected-attribute');
-        $("#guideModal .programs-guide").removeClass('selected-attribute');
+        $("#guideModal .plo-guide").removeClass('selected-attribute');
         $("#guideModal .ms-guide").removeClass('selected-attribute');
         $("#guideModal .programCourses-guide").removeClass('selected-attribute');
+        $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
         // add attribute
         $("#guideModal .programOverview-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
 
         // Header
         $("#guideModal .modal-title").text('Program Overview Guide');
@@ -238,20 +323,121 @@
             
         `);
     }
-
+    // Courses
     function setCourses() {
+        // remove attributes
+        $("#guideModal .programs-guide").removeClass('selected-attribute');
+        $("#guideModal .plo-guide").removeClass('selected-attribute');
+        $("#guideModal .ms-guide").removeClass('selected-attribute');
+        $("#guideModal .programCourses-guide").removeClass('selected-attribute');
+        $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
+        // add attribute
+        $("#guideModal .courses-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
+
         // Header
         $("#guideModal .modal-title").text('Courses Guide');
         // Body
         $("#guideModal .update-content").html(`
-            <h3 style="margin-top:2%;">Courses</h3>
+            <h2 class="mb-4 head"><u>Courses</u></h2>
             <br>
-            <p style="font-size:18px;">The courses section displays all courses that you have either created or have been invited to collaborate on. If there are no visible programs you can create a course by selecting the plus button on the right side of this tool tip.</p>
+            <p class="help-p my-3" style="font-size:18px;">The courses section displays all courses that you have either created or have been invited to collaborate on. If there are no visible programs you can create a course by selecting the plus button on the right side of this tool tip.</p>
+            <br>
+        `);
+    }
+
+    function setCLO() {
+        // remove attributes
+        $("#guideModal .programs-guide").removeClass('selected-attribute');
+        $("#guideModal .plo-guide").removeClass('selected-attribute');
+        $("#guideModal .ms-guide").removeClass('selected-attribute');
+        $("#guideModal .programCourses-guide").removeClass('selected-attribute');
+        $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
+        // add attribute
+        $("#guideModal .clo-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
+
+        // Header
+        $("#guideModal .modal-title").text('Course Learning Outcomes Guide');
+        // Body
+        $("#guideModal .update-content").html(`
+            <h2 class="mb-4 head"><u>Course Learning Outcomes (Step 1)</u></h2>
+            <br>
+            
+        `);
+    }
+
+    function setSAM() {
+        // remove attributes
+        $("#guideModal .programs-guide").removeClass('selected-attribute');
+        $("#guideModal .plo-guide").removeClass('selected-attribute');
+        $("#guideModal .ms-guide").removeClass('selected-attribute');
+        $("#guideModal .programCourses-guide").removeClass('selected-attribute');
+        $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
+        // add attribute
+        $("#guideModal .sam-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
+
+        // Header
+        $("#guideModal .modal-title").text('Student Assessment Methods Guide');
+        // Body
+        $("#guideModal .update-content").html(`
+            <h2 class="mb-4 head"><u>Student Assessment Methods Guide (Step 2)</u></h2>
             <br>
         `);
     }
 
     function setSyllabi() {
+        // remove attributes
+        $("#guideModal .programs-guide").removeClass('selected-attribute');
+        $("#guideModal .plo-guide").removeClass('selected-attribute');
+        $("#guideModal .ms-guide").removeClass('selected-attribute');
+        $("#guideModal .programCourses-guide").removeClass('selected-attribute');
+        $("#guideModal .programOverview-guide").removeClass('selected-attribute');
+        $("#guideModal .courses-guide").removeClass('selected-attribute');
+        $("#guideModal .clo-guide").removeClass('selected-attribute');
+        $("#guideModal .sam-guide").removeClass('selected-attribute');
+        $("#guideModal .tla-guide").removeClass('selected-attribute');
+        $("#guideModal .courseAlignment-guide").removeClass('selected-attribute');
+        $("#guideModal .programOutcomeMapping-guide").removeClass('selected-attribute');
+        $("#guideModal .standards-guide").removeClass('selected-attribute');
+        $("#guideModal .coursesSummary-guide").removeClass('selected-attribute');
+        $("#guideModal .syllabi-guide").removeClass('selected-attribute');
+        // add attribute
+        $("#guideModal .syllabi-guide").addClass('selected-attribute');
+        // Reset Scroll to top
+        $('.update-content').scrollTop(0);
+
         // Header
         $("#guideModal .modal-title").text('Syllabi Guide');
         // Body
@@ -262,13 +448,18 @@
     }
 
     // calls for on click methods (nav bar) 
+    // Programs
     $('.programs-guide').on('click', setProgram);
-    $('.courses-guide').on('click', setCourses);
-    $('.syllabi-guide').on('click', setSyllabi);
-    $('.plo-guide').on('click', setPLO)
+    $('.plo-guide').on('click', setPLO);
     $('.ms-guide').on('click', setMS);
     $('.programCourses-guide').on('click', setProgramCourses);
     $('.programOverview-guide').on('click', setProgramOverview);
+    // Courses
+    $('.courses-guide').on('click', setCourses);
+    $('.clo-guide').on('click', setCLO);
+    $('.sam-guide').on('click', setSAM);
+    // Syllabi
+    $('.syllabi-guide').on('click', setSyllabi);
     
     // Calls from Dashboard
     $('#programHelp').on('click', setProgram);
@@ -279,6 +470,9 @@
     $('#msHelp').on('click', setMS);
     $('#programCoursesHelp').on('click', setProgramCourses);
     $('#programOverviewHelp').on('click', setProgramOverview);
+    // Calls from course wizard
+    $('#cloHelp').on('click', setCLO);
+    $('#samHelp').on('click', setSam);
 
     function onClick(element) {
         document.getElementById("img01").src = element.src;
