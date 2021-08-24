@@ -37,7 +37,7 @@
             <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-primary mb-4 border-bottom border-white border-5">
                 <div class="container">
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        <img width="29" height="40" src="{{ asset('img/UBC-logo-2018-crest-white-rgb72.png') }}" alt="UBC crest logo" style="margin-right: 25px">
+                        <img width="29" height="40" src="{{ asset('img/ubc-logo-2018-crest-white-rgb72.png') }}" alt="UBC crest logo" style="margin-right: 25px">
                         <strong class="text-white" style="font-family: Arial, Helvetica, sans-serif">Curriculum MAP</strong>
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
