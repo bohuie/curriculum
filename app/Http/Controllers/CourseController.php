@@ -512,6 +512,9 @@ class CourseController extends Controller
         $course_owner = User::find($request->input('course_owner_id'));
         $course = Course::find($course_id);
         $program = Program::find($request->input('program_id'));
+
+        // disables button on the front end to allow user to notify Instructor more then once
+        CourseProgram::where('course_id', $course_id)->where('program_id', $request->input('program_id'))->update(['map_status' => 1]);
         
         Mail::to($course_owner->email)->send(new NotifyInstructorForMappingMail($program->program, $program_owner->name, $course->course_code, $course->course_num, $course->course_title));
         if (!count(Mail::failures()) > 0) {

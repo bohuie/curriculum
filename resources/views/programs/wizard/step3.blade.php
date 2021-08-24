@@ -13,9 +13,17 @@
                 </h3>
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        Input the required and non-required courses for this program (to the best of your knowledge).
+                    <h6 class="card-subtitle text-center mb-4 lh-lg">
+                        Add required and non-required courses to this program. After adding courses to this program, each course can be mapped to the Program Learning Outcomes (PLOs) of this Program (identified in step 1). Once all courses have been individually mapped to this program’s PLOs, you can visit the “Program Summary/Step 4” to see the learning outcomes map of the program.
+
                     </h6>
+                    <h6 class="card-subtitle wizard text-primary fw-bold">
+                        Note: Only course owners or editors can map the course to these program’s PLOs.
+                    </h6>
+                    <ul>
+                        <li>If you are the owner or an editor of a course, you will need go to your dashboard, select the course, identify the course learning outcomes in step 1 (if not already done) and map them to this program’s PLOs (step 5).</li>
+                        <li>Otherwise, you can let the course owner know that this program has been created and that their course can now be mapped to the PLOs by clicking the ‘Ask Instructor to Map Course’ button.</li>
+                    </ul>
                     
                     <div class="row mb-2">
                         <div class="col">
@@ -80,22 +88,70 @@
                                             <td class="text-center">
                                                 @if($actualTotalOutcomes[$programCourse->course_id] == 0)
                                                     <i class="bi bi-exclamation-circle-fill text-danger pr-2"></i>Not Mapped
-                                                    <!-- Show Only If the User is not the Owner -->
-                                                    @if($programCourse->owner[0]->id != $user->id)
+                                                    <!-- If the User has been notified previously -->
+                                                    @if($programCourse->pivot->map_status == 1)
                                                         <br>
-                                                        <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                            Ask Instructor to Map Course
+                                                        <button type="button" class="btn btn-success btn-sm ml-2" disabled>
+                                                            <i class="bi bi-check2-circle"></i> Notified
                                                         </button>
+                                                    @elseif($programCourse->owners[0]->id == $user->id)
+                                                        <!-- Allow owner to be redirected to the course to map it -->
+                                                        <br>
+                                                        <a type="button" class="btn btn-outline-primary btn-sm ml-2" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                            Map Course
+                                                        </a>
                                                     @endif
-                                                    <!-- End if -->
+                                                    @foreach($programCourse->editors as $editor)
+                                                        @if($editor->id == $user->id && $programCourse->pivot->map_status != 1)
+                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
+                                                            <br>
+                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                            Map Course
+                                                            </a>
+                                                        @endif
+                                                    @endforeach
+                                                    @foreach($programCourse->viewers as $viewer)
+                                                        @if($viewer->id == $user->id && $programCourse->pivot->map_status != 1)
+                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
+                                                            <br>
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                Ask Instructor to Map Course
+                                                            </button>
+                                                        @endif
+                                                    @endforeach
                                                 @elseif ($actualTotalOutcomes[$programCourse->course_id] < $expectedTotalOutcomes[$programCourse->course_id])
                                                     <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Partially Mapped
-                                                    @if($programCourse->owner[0]->id != $user->id)
+                                                    <!-- If the User has been notified previously -->
+                                                    @if($programCourse->pivot->map_status == 1)
                                                         <br>
-                                                        <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                            Ask Instructor to Map Course
+                                                        <button type="button" class="btn btn-success btn-sm ml-2" disabled>
+                                                            <i class="bi bi-check2-circle"></i> Notified
                                                         </button>
+                                                    @elseif($programCourse->owners[0]->id == $user->id)
+                                                        <!-- Allow owner to be redirected to the course to map it -->
+                                                        <br>
+                                                        <a type="button" class="btn btn-outline-primary btn-sm ml-2" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                            Map Course
+                                                        </a>
                                                     @endif
+                                                    @foreach($programCourse->editors as $editor)
+                                                        @if($editor->id == $user->id && $programCourse->pivot->map_status != 1)
+                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
+                                                            <br>
+                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                            Map Course
+                                                            </a>
+                                                        @endif
+                                                    @endforeach
+                                                    @foreach($programCourse->viewers as $viewer)
+                                                        @if($viewer->id == $user->id && $programCourse->pivot->map_status != 1)
+                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
+                                                            <br>
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                Ask Instructor to Map Course
+                                                            </button>
+                                                        @endif
+                                                    @endforeach
                                                 @else
                                                     <i class="bi bi-check-circle-fill text-success pr-2"></i>Completed
                                                 @endif
@@ -116,7 +172,7 @@
                                                                 @csrf
                                                                 {{method_field('GET')}}
                                                                 <input type="hidden" class="form-check-input " name="program_owner_id" value={{$user->id}}>
-                                                                <input type="hidden" class="form-check-input " name="course_owner_id" value={{$programCourse->owner[0]->id}}>
+                                                                <input type="hidden" class="form-check-input " name="course_owner_id" value={{$programCourse->owners[0]->id}}>
                                                                 <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
                                                                 <div class="modal-footer">
                                                                     <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
