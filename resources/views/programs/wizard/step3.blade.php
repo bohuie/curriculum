@@ -106,8 +106,11 @@
                                                             <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
                                                             <br>
                                                             <a type="button" class="btn btn-outline-primary btn-sm ml-2" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
-                                                            Map Course
+                                                                Map Course
                                                             </a>
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                Ask Instructor to Map Course
+                                                            </button>
                                                         @endif
                                                     @endforeach
                                                     @foreach($programCourse->viewers as $viewer)
@@ -139,8 +142,11 @@
                                                             <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
                                                             <br>
                                                             <a type="button" class="btn btn-outline-primary btn-sm ml-2" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
-                                                            Map Course
+                                                                Map Course
                                                             </a>
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                Ask Instructor to Map Course
+                                                            </button>
                                                         @endif
                                                     @endforeach
                                                     @foreach($programCourse->viewers as $viewer)
