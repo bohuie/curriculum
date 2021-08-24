@@ -9,7 +9,7 @@
             <div class="card-header wizard text-start">
                 <h2>
                     Syllabus Generator 
-                    <button type="button" class="btn bg-primary text-white col-3 float-right" data-toggle="modal" data-target="#importExistingCourse">Import an existing course <i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
+                    <button type="button" class="btn btn-primary bg-primary text-white  float-right fs-5 pr-4 pl-4" data-toggle="modal" data-target="#importExistingCourse">Import an existing course <i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
                 </h2>
                 <!-- Import existing course Modal -->
                 <div class="modal fade" id="importExistingCourse" tabindex="-1" role="dialog" aria-labelledby="importExistingCourse" aria-hidden="true">
