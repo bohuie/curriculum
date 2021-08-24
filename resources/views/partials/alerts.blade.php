@@ -1,7 +1,23 @@
-@if(count($errors)>0)
-    @foreach($errors->all() as $error)
-        <div class="alert alert-danger">
-            {{$error}}
+@if (session('errorMessages'))
+    @foreach(session('errorMessages') as $errMsg)
+        <div class="alert alert-danger" role="alert">
+            {!! $errMsg !!}
+        </div>
+    @endforeach
+@endif
+
+@if (session('warningMessages'))
+    @foreach(session('warningMessages') as $warningMsg)
+        <div class="alert alert-warning" role="alert">
+            {!! $warningMsg !!}
+        </div>
+    @endforeach
+@endif
+
+@if (session('successMessages'))
+    @foreach(session('successMessages') as $successMsg)
+        <div class="alert alert-success" role="alert">
+            {!! $successMsg !!}
         </div>
     @endforeach
 @endif

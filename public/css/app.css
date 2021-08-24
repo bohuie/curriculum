@@ -4425,7 +4425,7 @@ input[type=button].btn-block {
 }
 
 .nav-link.disabled {
-  color: #6c757d;
+  color: #f3f3f3;
   pointer-events: none;
   cursor: default;
 }
@@ -10702,6 +10702,11 @@ margin-left:-15px;
   border-top: 1px dotted #833f0b;
   margin-bottom: 0.5rem;
   padding-top: 0.5rem;
+}
+
+.oSyllabusHeader {
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 
