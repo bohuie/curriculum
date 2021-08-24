@@ -290,8 +290,22 @@
             <br>
             <h2 class="text-center mb-4">How to Add an Existing Course</h2>
             <p class="help-p my-3" style="font-size:18px;">To add an existing course to your program you must either have previously created a course that is not already assigned to the current program, or have been added as a collaborator to a course. If at least one of those two requirements is met then you will be able to add and existing course by clicking the button ‘+ Existing Course’ as shown below. Otherwise, if neither condition is met then you can also create a new course, more information on how to create a new course is provided under this section.</p>
-            <img class="img center my-3" src="{{asset('/img/guide/CreateCustomMS.PNG')}}" onclick="onClick(this)">
-
+            <img class="img center my-3" src="{{asset('/img/guide/AddExistingCourse.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">From the prompt shown below you will be able to select from a list of available courses to add to your program. You can add multiple courses at a time. As well you can select whether or not the course is required by the program or if it is an elective.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/AddExistingCourseGif.gif')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">After you press the “Add Selected’ you will see the courses added to you program in the courses table.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Add a New Course</h2>
+            <p class="help-p my-3" style="font-size:18px;">To add a new course to your program you will first need to select the ‘+ New Course’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/AddNewCourse.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">This will open a prompt that will allow you to enter information regarding your course, as well as if it is required by the program.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateProgramCourseModal.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">After you finish inputting all the required information the course will then appear on your courses table for the program. You will also be able to access the course from the dashboard as well. </p>
+            <br>
             <div class="row">
                 <div class="col"><button class="btn btn-primary float-left w-100" onclick="setMS()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Mapping Scales (Step 2)</button></div>
                 <div class="col"><button class="btn btn-primary float-right w-100" onclick="setProgramOverview()" style="color: white;">Program Overview (Step 4) <i class="bi bi-arrow-right mr-2"></i></button></div>
@@ -326,9 +340,11 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Program Overview (Step 4)</u></h2>
             <br>
-
+            <p class="help-p my-3" style="font-size:18px;">The program overview provides a comprehensive view of all of the information regarding the program, as well as a detailed chart that shows the alignment of courses to program learning outcomes for this program. You must fill in the previous steps in order to see some of the fields for the program overview.</p>
+            <p class="help-p my-3" style="font-size:18px;">The program overview can be downloaded as a PDF copy.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramsDownloadPDF.png')}}" onclick="onClick(this)">
+            <br>
             <button class="btn btn-primary float-left w-50" onclick="setProgramCourses()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Courses (Step 3)</button>
-            
         `);
     }
     // Courses
