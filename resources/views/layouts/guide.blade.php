@@ -287,7 +287,10 @@
             <h2 class="mb-4 head"><u>Courses (Step 3)</u></h2>
             <br>
             <p class="help-p my-3" style="font-size:18px;">The courses step allows you to either add an existing course to your program, or create a new course which is then added to your program. This then allows Program Learning Outcomes (PLOs) to be mapped to Course Learning Outcomes (CLOs).</p>
-            <p class="help-p my-3" style="font-size:18px;"></p>
+            <br>
+            <h2 class="text-center mb-4">How to Add an Existing Course</h2>
+            <p class="help-p my-3" style="font-size:18px;">To add an existing course to your program you must either have previously created a course that is not already assigned to the current program, or have been added as a collaborator to a course. If at least one of those two requirements is met then you will be able to add and existing course by clicking the button ‘+ Existing Course’ as shown below. Otherwise, if neither condition is met then you can also create a new course, more information on how to create a new course is provided under this section.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCustomMS.PNG')}}" onclick="onClick(this)">
 
             <div class="row">
                 <div class="col"><button class="btn btn-primary float-left w-100" onclick="setMS()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Mapping Scales (Step 2)</button></div>
