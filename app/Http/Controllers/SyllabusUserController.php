@@ -53,17 +53,18 @@ class SyllabusUserController extends Controller
         $currentUser = User::find(Auth::id());
         // get the current user permission
         $currentUserPermission = $currentUser->syllabi->where('id', $syllabusId)->first()->pivot->permission;
+        // get the syllabus
+        $syllabus = Syllabus::find($syllabusId);
+
         // keep track of errors
         $errorMessages = Collection::make();
         $warningMessages = Collection::make();
 
         // if the current user is the owner, save the collaborators and their permissions
         if ($currentUserPermission == 1 ) {
-            $currentPermissions = ($request->input('current_permissions')) ? $request->input('current_permissions') : array();
-            $newCollabs = $request->input('new_collabs');
-            $newPermissions = $request->input('new_permissions');
-            // get the syllabus
-            $syllabus = Syllabus::find($syllabusId);
+            $currentPermissions = ($request->input('syllabus_current_permissions')) ? $request->input('syllabus_current_permissions') : array();
+            $newCollabs = $request->input('syllabus_new_collabs');
+            $newPermissions = $request->input('syllabus_new_permissions');
             // get the saved collaborators for this syllabus, but not the owner
             $savedSyllabusUsers = SyllabusUser::where([['syllabus_id', '=', $syllabus->id], ['permission', '!=', 1]])->get();
             // update current collaborators for this syllabus
@@ -106,24 +107,22 @@ class SyllabusUserController extends Controller
                                 Mail::to($user->email)->send(new NotifySyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
-                                // array_push($errorMessages, 'There was an error adding ' . $user->email . ' to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
                             }
                         } else {
                             $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
-
-                            // array_push($errorMessages, $user->email . ' is already collaborating on syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
                         }
                     } else {
                         $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
-
-                        
-                        // array_push($errorMessages, $newCollab . " has not registered on this site. ");
                     }
                 }
             }
         // else the current user does not own this syllabus
         } else {
-            $request->session()->flash('error', 'You do not have permission to add collaborators to this syllabus');
+            $errorMessages->add('You do not have permission to add collaborators to this syllabus');
+        }
+        // if no errors or warnings, flash a success message
+        if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
+            $request->session()->flash('success', 'Successfully updated collaborators on syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
         }
         // return to the previous page
         return redirect()->back()->with('errorMessages', $errorMessages)->with('warningMessages', $warningMessages);

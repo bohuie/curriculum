@@ -177,97 +177,9 @@
                     <div class="col">
                         <!-- Assign instructor button  -->
                         <button type="button" class="btn btn-outline-primary btn-sm float-right" style="width:200px"
-                            data-toggle="modal" data-target="#assignInstructorModal">Add Collaborators</button>
-
-                        <!-- Collaborator Modal -->
-                        <div class="modal fade" id="assignInstructorModal" tabindex="-1" role="dialog"
-                            aria-labelledby="assignInstructorModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="assignInstructorModalLabel">Add Collaborators to
-                                            Course: {{$course->course_title}}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="card-body">
-                                    <p class="form-text text-muted mb-4">Collaborators can see and edit the course. Collaborators must first register with this web application to be added to a course.
-                                        By adding a collaborator, a verification email will be sent to their email address.
-                                        If your collaborator is not registered with this website yet,
-                                        use the <a href="{{ url('/invite') }}">'Registration Invite' feature to invite them.</a>
-                                        </p>
-                                        <form method="POST" action="{{ action('CourseUserController@store', $course->course_id) }}">
-                                            @csrf
-                                            <div class="row mb-4">
-                                                <div class="col-6">
-                                                    <input id="email" type="email" name="email" class="form-control" placeholder="Collaborator Email" aria-label="email" required>
-                                                </div>
-                                                <div class="col-3">
-                                                    <select class="form-select" name="permission">
-                                                        <option value="edit" selected>Editor</option>
-                                                        <option value="view">Viewer</option>
-                                                    </select>                                                                    
-                                                </div>
-                                                <div class="col-3">
-                                                    <button type="submit" class="btn btn-primary col"><i class="bi bi-plus"></i> Collaborator</button>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" class="form-check-input" name="course_id" value={{$course->course_id}}>
-                                        </form>
-                                        @if ($courseUsers[$course->course_id]->count() < 1)
-                                            <div class="alert alert-warning wizard">
-                                                <i class="bi bi-exclamation-circle-fill"></i>You have not added any collaborators to this course yet.                    
-                                            </div>
-                                        @else
-                                            <table class="table table-light borderless" >
-                                                <tr class="table-primary">
-                                                    <th>Collaborators</th>
-                                                    <th></th>
-                                                    <th class="text-center w-25">Actions</th>
-                                                </tr>
-                                                @foreach($courseUsers[$course->course_id] as $courseCollaborator)
-                                                        <tr>
-                                                            <td >
-                                                                <b>{{$courseCollaborator->name}} @if ($courseCollaborator->email == $user->email) (Me) @endif</b>
-                                                                <p>{{$courseCollaborator->email}}</p>
-                                                            </td>
-                                                            <td>@switch ($courseCollaborator->pivot->permission) 
-                                                                    @case(1)
-                                                                        <b><i>Owner</i></b>
-                                                                        @break
-                                                                    @case(2)
-                                                                        Editor
-                                                                        @break
-                                                                    @case(3)
-                                                                        Viewer
-                                                                        @break
-                                                                @endswitch
-                                                            </td>
-                                                            @if ($courseCollaborator->pivot->permission == 1)
-                                                                <td></td>
-                                                            @else
-                                                                <td class="text-center">
-                                                                    <form action="{{route('courses.unassign', $course->course_id) }}" method="POST">
-                                                                        @csrf
-                                                                        {{method_field('DELETE')}}
-                                                                        <input type="hidden" class="form-check-input" name="course_id" value={{$course->course_id}}>
-                                                                        <input type="hidden" class="form-check-input" name="user_id" value="{{$courseCollaborator->id}}">
-                                                                        <input type="hidden" class="form-check-input" name="email" value="{{$courseCollaborator->email}}">
-                                                                        <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
-                                                                    </form>
-                                                                </td>
-                                                            @endif
-                                                        </tr>
-                                                @endforeach
-                                            </table>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- End of course collaborator modal -->
+                            data-bs-toggle="modal" data-bs-target="#addCourseCollaboratorsModal{{$course->course_id}}">Add Collaborators</button>
                     </div>
+                    @include('courses.courseCollabs')
                 </div>
 
                 <div class="row">
@@ -353,3 +265,4 @@
         </div>
     @endif
 </div>
+

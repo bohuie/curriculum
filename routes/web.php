@@ -86,6 +86,7 @@ Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDe
 Route::resource('/ploCategory','PLOCategoryController');
 
 Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
+Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
 Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
 
 // Program wizard controller used to sent info from database to the blade page
