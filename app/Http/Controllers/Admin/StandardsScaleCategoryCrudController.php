@@ -58,8 +58,10 @@ class StandardsScaleCategoryCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
+    
     protected function setupCreateOperation()
     {
+
         CRUD::setValidation(StandardsScaleCategoryRequest::class);
 
         $this->crud->addField([
@@ -85,7 +87,7 @@ class StandardsScaleCategoryCrudController extends CrudController
          * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
          */
     }
-
+    
     /**
      * Define what happens when the Update operation is loaded.
      * 

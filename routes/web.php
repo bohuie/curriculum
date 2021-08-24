@@ -42,9 +42,11 @@ Route::get('/syllabusGenerator/import/course','SyllabusController@getCourseInfo'
 // route to delete a syllabus
 Route::delete('/syllabusGenerator/{syllabusId}', 'SyllabusController@destroy')->name('syllabus.delete');
 // route to assign a syllabus collaborator
-Route::post('/syllabi/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
+Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
 // route to unassign a syllabus collaborator
 Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
+// route to download a syllabus
+Route::post('/syllabi/{syllabusId}/word','SyllabusController@syllabusToWordDoc')->name('syllabus.word');
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
@@ -84,6 +86,7 @@ Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDe
 Route::resource('/ploCategory','PLOCategoryController');
 
 Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
+Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
 Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
 
 // Program wizard controller used to sent info from database to the blade page
