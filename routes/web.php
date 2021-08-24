@@ -62,6 +62,7 @@ Route::get('/courses/{course}/summary','CourseController@show')->name('courses.s
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');
+Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
 
 Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 

@@ -24,6 +24,10 @@ class Course extends Model
         return $this->belongsToMany(User::class, 'course_users', 'course_id', 'user_id')->withPivot('permission');
     }
 
+    public function owner() {
+        return $this->belongsToMany(User::class, 'course_users', 'course_id', 'user_id')->wherePivot('permission', 1);
+    }
+
     public function learningActivities(){
         return $this->hasMany(LearningActivity::class, 'course_id','course_id');
     }

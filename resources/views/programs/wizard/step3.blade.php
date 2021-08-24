@@ -77,14 +77,55 @@
                                             <td>
                                                 {{$programCourse->year}} {{$programCourse->semester}}
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if($actualTotalOutcomes[$programCourse->course_id] == 0)
                                                     <i class="bi bi-exclamation-circle-fill text-danger pr-2"></i>Not Mapped
+                                                    <!-- Show Only If the User is not the Owner -->
+                                                    @if($programCourse->owner[0]->id != $user->id)
+                                                        <br>
+                                                        <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                            Ask Instructor to Map Course
+                                                        </button>
+                                                    @endif
+                                                    <!-- End if -->
                                                 @elseif ($actualTotalOutcomes[$programCourse->course_id] < $expectedTotalOutcomes[$programCourse->course_id])
                                                     <i class="bi bi-exclamation-circle-fill text-warning pr-2"></i>Partially Mapped
+                                                    @if($programCourse->owner[0]->id != $user->id)
+                                                        <br>
+                                                        <button type="button" class="btn btn-outline-primary btn-sm ml-2" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                            Ask Instructor to Map Course
+                                                        </button>
+                                                    @endif
                                                 @else
                                                     <i class="bi bi-check-circle-fill text-success pr-2"></i>Completed
                                                 @endif
+                                                <!-- Ask Instructor to Map Course Modal -->
+                                                <div class="modal fade" id="emailInstructorToMapCourse{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="emailInstructorToMapCourse" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Ask Course Instructor to Map this Course</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                            Are you sure you want to ask the instructor of {{$programCourse->course_code . ' ' . $programCourse->course_num}} to map to your program ?
+                                                            </div>
+                                                            <form action="{{route('courses.emailCourseInstructor', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
+                                                                @csrf
+                                                                {{method_field('GET')}}
+                                                                <input type="hidden" class="form-check-input " name="program_owner_id" value={{$user->id}}>
+                                                                <input type="hidden" class="form-check-input " name="course_owner_id" value={{$programCourse->owner[0]->id}}>
+                                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
+                                                                <div class="modal-footer">
+                                                                    <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                                    <button style="width:100px" type="submit" class="btn btn-primary btn-sm">Yes, Proceed</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
                                                 <!-- Delete button -->
