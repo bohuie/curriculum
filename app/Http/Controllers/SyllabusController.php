@@ -80,9 +80,9 @@ class SyllabusController extends Controller
                     return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
 
                 break;
-                // editor
-                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
                 case 2:
+                    // editor
+                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
                 break;
                 // viewer
                 case 3:
@@ -745,6 +745,7 @@ class SyllabusController extends Controller
                 
                 foreach ($allOkanaganSyllabusResources as $resource) {
                     if (in_array($resource->id, $selectedOkanaganSyllabusResourceIds)) {
+                        Log::debug($resource->id_name);
                         $templateProcessor->cloneBlock($resource->id_name);
                         $templateProcessor->setValue($resource->id_name . '-title', $resource->title);
                         // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);

@@ -55,6 +55,11 @@ class OkanaganSyllabusResourceSeeder extends Seeder
         ]);
 
         OkanaganSyllabusResource::create([
+            'id_name' => 'global',
+            'title' => 'The Global Engagement Office'
+        ]);
+
+        OkanaganSyllabusResource::create([
             'id_name' => 'copyright',
             'title' => '© Copyright Statement',
         ]);
