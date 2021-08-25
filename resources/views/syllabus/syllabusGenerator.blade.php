@@ -9,7 +9,6 @@
             <div class="card-header wizard text-start">
                 <h2>
                     Syllabus Generator 
-                    <button type="button" class="btn btn-primary bg-primary text-white  float-right fs-5 pr-4 pl-4" data-toggle="modal" data-target="#importExistingCourse">Import an existing course <i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
                 </h2>
                 <!-- Import existing course Modal -->
                 <div class="modal fade" id="importExistingCourse" tabindex="-1" role="dialog" aria-labelledby="importExistingCourse" aria-hidden="true">
@@ -71,19 +70,23 @@
             </div>
 
             <div class="card-body">
-                <h6 class="card-subtitle mb-4 lh-lg fs-6 text-center">
+                <h6 class="card-subtitle mb-4 lh-lg fs-6 ml-3 mt-2 mr-2">
                     To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank"href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
                 </h6>
+                <hr class="w-50 text-secondary mb-4 ml-3">
                 
                 <form class="courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
                     @csrf
                     <div class="container">
-                        <div class="row mb-3 ml-2 mr-2">
-                            <div class="col fs-6 ">
+                        <div class="row mb-4 mr-2">
+                            <div class="col-auto fs-6">
+                                <button type="button" class="btn btn-primary bg-primary text-white m-0" data-toggle="modal" data-target="#importExistingCourse">Import an existing course <i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
+                            </div>
+                            <div class="col-3 fs-6 ">
                                 <!-- Campus dropdown -->
-                                <div class="row justify-content-end mr-4 position-relative">
+                                <div class="row">
                                     <label for="campus" class="col-auto col-form-label requiredField">*</label>
-                                    <select class="form-select form-select-sm col-5" id="campus" name="campus" form="sylabusGenerator" required>
+                                    <select class="form-select form-select-sm col" id="campus" name="campus" form="sylabusGenerator" required>
                                         <option disabled selected value=""> -- Campus -- </option>
                                         <option value="O">UBC Okanagan</option>
                                         <option value="V">UBC Vancouver</option>
@@ -91,7 +94,7 @@
                                 </div>
                             </div>
                             <!-- land acknowledgement -->
-                            <div class="col fs-6 form-check align-self-center">
+                            <div class="col fs-6 form-check align-self-center ml-5">
                                 @if (!empty($syllabus))
                                     <input id="land" class="land form-check-input" type="checkbox" @if ($syllabus->campus == 'O') {{in_array($okanaganSyllabusResources[0]->id, $selectedOkanaganSyllabusResourceIds) ? 'checked' : ''}} @else {{in_array($vancouverSyllabusResources[0]->id, $selectedVancouverSyllabusResourceIds) ? 'checked' : ''}}@endif>
                                     <label for="land" class="form-check-label">Land Acknowledgement</label>
