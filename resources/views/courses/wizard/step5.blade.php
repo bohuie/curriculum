@@ -50,7 +50,14 @@
                                                 <!-- Program accordion header -->
                                                 <h2 class="accordion-header fs-2" id="programAccordionHeader{{$courseProgram->program_id}}">
                                                     <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProgramAccordion{{$courseProgram->program_id}}" aria-expanded="false" aria-controls="collapseProgramAccordion{{$courseProgram->program_id}}">
-                                                        <b>{{$index + 1}}</b>. {{$courseProgram->program}}                                                
+                                                        <b>{{$index + 1}}</b>. {{$courseProgram->program}}
+                                                        @if ($outcomeMapsCountPerProgram[$courseProgram->program_id] == 0)
+                                                            &emsp;-&emsp;<b class="text-danger">Not Mapped</b>
+                                                        @elseif ($outcomeMapsCountPerProgram[$courseProgram->program_id] < ($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count()))
+                                                            &emsp;-&emsp;<b class="text-warning">Partially Mapped</b>
+                                                        @else
+                                                            &emsp;-&emsp;<b class="text-success">Completed</b>
+                                                        @endif
                                                     </button>
                                                 </h2>
                                                 <!-- Program Accordion body -->
@@ -83,7 +90,6 @@
                                                                                     <td>
                                                                                         {{$programMappingScaleLevel->description}}
                                                                                     </td>
-
                                                                                 </tr>
                                                                             @endforeach
                                                                         </tbody>
@@ -98,8 +104,15 @@
                                                                         <div class="accordion-item mb-2">
                                                                             <!-- CLO accordion header -->
                                                                             <h2 class="accordion-header" id="header{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                                    <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                                                @if ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] == $courseProgram->programLearningOutcomes()->count())
+                                                                                    <button class="accordion-button white-arrow clo collapsed bg-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                                        <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                                                        &emsp;-&emsp;<b>{{ ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100 }}%</b>
+                                                                                    @else
+                                                                                    <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                                        <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                                                        &emsp;-&emsp;<b>{{ ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100 }}%</b>
+                                                                                    @endif
                                                                                 </button>
                                                                             </h2>
 
@@ -134,40 +147,49 @@
                                                                                                             
                                                                                                             <tbody>
                                                                                                                 @if ($courseProgram->ploCategories->count() > 0)
+                                                                                                                    
+                                                                                                                    <?php $pos = 0 ?>
                                                                                                                     @foreach ($courseProgram->ploCategories as $ploCategory) 
-                                                                                                                    <tr>
-                                                                                                                        <td colspan="42" class="table-active">{{$ploCategory->plo_category}}</td>
-                                                                                                                    </tr>
-
-                                                                                                                        @foreach ($ploCategory->plos as $index => $plo)
-                                                                                                                        <tr>
-                                                                                                                            <td style="width:5%" >{{($index++) + 1}}</td>
-                                                                                                                            <td>
-                                                                                                                                <b>{{$plo->plo_shortphrase}}</b><br>
-                                                                                                                                {{$plo->pl_outcome}}
-                                                                                                                            </td>
-                                                                                                                            @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
+                                                                                                                        @if ($ploCategory->plos->count() > 0)
+                                                                                                                            <tr>
+                                                                                                                                <td colspan="42" class="table-active">{{$ploCategory->plo_category}}</td>
+                                                                                                                            </tr>
+                                                                                                                            @foreach ($ploCategory->plos as $plo)
+                                                                                                                                
+                                                                                                                            <tr>
+                                                                                                                                <?php $pos++ ?>
+                                                                                                                                <td style="width:5%" >{{$pos}}</td>
+                                                                                                                                <td>
+                                                                                                                                    <b>{{$plo->plo_shortphrase}}</b><br>
+                                                                                                                                    {{$plo->pl_outcome}}
+                                                                                                                                </td>
+                                                                                                                                @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
+                                                                                                                                    <td>
+                                                                                                                                        <div class="form-check">
+                                                                                                                                            <input required class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="{{$programMappingScaleLevel->map_scale_id}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
+                                                                                                                                        </div>
+                                                                                                                                    </td>
+                                                                                                                                @endforeach
                                                                                                                                 <td>
                                                                                                                                     <div class="form-check">
-                                                                                                                                        <input required class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="{{$programMappingScaleLevel->map_scale_id}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
+                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
                                                                                                                                     </div>
                                                                                                                                 </td>
+                                                                                                                            </tr>
                                                                                                                             @endforeach
-                                                                                                                            <td>
-                                                                                                                                <div class="form-check">
-                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
-                                                                                                                                </div>
-                                                                                                                            </td>
-                                                                                                                        </tr>
-                                                                                                                        @endforeach
+                                                                                                                        @endif
                                                                                                                     @endforeach
-                                                                                                                    <tr>
-                                                                                                                        <td class="table-active" colspan="42">Uncategorized PLOs</td>
-                                                                                                                    </tr>
+                                                                                                                    <?php $hasRan = FALSE ?>
                                                                                                                     @foreach ($courseProgram->programLearningOutcomes as $plo) 
                                                                                                                         @if (!isset($plo->category))
+                                                                                                                            @if (! $hasRan) 
+                                                                                                                                <tr>
+                                                                                                                                    <td class="table-active" colspan="42">Uncategorized PLOs</td>
+                                                                                                                                </tr>
+                                                                                                                                <?php $hasRan = TRUE ?>
+                                                                                                                            @endif
                                                                                                                         <tr>
-                                                                                                                            <td>{{($index++) + 1}}</td>
+                                                                                                                            <td>{{$pos++ + 1}}</td>
                                                                                                                             <td>
                                                                                                                                 <b>{{$plo->plo_shortphrase}}</b><br>
                                                                                                                                 {{$plo->pl_outcome}}
@@ -187,7 +209,10 @@
                                                                                                                         </tr>
                                                                                                                         @endif
                                                                                                                     @endforeach
-                                                                                                                @else 
+                                                                                                                @else
+                                                                                                                    <tr>
+                                                                                                                        <td class="table-active" colspan="42">Uncategorized PLOs</td>
+                                                                                                                    </tr>
                                                                                                                     @foreach($courseProgram->programLearningOutcomes as $index => $pl_outcome)
                                                                                                                         <tr>
                                                                                                                             <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>
@@ -356,6 +381,10 @@
     }
 
 </script>
+<style>
+    h3 span{width:32%;display:inline-block;}
+    h3 span:last-child { text-align:right }
+</style>
 
 
 @endsection

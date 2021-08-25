@@ -11,7 +11,7 @@ class Standard extends Model
 
     protected $primaryKey = 'standard_id';
 
-    protected $fillable = ['standard_id', 's_shortphrase', 's_outcome'];
+    protected $fillable = ['standard_id', 'standard_category_id','s_shortphrase', 's_outcome'];
 
     public function learningOutcomes(){
         return $this->belongsToMany(LearningOutcome::class)->using(StandardsOutcomeMap::class); 

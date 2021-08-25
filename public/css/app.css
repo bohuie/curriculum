@@ -4425,7 +4425,7 @@ input[type=button].btn-block {
 }
 
 .nav-link.disabled {
-  color: #6c757d;
+  color: #f3f3f3;
   pointer-events: none;
   cursor: default;
 }
@@ -6715,82 +6715,6 @@ button.bg-dark:focus {
 
 .bg-transparent {
   background-color: transparent !important;
-}
-
-.border {
-  border: 1px solid #dee2e6 !important;
-}
-
-.border-top {
-  border-top: 1px solid #dee2e6 !important;
-}
-
-.border-right {
-  border-right: 1px solid #dee2e6 !important;
-}
-
-.border-bottom {
-  border-bottom: 1px solid #dee2e6 !important;
-}
-
-.border-left {
-  border-left: 1px solid #dee2e6 !important;
-}
-
-.border-0 {
-  border: 0 !important;
-}
-
-.border-top-0 {
-  border-top: 0 !important;
-}
-
-.border-right-0 {
-  border-right: 0 !important;
-}
-
-.border-bottom-0 {
-  border-bottom: 0 !important;
-}
-
-.border-left-0 {
-  border-left: 0 !important;
-}
-
-.border-primary {
-  border-color: #40B4E5 !important;
-}
-
-.border-secondary {
-  border-color: #6c757d !important;
-}
-
-.border-success {
-  border-color: #38c172 !important;
-}
-
-.border-info {
-  border-color: #6EC4E8 !important;
-}
-
-.border-warning {
-  border-color: #ffed4a !important;
-}
-
-.border-danger {
-  border-color: #e3342f !important;
-}
-
-.border-light {
-  border-color: #f8f9fa !important;
-}
-
-.border-dark {
-  border-color: #343a40 !important;
-}
-
-.border-white {
-  border-color: #fff !important;
 }
 
 .rounded-sm {
@@ -10758,6 +10682,31 @@ margin-left:-15px;
   padding-top: 0.5rem;
   padding-bottom:0.5rem;
   padding-left: 0.5rem;
+}
+
+.vSyllabusHeader {
+  color: #833f0b;
+  border-bottom: 1px solid #833f0b;
+  margin-bottom: 0.5rem;
+}
+
+.vSyllabusHeader {
+  color: #833f0b;
+  border-bottom: 1px solid #833f0b;
+  margin-bottom: 0.5rem;
+}
+
+.vSyllabusHeader2 {
+  color: #833f0b;
+  border-bottom: 1px dotted #833f0b;
+  border-top: 1px dotted #833f0b;
+  margin-bottom: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.oSyllabusHeader {
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 

@@ -17,4 +17,15 @@ Route::group([
     Route::crud('course', 'CourseCrudController');
     Route::crud('program', 'ProgramCrudController');
     Route::crud('user', 'UserCrudController');
+    Route::crud('learningOutcome', 'LearningOutcomeCrudController');
+   // Route::crud('mappingScaleProgram', 'MappingScaleProgramCrudController');
+    Route::crud('optional-priority', 'OptionalPriorityCrudController');
+    Route::crud('subcategories', 'SubcategoriesCrudController');
+    Route::crud('categories', 'CategoriesCrudController');
+    Route::crud('standard-category', 'StandardCategoryCrudController');
+    Route::crud('standards-scale-category', 'StandardsScaleCategoryCrudController');
+    Route::crud('mapping-scales', 'MappingScaleCrudController');
+    Route::crud('mapping-scale-category', 'MappingScaleCategoryCrudController');
+    Route::crud('custom-assessment-methods', 'CustomAssessmentMethodsCrudController');
+    Route::crud('custom-learning-activities', 'CustomLearningActivitiesCrudController');
 }); // this should be the absolute last line of this file

@@ -16,10 +16,17 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         $this->call([
-            ProgramSeeder::class,
             RoleSeeder::class,
-            UserSeeder::class,
+            UserSeeder::class,            
+            MappingScaleCategoriesSeeder::class,
             MappingScaleSeeder::class,
+            OptionalPrioritiesSeeder::class,
+            StandardCategorySeeder::class,
+            StandardSeeder::class,
+            StandardScaleCategorySeeder::class,
+            StandardScaleSeeder::class,
+            OkanaganSyllabusResourceSeeder::class,
+            VancouverSyllabusResourceSeeder::class,
         ]);
     }
 }

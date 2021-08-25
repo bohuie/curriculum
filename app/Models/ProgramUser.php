@@ -9,7 +9,13 @@ class ProgramUser extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = ['user_id','program_id'];
+    protected $table = 'program_users';
+
+    protected $primary = 'id';
+
+    protected $guarded = ['permission'];
+
+    protected $fillable = ['user_id','program_id'];
 
     public $incrementing = false;
 }

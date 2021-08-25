@@ -25,7 +25,6 @@ Route::get('/', function () {
 Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/home', 'HomeController@store')->name('home.store');
 //Route::delete('/home/{course}/unassign', 'HomeController@destroy')->name('home.destroy');
 Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
 
@@ -44,9 +43,11 @@ Route::get('/syllabusGenerator/import/course','SyllabusController@getCourseInfo'
 // route to delete a syllabus
 Route::delete('/syllabusGenerator/{syllabusId}', 'SyllabusController@destroy')->name('syllabus.delete');
 // route to assign a syllabus collaborator
-Route::post('/syllabi/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
+Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
 // route to unassign a syllabus collaborator
 Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
+// route to download a syllabus
+Route::post('/syllabi/{syllabusId}/word','SyllabusController@syllabusToWordDoc')->name('syllabus.word');
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
@@ -54,6 +55,7 @@ Route::get('/programs/{program}/submit','ProgramController@submit')->name('progr
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
 
 Route::resource('/courses','CourseController');
+Route::post('/courses', 'CourseController@store')->name('courses.store');
 
 Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
 Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');
@@ -63,6 +65,7 @@ Route::get('/courses/{course}/summary','CourseController@show')->name('courses.s
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');
+Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
 
 Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 
@@ -85,6 +88,7 @@ Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDe
 Route::resource('/ploCategory','PLOCategoryController');
 
 Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
+Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
 Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
 
 // Program wizard controller used to sent info from database to the blade page

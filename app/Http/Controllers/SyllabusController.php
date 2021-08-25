@@ -25,8 +25,32 @@ use App\Models\syllabus\SyllabusUser;
 use App\Models\syllabus\VancouverSyllabusResource;
 use stdClass;
 
+define("INPUT_TIPS", array(
+    "otherCourseStaff" => "If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?",
+    "learningOutcomes" => "Tell students what changes in their knowledge, skills, or attitudes should occur during the course. Knowing these, students will have a framework within which to put individual components of the course and they will be primed for the kinds of assessments of learning that will come.",
+    "learningAssessments" => "Identify the various ways you will assess achievement of stated learning outcomes or objectives, when each will occur, and the weighting of each component in the final grade. Sometimes your assessment plan will need to be adjusted, you must discuss the proposal with the class and provide a rationale and then update the syllabus. A new, dated electronic syllabus must be provided",
+    "learningActivities" => "Do you expect students to participate in class? In what ways? (e.g., case studies, using “clickers” to answer questions, working in small groups, etc.) Is participation in on-line discussions required? Are readings required in advance with answers to be submitted to discussion questions or problem sets? 
+    Is an oral presentation required? Is there a field excursion?",
+    "learningMaterials" => "List of required learning materials for your course and where they might be obtained (e.g. the Bookstore if you ordered a text or a reading package, your department office if an in-house resource is available). Providing students with at least an estimate of the costs of materials is expected. Explanation of any on-line learning management system used (e.g.Canvas).",
+    "latePolicy" => "State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?",
+    "missedActivityPolicy" => "In accordance with policy on Grading Practices, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight the marks from a missed test onto later assessments?",
+    "courseDescription" => "As in the Academic Calendar or, for courses without a published description, include a brief representative one.", 
+    "coursePrereqs" => "Is there a course that students must have passed before taking this course?",
+    "courseCoreqs" => "Is there a course that students must take concurrently (if not before)?",
+    "courseContacts" => "Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?", 
+    "officeHours" => "Do you have set office hours or can students make appointments? Do you hold “office hours” online? If so, how do students access you?",
+    "courseStructure" => "First, the basic components: lecture, lab, discussion, tutorial. Typically the locations are on the Student Service Centre but you may wish to include them. Then a description of how your classes are structured: Do you use traditional lecturing? Do you provide notes (outlines)? Do you combine on-line and in-class activity? You may wish to combine this section and Learning Outcomes below to provide an opportunity to introduce students to your philosophy of learning, to the culture of your discipline and how this course fits in the larger context.",
+    "courseSchedule" => "This may be a weekly schedule, it may be class by class, but let students know that if changes occur, they will be informed.",
+    "instructorBioStatement" => "You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.",
+    "learningResources" => "Include information on any resources to support student learning that are supported by the academic unit responsible for the course.",
+    "learningAnalytics" => "If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?",
+    "officeLocation" => "Building & Room Number",
+));
+
+
 class SyllabusController extends Controller
 {
+
     //
     public function __construct()
     {
@@ -34,115 +58,96 @@ class SyllabusController extends Controller
         $this->middleware('hasAccess');
     }
 
-    public function index($syllabusId = null){
-
-        $user = User::where('id', Auth::id())->first();
-        $myCourses = $user->courses()
-            ->select('courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-            'courses.course_id','courses.course_num','courses.course_title', 'courses.status')
-            ->where([
-                ['course_users.user_id','=',Auth::id()],
-                ['courses.status', '=', 1]
-            ])->orWhere([
-                ['course_users.user_id','=',Auth::id()],
-                ['courses.status', '=', -1]
-            ])->get();
-
-        $inputFieldDescriptions['otherCourseStaff'] = "If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?";
-
-        $inputFieldDescriptions['learningOutcomes'] = 'Tell students what changes in their knowledge, skills, or attitudes should occur during the course. Knowing these, students will have a framework within which to put individual components of the course and they will be primed for the kinds of assessments of learning that will come.';
-
-        $inputFieldDescriptions['learningAssessments'] = 'Identify the various ways you will assess achievement of stated learning outcomes or objectives, when each will occur, and the weighting of each component in the final grade. 
-        Sometimes your assessment plan will need to be adjusted, you must discuss the proposal with the class and provide a rationale and then update the syllabus. A new, dated electronic syllabus must be provided';
-
-        $inputFieldDescriptions['learningActivities'] = 'Do you expect students to participate in class? In what ways? (e.g., case studies, using “clickers” to answer questions, working in small groups, etc.) Is participation in on-line discussions required? Are readings required in advance with answers to be submitted to discussion questions or problem sets? 
-        Is an oral presentation required? Is there a field excursion?
-        ';
-
-        $inputFieldDescriptions['learningMaterials'] = 'List of required learning materials for your course and where they might be obtained (e.g. the Bookstore if you ordered a text or a reading package, your department office if an in-house resource is available).
-        Providing students with at least an estimate of the costs of materials is expected. 
-        Explanation of any on-line learning management system used (e.g.Canvas).
-        ';
-
-        $inputFieldDescriptions['latePolicy'] = 'State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?';
-
-        $inputFieldDescriptions['missedActivityPolicy'] = 'In accordance with policy on Grading Practices, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight the marks from a missed test onto later assessments?';
-
-        $inputFieldDescriptions['courseDescription'] = "As in the Academic Calendar or, for courses without a published description, include a brief representative one";
-
-        $inputFieldDescriptions['coursePrereqs'] = 'Is there a course that students must have passed before taking this course?';
-
-        $inputFieldDescriptions['courseCoreqs'] = 'Is there a course that students must take concurrently (if not before)?';
-
-        $inputFieldDescriptions['courseContacts'] = 'Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?';
-
-        $inputFieldDescriptions['officeHours'] = 'Do you have set office hours or can students make appointments? Do you hold “office hours” online? If so, how do students access you?';
-
-        $inputFieldDescriptions['courseStructure'] = 'First, the basic components: lecture, lab, discussion, tutorial. Typically the locations are on the Student Service Centre but you may wish to include them.
-        Then a description of how your classes are structured: Do you use traditional lecturing? Do you provide notes (outlines)? Do you combine on-line and in-class activity?
-        You may wish to combine this section and Learning Outcomes below to provide an opportunity to introduce students to your philosophy of learning, to the culture of your discipline and how this course fits in the larger context.
-        ';
-
-        $inputFieldDescriptions['courseSchedule'] = 'This may be a weekly schedule, it may be class by class, but let students know that if changes occur, they will be informed.';
-
-        $inputFieldDescriptions['instructorBioStatement'] = 'You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.';
-
-        $inputFieldDescriptions['learningResources'] = 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.';
-        $inputFieldDescriptions['learningAnalytics'] = 'If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?';
-        $inputFieldDescriptions['officeLocation'] = 'Building & Room Number';
-
+    public function index($syllabusId = null, Request $request) {
+        // get the current user
+        $user = User::find(Auth::id());
+        // get this users courses
+        $myCourses = $user->courses;
         // get vancouver campus resources
         $vancouverSyllabusResources = VancouverSyllabusResource::all();
         // get okanagan campus resources
         $okanaganSyllabusResources = OkanaganSyllabusResource::all();
+        // put 
 
-        // if syllabusId is not null, view for syllabus with syllabusId was requested
         if ($syllabusId != null) {
-            // get the saved syllabus if the current user is a user of this syllabus
-            $syllabus = DB::table('syllabi')->where('id', $syllabusId)
-            ->whereExists(function ($query) use ($syllabusId, $user) {
-                $query->select()->from('syllabi_users')->where([
-                    ['syllabi_users.syllabus_id', '=', $syllabusId],
-                    ['syllabi_users.user_id', '=', $user->id],
-                ]);
-            })->get()->first();
+            // get this users permission level 
+            $userPermission = $user->syllabi->where('id', $syllabusId)->first()->pivot->permission;
             
-            // if syllabus was found, return view with the syllabus data
-            if ($syllabus){
+            // show view based on user permission
+            switch ($userPermission) {
+                // owner
+                case 1:
+                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
 
-                switch ($syllabus->campus) {
-                    case 'O':
-                        // get data specific to okanagan campus
-                        $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
-                        // get selected okanagan syllabus resource
-                        $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
-                        // return view with okanagan syllabus data
-                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
-                    break;
-                    case 'V':
-                        // get data specific to vancouver campus
-                        $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
-                        // get selected vancouver syllabus resource
-                        $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
-                        // return view with vancouver syllabus data
-                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);
+                break;
+                case 2:
+                    // editor
+                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
+                break;
+                // viewer
+                case 3:
+                    return $this->syllabusViewer($syllabusId, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
 
-                    break;
-
-                    default: 
-                        // return default view 
-                        return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', $syllabus);
-
-                }
-
-            // else redirect to the empty syllabus generator view where syllabus id is null
-            } else {
-                return redirect()->route('syllabus')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+                break;
+                // return view to create a syllabus as default
+                default:
+                    return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
             }
 
-        // else return the empty syllabus generator view where syllabus id is null
+        // return view to create a syllabus
         } else {
-            return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', $inputFieldDescriptions)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+            return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+        }
+    }
+
+
+    public function syllabusEditor($syllabusId, $data) {
+        // get this syllabus
+        $syllabus = Syllabus::find($syllabusId);
+        
+        switch ($syllabus->campus) {
+            case 'O':
+                // get data specific to okanagan campus
+                $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
+                // get selected okanagan syllabus resource
+                $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
+                // return view with okanagan syllabus data
+                return view("syllabus.syllabusGenerator")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
+            break;
+            case 'V':
+                // get data specific to vancouver campus
+                $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+                // get selected vancouver syllabus resource
+                $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
+                // return view with vancouver syllabus data
+                return view("syllabus.syllabusGenerator")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);
+            break;
+                
+        }
+
+    }
+
+
+    public function syllabusViewer($syllabusId, $data) {
+        // get this syllabus
+        $syllabus = Syllabus::find($syllabusId);
+        
+        switch ($syllabus->campus) {
+            case 'O':
+                // get data specific to okanagan campus
+                $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
+                // get selected okanagan syllabus resource
+                $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
+                // return view with okanagan syllabus data
+                return view("syllabus.syllabusViewerOkanagan")->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
+            break;
+            case 'V':
+                // get data specific to vancouver campus
+                $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+                // get selected vancouver syllabus resource
+                $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
+                // return view with vancouver syllabus data
+                return view("syllabus.syllabusViewerVancouver")->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);        
         }
     }
 
@@ -189,13 +194,8 @@ class SyllabusController extends Controller
 
         // download syllabus as a word document
         if ($request->input('download')) {
-            $documentName = $courseCode.$courseNumber.'-Syllabus.docx';
-            // create word document
-            $wordDocument = $this->wordExport($request);
-            // save word document on server
-            $wordDocument->saveAs($documentName);
-            // force user browser to download the saved document
-            return response()->download($courseCode.$courseNumber.'-Syllabus.docx')->deleteFileAfterSend(true);            
+            // download syllabus
+            return $this->syllabusToWordDoc($syllabus->id);
         }
 
         return redirect()->route('syllabus', [
@@ -529,17 +529,26 @@ class SyllabusController extends Controller
      */
     public function destroy(Request $request, $syllabusId)
     {
-        //
-        $syllabus = Syllabus::where('id', $syllabusId)->first();
-
-        if($syllabus->delete()){
-            $request->session()->flash('success','Your syllabus has been deleted');
-        }else{
-            $request->session()->flash('error', 'There was an error deleting your syllabus');
+        // find the syllabus to delete
+        $syllabus = Syllabus::find($syllabusId);
+        // find the current user
+        $currentUser = User::find(Auth::id());
+        // get the current users permission level for the syllabus to delete
+        $currentUserPermission = $currentUser->syllabi->where('id', $syllabusId)->first()->pivot->permission;
+        // if the current user owns the syllabus, try delete it
+        if ($currentUserPermission == 1) {
+            if($syllabus->delete()){
+                $request->session()->flash('success','Your syllabus has been deleted');
+            }else{
+                $request->session()->flash('error', 'There was an error deleting your syllabus');
+            }
+        // else the current user does not own the syllabus, flash an error
+        } else {
+            $request->session()->flash('error','You do not have permission to delete this syllabus');
         }
 
+        // return to the dashboard
         return redirect()->route('home');
-
     }
 
     
@@ -553,57 +562,43 @@ class SyllabusController extends Controller
             ]);
 
         $course_id = $request->course_id;
+        $course = Course::find($course_id);
         // get relevant course info for import into Syllabus Generator
-        $courseInfo = Course::select('course_code', 'course_num', 'course_title', 'year', 'semester')->where('course_id', '=', $course_id)->first();
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $a_methods = $course->assessmentMethods;
+        $l_outcomes = $course->learningOutcomes;
+        $l_activities = $course->learningActivities;
         // put courseInfo, assessment methods and CLOs in the return object
-        $data['c_title'] = $courseInfo->course_title;
-        $data['c_code'] = $courseInfo->course_code;
-        $data['c_num'] = $courseInfo->course_num;
-        $data['c_year'] = $courseInfo->year;
-        $data['c_term'] = $courseInfo->semester;
+        $data['c_title'] = $course->course_title;
+        $data['c_code'] = $course->course_code;
+        $data['c_num'] = $course->course_num;
+        $data['c_year'] = $course->year;
+        $data['c_term'] = $course->semester;
         $data['a_methods'] = $a_methods;
         $data['l_outcomes'] = $l_outcomes;
+        $data['l_activities'] = $l_activities;
 
         $data = json_encode($data);
         return $data;
     }
 
-    //Syllabus Word file
-    public function WordExport(Request $request){
-                
-        // validate request
-        $request->validate([
-            'campus' => ['required'],
-            'courseTitle' => ['required'],
-            'courseCode' => ['required'],
-            'courseNumber' => ['required'],
-            'courseInstructor' => ['required'],
-            'courseYear' => ['required'],
-            'courseSemester' => ['required'],
-        ]);
-        $campus = $request->input('campus');
-        $courseTitle = $request->input('courseTitle');
-        $courseCode = $request->input('courseCode');
-        $courseNumber = $request->input('courseNumber');
-        $courseInstructor = $request->input('courseInstructor');
-        $courseYear = $request->input('courseYear');
-        $semester = $request->input('courseSemester');
+    public function syllabusToWordDoc($syllabusId) {
+        $syllabus = Syllabus::find($syllabusId);
 
-        switch($campus){
-            // generate word syllabus for Okanagan campus course
+        switch ($syllabus->campus) {
             case 'O':
+                // create a new template for this syllabus
                 $templateProcessor = new TemplateProcessor('word-template/UBC-O_default.docx');
-
-                if($courseFormat = $request->input('courseFormat')){
+                // get data specific to the okanagan campus
+                $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
+                // add data to the okanagan syllabus template
+                if($courseFormat = $okanaganSyllabus->course_format){
                     $templateProcessor->cloneBlock('NocourseFormat');
-                    $templateProcessor->setValue('courseFormat',$courseFormat);
+                    $templateProcessor->setValue('courseFormat', $courseFormat);
                 }else{
                     $templateProcessor->cloneBlock('NocourseFormat',0);
                 }
         
-                if($courseOverview = $request->input('courseOverview')){
+                if($courseOverview = $okanaganSyllabus->course_overview){
                     $templateProcessor->cloneBlock('NocourseOverview');
                     $templateProcessor->setValue('courseOverview',$courseOverview);
                 }else{
@@ -612,7 +607,7 @@ class SyllabusController extends Controller
                 }
 
                 // tell template processor to include learning activities if user completed the field(s)
-                if($learningActivities = $request->input('learningActivities')){
+                if($learningActivities = $syllabus->learning_activities){
                     $templateProcessor->cloneBlock('NoLearningActivities');
                     // split learning activities string on newline char
                     $learningActivitiesArr = explode("\n", $learningActivities);
@@ -630,7 +625,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningActivities',0);
                 }
                 // tell template processor to include other course staff if user completed the field(s)
-                if($otherCourseStaff = $request->input('otherCourseStaff')){
+                if($otherCourseStaff = $syllabus->other_course_staff){
                     $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
                     // split other course staff string on newline char
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
@@ -648,7 +643,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoOtherInstructionalStaff',0);
                 }
                 // tell template processor to include course location if user completed the field(s)
-                if ($courseLocation = $request->input('courseLocation')) {
+                if ($courseLocation = $syllabus->course_location) {
                     $templateProcessor->cloneBlock('NoCourseLocation');
                     $templateProcessor->setValue('courseLocation',$courseLocation);
                 } else {
@@ -656,34 +651,28 @@ class SyllabusController extends Controller
                 }
                 
                 // tell template processor to include class hours if user completed the field(s)
-                if ($classStartTime = $request->input('startTime') and $classEndTime = $request->input('endTime')) {
+                if ($classStartTime = $syllabus->class_start_time && $classEndTime = $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
                     $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
                 } else {
                     $templateProcessor->cloneBlock('NoClassHours',0);
                 }
-
                 // tell template processor to include course schedule if user completed the field(s)
-                if ($schedules = $request->input('schedule')) {
+                if ($schedule = $okanaganSyllabus->course_) {
                     $templateProcessor->cloneBlock('NoCourseDays');
-                    $schedule = "";
-                    foreach($schedules as $day) {
-                        $schedule = ($schedule == "" ? $day : $schedule . '/' . $day);
-                    }
-                    $templateProcessor->setValue('schedule',$schedule);
+                    $templateProcessor->setValue('schedule', $schedule);
                 } else {
                     $templateProcessor->cloneBlock('NoCourseDays', 0);
                 }
-
                 // tell template processor to include office hours if user completed the field(s)
-                if ($officeHour = $request->input('officeHour')) {
+                if ($officeHour = $syllabus->office_hours) {
                     $templateProcessor->cloneBlock('NoOfficeHours');
                     $templateProcessor->setValue('officeHour',$officeHour);
                 } else {
                     $templateProcessor->cloneBlock('NoOfficeHours', 0);
                 }
 
-                switch($semester){
+                switch($syllabus->course_term){
                     case("W1"):
                         $templateProcessor->setValue('season',"Winter");
                         $templateProcessor->setValue('term',"Term 1");
@@ -702,7 +691,7 @@ class SyllabusController extends Controller
                     break;
                 }
 
-                if($learningOutcome = $request->input('learningOutcome')){
+                if($learningOutcome = $syllabus->learning_outcomes){
                     $templateProcessor->cloneBlock('NolearningOutcomes');
                     // split learning outcomes string on newline char
                     $learningOutcomes = explode("\n", $learningOutcome);
@@ -719,7 +708,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NolearningOutcomes',0);
                 }
 
-                if($learningAssessments = $request->input('learningAssessments')){
+                if($learningAssessments = $syllabus->learning_assessments){
                     $templateProcessor->cloneBlock('NoLearningAssessments');
                     // split assessment methods string on newline char
                     $assessmentMethods = explode("\n", $learningAssessments);
@@ -737,44 +726,46 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningAssessments',0);
                 }
                 // include vancouver course learning resources in template
-                if($learningResources = $request->input('learningResources')){
+                if($learningResources = $syllabus->learning_resources){
                     $templateProcessor->cloneBlock('NoCourseLearningResources');
                     $templateProcessor->setValue('courseLearningResources', $learningResources);
                 }else{
                     $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
                 }
         
-                if($learningMaterials = $request->input('learningMaterials')){
+                if($learningMaterials = $syllabus->learning_materials){
                     $templateProcessor->cloneBlock('NoLearningMaterials');
                     $templateProcessor->setValue('learningMaterials',$learningMaterials);
                 }else{
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
                 }
-
+                
                 $allOkanaganSyllabusResources = OkanaganSyllabusResource::all();
+                $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
+                
                 foreach ($allOkanaganSyllabusResources as $resource) {
-                    if (array_key_exists($resource->id, $request->input('okanaganSyllabusResources'))) {
+                    if (in_array($resource->id, $selectedOkanaganSyllabusResourceIds)) {
+                        Log::debug($resource->id_name);
                         $templateProcessor->cloneBlock($resource->id_name);
                         $templateProcessor->setValue($resource->id_name . '-title', $resource->title);
                         // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
                     } else {
                         $templateProcessor->cloneBlock($resource->id_name, 0);
                     }
-                }
-            
+                }  
+
             break;
             case 'V':
-                $request->validate([
-                    'courseCredit' => ['required'],
-                ]);
-                $courseCredit = $request->input('courseCredit');
+                // get data specific to the okanagan campus
+                $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id)->first();
                 // generate word syllabus for Vancouver campus course
                 $templateProcessor = new TemplateProcessor('word-template/UBC-V_default.docx');
-
+                // add data to the vancouver syllabus template
+                $courseCredit = $vancouverSyllabus->course_credit;
                 // add required form fields specific to Vancouver campus to template
                 $templateProcessor->setValues(array('courseCredit' => $courseCredit,));
 
-                if($officeLocation = $request->input('officeLocation')){
+                if($officeLocation = $vancouverSyllabus->office_location){
                     $templateProcessor->cloneBlock('NoOfficeLocation');
                     $templateProcessor->setValue('officeLocation', $officeLocation);
                 }else{
@@ -782,14 +773,14 @@ class SyllabusController extends Controller
                 }
 
                 // include vancouver course description in template
-                if($courseDescription = $request->input('courseDescription')){
+                if($courseDescription = $vancouverSyllabus->course_description){
                     $templateProcessor->cloneBlock('NoCourseDescription');
                     $templateProcessor->setValue('courseDescription', $courseDescription);
                 }else{
                     $templateProcessor->cloneBlock('NoCourseDescription', 0);
                 }
 
-                if($contacts = $request->input('courseContacts')){
+                if($contacts = $vancouverSyllabus->course_contacts){
                     $templateProcessor->cloneBlock('NoContacts', 0);
                     // split contacts string on newline char
                     $contactsArr = explode("\n", $contacts);
@@ -809,7 +800,7 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('contacts', '');
                 }
 
-                if($coursePrereqs = $request->input('coursePrereqs')){
+                if($coursePrereqs = $vancouverSyllabus->course_prereqs){
                     $templateProcessor->cloneBlock('NoPrerequisites', 0);
                     // split course prereqs string on newline char
                     $coursePrereqsArr = explode("\n", $coursePrereqs);
@@ -828,7 +819,7 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('prerequisites', '');
                 }
 
-                if($courseCoreqs = $request->input('courseCoreqs')){
+                if($courseCoreqs = $vancouverSyllabus->course_coreqs){
                     $templateProcessor->cloneBlock('NoCorequisites', 0);
                     // split course coreqs string on newline char
                     $courseCoreqsArr = explode("\n", $courseCoreqs);
@@ -847,14 +838,14 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('corequisites', '');
                 }
 
-                if($courseInstructorBio = $request->input('courseInstructorBio')){
+                if($courseInstructorBio = $vancouverSyllabus->instructor_bio){
                     $templateProcessor->cloneBlock('NoInstructorBio');
                     $templateProcessor->setValue('instructorBio', $courseInstructorBio);
                 }else{
                     $templateProcessor->cloneBlock('NoInstructorBio', 0);
                 }
 
-                if($courseStructure = $request->input('courseStructure')){
+                if($courseStructure = $vancouverSyllabus->course_structure){
                     $templateProcessor->cloneBlock('NoCourseStructure', 0);
                     $templateProcessor->setValue('courseStructure', $courseStructure);
                 }else{
@@ -862,7 +853,7 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('courseStructure', '');
                 }
 
-                if($courseSchedule = $request->input('courseSchedule')){
+                if($courseSchedule = $vancouverSyllabus->course_schedule){
                     $templateProcessor->cloneBlock('NoTopicsSchedule', 0 );
                     $templateProcessor->setValue('courseSchedule', $courseSchedule);
                 }else{
@@ -871,7 +862,7 @@ class SyllabusController extends Controller
                 }
 
                 // tell template processor to include learning activities if user completed the field(s)
-                if($learningActivities = $request->input('learningActivities')){
+                if($learningActivities = $syllabus->learning_activities){
                     $templateProcessor->cloneBlock('NoLearningActivities', 0);
                     // split learning activities string on newline char
                     $learningActivitiesArr = explode("\n", $learningActivities);
@@ -891,7 +882,7 @@ class SyllabusController extends Controller
 
                 }
                 // tell template processor to include other course staff if user completed the field(s)
-                if($otherCourseStaff = $request->input('otherCourseStaff')){
+                if($otherCourseStaff =  $syllabus->other_instructional_staff){
                     $templateProcessor->cloneBlock('NoOtherInstructionalStaff', 0);
                     // split other course staff string on newline char
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
@@ -910,7 +901,7 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('otherInstructionalStaff', '');
                 }
                 // tell template processor to include course location if user completed the field(s)
-                if ($courseLocation = $request->input('courseLocation')) {
+                if ($courseLocation =  $syllabus->course_location) {
                     $templateProcessor->cloneBlock('NoCourseLocation');
                     $templateProcessor->setValue('courseLocation',$courseLocation);
                 } else {
@@ -918,7 +909,7 @@ class SyllabusController extends Controller
                 }
                 
                 // tell template processor to include class hours if user completed the field(s)
-                if ($classStartTime = $request->input('startTime') and $classEndTime = $request->input('endTime')) {
+                if ($classStartTime =  $syllabus->class_start_time && $classEndTime =  $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
                     $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
                 } else {
@@ -926,26 +917,21 @@ class SyllabusController extends Controller
                 }
 
                 // tell template processor to include course schedule if user completed the field(s)
-                if ($schedules = $request->input('schedule')) {
-                    $templateProcessor->cloneBlock('NoCourseDays');
-                    $schedule = "";
-                    foreach($schedules as $day) {
-                        $schedule = ($schedule == "" ? $day : $schedule . '/' . $day);
-                    }
+                if ($schedule =  $syllabus->class_meeting_days) {
                     $templateProcessor->setValue('schedule',$schedule);
                 } else {
                     $templateProcessor->cloneBlock('NoCourseDays', 0);
                 }
 
                 // tell template processor to include office hours if user completed the field(s)
-                if ($officeHour = $request->input('officeHour')) {
+                if ($officeHour =  $syllabus->office_hours) {
                     $templateProcessor->cloneBlock('NoOfficeHours');
                     $templateProcessor->setValue('officeHour',$officeHour);
                 } else {
                     $templateProcessor->cloneBlock('NoOfficeHours', 0);
                 }
 
-                switch($semester){
+                switch($syllabus->course_term){
                     case("W1"):
                         $templateProcessor->setValue('season',"Winter");
                         $templateProcessor->setValue('term',"Term 1");
@@ -964,7 +950,7 @@ class SyllabusController extends Controller
                     break;
                 }
 
-                if($learningOutcome = $request->input('learningOutcome')){
+                if($learningOutcome =  $syllabus->learning_outcomes){
                     $templateProcessor->cloneBlock('NolearningOutcomes', 0);
                     // split learning outcomes string on newline char
                     $learningOutcomes = explode("\n", $learningOutcome);
@@ -982,7 +968,7 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('learningOutcomes', '');
                 }
 
-                if($learningAssessments = $request->input('learningAssessments')){
+                if($learningAssessments =  $syllabus->learning_assessments){
                     $templateProcessor->cloneBlock('NoLearningAssessments', 0);
                     // split assessment methods string on newline char
                     $assessmentMethods = explode("\n", $learningAssessments);
@@ -1002,14 +988,14 @@ class SyllabusController extends Controller
 
                 }
                 // include vancouver course learning resources in template
-                if($learningResources = $request->input('learningResources')){
+                if($learningResources =  $syllabus->learning_resources){
                     $templateProcessor->cloneBlock('NoCourseLearningResources');
                     $templateProcessor->setValue('courseLearningResources', $learningResources);
                 }else{
                     $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
                 }
         
-                if($learningMaterials = $request->input('learningMaterials')){
+                if($learningMaterials =  $syllabus->learning_materials){
                     $templateProcessor->cloneBlock('NoLearningMaterials', 0);
                     $templateProcessor->setValue('learningMaterials',$learningMaterials);
                 }else{
@@ -1018,7 +1004,7 @@ class SyllabusController extends Controller
 
                 }
 
-                if ($learningAnalytics = $request->input('learningAnalytics')) {
+                if ($learningAnalytics =  $vancouverSyllabus->learning_analytics) {
                     $templateProcessor->cloneBlock('NoLearningAnalytics');
                     $templateProcessor->setValue('learningAnalytics', $learningAnalytics);
                 } else {
@@ -1026,55 +1012,61 @@ class SyllabusController extends Controller
                 }
 
                 $allVancouverSyllabusResources = VancouverSyllabusResource::all();
+                $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
+                
                 foreach ($allVancouverSyllabusResources as $resource) {
-                    if (array_key_exists($resource->id, $request->input('vancouverSyllabusResources'))) {
+                    if (in_array($resource->id, $selectedVancouverSyllabusResourceIds)) {
                         $templateProcessor->cloneBlock($resource->id_name);
                         $templateProcessor->setValue($resource->id_name . '-title', strtoupper($resource->title));
                         // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
                     } else {
                         $templateProcessor->cloneBlock($resource->id_name, 0);
                     }
-                    
-                }
+                }  
 
             break;
         }
+
         // add required form fields common to both campuses to template
-        $templateProcessor->setValues(array('courseTitle'=> $courseTitle,'courseCode' => $courseCode, 'courseNumber'=> $courseNumber, 'courseInstructor'=> $courseInstructor,
-                    'courseYear'=> $courseYear,));
+        $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseInstructor'=> $syllabus->course_instructor,
+                    'courseYear'=> $syllabus->course_year,));
 
         // date the syllabus
         $templateProcessor->setValue('dateGenerated', date('d, M Y'));
         
-        if($latePolicy = $request->input('latePolicy')){
+        if($latePolicy = $syllabus->late_policy){
             $templateProcessor->cloneBlock('NolatePolicy');
             $templateProcessor->setValue('latePolicy',$latePolicy);
         }else{
             $templateProcessor->cloneBlock('NolatePolicy',0);
         }
 
-        if($missingExam = $request->input('missingExam')){
+        if($missingExam = $syllabus->missed_exam_policy){
             $templateProcessor->cloneBlock('NoMissingExam');
             $templateProcessor->setValue('missingExam',$missingExam);
         }else{
             $templateProcessor->cloneBlock('NoMissingExam',0);
         }
 
-        if($missingActivity = $request->input('missingActivity')){
+        if($missingActivity = $syllabus->missed_activity_policy){
             $templateProcessor->cloneBlock('NomissingActivity');
             $templateProcessor->setValue('missingActivity',$missingActivity);
         }else{
             $templateProcessor->cloneBlock('NomissingActivity',0);
         }
 
-        if($passingCriteria = $request->input('passingCriteria')){
+        if($passingCriteria = $syllabus->passing_criteria){
             $templateProcessor->cloneBlock('NopassingCriteria');
             $templateProcessor->setValue('passingCriteria',$passingCriteria);
         }else{
             $templateProcessor->cloneBlock('NopassingCriteria',0);
         }
+        // set document name
+        $documentName = $syllabus->course_code.$syllabus->course_num.'-Syllabus.docx';
+        // save word document on server
+        $templateProcessor->saveAs($documentName);
+        // force user browser to download the saved document
+        return response()->download($documentName)->deleteFileAfterSend(true);            
 
-        return $templateProcessor;
     }
-
 }

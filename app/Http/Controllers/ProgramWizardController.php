@@ -50,18 +50,31 @@ class ProgramWizardController extends Controller
     //     return view('programs.wizard.step1')->with('program', $program)->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers);
     // }
 
-    public function step1($program_id)
+    public function step1($program_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('programWizard.step4', $program_id);
+        }
+
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
-        $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
-                                ->select('users.email','program_users.user_id','program_users.program_id')
-                                ->where('program_users.program_id','=',$program_id)->get();
+        // get my programs
+        $myPrograms = $user->programs;
+        // returns a collection of programs associated with users Collaborators
+        $programUsers = array();
+        foreach ($myPrograms as $program) {
+            $programsUsers = $program->users()->get();
+            $programUsers[$program->program_id] = $programsUsers;
+        }
 
-        //
         //$plos = ProgramLearningOutcome::join('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
 
@@ -91,19 +104,32 @@ class ProgramWizardController extends Controller
         return view('programs.wizard.step1')->with('plos', $plos)->with('program', $program)->with('ploCategories', $ploCategories)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('ploProgramCategories', $ploProgramCategories)
-                                            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS);
+                                            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
-    public function step2($program_id)
+    public function step2($program_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('programWizard.step4', $program_id);
+        }
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
-        $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
-                                ->select('users.email','program_users.user_id','program_users.program_id')
-                                ->where('program_users.program_id','=',$program_id)->get();
+        // get my programs
+        $myPrograms = $user->programs;
+        // returns a collection of programs associated with users Collaborators
+        $programUsers = array();
+        foreach ($myPrograms as $program) {
+            $programsUsers = $program->users()->get();
+            $programUsers[$program->program_id] = $programsUsers;
+        }
 
         //
         $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
@@ -140,28 +166,37 @@ class ProgramWizardController extends Controller
         return view('programs.wizard.step2')->with('mappingScales', $mappingScales)->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('msCategories', $msCategories)->with('mscScale', $mscScale)
-                                            ->with('hasCustomMS', $hasCustomMS)->with('hasImportedMS', $hasImportedMS);
+                                            ->with('hasCustomMS', $hasCustomMS)->with('hasImportedMS', $hasImportedMS)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
-    public function step3($program_id)
+    public function step3($program_id, Request $request)
     {
+        $isEditor = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }
+        $isViewer = false;
+        if ($request->isViewer) {
+            return redirect()->route('programWizard.step4', $program_id);
+        }
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
         $levels = array("Undergraduate", "Graduate", "Other");
-        $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
-                                ->select('users.email','program_users.user_id','program_users.program_id')
-                                ->where('program_users.program_id','=',$program_id)->get();
+        $user = User::where('id',Auth::id())->first();
+        // get my programs
+        $myPrograms = $user->programs;
+        // returns a collection of programs associated with users Collaborators
+        $programUsers = array();
+        foreach ($myPrograms as $program) {
+            $programsUsers = $program->users()->get();
+            $programUsers[$program->program_id] = $programsUsers;
+        }
 
         // get the current user
         $user = User::where('id',Auth::id())->first();
         // get the program
         $program = Program::where('program_id', $program_id)->first();
-        // get all the users that belong to this program (using relationship defined in Program model)
-        //$programUsers = $program->users()->where('program_id', $program_id)->get();
-        $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
-                                ->select('users.email','program_users.user_id','program_users.program_id')
-                                ->where('program_users.program_id','=',$program_id)->get();
         // get all the courses that belong to this program
         $programCourses = $program->courses()->get();
         // get ids of all the courses that belong to this program
@@ -221,19 +256,31 @@ class ProgramWizardController extends Controller
         return view('programs.wizard.step3')->with('program', $program)->with('programCoursesUsers', $programCoursesUsers)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('programCourses', $programCourses)->with('userCoursesNotInProgram', $userCoursesNotInProgram)->with('standard_categories', $standard_categories)
-                                            ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes);
+                                            ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
-    public function step4($program_id)
+    public function step4($program_id, Request $request)
     {
+        $isEditor = false;
+        $isViewer = false;
+        if ($request->isEditor) {
+            $isEditor = true;
+        }else if ($request->isViewer) {
+            $isViewer = true;
+        }
         //header
         $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
         $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
-        $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
-                                ->select('users.email','program_users.user_id','program_users.program_id')
-                                ->where('program_users.program_id','=',$program_id)->get();
+        // get my programs
+        $myPrograms = $user->programs;
+        // returns a collection of programs associated with users Collaborators
+        $programUsers = array();
+        foreach ($myPrograms as $program) {
+            $programsUsers = $program->users()->get();
+            $programUsers[$program->program_id] = $programsUsers;
+        }
 
         //
         $program = Program::where('program_id', $program_id)->first();
@@ -328,7 +375,7 @@ class ProgramWizardController extends Controller
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('coursesOutcomes', $coursesOutcomes)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
                                             ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
-                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses);
+                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
@@ -415,12 +462,18 @@ class ProgramWizardController extends Controller
             foreach($dist as $courseId => $d) {
                 $weight = 0;
                 $tieResults = array();
+                $id = NULL;
                 //count the number of times a mapping scales appears for a program learning outcome 
-                foreach($d as $mapScaleWeight) {
+                foreach($d as $ms_Id => $mapScaleWeight) {
                     //check if the current ($mapScaleWeight) > than the previously stored value
                     if ($weight < $mapScaleWeight) {
                         $weight = $mapScaleWeight;
-                    } else if ($weight == $mapScaleWeight) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
+                        $id = $ms_Id;
+                    }
+                }
+                // Check if the largest weighted value ties with another value
+                foreach($d as $ms_Id => $mapScaleWeight) {
+                    if ($weight == $mapScaleWeight && $id != $ms_Id) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
                         $tieResults = array_keys($d, $weight);
                     }
                 }
