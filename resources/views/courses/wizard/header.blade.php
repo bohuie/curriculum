@@ -1,7 +1,7 @@
 <div class="mt-4 mb-5">
     <div class="row">
         <div class="col">
-            <h3>Course: {{$course->year}} {{$course->semester}} {{$course->course_code}}{{$course->course_num}}  {{$course->section}}</h3>
+            <h3>Course: {{$course->year}} {{$course->semester}} {{$course->course_code}} {{$course->course_num}} {{$course->section}}</h3>
             <h5 class="text-muted">{{$course->course_title}}</h5>
             <h5>Mode of Delivery:
             @switch($course->delivery_modality)
