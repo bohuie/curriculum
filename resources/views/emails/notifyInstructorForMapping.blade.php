@@ -1,8 +1,8 @@
 @component('mail::message')
 
-# You have been asked you to map your course to the program: {{$program}}
+# {{$program_user_name}} has added your course to {{$program}}
 
-{{$program_user_name}} has asked you to map your course: {{$course_code}} {{$course_num}} - {{$course_title}}, to the program: {{$program}}.
+Your course {{$course_code}} {{$course_num}} - {{$course_title}} has been identified as {{$required}}. Please log into your account to map your course to the learning outcomes of {{$program}}.
 
 @component('mail::button', ['url' => env('LOGIN_URL')])
 Log In and Map Course
