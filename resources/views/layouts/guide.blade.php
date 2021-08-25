@@ -150,7 +150,7 @@
             <p class="help-p my-3" style="font-size:18px;">To create a program, you must fill out the following form shown below after clicking on the plus icon.</p>
             <img class="img center" src="{{asset('/img/guide/CreateProgramModal.PNG')}}" onclick="onClick(this)">
             <br>
-            <p class="help-p my-3" style="font-size:18px;">Once you have created you program you can click on the name as shown in the picture below. This link will bring you to the next step in creating your program.</p>
+            <p class="help-p my-3" style="font-size:18px;">Once you have created your program you can click on the name as shown in the picture below. This link will bring you to the next step in creating your program.</p>
             <img class="img center my-3" src="{{asset('/img/guide/CreatedProgramAnnotated.png')}}" onclick="onClick(this)">
             <br>
             <button class="btn btn-primary float-right w-50" onclick="setPLO()" style="color: white;">Program Learning Outcomes (Step 1) <i class="bi bi-arrow-right mr-2"></i></button>
@@ -375,8 +375,17 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Courses</u></h2>
             <br>
+            <h2 class="text-center mb-4">How to Create a Course</h2>
             <p class="help-p my-3" style="font-size:18px;">The courses section displays all courses that you have either created or have been invited to collaborate on. If there are no visible programs you can create a course by selecting the plus button on the right side of this tool tip.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CourseHeaderAnnotated.png')}}" onclick="onClick(this)">
             <br>
+            <p class="help-p my-3" style="font-size:18px;">To create a course, you must fill out the following form shown below after clicking on the plus icon.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCourseModal.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3" style="font-size:18px;">Once you have created your course you can click on the name as shown in the picture below. This link will bring you to the next step in creating your course.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreatedCourseAnnotated.png')}}" onclick="onClick(this)">
+            <br>
+            <button class="btn btn-primary float-right w-50" onclick="setCLO()" style="color: white;">Course Learning Outcomes (Step 1) <i class="bi bi-arrow-right mr-2"></i></button>
         `);
     }
 
