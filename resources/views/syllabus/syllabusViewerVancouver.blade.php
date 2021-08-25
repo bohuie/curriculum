@@ -3,11 +3,11 @@
 
 @section('content')
 
-<div class="card">
+<div class="card mt-4">
     <!-- header -->
     <div class="card-header wizard ">
         <h4>
-            <b>Vancouver Syllabus: </b> <span class="fs-5">{{$syllabus->course_title}}, {{$syllabus->course_code}} {{$syllabus->course_num}}</span>
+            {{$syllabus->course_title}}, {{$syllabus->course_code}} {{$syllabus->course_num}}
         </h4>
     </div>
     <!-- body -->
@@ -43,88 +43,186 @@
                     </tr>
                 </tbody>
             </table>
+            <p><b>Campus:</b> @if ($syllabus->campus == 'V') Vancouver @else Okanagan @endif</p>
             <p><b>Instructor:</b> {{$syllabus->course_instructor}}</p>
-            <p><b>Office Location:</b> {{$vancouverSyllabus->office_location}}</p>
+            <p><b>Office Location
+                <span>
+                    <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['officeLocation']}}"></i>
+                </span>
+                </b> 
+                {{$vancouverSyllabus->office_location}}
+            </p>
             <p><b>Duration:</b> {{$syllabus->course_term}} {{$syllabus->course_year}}</p>
             <p><b>Class Location:</b> {{$syllabus->course_location}}</p>
             <p><b>Class Days:</b> {{$syllabus->class_meeting_days}}</p>
             <p><b>Class Hours:</b> {{$syllabus->class_start_time}} - {{$syllabus->class_end_time}}</p>
-            <p><b>Office Hours:</b> {{$syllabus->office_hours}}</p>
+            <p><b>Office Hours                     
+                <span>
+                    <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['officeHours']}}"></i>
+                </span>
+                </b> 
+                {{$syllabus->office_hours}}
+            </p>
         </div>
         <!-- course prerequisites -->
         <div class="mb-4">
             <div class="vSyllabusHeader2">
-                <h6>PREREQUISITES</h6>
+                <h6>
+                    PREREQUISITES
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['coursePrereqs']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$vancouverSyllabus->course_prereqs}}</p>
         </div>
         <!-- course corequisites -->
         <div class="mb-4">
             <div class="vSyllabusHeader2">
-                <h6>COREQUISITES</h6>
+                <h6>
+                    COREQUISITES
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['courseCoreqs']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$vancouverSyllabus->course_coreqs}}</p>
         </div>
         <!-- course contacts -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>CONTACTS</h6>
+                <h6>
+                    CONTACTS
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['courseContacts']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$vancouverSyllabus->contacts}}</p>
         </div>
         <!-- course instructor biographical statement -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>COURSE INSTRUCTOR BIOGRAPHICAL STATEMENT</h6>
+                <h6>COURSE INSTRUCTOR BIOGRAPHICAL STATEMENT
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['instructorBioStatement']}}"></i>
+                    </span>
+                </h6>
             </div>
             <p>{{$vancouverSyllabus->instructor_bio}}</p>
         </div>
         <!-- other instructional staff -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>OTHER INSTRUCTIONAL STAFF</h6>
+                <h6>
+                    OTHER INSTRUCTIONAL STAFF
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['otherCourseStaff']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm disabled mb-1" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$syllabus->other_instructional_staff}}</p>
         </div>
         <!-- course structure -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>COURSE STRUCTURE</h6>
+                <h6>
+                    COURSE STRUCTURE
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['courseStructure']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$vancouverSyllabus->course_structure}}</p>
         </div>
         <!-- schedule of topics -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>SCHEDULE OF TOPICS</h6>
+                <h6>
+                    SCHEDULE OF TOPICS
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$vancouverSyllabus->course_schedule}}</p>
         </div>
         <!--  learning outcomes -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>LEARNING OUTCOMES</h6>
+                <h6>
+                    LEARNING OUTCOMES
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningOutcomes']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm disabled mb-1" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
+            <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
             <p>{{$syllabus->learning_outcomes}}</p>
         </div>
         <!--  learning activities -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>LEARNING ACTIVITIES</h6>
+                <h6>
+                    LEARNING ACTIVITIES
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningActivities']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$syllabus->learning_activities}}</p>
         </div>
         <!--  learning materials -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>LEARNING MATERIALS</h6>
+                <h6>
+                    LEARNING MATERIALS
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningMaterials']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$syllabus->learning_materials}}</p>
         </div>
         <!--  assessments of learning -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>ASSESSMENTS OF LEARNING</h6>
+                <h6>
+                    ASSESSMENTS OF LEARNING
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningAssessments']}}"></i>
+                        <span class="d-inline-block has-tooltip " tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130">
+                            <button type="button" class="btn btn-danger btn-sm mb-1 disabled" style="font-size:10px;">Required by policy</button> 
+                        </span>
+                    </span>
+                </h6>
             </div>
             <p>{{$syllabus->learningAssessments}}</p>
         </div>
@@ -138,7 +236,11 @@
         <!--  late policy -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>LATE POLICY</h6>
+                <h6>LATE POLICY
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
+                    </span>
+                </h6>
             </div>
             <p>{{$syllabus->late_policy}}</p>
         </div>
@@ -152,7 +254,11 @@
         <!--  missed activity policy -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>MISSED ACTIVITY POLICY</h6>
+                <h6>MISSED ACTIVITY POLICY
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
+                    </span>
+                </h6>
             </div>
             <p>{{$syllabus->missed_activity_policy}}</p>
         </div>
@@ -173,14 +279,22 @@
             <!-- learning analytics -->
             <div class="mb-4">
                 <div class="vSyllabusHeader2">
-                    <h6>LEARNING ANALYTICS</h6>
+                    <h6>LEARNING ANALYTICS
+                        <span>
+                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningAnalytics']}}"></i>
+                        </span>
+                    </h6>
                 </div>
                 <p>{{$vancouverSyllabus->learning_analytics}}</p>
             </div>
             <!-- learning resources -->
             <div class="mb-4">
                 <div class="vSyllabusHeader2">
-                    <h6>LEARNING RESOURCES</h6>
+                    <h6>LEARNING RESOURCES
+                        <span>
+                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                        </span>
+                    </h6>
                 </div>
                 <p>{{$syllabus->learning_resources}}</p>
             </div>
@@ -212,9 +326,20 @@
     </div>
     <!-- footer -->
     <div class="card-footer p-4">
-        <button type="button" class="btn btn-primary col-2 btn-sm m-2 float-right" >Download <i class="bi bi-download"></i></button>
+        <form method="POST" action="{{ action('SyllabusController@syllabusToWordDoc', $syllabus->id) }}">
+            @csrf        
+            <button type="submit" class="btn btn-primary col-2 btn-sm m-2 float-right">Download <i class="bi bi-download"></i></button>
+        </form>
     </div>
 </div>
+
+<script type="application/javascript">
+    $(document).ready(function () {
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+</script>
 
 @endsection
 

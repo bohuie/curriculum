@@ -269,9 +269,35 @@ class CourseWizardController extends Controller
                                 ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
                                 ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
+        
+        // Returns the count of clos to plos for a courseProgram
+        $coursePrograms = $course->programs;
+        $clos = $course->learningOutcomes->pluck('l_outcome_id')->toArray();
+        $pl_outcomes = array();
+        $outcomeMapsCountPerProgram = array();
+        $outcomeMapsCountPerProgramCLO = array();
+        foreach ($coursePrograms as $courseProgram) {
+            $pl_outcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes->pluck('pl_outcome_id')->toArray();
+            $outcomeMapsCountPerProgram[$courseProgram->program_id] = 0;
+            $outcomeMapsCountPerProgramCLO[$courseProgram->program_id] = array();
+        }
+        foreach ($clos as $clo) {
+            foreach ($pl_outcomes as $programId => $pl_outcome) {
+                $outcomeMapsCountPerProgramCLO[$programId][$clo] = 0;
+                foreach ($pl_outcome as $pl_outcome_id) {
+                    if (OutcomeMap::where('l_outcome_id', $clo)->where('pl_outcome_id', $pl_outcome_id)->exists()) {
+                        // increment for program (Outer Accordion)
+                        $outcomeMapsCountPerProgram[$programId] +=1;
+                        // increment for clos (Inner Accordion)
+                        $outcomeMapsCountPerProgramCLO[$programId][$clo] += 1;
+                    }
+                }
+            }
+        }
 
         return view('courses.wizard.step5')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
-        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount);
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
+        ->with('outcomeMapsCountPerProgram', $outcomeMapsCountPerProgram)->with('outcomeMapsCountPerProgramCLO', $outcomeMapsCountPerProgramCLO);
     }
 
     public function step6($course_id, Request $request)

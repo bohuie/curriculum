@@ -35,21 +35,6 @@ class OkanaganSyllabusResourceSeeder extends Seeder
         ]);
 
         OkanaganSyllabusResource::create([
-            'id_name' => 'health',
-            'title' => 'Health and Wellness',
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'safewalk',
-            'title' => 'Safewalk',
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'student',
-            'title' => 'Student Learning Hub',
-        ]);
-
-        OkanaganSyllabusResource::create([
             'id_name' => 'disability',
             'title' => 'UBC Okanagan Disability Resource Centre',
         ]);
@@ -60,8 +45,28 @@ class OkanaganSyllabusResourceSeeder extends Seeder
         ]);
 
         OkanaganSyllabusResource::create([
+            'id_name' => 'health',
+            'title' => 'Health and Wellness',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'student',
+            'title' => 'Student Learning Hub',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'global',
+            'title' => 'The Global Engagement Office'
+        ]);
+
+        OkanaganSyllabusResource::create([
             'id_name' => 'copyright',
             'title' => '© Copyright Statement',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'safewalk',
+            'title' => 'Safewalk',
         ]);
 
     }
