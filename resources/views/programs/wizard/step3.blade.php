@@ -261,7 +261,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                            Are you sure you want to email the instructor of {{$programCourse->course_code . ' ' . $programCourse->course_num}} to ask them to map their course to your program?
+                                                            Are you sure you want to email {{$programCourse->owners[0]->name}} the instructor of {{$programCourse->course_code . ' ' . $programCourse->course_num}} to ask them to map their course to your program?
                                                             </div>
                                                             <form action="{{route('courses.emailCourseInstructor', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
                                                                 @csrf
