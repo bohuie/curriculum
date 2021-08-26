@@ -8,6 +8,15 @@
 
             <div class="card">
                 <div class="card-header wizard">
+                    <h3 style="display: inline-block;">Column Chart</h3>
+                </div>
+                <div class="container mt-5">
+                    <div id="high-chart"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header wizard">
                     <div class="w-25" style="display: inline-block;"></div>
                     <h3 style="display: inline-block;">Program Overview</h3>
                     <a class="float-right w-25" href="{{route('programs.pdf', $program->program_id)}}" style="display: inline-block;">
@@ -450,6 +459,63 @@
         });
     });
 </script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script type="text/javascript">
+
+    var ms = <?php echo json_encode($programMappingScales)?>;
+    var colours = <?php echo json_encode($programMappingScalesColours)?>;
+    var plosInOrder = <?php echo json_encode($plosInOrder)?>;
+    console.log(ms);
+    console.log(colours);
+    console.log(plosInOrder);
+    var series = [];
+
+    series = generateData(ms, colours);
+
+    function generateData(ms, colours) {
+        var series = [];
+
+        for (var i = 0; i < ms.length; i++) {
+            series.push({
+                name: ms[i],
+                data: [1, 2, 3],
+                color: colours[i]
+            });
+        }
+        return series;
+    }
+
+    $('#high-chart').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Number of Course Outcomes'
+        },
+        subtitle: {
+            text: 'per Program Learning Outcomes'
+        },
+        xAxis: {
+            title: {
+                text: 'Program Learning Outcomes'
+            },
+            categories: plosInOrder
+        },
+        yAxis: {
+            title: {
+                text: '# of Outcomes'
+            }
+        },
+        series: series
+    });
+
+</script>
+<style>
+    .highcharts-credits {
+        display: none;
+    }
+</style>
 
 <style>
 

@@ -9,6 +9,7 @@ use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
+use App\Models\User;
 use Database\Seeders\MappingScaleSeeder;
 use Illuminate\Support\Facades\DB;
 use Mockery\Undefined;
@@ -310,7 +311,7 @@ class ChartController extends Controller
         $chart->title('PLO Mapping Chart', 20, '#666', true, 'Arial');
 
 
-        return view('pages.chart', compact('chart'));
+        return view('pages.chart', compact('chart'), compact('testtt'));
     }
     public function convertHexToRGBA($hexColour, $transparency){
         //hex to [r,g,b]

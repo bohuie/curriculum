@@ -370,12 +370,33 @@ class ProgramWizardController extends Controller
         $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
         $storeRequired = $this->assignColours($storeRequired);
 
+        ////////////////////////////////////////////////
+        // Get Mapping Scales for high-chart
+        $programMappingScales = $mappingScales->pluck('abbreviation')->toArray();
+        $programMappingScales[count($programMappingScales)] = 'N/A';
+        // Get Mapping Scale Colours for high-chart
+        $programMappingScalesIds = $mappingScales->pluck('map_scale_id')->toArray();
+        $programMappingScalesIds[count($programMappingScalesIds)] = 0;
+        $programMappingScalesColours = [];
+        for ($i = 0; $i < count($programMappingScalesIds); $i++) {
+            $programMappingScalesColours[$i] = (MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first() == "#FFFFFF" ? "#6c757d" : MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first());
+        }
+        // get categorized plo's for the program (ordered by category then outcome id)
+        $plos_order = ProgramLearningOutcome::where('program_id', $program_id)->whereNotNull('plo_category_id')->orderBy('plo_category_id', 'ASC')->orderBy('pl_outcome_id', 'ASC')->get();
+        // get UnCategorized PLO's
+        $uncatPLOS = ProgramLearningOutcome::where('program_id', $program_id)->whereNull('plo_category_id')->get();
+        // Merge Categorized PLOs and Uncategorized PLOs
+        $all_plos = $plos_order->toBase()->merge($uncatPLOS);
+        $plosInOrder = $all_plos->pluck('plo_shortphrase')->toArray();
+        ////////////////////////////////////////////////
+
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('coursesOutcomes', $coursesOutcomes)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
                                             ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
-                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
+                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'));
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
