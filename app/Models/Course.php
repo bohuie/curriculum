@@ -56,6 +56,11 @@ class Course extends Model
         //return $this->hasMany(Standard::class, 'standard_category_id', 'standard_category_id');
         return $this->hasManyThrough(StandardScale::class, StandardsScaleCategory::class);
     }
+
+    public function optionalPriorities(){
+        return $this->belongsToMany(OptionalPriorities::class, 'course_optional_priorities', 'course_id', 'op_id');
+    }
+
     
     //these are for the tables of child records on the course crud controller
     public function getCLOtableAttribute(){
@@ -166,9 +171,6 @@ class Course extends Model
         DB::table('outcome_activities')->whereIn('l_activity_id', $setDel)->delete();
     }
 
-    public function optionalPriorities(){
-        return $this->belongsToMany(OptionalPriorities::class, 'course_optional_priorities', 'course_id', 'op_id');
-    }
 
 }
 
