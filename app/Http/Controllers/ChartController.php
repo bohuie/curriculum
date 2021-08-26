@@ -59,7 +59,7 @@ class ChartController extends Controller
             - here we will have a list of PLOs for a program - in a collection I think
         */
         $mapScales_ids = array();
-        
+        $mapScales_ids_perPLO = array();
         foreach($all_plos as $plo){
             /*
             3. Get map scale ids ($ms_ids)
@@ -237,7 +237,7 @@ class ChartController extends Controller
             $idx += 1;
         }*/
         
-        
+        /*
         foreach($output as $dataset){
         
             //dd($dataset);
@@ -254,7 +254,7 @@ class ChartController extends Controller
             
         }/**/
 
-        /*
+        
         $bg1 = $this->convertHexToRGBA('#80bdff', '0.5');
         $bg2 = $this->convertHexToRGBA('#1aa7ff', '0.5');
         $bg3 = $this->convertHexToRGBA('#0065bd', '0.5');
@@ -293,7 +293,7 @@ class ChartController extends Controller
             'backgroundColor'=>($bg3),
             'borderColor'=>($bord3),
         ]);
-        */
+        
         //make the scale always step size (increment) of 1
         $chart->options([
             'scales' => [
