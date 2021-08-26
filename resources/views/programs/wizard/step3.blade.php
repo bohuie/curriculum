@@ -14,15 +14,15 @@
 
                 <div class="card-body">
                     <h6 class="card-subtitle text-center mb-4 lh-lg">
-                        Add required and non-required courses to this program. After adding courses to this program, each course can be mapped to the Program Learning Outcomes (PLOs) of this Program (identified in step 1). Once all courses have been individually mapped to this program’s PLOs, you can visit the “Program Summary/Step 4” to see the learning outcomes map of the program.
+                    Add required and non-required courses to this program. After adding the courses, each course should be mapped to the Program Learning Outcomes (PLOs) of this Program. Once all courses have been individually mapped to this program, visit the “Program Summary/Step 4” to see the learning outcomes map of the program. 
 
                     </h6>
                     <h6 class="card-subtitle wizard text-primary fw-bold">
-                        Note: Only course owners or editors can map the course to these program’s PLOs.
+                        Note: Only course owners or editors can map the course to this program.
                     </h6>
                     <ul>
-                        <li>If you are the owner or an editor of a course, you will need go to your dashboard, select the course, identify the course learning outcomes in step 1 (if not already done) and map them to this program’s PLOs (step 5).</li>
-                        <li>Otherwise, you can let the course owner know that this program has been created and that their course can now be mapped to the PLOs by clicking the ‘Ask Instructor to Map Course’ button.</li>
+                        <li class="my-2"><button type="button" class="btn btn-outline-primary btn-sm ml-2" disabled>Map Course</button> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
+                        <li class="my-2"><button type="button" class="btn btn-outline-primary btn-sm ml-2" disabled>Ask to map Course</button> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
                     </ul>
                     
                     <div class="row mb-2">
@@ -85,7 +85,7 @@
                                             <td>
                                                 {{$programCourse->year}} {{$programCourse->semester}}
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 @if($actualTotalOutcomes[$programCourse->course_id] == 0)
                                                     <i class="bi bi-exclamation-circle-fill text-danger pr-2"></i>Not Mapped
                                                 @elseif ($actualTotalOutcomes[$programCourse->course_id] < $expectedTotalOutcomes[$programCourse->course_id])
@@ -113,14 +113,14 @@
                                                         </button>
                                                     @elseif($programCourse->owners[0]->id == $user->id)
                                                         <!-- Allow owner to be redirected to the course to map it -->
-                                                        <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                        <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
                                                             Map Course
                                                         </a>
                                                     @endif
                                                     @foreach($programCourse->editors as $editor)
                                                         @if($editor->id == $user->id && $programCourse->pivot->map_status != 1)
                                                             <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
-                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
                                                                 Map Course
                                                             </a>
                                                             <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
