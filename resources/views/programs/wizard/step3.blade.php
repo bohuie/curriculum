@@ -21,8 +21,8 @@
                         Note: Only course owners or editors can map the course to this program.
                     </h6>
                     <ul>
-                        <li class="my-2"><button type="button" class="btn btn-outline-primary btn-sm ml-2" disabled>Map Course</button> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
-                        <li class="my-2"><button type="button" class="btn btn-outline-primary btn-sm ml-2" disabled>Ask to map Course</button> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
+                        <li class="my-2"><b>Button - Map Course:</b> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
+                        <li class="my-2"><b>Button - Ask to map course:</b> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
                     </ul>
                     
                     <div class="row mb-2">
