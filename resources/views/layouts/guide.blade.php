@@ -416,7 +416,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Learning Outcomes (Step 1)</u></h2>
             <br>
-            
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
@@ -447,6 +447,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Student Assessment Methods Guide (Step 2)</u></h2>
             <br>
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
@@ -477,6 +478,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Teaching and Learning Activities (Step 3)</u></h2>
             <br>
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
@@ -507,6 +509,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Alignment (Step 4)</u></h2>
             <br>
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
@@ -537,6 +540,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Program Outcome Mapping (Step 5)</u></h2>
             <br>
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
@@ -567,6 +571,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Standards and Strategic Priorities (Step 6)</u></h2>
             <br>
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
@@ -597,6 +602,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Summary (Step 7)</u></h2>
             <br>
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
@@ -625,8 +631,9 @@
         $("#guideModal .modal-title").text('Syllabi Guide');
         // Body
         $("#guideModal .update-content").html(`
-            <p>info for syllabi</p>
-            <img src="{{asset('img/team/Daulton-200x200.png')}}">
+            <h2 class="mb-4 head"><u>Syllabi</u></h2>
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
         `);
     }
 
