@@ -71,6 +71,10 @@
                             @else
 
                             <li class="nav-item">
+                                <a class="nav-link text-white" href="https://ubc.ca1.qualtrics.com/jfe/form/SV_6XPhsAWAh6H2l6K" target="_blank" rel="noopener">Feedback</a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link text-white" href="{{ route('home')}}">My Dashboard</a>
                             </li>
 
