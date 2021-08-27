@@ -378,7 +378,9 @@ class ProgramWizardController extends Controller
         $programMappingScalesIds = $mappingScales->pluck('map_scale_id')->toArray();
         $programMappingScalesIds[count($programMappingScalesIds)] = 0;
         $programMappingScalesColours = [];
+        $freqOfMSIds = [];          // used in a later step
         for ($i = 0; $i < count($programMappingScalesIds); $i++) {
+            $freqOfMSIds[$programMappingScalesIds[$i]] = [];
             $programMappingScalesColours[$i] = (MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first() == "#FFFFFF" ? "#6c757d" : MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first());
         }
         // get categorized plo's for the program (ordered by category then outcome id)
@@ -389,6 +391,29 @@ class ProgramWizardController extends Controller
         $all_plos = $plos_order->toBase()->merge($uncatPLOS);
         $plosInOrder = $all_plos->pluck('plo_shortphrase')->toArray();
         ////////////////////////////////////////////////
+        /* ms_id's (I, D, A, cs, N/A)
+                1 = 'I' => [countOfAbvFor(plo1), countOfAbvFor(plo2), ... , countOfAbvFor(plo7)]
+                2 = 'D' => [ ... ]
+                3 = 'A' => []
+                34 = 'cs' => []
+                0 = 'N/A' => []
+        */
+        // loop through $freqOfMSIds then
+        // loop through PLOs ($ploInOrderIds) and get array [countOfAbvFor(plo1), countOfAbvFor(plo2), ... , countOfAbvFor(plo7)]
+        $plosInOrderIds = $all_plos->pluck('pl_outcome_id')->toArray();
+        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+            foreach($plosInOrderIds as $plosInOrderId) {
+                array_push($freqOfMSIds[$ms_id], OutcomeMap::where('pl_outcome_id', $plosInOrderId)->where('map_scale_id', $ms_id)->count());
+            }
+        }
+        // Change key se that order isn't messed up when data is used in highcharts 
+        $index = 0;
+        $freqForMS = [];
+        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+            $freqForMS[$index] = $freqOfMSId;
+            $index++;
+        }
+        ////////////////////////////////////////////////
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
@@ -396,7 +421,7 @@ class ProgramWizardController extends Controller
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
                                             ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
                                             ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'));
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'));
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {

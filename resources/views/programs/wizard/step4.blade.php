@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             @include('programs.wizard.header')
-
+            <!-- Column Chart -->
             <div class="card">
                 <div class="card-header wizard">
                     <h3 style="display: inline-block;">Column Chart</h3>
@@ -14,7 +14,7 @@
                     <div id="high-chart"></div>
                 </div>
             </div>
-
+            <!-- End Column Chart -->
             <div class="card">
                 <div class="card-header wizard">
                     <div class="w-25" style="display: inline-block;"></div>
@@ -25,7 +25,7 @@
                         </button>
                     </a>
                 </div>
-                        
+                
                         <!-- Program Learning Outcomes -->
                         <div class="card-body">
                             <h5 class="card-title">
@@ -466,9 +466,7 @@
     var ms = <?php echo json_encode($programMappingScales)?>;
     var colours = <?php echo json_encode($programMappingScalesColours)?>;
     var plosInOrder = <?php echo json_encode($plosInOrder)?>;
-    console.log(ms);
-    console.log(colours);
-    console.log(plosInOrder);
+    var freq = <?php echo json_encode($freqForMS)?>;
     var series = [];
 
     series = generateData(ms, colours);
@@ -479,7 +477,7 @@
         for (var i = 0; i < ms.length; i++) {
             series.push({
                 name: ms[i],
-                data: [1, 2, 3],
+                data: freq[i],
                 color: colours[i]
             });
         }
@@ -495,6 +493,11 @@
         },
         subtitle: {
             text: 'per Program Learning Outcomes'
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
         },
         xAxis: {
             title: {
