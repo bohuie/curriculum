@@ -10,10 +10,20 @@
         </div>
 
         <div class="col-md-12">
-            <div class="card shadow rounded m-4" style="border-style: solid;border-color: #1E90FF;">
-                <div class="card-title bg-primary p-3">
-                    <h3 style="color: white;">
-                        Programs    
+
+                <div class="card shadow rounded m-4" style="border-style: solid;
+                border-color: #1E90FF;">
+                    <div class="card-title bg-primary p-3">
+                        <h3 style="color: white;">
+                        Programs
+                        
+                        <div style="float:right;">
+                            <button id="programHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
+                        @include('layouts.guide')
+
                         <div style="float:right;">
                             <button style="border: none; background: none; outline: none;" data-toggle="modal" data-target="#createProgramModal">
                                 <i class="bi bi-plus-circle text-white"></i>
@@ -140,40 +150,18 @@
                                     </div>
                                 </div>
 
-                                @endif
-                            </td>
-                        </tr>
-                    </tbody>
-                    @endforeach
-                            
-                    <!-- Displays Programs I can view -->
-                    @if (count($myPrograms->where('userPermission', 3)) > 0)
-                    <tr>
-                        <th colspan="6" class="table-secondary">Programs I Can View</th>
-                    </tr>
-                    @endif
-                            
-                    @foreach ($myPrograms->where('userPermission', 3)->values() as $index => $program) 
-                    <tbody>
-                        <tr>
-                            <td><a href="{{route('programWizard.step1', $program->program_id)}}">{{$program->program}}</a></td>
-                            <td>{{$program->faculty}} </td>
-                            <td>{{$program->level}}</td>
-                            <td>{{$program->timeSince}}</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                    @endforeach
-                </table>
-                @endif
-            </div>
-            <!-- End of Programs -->
-            
-            <!-- Start of Courses -->
-            <div class="card shadow rounded m-4" style="border-style: solid;border-color: #1E90FF;">
-                <div class="card-title bg-primary p-3">
-                    <h3 style="color: white;">
-                        Courses       
+                <div class="card shadow rounded m-4" style="border-style: solid;
+                border-color: #1E90FF;">
+                    <div class="card-title bg-primary p-3">
+                        <h3 style="color: white;">
+                        Courses
+                        
+                        <div style="float:right;">
+                            <button id="coursesHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
+                        @include('layouts.guide')
 
                         <div style="float:right;">
                             <button style="border: none; background: none; outline: none;" data-toggle="modal" data-target="#createCourseModal">
@@ -551,11 +539,19 @@
             </div>
             <!-- End of Courses -->
 
-            <!-- Start of Syllabi Section -->
-            <div class="card shadow rounded m-4" style="border-style: solid;border-color: #1E90FF;">
-                <div class="card-title bg-primary p-3">
-                    <h3 style="color: white;">
-                    Syllabi   
+                <!-- My Syllabi Section -->
+                <div class="card shadow rounded m-4" style="border-style: solid;
+                border-color: #1E90FF;">
+                    <div class="card-title bg-primary p-3">
+                        <h3 style="color: white;">
+                        Syllabi
+                        
+                        <div style="float:right;">
+                            <button id="syllabiHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
+                        @include('layouts.guide')
 
                         <div style="float:right;">
                             <a href="{{route('syllabus')}}">
@@ -759,7 +755,7 @@
                     </div>
                                                 
                     <div class="form-group row">
-                        <label for="faculty" class="col-md-3 col-form-label text-md-right">Faculty/School</label>
+                        <label for="faculty" class="col-md-3 col-form-label text-md-right"><span class="requiredField">* </span>Faculty/School</label>
                         <div class="col-md-8">
                             <select id='faculty' class="custom-select" name="faculty" required>
                                 <option disabled selected hidden>Open this select menu</option>
@@ -1040,7 +1036,6 @@
         });
 
     });
-
 
 </script>
 
