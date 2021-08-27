@@ -22,6 +22,10 @@ Route::get('/', function () {
     return view('pages.landing');
 });
 
+Route::get('/admin-view', function () {
+    return view('pages.celebration');
+});
+
 Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');

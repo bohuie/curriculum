@@ -89,7 +89,7 @@
                                         
 
                                         @can('admin-privilege')
-                                            <a class="dropdown-item" href="{{ url('/admin') }}">
+                                            <a class="dropdown-item" href="{{ url('/admin-view') }}">
                                                 System Administrator
                                             </a>
                                         @endcan
