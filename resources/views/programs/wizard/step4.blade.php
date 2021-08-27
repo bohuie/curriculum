@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             @include('programs.wizard.header')
-
+            
             <div class="card">
                 <div class="card-header wizard">
                     <div class="w-25" style="display: inline-block;"></div>
@@ -16,7 +16,7 @@
                         </button>
                     </a>
                 </div>
-                        
+                
                         <!-- Program Learning Outcomes -->
                         <div class="card-body">
                             <h5 class="card-title">
@@ -419,9 +419,28 @@
                                 <!--End tab-pane-->
                             </div>
                             <!--End tab-content-->
+
+                            <!-- Column Chart -->
+                            <div class="mt-5">
+                                <form action="">
+                                    <div class=" mx-5 mt-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
+                                            <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
+                                            <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="container mt-0">
+                                    <div id="high-chart"></div>
+                                </div>
+                            </div>
+
                         </div>
                         <!--End card-body-->
-
                         <div class="card-footer">
                             <div class="card-body mb-4">
                                 @if (! $isViewer)
@@ -439,7 +458,6 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-
         // Enables functionality of tool tips
         $('[data-toggle="tooltip"]').tooltip({html:true});
 
@@ -450,6 +468,133 @@
         });
     });
 </script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+<script type="text/javascript">
+    // This is required to set the radio button to checked, this is a known firefox bug.
+    window.onload=check;
+    function check() {
+        document.getElementById("Cluster").checked = true;
+    }
+
+    var ms = <?php echo json_encode($programMappingScales)?>;
+    var colours = <?php echo json_encode($programMappingScalesColours)?>;
+    var plosInOrder = <?php echo json_encode($plosInOrder)?>;
+    var freq = <?php echo json_encode($freqForMS)?>;
+    var series = [];
+
+    series = generateData(ms, colours);
+
+    function generateData(ms, colours) {
+        var series = [];
+
+        for (var i = 0; i < ms.length; i++) {
+            series.push({
+                name: ms[i],
+                data: freq[i],
+                color: colours[i]
+            });
+        }
+        return series;
+    }
+
+    $('#high-chart').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Number of Course Outcomes'
+        },
+        subtitle: {
+            text: 'per Program Learning Outcomes'
+        },
+        xAxis: {
+            title: {
+                text: 'Program Learning Outcomes'
+            },
+            categories: plosInOrder
+        },
+        yAxis: {
+            title: {
+                text: '# of Outcomes'
+            }
+        },
+        series: series
+    });
+
+    function StackedColumn() {
+        $('#high-chart').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Number of Course Outcomes'
+            },
+            subtitle: {
+                text: 'per Program Learning Outcomes'
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            xAxis: {
+                title: {
+                    text: 'Program Learning Outcomes'
+                },
+                categories: plosInOrder
+            },
+            yAxis: {
+                title: {
+                    text: '# of Outcomes'
+                }
+            },
+            series: series
+        });
+    }
+
+    function ClusterColumn() {
+        $('#high-chart').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Number of Course Outcomes'
+            },
+            subtitle: {
+                text: 'per Program Learning Outcomes'
+            },
+            xAxis: {
+                title: {
+                    text: 'Program Learning Outcomes'
+                },
+                categories: plosInOrder
+            },
+            yAxis: {
+                title: {
+                    text: '# of Outcomes'
+                }
+            },
+            series: series
+        });
+    }
+
+    $('input[type=radio][name=chart_select]').change(function() {
+        if (this.id == 'Cluster'){
+            ClusterColumn();
+        } else if (this.id == 'Stacked') {
+            StackedColumn();
+        }
+    });
+
+</script>
+<style>
+    .highcharts-credits {
+        display: none;
+    }
+</style>
 
 <style>
 
