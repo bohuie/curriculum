@@ -427,14 +427,14 @@
                                 <h3 style="display: inline-block;">Column Chart</h3>
                             </div>
                             <form action="">
-                                <div class="float-right mx-5 mt-2">
+                                <div class=" mx-5 mt-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
-                                        <label class="form-check-label" for="Cluster">Cluster Chart</label>
+                                        <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
-                                        <label class="form-check-label" for="Stacked">Stacked Chart</label>
+                                        <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
                                     </div>
                                 </div>
                             </form>
