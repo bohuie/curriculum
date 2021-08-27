@@ -186,7 +186,7 @@
             <br>
             <h2 class="text-center mb-4">How to Create a Category</h2>
             <p class="help-p my-3" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required. To create a category, click the '+ PLO Category' button as shown below.</p>
-            <img class="img center my-3" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
+            <img class="img center my-3" src="{{asset('img/guide/plo_categories.PNG')}}" onclick="onClick(this)">
             <br>
             <p class="help-p my-3" style="font-size:18px;">After you click on the button to create a category you will be prompted with the following form to fill out.</p>
             <img class="img center my-3" src="{{asset('/img/guide/CreateCategoryModal.PNG')}}" onclick="onClick(this)">
