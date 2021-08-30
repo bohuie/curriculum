@@ -227,7 +227,7 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td style="max-width: 280px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -268,7 +268,7 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td style="max-width: 280px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -377,7 +377,7 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td style="max-width: 280px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -417,7 +417,7 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td style="max-width: 280px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -476,7 +476,7 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td style="max-width: 280px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -516,7 +516,7 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td style="max-width: 280px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
