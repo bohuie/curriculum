@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseProgram;
 use App\Models\PLOCategory;
 use Illuminate\Http\Request;
 

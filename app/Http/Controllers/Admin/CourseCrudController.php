@@ -242,7 +242,7 @@ class CourseCrudController extends CrudController
         
         $this->crud->addField([
             'name' => 'standard_category_id', // The db column name
-            'label' => "Standard <br>Category", // Table column heading
+            'label' => "Standard Category", // Table column heading
             'type' => 'select',
             'entity' => 'standardCategory', // the method that defines the relationship in your Model
             'attribute' => "sc_name", // foreign key attribute that is shown to user (identifiable attribute)
@@ -252,7 +252,7 @@ class CourseCrudController extends CrudController
         
         $this->crud->addField([
             'name' => 'scale_category_id', // The db column name
-            'label' => "Standards Scale<br>Category", // Table column heading
+            'label' => "Standards Scale Category", // Table column heading
             'type' => 'select',
             'entity' => 'standardScalesCategory', // the method that defines the relationship in your Model
             'attribute' => "name", // foreign key attribute that is shown to user (identifiable attribute)
@@ -263,14 +263,14 @@ class CourseCrudController extends CrudController
           //added this block as fix for bug03 (MD)
         $this->crud->addField([   // radio
             'name'        => 'year', // the name of the db column
-            'label'       => 'Course Year (Level)', // the input label
+            'label'       => 'Course Year', // the input label
             'type'        => 'radio',
             'options'     => [
                 // the key will be stored in the db, the value will be shown as label; 
-                1 => "1",
-                2 => "2",
-                3 => "3",
-                4 => "4"
+                2018 => "2018",
+                2019 => "2019",
+                2020 => "2020",
+                2021 => "2021"
             ],
             'default'     => 1,
             // optional

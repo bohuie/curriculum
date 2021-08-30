@@ -560,18 +560,35 @@
                     </div>
                 @else
                     <table class="table">
+                        <?php $pos = 0 ?>
                         @foreach ($optionalSubcategories as $optionalSubcategory)
                             <tr>
-                                <th colspan="2" class="table-secondary">{!! $optionalSubcategory->subcat_name !!}</th>
+                                <th colspan="2" class="info">{!! $optionalSubcategory->subcat_name !!}</th>
                             </tr>
-                            @foreach ($course->optionalPriorities as $index => $optional_Plo)
-                                @if ($optionalSubcategory->subcat_id == $optional_Plo->subcat_id)
+                            @if ($optionalSubcategory->subcat_id == 1)
+                                @foreach ($course->optionalPriorities->where('subcat_id', 1)->pluck('year')->unique()->sortDesc() as $year)
                                     <tr>
-                                        <td style="width:5%" >{{$index + 1}}</td>
-                                        <td>{!! $optional_Plo->optional_priority !!}</td>
+                                        <th colspan="2" class="active">{{$year}}</th>
                                     </tr>
-                                @endif
-                            @endforeach
+                                    @foreach ($course->optionalPriorities->where('subcat_id', 1)->where('year', $year) as $priority)
+                                        <?php $pos++ ?>
+                                        <tr>
+                                            <td style="width:5%">{{$pos}}</td>
+                                            <td>{!! $priority->optional_priority !!}</td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            @else
+                                @foreach ($course->optionalPriorities as $index => $optional_Plo)
+                                    @if ($optionalSubcategory->subcat_id == $optional_Plo->subcat_id)
+                                        <?php $pos++ ?>
+                                        <tr>
+                                            <td style="width:5%" >{{$pos}}</td>
+                                            <td>{!! $optional_Plo->optional_priority !!}</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            @endif
                         @endforeach
                     </table>
                 @endif

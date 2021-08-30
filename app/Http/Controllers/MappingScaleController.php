@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseProgram;
 use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
@@ -59,11 +60,13 @@ class MappingScaleController extends Controller
         $ms->description = $request->input('description');
         $ms->colour = $request->input('colour');
         $ms->save();
-
         
         $msp = new MappingScaleProgram;
         $msp->map_scale_id = $ms->map_scale_id;
         $msp->program_id = $request->input('program_id');
+
+        CourseProgram::where('program_id', $request->input('program_id'))->update(['map_status' => 0]);
+
         
         if($msp->save()){
             $request->session()->flash('success', 'Mapping scale level added');
@@ -200,6 +203,7 @@ class MappingScaleController extends Controller
                 $request->session()->flash('error', 'There was an error deleting the plo category');
             }
         }
+        CourseProgram::where('program_id', $request->input('program_id'))->update(['map_status' => 0]);
 
         return redirect()->route('programWizard.step2', $request->input('program_id'));
     }

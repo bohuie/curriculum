@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseProgram;
 use App\Models\ProgramLearningOutcome;
 use Illuminate\Http\Request;
 
@@ -50,6 +51,8 @@ class ProgramLearningOutcomeController extends Controller
         $plo->pl_outcome = $request->input('plo');
         $plo->plo_shortphrase = $request->input('title');
         $plo->program_id = $request->input('program_id');
+
+        CourseProgram::where('program_id', $request->input('program_id'))->update(['map_status' => 0]);
 
         if($request->has('category')){
             $plo->plo_category_id = $request->input('category');
