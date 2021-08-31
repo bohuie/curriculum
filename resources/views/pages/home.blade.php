@@ -923,7 +923,7 @@
                                     Number</label>
 
                             <div class="col-md-8">
-                                <input id="course_num" type="number" max="700" min="100" pattern="[0-9]*"
+                                <input id="course_num" type="text"
                                         class="form-control @error('course_num') is-invalid @enderror" name="course_num"
                                         required autofocus>
 
