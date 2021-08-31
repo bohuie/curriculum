@@ -7,16 +7,31 @@
             @include('programs.wizard.header')
             
             <div class="card">
-                <div class="card-header wizard">
-                    <div class="w-25" style="display: inline-block;"></div>
-                    <h3 style="display: inline-block;">Program Overview</h3>
-                    <a class="float-right w-25" href="{{route('programs.pdf', $program->program_id)}}" style="display: inline-block;">
-                        <button class="btn btn-primary col mr-5" onclick="{{route('programs.pdf', $program->program_id)}}" style="display: inline-block;">
-                            Download PDF<i class="bi bi-download pl-2" style="display: inline-block;"></i>
-                        </button>
-                    </a>
-                </div>
-                
+                <h3 class="card-header wizard">
+                    <div class="row">
+                        <div class="col text-left">
+                            <a class="w-25" href="{{route('programs.pdf', $program->program_id)}}">
+                                <button class="btn btn-primary" onclick="{{route('programs.pdf', $program->program_id)}}">
+                                    Download PDF <i class="bi bi-download"></i>
+                                </button>
+                            </a>
+                        </div>
+
+                        <div class="col">
+                            Program Overview
+                        </div>
+
+                        <div class="col text-right">
+                            <button id="programOverviewHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle" style="color:#002145;"></i>
+                            </button>
+                        </div>
+                        <div class="text-left">
+                            @include('layouts.guide')
+                        </div>
+                    </div>
+                </h3>
+                        
                         <!-- Program Learning Outcomes -->
                         <div class="card-body">
                             <h5 class="card-title">

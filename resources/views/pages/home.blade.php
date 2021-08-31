@@ -10,10 +10,20 @@
         </div>
 
         <div class="col-md-12">
-            <div class="card shadow rounded m-4" style="border-style: solid;border-color: #1E90FF;">
-                <div class="card-title bg-primary p-3">
-                    <h3 style="color: white;">
-                        Programs    
+
+                <div class="card shadow rounded m-4" style="border-style: solid;
+                border-color: #1E90FF;">
+                    <div class="card-title bg-primary p-3">
+                        <h3 style="color: white;">
+                        Programs
+                        
+                        <div style="float:right;">
+                            <button id="programHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
+                        @include('layouts.guide')
+
                         <div style="float:right;">
                             <button style="border: none; background: none; outline: none;" data-toggle="modal" data-target="#createProgramModal">
                                 <i class="bi bi-plus-circle text-white"></i>
@@ -173,7 +183,14 @@
             <div class="card shadow rounded m-4" style="border-style: solid;border-color: #1E90FF;">
                 <div class="card-title bg-primary p-3">
                     <h3 style="color: white;">
-                        Courses       
+                        Courses
+                    
+                    <div style="float:right;">
+                        <button id="coursesHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                            <i class="bi bi-question-circle text-white"></i>
+                        </button>
+                    </div>
+                    @include('layouts.guide')
 
                         <div style="float:right;">
                             <button style="border: none; background: none; outline: none;" data-toggle="modal" data-target="#createCourseModal">
@@ -210,7 +227,7 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -251,7 +268,7 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -360,7 +377,7 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -400,7 +417,7 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -459,7 +476,7 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -499,7 +516,7 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
@@ -551,11 +568,19 @@
             </div>
             <!-- End of Courses -->
 
-            <!-- Start of Syllabi Section -->
-            <div class="card shadow rounded m-4" style="border-style: solid;border-color: #1E90FF;">
-                <div class="card-title bg-primary p-3">
-                    <h3 style="color: white;">
-                    Syllabi   
+                <!-- My Syllabi Section -->
+                <div class="card shadow rounded m-4" style="border-style: solid;
+                border-color: #1E90FF;">
+                    <div class="card-title bg-primary p-3">
+                        <h3 style="color: white;">
+                        Syllabi
+                        
+                        <div style="float:right;">
+                            <button id="syllabiHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle text-white"></i>
+                            </button>
+                        </div>
+                        @include('layouts.guide')
 
                         <div style="float:right;">
                             <a href="{{route('syllabus')}}">
@@ -759,7 +784,7 @@
                     </div>
                                                 
                     <div class="form-group row">
-                        <label for="faculty" class="col-md-3 col-form-label text-md-right">Faculty/School</label>
+                        <label for="faculty" class="col-md-3 col-form-label text-md-right"><span class="requiredField">* </span>Faculty/School</label>
                         <div class="col-md-8">
                             <select id='faculty' class="custom-select" name="faculty" required>
                                 <option disabled selected hidden>Open this select menu</option>
@@ -1040,7 +1065,6 @@
         });
 
     });
-
 
 </script>
 

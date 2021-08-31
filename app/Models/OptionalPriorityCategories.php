@@ -18,7 +18,7 @@ class OptionalPriorityCategories extends Model
         'cat_id',    
         'cat_name'   
     ];
-    public function optionalPrioritySubcategory(){
+    public function optionalPrioritySubcategories(){
         return $this->hasMany(OptionalPrioritySubcategories::class, 'cat_id', 'cat_id');
     }
 }
