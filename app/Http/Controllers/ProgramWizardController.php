@@ -303,11 +303,35 @@ class ProgramWizardController extends Controller
 
         // get all of the first year courses this program belongs to
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $forthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+
         $count = 0;
         foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
-            // if the first number in course_num is not 1 then remove it from the collection
-            if ($firstYearProgramCourse->course_num[0] != '1') {
+            if ($firstYearProgramCourse->course_num[0] != '1') {           // if the first number in course_num is not 1 then remove it from the collection
                 $firstYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
+            if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 2 then remove it from the collection
+                $secondYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
+            if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 3 then remove it from the collection
+                $thirdYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($forthYearProgramCourses as $forthYearProgramCourse) {
+            if ($forthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 4 then remove it from the collection
+                $forthYearProgramCourses->forget($count);
             }
             $count++;
         }
@@ -381,6 +405,39 @@ class ProgramWizardController extends Controller
         $storeFirst = $this->replaceIdsWithAbv($storeFirst, $arrFirst);
         $storeFirst = $this->assignColours($storeFirst);
 
+        // Second Year Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $secondYearProgramCourses);
+        $arrSecond = array();
+        $arrSecond = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrSecond);
+        $storeSecond = array();
+        $storeSecond = $this->createCDFArray($arrSecond, $storeSecond);
+        $storeSecond = $this->frequencyDistribution($arrSecond, $storeSecond);
+        $storeSecond = $this->replaceIdsWithAbv($storeSecond, $arrSecond);
+        $storeSecond = $this->assignColours($storeSecond);
+
+        // Third Year Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $thirdYearProgramCourses);
+        $arrThird = array();
+        $arrThird = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrThird);
+        $storeThird = array();
+        $storeThird = $this->createCDFArray($arrThird, $storeThird);
+        $storeThird = $this->frequencyDistribution($arrThird, $storeThird);
+        $storeThird = $this->replaceIdsWithAbv($storeThird, $arrThird);
+        $storeThird = $this->assignColours($storeThird);
+
+        // Forth Year Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $forthYearProgramCourses);
+        $arrForth = array();
+        $arrForth = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrForth);
+        $storeForth = array();
+        $storeForth = $this->createCDFArray($arrForth, $storeForth);
+        $storeForth = $this->frequencyDistribution($arrForth, $storeForth);
+        $storeForth = $this->replaceIdsWithAbv($storeForth, $arrForth);
+        $storeForth = $this->assignColours($storeForth);
+
         // Required Courses Frequency Distribution
         $coursesOutcome = array();
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
@@ -434,7 +491,8 @@ class ProgramWizardController extends Controller
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
                                             ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
                                             ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)
+                                            ->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)->with('secondYearProgramCourses', $secondYearProgramCourses)->with('storeSecond', $storeSecond)
+                                            ->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('forthYearProgramCourses', $forthYearProgramCourses)->with('storeForth', $storeForth)
                                             ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'));
     }
 
