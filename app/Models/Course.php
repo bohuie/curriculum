@@ -53,6 +53,10 @@ class Course extends Model
         return $this->belongsToMany(Program::class, 'course_programs', 'course_id', 'program_id');
     }
 
+    public function standards() {
+        return $this->hasMany(Standard::class, 'standard_category_id','standard_category_id');
+    }
+
     public function standardScalesCategory() {
         return $this->belongsTo(StandardsScaleCategory::class, 'scale_category_id', 'scale_category_id');
     }

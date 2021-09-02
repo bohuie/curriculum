@@ -349,9 +349,18 @@ class CourseWizardController extends Controller
         // get the saved optional priorities
         $opStored = $course->optionalPriorities->pluck('op_id')->toArray();
 
-        // ddd($optionalPriorityCategories[0]->optionalPrioritySubcategories[0]->optionalPriorities->pluck('year')->unique());
+        // return a count for the completed number of standards
+        $standardsMapped = [];
+        foreach ($l_outcomes as $l_outcome) {
+            $standardsMapped[$l_outcome->l_outcome_id] = 0;
+        }
+        foreach ($l_outcomes as $l_outcome) {
+            if (StandardsOutcomeMap::where('l_outcome_id', $l_outcome->l_outcome_id)->exists()) {
+                $standardsMapped[$l_outcome->l_outcome_id] = StandardsOutcomeMap::where('l_outcome_id', $l_outcome->l_outcome_id)->count();
+            }
+        }
 
-        return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount);
+        return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standardsMapped', $standardsMapped);
     }
     
     public function step7($course_id, Request $request)
