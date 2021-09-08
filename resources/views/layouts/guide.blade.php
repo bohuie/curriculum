@@ -667,7 +667,7 @@
     $('#programOverviewHelp').on('click', setProgramOverview);
     // Calls from course wizard
     $('#cloHelp').on('click', setCLO);
-    $('#samHelp').on('click', setSam);
+    $('#courseOverviewHelp').on('click', setCoursesSummary);
 
     function onClick(element) {
         document.getElementById("img01").src = element.src;
