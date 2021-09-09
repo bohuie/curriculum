@@ -15,6 +15,14 @@
             <div class="card">
                 <h3 class="card-header wizard" >
                     Program Outcome Mapping
+                    <div style="float: right;">
+                            <button id="programOutcomeMappingHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle" style="color:#002145;"></i>
+                            </button>
+                        </div>
+                        <div class="text-left">
+                            @include('layouts.guide')
+                    </div>
                 </h3>
                 <div class="card-body">
 

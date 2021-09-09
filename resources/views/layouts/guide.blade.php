@@ -74,33 +74,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal" style="color: white;">Open second modal</button>
             </div>
         </div>
     </div>
 </div>
 
-<!--Modal 2-->
-<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-black" id="exampleModalToggleLabel2" style="color: black;">Modal 2</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-black" style="color: black;">
-                <div class="update-content">
-                    <!--Loads Content here-->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#guideModal" data-bs-toggle="modal" data-bs-dismiss="modal" style="color: white;">Back to Guide</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--W3 Modal-->
+<!--img zoom Modal-->
 <div id="modal01" class="modal modal-zoom" onclick="this.style.display='none'">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content bg-dark">
@@ -416,7 +395,15 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Learning Outcomes (Step 1)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">Course Learning outcomes allow you to describe the outcomes that students can expect to take away from completing the course, further instructions can be found <a href='https://ctl.ok.ubc.ca/teaching-effectively/course-design/'>here</a>.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Add a New Course Learning Outcome</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To create a Course Learning Outcome, you will need to select the ‘+ CLO’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCLO.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You can then enter your Course Learning outcome as well as a short phrase in the prompt shown below. There is further information provided in the prompt to help you generate ideas for creating Course Learning Outcomes.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCLOModal.PNG')}}" onclick="onClick(this)">
+
         `);
     }
 
@@ -602,7 +589,11 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Summary (Step 7)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3" style="font-size:18px;">The course overview provides a comprehensive view of all of the information regarding the course, as well as detailed charts from the information provided in the previous steps. You must fill in the previous steps in order to see some of the fields for the course overview.</p>
+            <p class="help-p my-3" style="font-size:18px;">The course overview can be downloaded as a PDF copy.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CourseOverview.png')}}" onclick="onClick(this)">
+            <br>
+            <button class="btn btn-primary float-left w-50" onclick="setStandards()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Standards and Strategic Priorities (Step 6)</button>
         `);
     }
 
@@ -667,6 +658,11 @@
     $('#programOverviewHelp').on('click', setProgramOverview);
     // Calls from course wizard
     $('#cloHelp').on('click', setCLO);
+    $('#samHelp').on('click', setSAM);
+    $('#tlaHelp').on('click', setTLA);
+    $('#courseAlignmentHelp').on('click', setCourseAlignment);
+    $('#programOutcomeMappingHelp').on('click', setProgramOutcomeMapping);
+    $('#standardsHelp').on('click', setStandards);
     $('#courseOverviewHelp').on('click', setCoursesSummary);
 
     function onClick(element) {
