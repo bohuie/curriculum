@@ -402,8 +402,14 @@
             <img class="img center my-3" src="{{asset('/img/guide/CreateCLO.png')}}" onclick="onClick(this)">
             <br>
             <p class="help-p my-3 center" style="font-size:18px;">You can then enter your Course Learning outcome as well as a short phrase in the prompt shown below. There is further information provided in the prompt to help you generate ideas for creating Course Learning Outcomes.</p>
-            <img class="img center my-3" src="{{asset('/img/guide/CreateCLOModal.PNG')}}" onclick="onClick(this)">
-
+            <img class="img center my-3 w-50" src="{{asset('/img/guide/CreateCLOModal.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">It is recommended that a course has a maximum of 5-7 Course Learning Outcomes.</p>
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setCourses()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Courses</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setSAM()" style="color: white;">Student Assessment Methods (Step 2) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
