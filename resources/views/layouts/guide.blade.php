@@ -395,7 +395,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Learning Outcomes (Step 1)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">Course Learning outcomes allow you to describe the outcomes that students can expect to take away from completing the course, further instructions can be found <a href='https://ctl.ok.ubc.ca/teaching-effectively/course-design/'>here</a>.</p>
+            <p class="help-p my-3 center" style="font-size:18px;">Course Learning outcomes allow you to describe the outcomes that students can expect to take away from completing the course, further instructions can be found <a target=”_blank” href='https://ctl.ok.ubc.ca/teaching-effectively/course-design/'>here</a>.</p>
             <br>
             <h2 class="text-center mb-4">How to Add a New Course Learning Outcome</h2>
             <p class="help-p my-3 center" style="font-size:18px;">To create a Course Learning Outcome, you will need to select the ‘+ CLO’ button.</p>
