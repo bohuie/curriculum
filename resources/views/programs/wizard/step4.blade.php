@@ -156,12 +156,13 @@
                         <div class="card-body">
                             <nav class="mt-2">
                                 <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
-                                    <button class="nav-link active" id="nav-all-tab" data-bs-toggle="tab" data-bs-target="#nav-all" type="button" role="tab" aria-controls="nav-all" aria-selected="true">All Courses</button>
-                                    <button class="nav-link" id="nav-first-tab" data-bs-toggle="tab" data-bs-target="#nav-first" type="button" role="tab" aria-controls="nav-first" aria-selected="false">First Year Courses</button>
-                                    <button class="nav-link" id="nav-second-tab" data-bs-toggle="tab" data-bs-target="#nav-second" type="button" role="tab" aria-controls="nav-second" aria-selected="false">Second Year Courses</button>
-                                    <button class="nav-link" id="nav-third-tab" data-bs-toggle="tab" data-bs-target="#nav-third" type="button" role="tab" aria-controls="nav-third" aria-selected="false">Third Year Courses</button>
-                                    <button class="nav-link" id="nav-forth-tab" data-bs-toggle="tab" data-bs-target="#nav-forth" type="button" role="tab" aria-controls="nav-forth" aria-selected="false">Forth Year Courses</button>
-                                    <button class="nav-link" id="nav-required-tab" data-bs-toggle="tab" data-bs-target="#nav-required" type="button" role="tab" aria-controls="nav-required" aria-selected="false">Required Courses</button>
+                                    <button class="nav-link active w-25" id="nav-all-tab" data-bs-toggle="tab" data-bs-target="#nav-all" type="button" role="tab" aria-controls="nav-all" aria-selected="true">All Courses</button>
+                                    <button class="nav-link w-25" id="nav-required-tab" data-bs-toggle="tab" data-bs-target="#nav-required" type="button" role="tab" aria-controls="nav-required" aria-selected="false">Required Courses</button>
+                                    <button class="nav-link w-25" id="nav-first-tab" data-bs-toggle="tab" data-bs-target="#nav-first" type="button" role="tab" aria-controls="nav-first" aria-selected="false">First Year Courses</button>
+                                    <button class="nav-link w-25" id="nav-second-tab" data-bs-toggle="tab" data-bs-target="#nav-second" type="button" role="tab" aria-controls="nav-second" aria-selected="false">Second Year Courses</button>
+                                    <button class="nav-link w-25" id="nav-third-tab" data-bs-toggle="tab" data-bs-target="#nav-third" type="button" role="tab" aria-controls="nav-third" aria-selected="false">Third Year Courses</button>
+                                    <button class="nav-link w-25" id="nav-fourth-tab" data-bs-toggle="tab" data-bs-target="#nav-fourth" type="button" role="tab" aria-controls="nav-fourth" aria-selected="false">Fourth Year Courses</button>
+                                    <button class="nav-link w-25" id="nav-graduate-tab" data-bs-toggle="tab" data-bs-target="#nav-graduate" type="button" role="tab" aria-controls="nav-graduate" aria-selected="false">Graduate Year Courses</button>
                                 </div>
                             </nav>
                             <div class="tab-content" id="nav-tabContent">
@@ -444,7 +445,7 @@
                                         </h5>
                                         @if( count($secondYearProgramCourses) < 1 )
                                             <div class="alert alert-warning wizard">
-                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no first year courses set for this program yet.                   
+                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no second year courses set for this program yet.                   
                                             </div>
                                         @elseif ($ploCount < 1) 
                                             <div class="alert alert-warning wizard">
@@ -579,7 +580,7 @@
                                         </h5>
                                         @if( count($thirdYearProgramCourses) < 1 )
                                             <div class="alert alert-warning wizard">
-                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no first year courses set for this program yet.                   
+                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no third year courses set for this program yet.                   
                                             </div>
                                         @elseif ($ploCount < 1) 
                                             <div class="alert alert-warning wizard">
@@ -706,15 +707,15 @@
                                 </div>
                                 <!--End of tab-pane-->
 
-                                <div class="tab-pane fade" id="nav-forth" role="tabpanel" aria-labelledby="nav-forth-tab">
-                                    <!-- First Year Courses frequency distribution table -->
+                                <div class="tab-pane fade" id="nav-fourth" role="tabpanel" aria-labelledby="nav-fourth-tab">
+                                    <!-- Fourth Year Courses frequency distribution table -->
                                     <div class="card-body">
                                         <h5 class="card-title">
                                             Curriculum Map
                                         </h5>
-                                        @if( count($forthYearProgramCourses) < 1 )
+                                        @if( count($fourthYearProgramCourses) < 1 )
                                             <div class="alert alert-warning wizard">
-                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no first year courses set for this program yet.                   
+                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no fourth year courses set for this program yet.                   
                                             </div>
                                         @elseif ($ploCount < 1) 
                                             <div class="alert alert-warning wizard">
@@ -770,7 +771,7 @@
                                                     @endif
                                                 </tr>
                                                 <!-- Show all courses associated to the program -->
-                                                @foreach($forthYearProgramCourses as $course)
+                                                @foreach($fourthYearProgramCourses as $course)
                                                     <tr>
                                                         <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
                                                         {{$course->course_code}} {{$course->course_num}} {{$course->section}}
@@ -782,18 +783,18 @@
                                                         @foreach($ploProgramCategories as $index => $plo)
                                                             @if ($plo->plo_category != NULL)
                                                             <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-                                                                @if(isset($storeForth[$plo->pl_outcome_id][$course->course_id]))
+                                                                @if(isset($storeFourth[$plo->pl_outcome_id][$course->course_id]))
                                                                     <!-- Check if a Tie is present -->
-                                                                    @if(isset($storeForth[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-                                                                        <td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeForth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                    @if(isset($storeFourth[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                                        <td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeFourth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                             <span style="color: black;">
-                                                                                {{$storeForth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                                {{$storeFourth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                             </span>
                                                                         </td>
                                                                     @else
-                                                                        <td class="text-center align-middle" style="background-color: {{ $storeForth[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeForth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                        <td class="text-center align-middle" style="background-color: {{ $storeFourth[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeFourth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                             <span style="color: black;">
-                                                                                {{$storeForth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                                {{$storeFourth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                             </span>
                                                                         </td>
                                                                     @endif
@@ -809,18 +810,153 @@
                                                         @foreach($plos as $plo)
                                                             @if ($plo->plo_category == NULL)
                                                                 <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-                                                                @if(isset($storeForth[$plo->pl_outcome_id][$course->course_id]))
+                                                                @if(isset($storeFourth[$plo->pl_outcome_id][$course->course_id]))
                                                                     <!-- Check if a Tie is present -->
-                                                                    @if(isset($storeForth[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-                                                                        <td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 10px, #ccc 10px, #ccc 20px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeForth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                    @if(isset($storeFourth[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                                        <td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 10px, #ccc 10px, #ccc 20px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeFourth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                             <span style="color: black;">
-                                                                                {{$storeForth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                                {{$storeFourth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                             </span>
                                                                         </td>
                                                                     @else
-                                                                        <td class="text-center align-middle" style="background-color: {{ $storeForth[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeForth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                        <td class="text-center align-middle" style="background-color: {{ $storeFourth[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeFourth[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
                                                                             <span style="color: black;">
-                                                                                {{$storeForth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                                {{$storeFourth[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                            </span>
+                                                                        </td>
+                                                                    @endif
+
+                                                                @else
+                                                                    <td class="text-center align-middle" style="background-color: white;">
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+                                                                    </td>
+                                                                @endif
+                                                            @endif
+                                                        @endforeach
+                                                    </tr>
+                                                @endforeach
+                                            </table>
+                                        @endif
+                                    </div>  
+                                <!-- end Courses to PLOs frequency Distribution card -->
+                                </div>
+                                <!--End of tab-pane-->
+
+                                <div class="tab-pane fade" id="nav-graduate" role="tabpanel" aria-labelledby="nav-graduate-tab">
+                                    <!-- Graduate Courses frequency distribution table -->
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            Curriculum Map
+                                        </h5>
+                                        @if( count($graduateProgramCourses) < 1 )
+                                            <div class="alert alert-warning wizard">
+                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no graduate courses set for this program yet.                   
+                                            </div>
+                                        @elseif ($ploCount < 1) 
+                                            <div class="alert alert-warning wizard">
+                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
+                                            </div>
+                                        @else
+                                            <p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
+
+                                            <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
+                                                <tr class="table-primary">
+                                                    <th colspan='1' class="w-auto">Courses</th>
+                                                    <th class="text-left" colspan='{{ count($plos) }}'>Program-level Learning Outcomes</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
+                                                    <!-- Displays Categories -->
+                                                    @foreach($ploCategories as $index =>$plo)
+                                                        @if ($plo->plo_category != NULL)
+                                                            <!-- Use short name for category if there are more than 3 -->
+                                                            @if (($numCatUsed > 3) && ($plo->plos->count() > 0))
+                                                                <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">C - {{$index + 1}}</th>
+                                                            @elseif ($plo->plos->count() > 0)
+                                                                <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
+                                                            @endif
+                                                        @endif
+                                                    @endforeach
+                                                    <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
+                                                    @if($hasUncategorized)
+                                                        <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
+                                                    @endif
+                                                </tr>
+
+                                                <tr>
+                                                    <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
+                                                    <!-- If there are less than 7 PLOs, use the short-phrase, else use PLO at index + 1 -->
+                                                    @if (count($plos) < 7) 
+                                                        <!-- Categorized PLOs -->
+                                                        @foreach($ploProgramCategories as $plo)
+                                                            @if ($plo->plo_category != NULL)
+                                                                <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
+                                                            @endif
+                                                        @endforeach
+                                                        <!-- Uncategorized PLOs -->
+                                                        @foreach($plos as $plo)
+                                                            @if ($plo->plo_category == NULL)
+                                                                <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
+                                                            @endif
+                                                        @endforeach
+                                                    @else
+                                                        @foreach($plos as $index => $plo)
+                                                            <th style="background-color: rgba(0, 0, 0, 0.03);">PLO: {{$index + 1}}</th>
+                                                        @endforeach
+                                                    @endif
+                                                </tr>
+                                                <!-- Show all courses associated to the program -->
+                                                @foreach($graduateProgramCourses as $course)
+                                                    <tr>
+                                                        <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
+                                                        {{$course->course_code}} {{$course->course_num}} {{$course->section}}
+                                                        <br>
+                                                        {{$course->semester}} {{$course->year}}
+                                                        </th>
+                                                        <!-- Frequency distribution from each course -->
+                                                        <!-- For Each Categorized PLO -->
+                                                        @foreach($ploProgramCategories as $index => $plo)
+                                                            @if ($plo->plo_category != NULL)
+                                                            <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+                                                                @if(isset($storeGraduate[$plo->pl_outcome_id][$course->course_id]))
+                                                                    <!-- Check if a Tie is present -->
+                                                                    @if(isset($storeGraduate[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                                        <td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeGraduate[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                            <span style="color: black;">
+                                                                                {{$storeGraduate[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                            </span>
+                                                                        </td>
+                                                                    @else
+                                                                        <td class="text-center align-middle" style="background-color: {{ $storeGraduate[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeGraduate[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                            <span style="color: black;">
+                                                                                {{$storeGraduate[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                            </span>
+                                                                        </td>
+                                                                    @endif
+
+                                                                @else
+                                                                    <td class="text-center align-middle" style="background-color: white;">
+                                                                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+                                                                    </td>
+                                                                @endif
+                                                            @endif
+                                                        @endforeach
+                                                        <!-- For Each Uncategorized PLO-->
+                                                        @foreach($plos as $plo)
+                                                            @if ($plo->plo_category == NULL)
+                                                                <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+                                                                @if(isset($storeGraduate[$plo->pl_outcome_id][$course->course_id]))
+                                                                    <!-- Check if a Tie is present -->
+                                                                    @if(isset($storeGraduate[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                                        <td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 10px, #ccc 10px, #ccc 20px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeGraduate[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                            <span style="color: black;">
+                                                                                {{$storeGraduate[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                                            </span>
+                                                                        </td>
+                                                                    @else
+                                                                        <td class="text-center align-middle" style="background-color: {{ $storeGraduate[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeGraduate[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+                                                                            <span style="color: black;">
+                                                                                {{$storeGraduate[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
                                                                             </span>
                                                                         </td>
                                                                     @endif

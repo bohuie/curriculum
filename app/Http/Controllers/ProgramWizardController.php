@@ -305,7 +305,8 @@ class ProgramWizardController extends Controller
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
-        $forthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
 
         $count = 0;
         foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
@@ -329,9 +330,16 @@ class ProgramWizardController extends Controller
             $count++;
         }
         $count = 0;
-        foreach ($forthYearProgramCourses as $forthYearProgramCourse) {
-            if ($forthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 4 then remove it from the collection
-                $forthYearProgramCourses->forget($count);
+        foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
+            if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 4 then remove it from the collection
+                $fourthYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($graduateProgramCourses as $graduateProgramCourse) {
+            if ($graduateProgramCourse->course_num[0] != '5' && $graduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 5 or 6 then remove it from the collection
+                $graduateProgramCourses->forget($count);
             }
             $count++;
         }
@@ -427,16 +435,27 @@ class ProgramWizardController extends Controller
         $storeThird = $this->replaceIdsWithAbv($storeThird, $arrThird);
         $storeThird = $this->assignColours($storeThird);
 
-        // Forth Year Courses Frequency Distribution
+        // fourth Year Courses Frequency Distribution
         $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $forthYearProgramCourses);
-        $arrForth = array();
-        $arrForth = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrForth);
-        $storeForth = array();
-        $storeForth = $this->createCDFArray($arrForth, $storeForth);
-        $storeForth = $this->frequencyDistribution($arrForth, $storeForth);
-        $storeForth = $this->replaceIdsWithAbv($storeForth, $arrForth);
-        $storeForth = $this->assignColours($storeForth);
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $fourthYearProgramCourses);
+        $arrFourth = array();
+        $arrFourth = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFourth);
+        $storeFourth = array();
+        $storeFourth = $this->createCDFArray($arrFourth, $storeFourth);
+        $storeFourth = $this->frequencyDistribution($arrFourth, $storeFourth);
+        $storeFourth = $this->replaceIdsWithAbv($storeFourth, $arrFourth);
+        $storeFourth = $this->assignColours($storeFourth);
+
+        // graduate Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $graduateProgramCourses);
+        $arrGraduate = array();
+        $arrGraduate = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrGraduate);
+        $storeGraduate = array();
+        $storeGraduate = $this->createCDFArray($arrGraduate, $storeGraduate);
+        $storeGraduate = $this->frequencyDistribution($arrGraduate, $storeGraduate);
+        $storeGraduate = $this->replaceIdsWithAbv($storeGraduate, $arrGraduate);
+        $storeGraduate = $this->assignColours($storeGraduate);
 
         // Required Courses Frequency Distribution
         $coursesOutcome = array();
@@ -492,7 +511,8 @@ class ProgramWizardController extends Controller
                                             ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
                                             ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
                                             ->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)->with('secondYearProgramCourses', $secondYearProgramCourses)->with('storeSecond', $storeSecond)
-                                            ->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('forthYearProgramCourses', $forthYearProgramCourses)->with('storeForth', $storeForth)
+                                            ->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('fourthYearProgramCourses', $fourthYearProgramCourses)->with('storeFourth', $storeFourth)
+                                            ->with('graduateProgramCourses', $graduateProgramCourses)->with('storeGraduate', $storeGraduate)
                                             ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'));
     }
 
