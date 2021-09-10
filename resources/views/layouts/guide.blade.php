@@ -440,7 +440,22 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Student Assessment Methods Guide (Step 2)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">Student Assessment Methods provide a way to list the methods that students' understanding of course concepts and material will be evaluated and measured.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Add a New Student Assessment Methods</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To create Student Assessment Methods, you will need to select the ‘+ Student Assessment Methods’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateStudentAssessmentMethod.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You will then see the prompt shown below, from this menu you can add as many Assessment Methods as you would like. For each Assessment Method you will need to assign a weight, you may also assign the weight of zero if you wish.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateStudentAssementMethodsModal.gif')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">After adding your Assessment Methods, you will see them appear in the table as shown below, along with the total combined weight.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StudentAssessmentMethods.png')}}" onclick="onClick(this)">
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setCLO()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Course Learning Outcomes (Step 1)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setTLA()" style="color: white;">Teaching and Learning Activities (Step 3) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -471,7 +486,23 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Teaching and Learning Activities (Step 3)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">Teaching and Learning Activities are used to describe the methods the course will be taught.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Add New Teaching and Learning Activities</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To create Teaching and Learning Activities, you will need to select the ‘+ Learning Activities’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateTeachingandLearningActivities.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You will then see the prompt shown below, from this menu you can add as many Learning Activities as you would like.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateTeachingandLearningActivitiesModal.gif')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">After adding your Learning Activities, you will see them appear in the table as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/TeachingandLearningActivities.PNG')}}" onclick="onClick(this)">
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setSAM()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Student Assessment Methods (Step 2)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setCourseAlignment()" style="color: white;">Course Alignment (Step 4) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -503,6 +534,12 @@
             <h2 class="mb-4 head"><u>Course Alignment (Step 4)</u></h2>
             <br>
             <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setTLA()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Teaching and Learning Activities (Step 3)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setProgramOutcomeMapping()" style="color: white;">Program Outcome Mapping (Step 5) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -534,6 +571,12 @@
             <h2 class="mb-4 head"><u>Program Outcome Mapping (Step 5)</u></h2>
             <br>
             <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setCourseAlignment()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Course Alignment (Step 4)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setStandards()" style="color: white;">Standards and Strategic Priorities (Step 6) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -565,6 +608,12 @@
             <h2 class="mb-4 head"><u>Standards and Strategic Priorities (Step 6)</u></h2>
             <br>
             <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setProgramOutcomeMapping()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Program Outcome Mapping (Step 5)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setCoursesSummary()" style="color: white;">Course Summary (Step 7) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
