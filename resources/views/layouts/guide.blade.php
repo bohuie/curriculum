@@ -283,7 +283,7 @@
             <p class="help-p my-3" style="font-size:18px;">This will open a prompt that will allow you to enter information regarding your course, as well as if it is required by the program.</p>
             <img class="img center my-3" src="{{asset('/img/guide/CreateProgramCourseModal.PNG')}}" onclick="onClick(this)">
             <br>
-            <p class="help-p my-3" style="font-size:18px;">After you finish inputting all the required information the course will then appear on your courses table for the program. You will also be able to access the course from the dashboard as well. </p>
+            <p class="help-p my-3" style="font-size:18px;">After you finish inputting all the required information the course will then appear on your courses table for the program. You will also be able to access the course from the dashboard as well.</p>
             <br>
             <div class="row">
                 <div class="col"><button class="btn btn-primary float-left w-100" onclick="setMS()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Mapping Scales (Step 2)</button></div>
@@ -533,7 +533,8 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Alignment (Step 4)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">This step requires course instructors to align their Student Assessment Methods, and their Teaching and Learning Activities to their Course Learning Outcomes. An example of aligning a course is shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CourseAlignment.gif')}}" onclick="onClick(this)">
 
             <br>
             <div class="row">
@@ -570,7 +571,23 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Program Outcome Mapping (Step 5)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">This step requires that your course has been added to a program, otherwise you will not see any programs to map your course to. See the <a class="link" onclick="setProgram()">Program guide</a> if you would like to create a program.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Map your Course to a Program</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To map your course to a program, you will need to select the program dropdown as shown below (You may need to double click on the dropdown box to open it).</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMapping.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">Once the dropdown has opened you will see the mappings scale for the program, as well as your CLOs. To begin mapping the Program Learning Outcomes to your Course Learning Outcomes click on one of your Course Learning Outcomes as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMappingCLOS.png')}}" onclick="onClick(this)">
+            <br>
+            <ol class="m-5">
+                <li class="my-2" style="font-size: 18px;">Select the scale value which aligns best for your Course Learning Outcome to the Program Learning Outcome.</li>
+                <li class="my-2" style="font-size: 18px;">Make sure you save your selection for each Course Learning Outcome.</li>
+            </ol>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMappingCLOScale.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">After you have saved your selection, you will see the banner colour change to green to indicate that the CLO has been mapped.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMappingCLOSCompleted.png')}}" onclick="onClick(this)">
 
             <br>
             <div class="row">
@@ -607,7 +624,31 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Standards and Strategic Priorities (Step 6)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <h2 class="text-center mb-4">How to Map your Course to Standards</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">The standards tab is selected by default when you open the page.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StandardsAndStrategicPriorities.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You will need to select a CLO to map the Standards to (You may need to double click the CLO in order for the dropdown to appear).</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StandardsCLOS.PNG')}}" onclick="onClick(this)">
+            <br>
+            <ol class="m-5">
+                <li class="my-2" style="font-size: 18px;">Select the scale value which aligns best for your Course Learning Outcome to the Standard.</li>
+                <li class="my-2" style="font-size: 18px;">Make sure you save your selection for each Course Learning Outcome.</li>
+            </ol>
+            <img class="img center my-3" src="{{asset('/img/guide/StandardsCLOScale.PNG')}}" onclick="onClick(this)">
+            <br>
+            <h2 class="text-center mb-4">How to Map your Course to Strategic Priorities</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">First you will need to select the Strategic Priorities tab.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StrategicPriorities.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">Then you can select the from the drop down as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StrategicPriority.png')}}" onclick="onClick(this)">
+            <br>
+            <ol class="m-5">
+                <li class="my-2" style="font-size: 18px;">Select the Strategic Priority’s which align best for your course.</li>
+                <li class="my-2" style="font-size: 18px;">Make sure you save your selection before leaving the page.</li>
+            </ol>
+            <img class="img center my-3" src="{{asset('/img/guide/StrategicPrioritySelection.png')}}" onclick="onClick(this)">
 
             <br>
             <div class="row">
