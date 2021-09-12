@@ -130,3 +130,9 @@ Route::get('/email','AdminEmailController@index')->name('email');
 Route::post('/email', 'AdminEmailController@send')->name('email.send');
 
 Auth::routes();
+
+// register backpack auth routes manually 
+Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_prefix')], function () {
+    Route::auth();
+    Route::get('logout', 'Auth\LoginController@logout');
+});
