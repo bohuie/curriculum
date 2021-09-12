@@ -67,7 +67,7 @@ class OptionalPriorityCrudController extends CrudController
             'label' => 'Subcategory Name',// Table column heading
             'type' => 'strip_select',
             'name' => 'optionalPrioritySubcategory', // The db column name
-            'entity' =>'optionalPrioritySubcategories',
+            'entity' =>'optionalPrioritySubcategory',
             'attribute' => 'subcat_name',
             'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
@@ -80,11 +80,6 @@ class OptionalPriorityCrudController extends CrudController
                 $query ->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
             }
         ]);
-        
-        
-        
-        
-        
     }
 
     /**
