@@ -246,12 +246,34 @@
                         <div class="row" id="courseContacts"></div>
                         <!-- Course Structure -->
                         <div class="row" id="courseStructure"></div>
-                        <!-- Course Schedule -->
-                        <div class="row" id="courseSchedule"></div>
                         <!-- Course Format -->
                         <div class="row" id="courseFormat"></div>
                         <!-- Course Overview -->
                         <div class="row" id="courseOverview"></div>
+                        <!-- Course Schedule -->
+                        <div class="row" id="courseSchedule"></div>
+
+
+                        <div class="row">
+                            <div class="col">
+                                <table id="courseScheduleTable" class="table table-light table-borderless">
+                                    <thead>
+                                        <tr class="table-primary">
+                                            <th >When</th>
+                                            <th >Topics</th>
+                                            <th>Learning Outcomes</th>
+                                            <th >Student Assessment Methods</th>
+                                            <th >Teaching and Learning Activities</th>
+                                            <th ></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>  
+                            </div>
+                        </div>
+                        <button id="addToScheduleBtn" type="button" class="btn btn-outline-secondary mb-3"><i class="bi bi-plus mr-2"></i> Add to Schedule</button>                                  
+
                         <!-- Learning Outcomes -->
                         <div class="row mb-3">
                             <div class="col ">
@@ -450,6 +472,8 @@
         });
         // update syllabus form with the campus specific info
         onChangeCampus();
+
+        $('#addToScheduleBtn').on('click', addToSchedule);
     });
 
     // Import course info into using GET AJAX call
@@ -552,6 +576,36 @@
         
         // mark the section as "currently collapsed"
         element.setAttribute('data-collapsed', 'true');
+    }
+
+    function deleteFromSchedule(submitter) {
+        $(submitter).parents('tr').remove();
+    }
+
+    function addToSchedule() {
+        // prepend assessment method to the table
+        $('#courseScheduleTable tbody').append(`
+            <tr>
+                <td>
+                    <input type="text" class="form-control">
+                </td>
+                <td>  
+                    <textarea class="form-control" rows="1"></textarea>
+                </td>
+                <td>  
+                    <input type="text" class="form-control">
+                </td>              
+                <td>  
+                    <input type="text" class="form-control">
+                </td>   
+                <td>  
+                    <input type="text" class="form-control">
+                </td>             
+                <td class="text-center">
+                    <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteFromSchedule(this)"></i>
+                </td>
+            </tr>        
+        `);
     }
 
     // Function changes optional verison of syllabus
