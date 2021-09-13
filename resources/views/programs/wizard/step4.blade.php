@@ -158,11 +158,11 @@
                                 <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
                                     <button class="nav-link active w-25" id="nav-all-tab" data-bs-toggle="tab" data-bs-target="#nav-all" type="button" role="tab" aria-controls="nav-all" aria-selected="true">All Courses</button>
                                     <button class="nav-link w-25" id="nav-required-tab" data-bs-toggle="tab" data-bs-target="#nav-required" type="button" role="tab" aria-controls="nav-required" aria-selected="false">Required Courses</button>
-                                    <button class="nav-link w-25" id="nav-first-tab" data-bs-toggle="tab" data-bs-target="#nav-first" type="button" role="tab" aria-controls="nav-first" aria-selected="false">First Year Courses</button>
-                                    <button class="nav-link w-25" id="nav-second-tab" data-bs-toggle="tab" data-bs-target="#nav-second" type="button" role="tab" aria-controls="nav-second" aria-selected="false">Second Year Courses</button>
-                                    <button class="nav-link w-25" id="nav-third-tab" data-bs-toggle="tab" data-bs-target="#nav-third" type="button" role="tab" aria-controls="nav-third" aria-selected="false">Third Year Courses</button>
-                                    <button class="nav-link w-25" id="nav-fourth-tab" data-bs-toggle="tab" data-bs-target="#nav-fourth" type="button" role="tab" aria-controls="nav-fourth" aria-selected="false">Fourth Year Courses</button>
-                                    <button class="nav-link w-25" id="nav-graduate-tab" data-bs-toggle="tab" data-bs-target="#nav-graduate" type="button" role="tab" aria-controls="nav-graduate" aria-selected="false">Graduate Year Courses</button>
+                                    <button class="nav-link w-25" id="nav-first-tab" data-bs-toggle="tab" data-bs-target="#nav-first" type="button" role="tab" aria-controls="nav-first" aria-selected="false">100 Level Courses</button>
+                                    <button class="nav-link w-25" id="nav-second-tab" data-bs-toggle="tab" data-bs-target="#nav-second" type="button" role="tab" aria-controls="nav-second" aria-selected="false">200 Level Courses</button>
+                                    <button class="nav-link w-25" id="nav-third-tab" data-bs-toggle="tab" data-bs-target="#nav-third" type="button" role="tab" aria-controls="nav-third" aria-selected="false">300 Level Courses</button>
+                                    <button class="nav-link w-25" id="nav-fourth-tab" data-bs-toggle="tab" data-bs-target="#nav-fourth" type="button" role="tab" aria-controls="nav-fourth" aria-selected="false">400 Level Courses</button>
+                                    <button class="nav-link w-25" id="nav-graduate-tab" data-bs-toggle="tab" data-bs-target="#nav-graduate" type="button" role="tab" aria-controls="nav-graduate" aria-selected="false">500/600 Level Courses</button>
                                 </div>
                             </nav>
                             <div class="tab-content" id="nav-tabContent">
