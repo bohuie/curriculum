@@ -150,14 +150,22 @@
                 </div>
 
                 <div class="card-body">
-                    <button type="button" class="btn btn-primary col-2 float-right bg-primary text-white fs-5"  data-toggle="modal" data-target="#addLearningOutcomeModal">
-                        <i class="bi bi-plus mr-2 "></i>CLO
-                    </button>
-
-                    <h6 class="card-subtitle mb-4 lh-lg">
-                        Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.
-                        <strong>It is recommended that a course has 5-7 CLOs maximum</strong>.                    
-                    </h6>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <h6 class="card-subtitle mb-4 lh-lg">
+                                Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.
+                                <strong>It is recommended that a course has 5-7 CLOs maximum</strong>.                    
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col">
+                            <button type="button" class="btn btn-primary col-2 float-right bg-primary text-white fs-5"  data-toggle="modal" data-target="#addLearningOutcomeModal">
+                                <i class="bi bi-plus mr-2 "></i>CLO
+                            </button>
+                        </div>
+                    </div>
 
                     <div id="clo">
                         <div class="row">
