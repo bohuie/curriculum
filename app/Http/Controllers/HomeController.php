@@ -96,38 +96,53 @@ class HomeController extends Controller
 
         //for progress bar
         $progressBar = array();
+        $progressBarMsg = array();
         $count = 0;
         foreach($myCourses as $course) {
             // get course id for each course
             $courseId = $course->course_id;
+            $progressBarMsg[$courseId]['statusMsg'] = '';
             // gets the count for each step used to check if progress has been made
             if (LearningOutcome::where('course_id', $courseId)->count() > 0) {
                 $count++;
+            } else {
+                $progressBarMsg[$courseId]['statusMsg'] .= 'Course Learning Outcomes (Step 1) <br>';
             }
             if (AssessmentMethod::where('course_id', $courseId)->count() > 0) {
                 $count++;
+            } else {
+                $progressBarMsg[$courseId]['statusMsg'] .= 'Student Assessment Methods (Step 2) <br>';
             }
             if (LearningActivity::where('course_id', $courseId)->count() > 0) {
                 $count++;
+            } else {
+                $progressBarMsg[$courseId]['statusMsg'] .= 'Teaching and Learning Activities (Step 3) <br>';
             }
             if (LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_activities.course_id','=',$courseId)->count() > 0) {
                 $count++;
+            } else {
+                $progressBarMsg[$courseId]['statusMsg'] .= 'Assessment Methods - Course Alignment (Step 4) <br>';
             }
             if (AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')->where('assessment_methods.course_id','=',$courseId)->count() > 0) {
                 $count++;
+            } else {
+                $progressBarMsg[$courseId]['statusMsg'] .= 'Learning Activities - Course Alignment (Step 4) <br>';
             }
             if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() > 0) {
                 $count++;
+            } else {
+                $progressBarMsg[$courseId]['statusMsg'] .= 'Program Outcome Mapping (Step 5) <br>';
             }
             if (Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count()) {
                 $count++;
+            } else {
+                $progressBarMsg[$courseId]['statusMsg'] .= 'Standards (Step 6) <br>';
             }
             $progressBar[$courseId] = intval(round(($count / 7) * 100));
             $count = 0;
         }
-
         // return dashboard view
-        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar);
+        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg);
     }
 
 
