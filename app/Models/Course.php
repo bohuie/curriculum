@@ -24,6 +24,18 @@ class Course extends Model
         return $this->belongsToMany(User::class, 'course_users', 'course_id', 'user_id')->withPivot('permission');
     }
 
+    public function owners() {
+        return $this->belongsToMany(User::class, 'course_users', 'course_id', 'user_id')->wherePivot('permission', 1);
+    }
+
+    public function editors() {
+        return $this->belongsToMany(User::class, 'course_users', 'course_id', 'user_id')->wherePivot('permission', 2);
+    }
+
+    public function viewers() {
+        return $this->belongsToMany(User::class, 'course_users', 'course_id', 'user_id')->wherePivot('permission', 3);
+    }
+
     public function learningActivities(){
         return $this->hasMany(LearningActivity::class, 'course_id','course_id');
     }
@@ -41,6 +53,10 @@ class Course extends Model
         return $this->belongsToMany(Program::class, 'course_programs', 'course_id', 'program_id');
     }
 
+    public function standards() {
+        return $this->hasMany(Standard::class, 'standard_category_id','standard_category_id');
+    }
+
     public function standardScalesCategory() {
         return $this->belongsTo(StandardsScaleCategory::class, 'scale_category_id', 'scale_category_id');
     }
@@ -56,6 +72,11 @@ class Course extends Model
         //return $this->hasMany(Standard::class, 'standard_category_id', 'standard_category_id');
         return $this->hasManyThrough(StandardScale::class, StandardsScaleCategory::class);
     }
+
+    public function optionalPriorities(){
+        return $this->belongsToMany(OptionalPriorities::class, 'course_optional_priorities', 'course_id', 'op_id');
+    }
+
     
     //these are for the tables of child records on the course crud controller
     public function getCLOtableAttribute(){
@@ -166,9 +187,6 @@ class Course extends Model
         DB::table('outcome_activities')->whereIn('l_activity_id', $setDel)->delete();
     }
 
-    public function optionalPriorities(){
-        return $this->belongsToMany(OptionalPriorities::class, 'course_optional_priorities', 'course_id', 'op_id');
-    }
 
 }
 

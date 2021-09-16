@@ -98,8 +98,13 @@
                                                 <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                     <div class="accordion-item mb-2">
                                                         <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                            <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                            @if ($standardsMapped[$courseLearningOutcome->l_outcome_id] == $course->standards->count())
+                                                                <button class="accordion-button white-arrow clo collapsed bg-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}} &emsp;-&emsp; {{ number_format((float)($standardsMapped[$courseLearningOutcome->l_outcome_id] / $course->standards->count()) * 100) }} %
+                                                            @else
+                                                                <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}} &emsp;-&emsp; {{ number_format((float)($standardsMapped[$courseLearningOutcome->l_outcome_id] / $course->standards->count()) * 100) }} %
+                                                            @endif
                                                             </button>
                                                         </h2>
                                                         <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
@@ -177,71 +182,115 @@
                                     Select, from the below UBC and/or Ministry priorities and strategies, the items that align strongly with your course. This is <b>optional</b>.                                   
                                 </h6>
 
-                    <div class="jumbotron pt-4">
-                        <h4 class="mb-4">Alignment with UBC/Ministry Priorities</h4>
-                        
-                        <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
-                            Note: Remember to click save once you are done.
-                        </h6>
+                                <div class="jumbotron pt-4">
+                                    <h4 class="mb-4">Alignment with UBC/Ministry Priorities</h4>
+                                    <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">Note: Remember to click save once you are done.</h6>
 
-                        <!--Accordion-->
-                        <form id="optinal" action="{{route('storeOptionalPLOs')}}" method="POST">
-                            {{ csrf_field() }}
+                                    <!--Accordions-->
+                                    <form id="optinal" action="{{route('storeOptionalPLOs')}}" method="POST">
+                                        {{ csrf_field() }}
 
-                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                            <div class="accordion" id="PrioritiesAccordions">
-                                @foreach($optionalPriorityCategories as $optionalPriorityCategory)
-                                    <div class="accordion-item mb-2">
-                                        <h2 class="accordion-header" id="ministryPrioritiesHeader">
-                                            <button class="accordion-button white-arrow program collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}" aria-expanded="false" aria-controls="collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}">
-                                                {{$optionalPriorityCategory->cat_name}}
-                                            </button>
-                                        </h2>
-                                        <div id="collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}" class="accordion-collapse collapse" aria-labelledby="ministryPrioritiesHeader" data-bs-parent="#PrioritiesAccordions">
-                                            <div class="accordion-body">
-                                                <!--Subcat Name-->
-                                                <!--Subcat Desc-->
-                                                @foreach ($optionalPrioritySubcategories as $subCatId => $optionalPrioritySubcategory)
-                                                    @if ($optionalPriorityCategory->cat_id == $optionalPrioritySubcategory->cat_id) 
-                                                        <h6 class="fw-bold mb-3">{!! $optionalPrioritySubcategory->subcat_name !!}</h6>
-                                                        <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
-                                                        <!--optional Priorities for subcategory-->
-                                                        <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
-                                                            <thead class="thead-light">
-                                                                <tr>
-                                                                <th data-field="state" data-checkbox="true"></th>
-                                                                <th data-field="Description">Description</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach ($optionalPriories as $optionalPriority)
-                                                                    @if ($optionalPrioritySubcategory->subcat_id == $optionalPriority->subcat_id) 
-                                                                        <tr>
-                                                                        <td>
-                                                                            @if (in_array($optionalPriority->op_id, $opStored))
-                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}" checked>
-                                                                            @else
-                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
-                                                                            @endif
-                                                                        </td>
-                                                                        <td>
-                                                                            {!! $optionalPriority->optional_priority !!}
-                                                                        </td>
-                                                                        </tr>
-                                                                    @endif
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                        <p>{!! $optionalPrioritySubcategory->subcat_postamble !!}</p>
-                                                    @endif
-                                                @endforeach
-                                            </div>
+                                        <input type="hidden" name="course_id" value="{{$course->course_id}}">
+                                        <div class="accordion" id="PrioritiesAccordions">
+                                            @foreach($optionalPriorityCategories as $optionalPriorityCategory)
+                                                <div class="accordion-item mb-2">
+                                                    <h2 class="accordion-header" id="ministryPrioritiesHeader">
+                                                        <button class="accordion-button white-arrow program collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}" aria-expanded="false" aria-controls="collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}">
+                                                            {{$optionalPriorityCategory->cat_name}}
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseMinistryPriorities{{$optionalPriorityCategory->cat_id}}" class="accordion-collapse collapse" aria-labelledby="ministryPrioritiesHeader" data-bs-parent="#PrioritiesAccordions">
+                                                        <div class="accordion-body">
+                                                            @foreach ($optionalPriorityCategory->optionalPrioritySubcategories as $optionalPrioritySubcategory)
+                                                                <!-- UBC Mandate -->
+                                                                @if ($optionalPrioritySubcategory->subcat_id == 1)
+                                                                    <div class="row">
+                                                                        <div class="col-10">
+                                                                            <h6 class="fw-bold mb-3">
+                                                                                {!! $optionalPrioritySubcategory->subcat_name !!}
+                                                                            </h6>
+                                                                            <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
+                                                                        </div>
+                                                                        <!-- UBC Mandate Date Filter -->
+                                                                        <div class="col">
+                                                                            <select id="ubc-mandate" class="form-select col float-right bg-light fs-6" aria-label="UBC Mandate Year">
+                                                                                @foreach ($optionalPrioritySubcategory->optionalPriorities->pluck('year')->unique()->sortDesc() as $year)
+                                                                                    <option value="{{$year}}-mandate">{{$year}}</option>
+                                                                                @endforeach
+                                                                            </select>  
+                                                                        </div>
+
+                                                                        @foreach ($optionalPrioritySubcategory->optionalPriorities->pluck('year')->unique()->sortDesc() as $year)
+                                                                        <div class="collapse mandate show" id="{{$year}}-mandate">
+                                                                            <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
+                                                                                <thead class="thead-light">
+                                                                                    <tr>
+                                                                                        <th data-field="state" data-checkbox="true"></th>
+                                                                                        <th data-field="Description">Description</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody> 
+                                                                                    @foreach ($optionalPrioritySubcategory->optionalPriorities->where('year', $year) as $optionalPriority)
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                                @else
+                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                                    @endif
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                {!! $optionalPriority->optional_priority !!}
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    @endforeach                                                                                
+                                                                                </tbody>
+                                                                            </table> 
+                                                                        </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                <!-- End of UBC Mandate -->
+                                                                @else
+                                                                    <h6 class="fw-bold mb-3">
+                                                                        {!! $optionalPrioritySubcategory->subcat_name !!}
+                                                                    </h6>
+                                                                    <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
+
+                                                                    <!--optional Priorities for subcategory-->
+                                                                    <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
+                                                                        <thead class="thead-light">
+                                                                            <tr>
+                                                                                <th data-field="state" data-checkbox="true"></th>
+                                                                                <th data-field="Description">Description</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @foreach ($optionalPrioritySubcategory->optionalPriorities as $optionalPriority)
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                            <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                        @else
+                                                                                            <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                        @endif
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        {!! $optionalPriority->optional_priority !!}
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @endforeach
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <p>{!! $optionalPrioritySubcategory->subcat_postamble !!}</p>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2">Save</button>
-                        </form>
+                                        <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2">Save</button>
+                                    </form>
                         <!--End Accordion-->
 
                             <!-- End of optional priorities -->
@@ -267,6 +316,11 @@
 
 <script>
     $(document).ready(function () {
+
+        var mandateCollapseList = $('.collapse.mandate');
+
+        changeMandate($('#ubc-mandate').val(), mandateCollapseList)
+
         $('[data-toggle="tooltip"]').tooltip();
 
         $("form").submit(function () {
@@ -291,6 +345,13 @@
         $('#btnAdd').click(function() {
             add();
         });
+
+        $('#ubc-mandate').on('change', function (event) {
+            // get the value of the select 
+            var mandateId = $(this).val();
+            changeMandate(mandateId, mandateCollapseList);
+            
+        })
 
         // $("form").submit(function (e) {
         //     // prevent duplicate form submissions
@@ -335,6 +396,13 @@
 
         // });
     });
+
+    function changeMandate(mandateId, mandateCollapseList) {
+        mandateCollapseList.each(function (index, mandateCollapse) {    
+            $(mandateCollapse).removeClass('show');
+        });
+        $('#' + mandateId).addClass('show');
+    }
 
     function add() {
         var length = $('#highOpportunityTable tr').length;

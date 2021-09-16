@@ -13,52 +13,52 @@
                         <div class="col-md-4" style="border-right: 1px solid grey;">
                             <nav>
                                 <ol style="list-style-type: none; font-size:medium; list-style: none; padding-left: 0;">
-                                    <li>
+                                    <li class="li">
                                         <a class="programs-guide">Programs</a>
                                         <!--Sub-Categories For Programs-->
                                         <ol class="ol-inner" style="list-style-type: none;">
-                                            <li>
+                                            <li class="li">
                                                 <a class="plo-guide">Program Learning Outcomes (Step 1)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="ms-guide">Mapping Scale (Step 2)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="programCourses-guide">Courses (Step 3)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="programOverview-guide">Program Overview (Step 4)</a>
                                             </li>
                                         </ol>
                                     </li>
-                                    <li>
+                                    <li class="li">
                                         <a class="courses-guide">Courses</a>
                                         <!--Sub-Categories For Courses-->
                                         <ol class="ol-inner" style="list-style-type: none;">
-                                            <li>
+                                            <li class="li">
                                                 <a class="clo-guide">Course Learning Outcomes (Step 1)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="sam-guide">Student Assessment Methods (Step 2)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="tla-guide">Teaching and Learning Activities (Step 3)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="courseAlignment-guide">Course Alignment (Step 4)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="programOutcomeMapping-guide">Program Outcome Mapping (Step 5)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="standards-guide">Standards and Strategic Priorities (Step 6)</a>
                                             </li>
-                                            <li>
+                                            <li class="li">
                                                 <a class="coursesSummary-guide">Course Summary (Step 7)</a>
                                             </li>
                                         </ol>
                                     </li>
-                                    <li>
+                                    <li class="li">
                                         <a class="syllabi-guide">Syllabi</a>
                                     </li>
                                 </ol>
@@ -165,7 +165,7 @@
             <br>
             <h2 class="text-center mb-4">How to Create a Category</h2>
             <p class="help-p my-3" style="font-size:18px;">Categories can be used to group program learning outcomes; however, they are not required. To create a category, click the '+ PLO Category' button as shown below.</p>
-            <img class="img center my-3" src="{{asset('img/guide/plo_categories.png')}}" onclick="onClick(this)">
+            <img class="img center my-3" src="{{asset('img/guide/plo_categories.PNG')}}" onclick="onClick(this)">
             <br>
             <p class="help-p my-3" style="font-size:18px;">After you click on the button to create a category you will be prompted with the following form to fill out.</p>
             <img class="img center my-3" src="{{asset('/img/guide/CreateCategoryModal.PNG')}}" onclick="onClick(this)">
@@ -771,7 +771,7 @@
     a{
         cursor: pointer;
     }
-    li{
+    .li{
         margin-top: 5%;
         margin-bottom: 5%;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifyInstructorForMappingMail;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\User;
@@ -23,6 +24,7 @@ use App\Models\OutcomeMap;
 use App\Models\Standard;
 use App\Models\StandardCategory;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CourseController extends Controller
 {
@@ -91,9 +93,18 @@ class CourseController extends Controller
             ]);
 
         $course = new Course;
-        // TODO Update name of column program-id to ministry standards 
         $course->course_title = $request->input('course_title');
-        $course->course_num = $request->input('course_num');
+        // remove leading zeros from course number
+        $CNum = $request->input('course_num');
+        for ($i = 0; $i < strlen($CNum); $i++) {
+            if ($CNum[$i] == '0') {
+                $CNum = ltrim($CNum, $CNum[$i]);
+            } else {
+                // Found a value that's not '0'
+                break;
+            }
+        }
+        $course->course_num = $CNum;
         $course->course_code =  strtoupper($request->input('course_code'));
         // status of mapping process
         $course->status = -1;
@@ -276,7 +287,17 @@ class CourseController extends Controller
             ]);
 
         $course = Course::where('course_id', $course_id)->first();
-        $course->course_num = $request->input('course_num');
+        // remove leading zeros from course number
+        $CNum = $request->input('course_num');
+        for ($i = 0; $i < strlen($CNum); $i++) {
+            if ($CNum[$i] == '0') {
+                $CNum = ltrim($CNum, $CNum[$i]);
+            } else {
+                // Found a value that's not '0'
+                break;
+            }
+        }
+        $course->course_num = $CNum;
         $course->course_code = strtoupper($request->input('course_code'));
         $course->course_title = $request->input('course_title');
         $course->required = $request->input('required');
@@ -505,4 +526,23 @@ class CourseController extends Controller
     return redirect()->route('programWizard.step3', $request->input('program_id'));    
     }
 
+    public function emailCourseInstructor(Request $request, $course_id) {
+        $program_owner = User::find($request->input('program_owner_id'));
+        $course_owner = User::find($request->input('course_owner_id'));
+        $course = Course::find($course_id);
+        $program = Program::find($request->input('program_id'));
+        $required = (CourseProgram::where('course_id', $course_id)->where('program_id', $request->input('program_id'))->pluck('course_required')->first() == '1' ? "required" : "an elective");
+
+        // disables button on the front end to allow user to notify Instructor more then once
+        CourseProgram::where('course_id', $course_id)->where('program_id', $request->input('program_id'))->update(['map_status' => 1]);
+        
+        Mail::to($course_owner->email)->send(new NotifyInstructorForMappingMail($program->program, $program_owner->name, $course->course_code, $course->course_num, $course->course_title, $required));
+        if (!count(Mail::failures()) > 0) {
+            $request->session()->flash('success', $course_owner->name. ' has been asked to map their course to your program');
+        }else {
+            $request->session()->flash('error', 'There was an error notifying the course instructor');
+        }
+    
+        return redirect()->route('programWizard.step3', $request->input('program_id')); 
+    }
 }

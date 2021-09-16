@@ -22,9 +22,17 @@
                 </h3>
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        Input the required and non-required courses for this program (to the best of your knowledge).
+                    <h6 class="card-subtitle text-center mb-4 lh-lg">
+                    Add required and non-required courses to this program. After adding the courses, each course should be mapped to the Program Learning Outcomes (PLOs) of this Program. Once all courses have been individually mapped to this program, visit the “Program Summary/Step 4” to see the learning outcomes map of the program. 
+
                     </h6>
+                    <h6 class="card-subtitle wizard text-primary fw-bold">
+                        Note: Only course owners or editors can map the course to this program.
+                    </h6>
+                    <ul>
+                        <li class="my-2"><b>Button - Map Course:</b> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
+                        <li class="my-2"><b>Button - Ask to map course:</b> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
+                    </ul>
                     
                     <div class="row mb-2">
                         <div class="col">
@@ -46,7 +54,7 @@
                                             <th class="w-25">Course Title</th>
                                             <th>Course Code</th>
                                             <th>Term</th>
-                                            <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> The course instructor has <b>not</b> mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Completed:</b> The course instructor has mapped <b>some</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> The course instructor has mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
+                                            <th><i class="bi bi-exclamation-circle-fill" style="font-style:normal;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="<ol><li><b>Not Mapped:</b> The course instructor has <b>not</b> mapped their course learning outcomes to the program learning outcomes.</li><li><b>Partially Mapped:</b> The course instructor has mapped <b>some</b> of their course learning outcomes to the program learning outcomes.</li><li><b>Mapped:</b> The course instructor has mapped <b>all</b> of their course learning outcomes to the program learning outcomes.</li></ol>"> Mapped to Program</i></th>
                                             <th class="text-center">Actions</th>
                                         </tr>
 
@@ -97,8 +105,48 @@
                                             </td>
                                             <td>
                                                 <!-- Delete button -->
-                                                <button style="width:70px" type="submit" class="btn btn-danger btn-sm float-right ml-2" data-toggle="modal" data-target="#deleteConfirmationCourse{{$programCourse->course_id}}">Remove</button>
+                                                <button style="width:70px" type="submit" class="btn btn-danger btn-sm float-right ml-2" data-toggle="modal" data-target="#deleteConfirmationCourse{{$programCourse->course_id}}">
+                                                    Remove
+                                                </button>
 
+                                                <!-- Edit button -->
+                                                <button type="button" style="width:60px" class="btn btn-secondary btn-sm float-right ml-2" data-toggle="modal" data-target="#editCourseModal{{$programCourse->course_id}}">
+                                                    Edit
+                                                </button>
+
+                                                @if($actualTotalOutcomes[$programCourse->course_id] != $expectedTotalOutcomes[$programCourse->course_id])
+                                                    <!-- If the User has been notified previously -->
+                                                    @if($programCourse->pivot->map_status == 1)
+                                                        <button type="button" class="btn btn-success btn-sm ml-2 float-right" disabled>
+                                                            <i class="bi bi-check2-circle"></i> Notified
+                                                        </button>
+                                                    @elseif($programCourse->owners[0]->id == $user->id)
+                                                        <!-- Allow owner to be redirected to the course to map it -->
+                                                        <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
+                                                            Map Course
+                                                        </a>
+                                                    @endif
+                                                    @foreach($programCourse->editors as $editor)
+                                                        @if($editor->id == $user->id && $programCourse->pivot->map_status != 1)
+                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
+                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
+                                                                Map Course
+                                                            </a>
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                Ask to Map Course
+                                                            </button>
+                                                        @endif
+                                                    @endforeach
+                                                    @foreach($programCourse->viewers as $viewer)
+                                                        @if($viewer->id == $user->id && $programCourse->pivot->map_status != 1)
+                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                Ask to Map Course
+                                                            </button>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+                                                
                                                 <!-- Delete Confirmation Modal -->
                                                 <div class="modal fade" id="deleteConfirmationCourse{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationCourse" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
@@ -127,12 +175,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Edit button -->
-                                                <button type="button" style="width:60px" class="btn btn-secondary btn-sm float-right ml-2" data-toggle="modal" data-target="#editCourseModal{{$programCourse->course_id}}">
-                                                    Edit
-                                                </button>
-
+                                                
                                                 <!-- Edit Course Required Modal -->
                                                 <div class="modal fade" id="editCourseModal{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="editCourseModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg" role="document">
@@ -216,176 +259,32 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Assign instructor button  -->
-                                                <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#assignInstructorModal{{$programCourse->course_id}}">
-                                                Assign Instructor
-                                                </button>
-
-                                                <!-- Assign Instructor Modal
-                                                <div class="modal fade" id="assignInstructorModal{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="assignInstructorModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-lg" role="document">
+                                                <!-- Ask to Map Course Modal -->
+                                                <div class="modal fade" id="emailInstructorToMapCourse{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="emailInstructorToMapCourse" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="assignInstructorModalLabel">Assign Instructor to Course</h5>
+                                                                <h5 class="modal-title" id="exampleModalLabel">Email Course Instructor to Map this Course</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            <div class="container">
-                                                                <p class="form-text text-muted">
-                                                                Instructors must first register with this web application to see and edit a course.
-                                                                    By adding an instructor, a verification email will be sent to their email address.
-                                                                </p>
-                                                                <table class="table table-borderless">
-
-                                                                    <tr class="table-active">
-                                                                        <th colspan="2">Instructor</th>
-                                                                    </tr>
-                                                                    <div>
-                                                                        @foreach($programCoursesUsers[$programCourse->course_id] as $programCourseUser)
-                                                                                    <tr>
-                                                                                        <td>{{$programCourseUser->email}}</td>
-                                                                                        <td>
-                                                                                            <form action="{{route('courses.unassign', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
-                                                                                                
-                                                                                                @csrf
-                                                                                                {{method_field('DELETE')}}
-                                                                                                <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
-                                                                                                <input type="hidden" class="form-check-input" name="email" value="{{$programCourseUser->email}}">
-                                                                                                <button type="submit"class="btn btn-danger btn-sm">Unassign</button>
-                                                                                            </form>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                        @endforeach
-                                                                    </div>
-
-                                                                </table>
+                                                            <div class="modal-body">
+                                                            Are you sure you want to email {{$programCourse->owners[0]->name}} the instructor of {{$programCourse->course_code . ' ' . $programCourse->course_num}} to ask them to map their course to your program?
                                                             </div>
-
-                                                            <form method="POST" action="{{route('courses.assign', $programCourse->course_id)}}">
+                                                            <form action="{{route('courses.emailCourseInstructor', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
                                                                 @csrf
-                                                                <div class="modal-body">
-                                                                    <div class="form-group row">
-                                                                        <label for="email"
-                                                                            class="col-md-3 col-form-label text-md-right">Instructor
-                                                                            Email</label>
-
-                                                                        <div class="col-md-7">
-                                                                            <input id="email" type="email"
-                                                                                class="form-control @error('email') is-invalid @enderror"
-                                                                                name="email" autofocus>
-
-                                                                            @error('program')
-                                                                            <span class="invalid-feedback"
-                                                                                role="alert">
-                                                                                <strong>{{ $message }}</strong>
-                                                                            </span>
-                                                                            @enderror
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <input type="hidden" class="form-input" name="program_id" value="{{$program->program_id}}">
-
-                                                                </div>
+                                                                {{method_field('GET')}}
+                                                                <input type="hidden" class="form-check-input " name="program_owner_id" value={{$user->id}}>
+                                                                <input type="hidden" class="form-check-input " name="course_owner_id" value={{$programCourse->owners[0]->id}}>
+                                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
                                                                 <div class="modal-footer">
-
-                                                                    <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
-                                                                    <button type="submit" class="btn btn-primary col-2 btn-sm">Assign</button>
-                                                                </form>
+                                                                    <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                                    <button style="width:100px" type="submit" class="btn btn-primary btn-sm">Yes, Email</button>
                                                                 </div>
-                                                        </div>
-                                                    </div>-->
-                                                    <!-- Collaborator Modal -->
-                                                    <div class="modal fade" id="assignInstructorModal{{$programCourse->course_id}}" tabindex="-1" role="dialog"
-                                                        aria-labelledby="assignInstructorModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-lg" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="assignInstructorModalLabel">Add Collaborators to
-                                                                        Course: {{$programCourse->course_title}}</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-
-                                                                <div class="card-body">
-                                                                <p class="form-text text-muted mb-4">Collaborators can see and edit the course. Collaborators must first register with this web application to be added to a course.
-                                                                    By adding a collaborator, a verification email will be sent to their email address.
-                                                                    If your collaborator is not registered with this website yet,
-                                                                    use the <a href="{{ url('/invite') }}">'Registration Invite' feature to invite them.</a>
-                                                                    </p>
-                                                                    <form method="POST" action="{{ action('CourseUserController@store', $programCourse->course_id) }}">
-                                                                        @csrf
-                                                                        <div class="row mb-4">
-                                                                            <div class="col-6">
-                                                                                <input id="email" type="email" name="email" class="form-control" placeholder="Collaborator Email" aria-label="email" required>
-                                                                            </div>
-                                                                            <div class="col-3">
-                                                                                <select class="form-select" name="permission">
-                                                                                    <option value="edit" selected>Editor</option>
-                                                                                    <option value="view">Viewer</option>
-                                                                                </select>                                                                    
-                                                                            </div>
-                                                                            <div class="col-3">
-                                                                                <button type="submit" class="btn btn-primary col"><i class="bi bi-plus"></i> Collaborator</button>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <input type="hidden" class="form-check-input" name="course_id" value={{$programCourse->course_id}}>
-
-                                                                    </form>
-                                                                    @if ($programCoursesUsers[$programCourse->course_id]->count() < 1)
-                                                                        <div class="alert alert-warning wizard">
-                                                                            <i class="bi bi-exclamation-circle-fill"></i>You have not added any collaborators to this course yet.                    
-                                                                        </div>
-                                                                    @else
-                                                                        <table class="table table-light borderless" >
-                                                                            <tr class="table-primary">
-                                                                                <th>Collaborators</th>
-                                                                                <th></th>
-                                                                                <th class="text-center w-25">Actions</th>
-                                                                            </tr>
-                                                                            @foreach($programCoursesUsers[$programCourse->course_id] as $courseCollaborator)
-                                                                                    <tr>
-                                                                                        <td >
-                                                                                            <b>{{$courseCollaborator->name}} @if ($courseCollaborator->email == $user->email) (Me) @endif</b>
-                                                                                            <p>{{$courseCollaborator->email}}</p>
-                                                                                        </td>
-                                                                                        <td>@switch ($courseCollaborator->pivot->permission) 
-                                                                                                @case(1)
-                                                                                                    <b><i>Owner</i></b>
-                                                                                                    @break
-                                                                                                @case(2)
-                                                                                                    Editor
-                                                                                                    @break
-                                                                                                @case(3)
-                                                                                                    Viewer
-                                                                                                    @break
-                                                                                            @endswitch
-                                                                                        </td>
-                                                                                        @if ($courseCollaborator->pivot->permission == 1)
-                                                                                            <td></td>
-                                                                                        @else
-                                                                                            <td class="text-center">
-                                                                                                <form action="{{route('courses.unassign', $programCourse->course_id) }}" method="POST">
-                                                                                                    @csrf
-                                                                                                    {{method_field('DELETE')}}
-                                                                                                    <input type="hidden" class="form-check-input" name="course_id" value={{$programCourse->course_id}}>
-                                                                                                    <input type="hidden" class="form-check-input" name="user_id" value="{{$courseCollaborator->id}}">
-                                                                                                    <input type="hidden" class="form-check-input" name="email" value="{{$courseCollaborator->email}}">
-                                                                                                    <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
-                                                                                                </form>
-                                                                                            </td>
-                                                                                        @endif
-                                                                                    </tr>
-                                                                            @endforeach
-                                                                        </table>
-                                                                    @endif
-                                                            </div>
+                                                            </form>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <!-- End of course collaborator modal -->
                                                 </div>
                                             </td>                                        
                                         </tr>
@@ -438,9 +337,9 @@
                                                 Number</label>
 
                                             <div class="col-md-8">
-                                                <input id="course_num" type="text"
-                                                    class="form-control @error('course_num') is-invalid @enderror"
-                                                    name="course_num" required autofocus>
+                                                <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*"
+                                                    class="form-control @error('course_num') is-invalid @enderror" name="course_num"
+                                                    required autofocus>
 
                                                 @error('course_num')
                                                 <span class="invalid-feedback" role="alert">

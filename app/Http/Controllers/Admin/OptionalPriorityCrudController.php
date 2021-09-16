@@ -80,11 +80,6 @@ class OptionalPriorityCrudController extends CrudController
                 $query ->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
             }
         ]);
-        
-        
-        
-        
-        
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 use App\Mail\NotifyInstructorMail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -47,57 +48,90 @@ class CourseUserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $courseId)
     {
-        //
+        // get the current user
         $currentUser = User::find(Auth::id());
-        $currentUserPermission = $currentUser->courses->where('course_id', $request->input('course_id'))->first()->pivot->permission;
-        if ($currentUserPermission == 1) {
-            // Validate request 
-            $validator = $this->validate($request, [
-                'email'=> 'required',
-                'email'=> 'exists:users,email',
-                'permission' => 'required',
-                ]);
+        // get the current user permission
+        $currentUserPermission = $currentUser->courses->where('course_id', $courseId)->first()->pivot->permission;
+        // get the course
+        $course = Course::find($courseId);
+        // keep track of errors
+        $errorMessages = Collection::make();
+        $warningMessages = Collection::make();
 
-            // get user
-            $user = User::where('email', $request->input('email'))->first();
-            // get course id
-            $course_id = $request->input('course_id');
-            // get course
-            $course = Course::where('course_id',$course_id)->first();
-            // get permission
-            $permission = $request->input('permission');
-            // create a new collaborator
-            CourseUser::updateOrCreate(
-                ['course_id' => $course_id, 'user_id' => $user->id ]
-            );
-            // find the newly created or updated course user
-            $courseUser = CourseUser::where([
-                ['course_id', $course_id],
-                ['user_id', $user->id]
-            ])->first();
-            // Set the course users permission level
-            switch ($permission) {
-                case 'edit':
-                    $courseUser->permission = 2;
-                break;
-                case 'view':
-                    $courseUser->permission = 3;
-                break;
+        // if the current user is the owner, save the collaborators and their permissions
+        if ($currentUserPermission == 1 ) {
+            $currentPermissions = ($request->input('course_current_permissions')) ? $request->input('course_current_permissions') : array();
+            $newCollabs = $request->input('course_new_collabs');
+            $newPermissions = $request->input('course_new_permissions');
+            // get the saved collaborators for this course, but not the owner
+            $savedCourseUsers = CourseUser::where([['course_id', '=', $course->course_id], ['permission', '!=', 1]])->get();
+            // update current collaborators for this course
+            foreach ($savedCourseUsers as $savedCourseUser) {
+                if (array_key_exists($savedCourseUser->user_id, $currentPermissions)) {
+                    $this->update($savedCourseUser, $currentPermissions);
+                } else {
+                    // remove old collaborator from course, make sure it's not the owner
+                    if ($savedCourseUser->permission != 1) {
+                        $this->destroy($savedCourseUser);
+                    }
+                }
             }
 
-            if($courseUser->save()){
-                Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $currentUser->name));
-                $request->session()->flash('success', 'Course '.$course->course_code.''.$course->course_num.' successfully assigned to '.$user->email);
-            }else{
-                $request->session()->flash('error', 'There was an error assigning the course');
-            }
+            // add new collaborators
+            if ($newCollabs) {
+                foreach ($newCollabs as $index => $newCollab) {
+                    // find the newCollab by their email
+                    $user = User::where('email', $newCollab)->first();
+                    // if the user has registered with the tool, add the new collab
+                    if ($user) {
+                        // make sure the new collab user isn't already collaborating on this course 
+                        if (!in_array($user->email, $course->users->pluck('email')->toArray())) {
+                            // get their given permission level
+                            $permission = $newPermissions[$index];
+                            // create a new collaborator
+                            $courseUser = CourseUser::updateOrCreate(
+                                ['course_id' => $course->course_id, 'user_id' => $user->id],
+                                
+                            );
 
+                            $courseUser = CourseUser::where([['course_id', '=', $courseUser->course_id], ['user_id', '=', $courseUser->user_id]])->first();
+                            // set this course user permission level
+                            switch ($permission) {
+                                case 'edit':
+                                    $courseUser->permission = 2;
+                                break;
+                                case 'view':
+                                    $courseUser->permission = 3;
+                                break;
+                            }
+
+                            if($courseUser->save()){
+                                Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $user->name));
+                            } else {
+                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to course ' . $course->course_code . ' ' . $course->course_num);
+                            }
+                        } else {
+                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on course ' . $course->course_code . ' ' . $course->course_num);
+                        }
+                    } else {
+                        $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
+                    }
+                }
+            }
+        // else the current user does not own this course
         } else {
-            $request->session()->flash('error', 'You do not have permission to add collaborators to this course');
+            $errorMessages->add('You do not have permission to add collaborators to this course');
         }
-        return redirect()->back();
+
+        // if no errors or warnings, flash a success message
+        if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
+            $request->session()->flash('success', 'Successfully updated collaborators on course ' . $course->course_code . ' ' . $course->course_num);
+        }
+
+        // return to the previous page
+        return redirect()->back()->with('errorMessages', $errorMessages)->with('warningMessages', $warningMessages);
     }
 
     /**
@@ -129,10 +163,20 @@ class CourseUserController extends Controller
      * @param  \App\Models\CourseUser  $courseUser
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CourseUser $courseUser)
+    public function update(CourseUser $courseUser, $permissions)
     {
-        //
-
+        // update permissions for current collaborators
+        switch ($permissions[$courseUser->user_id]) {
+            case 'edit':
+                $courseUser->permission = 2;
+            break;
+            
+            case 'view':
+                $courseUser->permission = 3;
+            break;
+        }
+        
+        $courseUser->save();
     }
 
     /**
@@ -141,40 +185,15 @@ class CourseUserController extends Controller
      * @param  \App\Models\CourseUser  $courseUser
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy(CourseUser $courseUser)
     {
-        // user trying to remove collaborator
+        // get the current user
         $currentUser = User::find(Auth::id());
-        $currentUserPermission = $currentUser->courses->where('course_id', $request->input('course_id'))->first()->pivot->permission;
-        // user to be removed from course
-        $user_id = $request->input('user_id');
-
-        if ($currentUser->id == (int) $user_id) {
-            $course_id = $request->input('course_id');
-            $courseUser = CourseUser::where('course_id', $course_id)->where('user_id', $user_id);
-            $user = User::find($user_id);
-
-            if ($courseUser->delete()) {
-                $request->session()->flash('success', $user->name. ' has been removed');
-            } else {
-                $request->session()->flash('error', 'There was an error deleting the user');
-            }
-        
-        } else if ($currentUserPermission == 1) {
-            $user = User::find($user_id);
-            $course_id = $request->input('course_id');
-            $courseUser = CourseUser::where('course_id', $course_id)->where('user_id', $user_id);
-
-            if ($courseUser->delete()) {
-                $request->session()->flash('success', $user->name. ' has been deleted');
-            }else{
-                $request->session()->flash('error', 'There was an error deleting the user');
-            }
-
-        } else {
-            $request->session()->flash('error', 'You do not have permission to remove collaborators to this course');
+        // get the current user permission
+        $currentUserPermission = CourseUser::where([['course_id', $courseUser->course_id], ['user_id', $currentUser->id]])->first()->permission;
+        // if the current user is the owner, delete the given course collaborator
+        if ($currentUserPermission == 1 ) {
+            $courseUser->delete();
         }
-
-        return redirect()->back();
     }
 }
