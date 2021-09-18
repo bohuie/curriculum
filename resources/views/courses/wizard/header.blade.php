@@ -161,6 +161,24 @@
                                                 </div>
                                             </div>
 
+                                            <div class="form-group row">
+                                                <label for="standard_category_id" class="col-md-3 col-form-label text-md-right"><span class="requiredField">* </span>Map my course against</label>
+                                                <div class="col-md-8">
+                                                    <select class="form-control" name="standard_category_id" id="standard_category_id" required>
+                                                        <option value="{{$course->standard_category_id}}" selected hidden>{{$course->standardCategory->sc_name}}</option>
+                                                        @foreach($standard_categories as $standard_category)
+                                                            <option value="{{ $standard_category->standard_category_id }}">{{$standard_category->sc_name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <small id="helpBlock" class="form-text text-danger">
+                                                        Warning: Changing the standards will erase any previously saved standard mapping outcomes.
+                                                    </small>
+                                                    <small id="helpBlock" class="form-text text-muted">
+                                                        These are the standards from the Ministry of Advanced Education in BC.
+                                                    </small>
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
