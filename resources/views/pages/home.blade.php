@@ -227,14 +227,16 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
                                             @if ($progressBar[$course->course_id] == 0)
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @elseif ($progressBar[$course->course_id] == 100)
                                                 <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
@@ -242,9 +244,11 @@
                                                     <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             @else
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -268,14 +272,16 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
                                             @if ($progressBar[$course->course_id] == 0)
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @elseif ($progressBar[$course->course_id] == 100)
                                                 <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
@@ -283,9 +289,11 @@
                                                     <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             @else
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -377,14 +385,16 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
                                             @if ($progressBar[$course->course_id] == 0)
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @elseif ($progressBar[$course->course_id] == 100)
                                                 <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
@@ -392,9 +402,11 @@
                                                     <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             @else
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -417,14 +429,16 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
                                             @if ($progressBar[$course->course_id] == 0)
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @elseif ($progressBar[$course->course_id] == 100)
                                                 <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
@@ -432,9 +446,11 @@
                                                     <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             @else
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -476,14 +492,16 @@
                                 <tr>
                                     <!-- Courses That have Not been Completed TODO: THIS IS PROBABLY NOT NEEDED ANYMORE-->
                                     @if($course->status !== 1)
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
                                             @if ($progressBar[$course->course_id] == 0)
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @elseif ($progressBar[$course->course_id] == 100)
                                                 <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
@@ -491,9 +509,11 @@
                                                     <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             @else
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -516,14 +536,16 @@
                                         </td>
                                     @else
                                         <!-- Courses That have been Completed -->
-                                        <td><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
+                                        <td style="max-width: 450px;"><a href="{{route('courseWizard.step1', $course->course_id)}}">{{$course->course_title}}</a></td>
                                         <td>{{$course->course_code}} {{$course->course_num}}</td>
                                         <td>{{$course->year}} {{$course->semester}}</td>
                                         <td class="align-middle">
                                             @if ($progressBar[$course->course_id] == 0)
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @elseif ($progressBar[$course->course_id] == 100)
                                                 <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
@@ -531,9 +553,11 @@
                                                     <div class="progress-bar bg-success" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             @else
-                                                <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="{{$progressBarMsg[$course->course_id]['statusMsg']}}">
+                                                    <p class="text-center mb-0">{{$progressBar[$course->course_id]}}%</p>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width:{{$progressBar[$course->course_id]}}%;" aria-valuenow="{{$progressBar[$course->course_id]}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -923,7 +947,7 @@
                                     Number</label>
 
                             <div class="col-md-8">
-                                <input id="course_num" type="text"
+                                <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*"
                                         class="form-control @error('course_num') is-invalid @enderror" name="course_num"
                                         required autofocus>
 
@@ -1071,6 +1095,8 @@
 <style> 
 .tooltip-inner {
     text-align: left;
+    max-width: 600px;
+    width: auto;
 }
 </style>
 

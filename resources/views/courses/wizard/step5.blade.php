@@ -15,6 +15,14 @@
             <div class="card">
                 <h3 class="card-header wizard" >
                     Program Outcome Mapping
+                    <div style="float: right;">
+                            <button id="programOutcomeMappingHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle" style="color:#002145;"></i>
+                            </button>
+                        </div>
+                        <div class="text-left">
+                            @include('layouts.guide')
+                    </div>
                 </h3>
                 <div class="card-body">
 
@@ -107,12 +115,12 @@
                                                                                 @if ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] == $courseProgram->programLearningOutcomes()->count())
                                                                                     <button class="accordion-button white-arrow clo collapsed bg-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                                         <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
-                                                                                        &emsp;-&emsp;<b>{{ ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100 }}%</b>
-                                                                                    @else
+                                                                                        &emsp;-&emsp;<b>{{ number_format((float)(($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100)) }}%</b>
+                                                                                @else
                                                                                     <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                                         <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
-                                                                                        &emsp;-&emsp;<b>{{ ($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100 }}%</b>
-                                                                                    @endif
+                                                                                        &emsp;-&emsp;<b>{{ number_format((float)(($outcomeMapsCountPerProgramCLO[$courseProgram->program_id][$courseLearningOutcome->l_outcome_id] / $courseProgram->programLearningOutcomes()->count()) * 100)) }}%</b>
+                                                                                @endif
                                                                                 </button>
                                                                             </h2>
 

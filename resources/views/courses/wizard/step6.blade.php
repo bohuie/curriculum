@@ -15,6 +15,14 @@
             <div class="card">
                 <h3 class="card-header wizard" >
                     Standards and Strategic Priorities
+                    <div style="float: right;">
+                            <button id="standardsHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle" style="color:#002145;"></i>
+                            </button>
+                        </div>
+                        <div class="text-left">
+                            @include('layouts.guide')
+                    </div>
                 </h3>
 
                 <div class="card-body">
@@ -90,8 +98,13 @@
                                                 <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                     <div class="accordion-item mb-2">
                                                         <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                            <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
+                                                            @if ($standardsMapped[$courseLearningOutcome->l_outcome_id] == $course->standards->count())
+                                                                <button class="accordion-button white-arrow clo collapsed bg-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}} &emsp;-&emsp; {{ number_format((float)($standardsMapped[$courseLearningOutcome->l_outcome_id] / $course->standards->count()) * 100) }} %
+                                                            @else
+                                                                <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}} &emsp;-&emsp; {{ number_format((float)($standardsMapped[$courseLearningOutcome->l_outcome_id] / $course->standards->count()) * 100) }} %
+                                                            @endif
                                                             </button>
                                                         </h2>
                                                         <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">

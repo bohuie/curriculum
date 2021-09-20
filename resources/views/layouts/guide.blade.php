@@ -74,33 +74,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal" style="color: white;">Open second modal</button>
             </div>
         </div>
     </div>
 </div>
 
-<!--Modal 2-->
-<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-black" id="exampleModalToggleLabel2" style="color: black;">Modal 2</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-black" style="color: black;">
-                <div class="update-content">
-                    <!--Loads Content here-->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#guideModal" data-bs-toggle="modal" data-bs-dismiss="modal" style="color: white;">Back to Guide</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--W3 Modal-->
+<!--img zoom Modal-->
 <div id="modal01" class="modal modal-zoom" onclick="this.style.display='none'">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content bg-dark">
@@ -304,7 +283,7 @@
             <p class="help-p my-3" style="font-size:18px;">This will open a prompt that will allow you to enter information regarding your course, as well as if it is required by the program.</p>
             <img class="img center my-3" src="{{asset('/img/guide/CreateProgramCourseModal.PNG')}}" onclick="onClick(this)">
             <br>
-            <p class="help-p my-3" style="font-size:18px;">After you finish inputting all the required information the course will then appear on your courses table for the program. You will also be able to access the course from the dashboard as well. </p>
+            <p class="help-p my-3" style="font-size:18px;">After you finish inputting all the required information the course will then appear on your courses table for the program. You will also be able to access the course from the dashboard as well.</p>
             <br>
             <div class="row">
                 <div class="col"><button class="btn btn-primary float-left w-100" onclick="setMS()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Mapping Scales (Step 2)</button></div>
@@ -416,7 +395,21 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Learning Outcomes (Step 1)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">Course Learning outcomes allow you to describe the outcomes that students can expect to take away from completing the course, further instructions can be found <a target=”_blank” href='https://ctl.ok.ubc.ca/teaching-effectively/course-design/'>here</a>.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Add a New Course Learning Outcome</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To create a Course Learning Outcome, you will need to select the ‘+ CLO’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateCLO.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You can then enter your Course Learning outcome as well as a short phrase in the prompt shown below. There is further information provided in the prompt to help you generate ideas for creating Course Learning Outcomes.</p>
+            <img class="img center my-3 w-50" src="{{asset('/img/guide/CreateCLOModal.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">It is recommended that a course has a maximum of 5-7 Course Learning Outcomes.</p>
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setCourses()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Courses</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setSAM()" style="color: white;">Student Assessment Methods (Step 2) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -447,7 +440,22 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Student Assessment Methods Guide (Step 2)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">Student Assessment Methods provide a way to list the methods that students' understanding of course concepts and material will be evaluated and measured.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Add a New Student Assessment Methods</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To create Student Assessment Methods, you will need to select the ‘+ Student Assessment Methods’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateStudentAssessmentMethod.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You will then see the prompt shown below, from this menu you can add as many Assessment Methods as you would like. For each Assessment Method you will need to assign a weight, you may also assign the weight of zero if you wish.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateStudentAssementMethodsModal.gif')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">After adding your Assessment Methods, you will see them appear in the table as shown below, along with the total combined weight.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StudentAssessmentMethods.png')}}" onclick="onClick(this)">
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setCLO()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Course Learning Outcomes (Step 1)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setTLA()" style="color: white;">Teaching and Learning Activities (Step 3) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -478,7 +486,23 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Teaching and Learning Activities (Step 3)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">Teaching and Learning Activities are used to describe the methods the course will be taught.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Add New Teaching and Learning Activities</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To create Teaching and Learning Activities, you will need to select the ‘+ Learning Activities’ button.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateTeachingandLearningActivities.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You will then see the prompt shown below, from this menu you can add as many Learning Activities as you would like.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CreateTeachingandLearningActivitiesModal.gif')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">After adding your Learning Activities, you will see them appear in the table as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/TeachingandLearningActivities.PNG')}}" onclick="onClick(this)">
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setSAM()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Student Assessment Methods (Step 2)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setCourseAlignment()" style="color: white;">Course Alignment (Step 4) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -509,7 +533,14 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Alignment (Step 4)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">This step requires course instructors to align their Student Assessment Methods, and their Teaching and Learning Activities to their Course Learning Outcomes. An example of aligning a course is shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CourseAlignment.gif')}}" onclick="onClick(this)">
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setTLA()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Teaching and Learning Activities (Step 3)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setProgramOutcomeMapping()" style="color: white;">Program Outcome Mapping (Step 5) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -540,7 +571,29 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Program Outcome Mapping (Step 5)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">This step requires that your course has been added to a program, otherwise you will not see any programs to map your course to. See the <a class="link" onclick="setProgram()">Program guide</a> if you would like to create a program.</p>
+            <br>
+            <h2 class="text-center mb-4">How to Map your Course to a Program</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">To map your course to a program, you will need to select the program dropdown as shown below (You may need to double click on the dropdown box to open it).</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMapping.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">Once the dropdown has opened you will see the mappings scale for the program, as well as your CLOs. To begin mapping the Program Learning Outcomes to your Course Learning Outcomes click on one of your Course Learning Outcomes as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMappingCLOS.png')}}" onclick="onClick(this)">
+            <br>
+            <ol class="m-5">
+                <li class="my-2" style="font-size: 18px;">Select the scale value which aligns best for your Course Learning Outcome to the Program Learning Outcome.</li>
+                <li class="my-2" style="font-size: 18px;">Make sure you save your selection for each Course Learning Outcome.</li>
+            </ol>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMappingCLOScale.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">After you have saved your selection, you will see the banner colour change to green to indicate that the CLO has been mapped.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/ProgramOutcomeMappingCLOSCompleted.png')}}" onclick="onClick(this)">
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setCourseAlignment()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Course Alignment (Step 4)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setStandards()" style="color: white;">Standards and Strategic Priorities (Step 6) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -571,7 +624,37 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Standards and Strategic Priorities (Step 6)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <h2 class="text-center mb-4">How to Map your Course to Standards</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">The standards tab is selected by default when you open the page.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StandardsAndStrategicPriorities.PNG')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">You will need to select a CLO to map the Standards to (You may need to double click the CLO in order for the dropdown to appear).</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StandardsCLOS.PNG')}}" onclick="onClick(this)">
+            <br>
+            <ol class="m-5">
+                <li class="my-2" style="font-size: 18px;">Select the scale value which aligns best for your Course Learning Outcome to the Standard.</li>
+                <li class="my-2" style="font-size: 18px;">Make sure you save your selection for each Course Learning Outcome.</li>
+            </ol>
+            <img class="img center my-3" src="{{asset('/img/guide/StandardsCLOScale.PNG')}}" onclick="onClick(this)">
+            <br>
+            <h2 class="text-center mb-4">How to Map your Course to Strategic Priorities</h2>
+            <p class="help-p my-3 center" style="font-size:18px;">First you will need to select the Strategic Priorities tab.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StrategicPriorities.png')}}" onclick="onClick(this)">
+            <br>
+            <p class="help-p my-3 center" style="font-size:18px;">Then you can select the from the drop down as shown below.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/StrategicPriority.png')}}" onclick="onClick(this)">
+            <br>
+            <ol class="m-5">
+                <li class="my-2" style="font-size: 18px;">Select the Strategic Priority’s which align best for your course.</li>
+                <li class="my-2" style="font-size: 18px;">Make sure you save your selection before leaving the page.</li>
+            </ol>
+            <img class="img center my-3" src="{{asset('/img/guide/StrategicPrioritySelection.png')}}" onclick="onClick(this)">
+
+            <br>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-left w-100" onclick="setProgramOutcomeMapping()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Program Outcome Mapping (Step 5)</button></div>
+                <div class="col"><button class="btn btn-primary float-right w-100" onclick="setCoursesSummary()" style="color: white;">Course Summary (Step 7) <i class="bi bi-arrow-right mr-2"></i></button></div>
+            </div>
         `);
     }
 
@@ -602,7 +685,11 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Course Summary (Step 7)</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3" style="font-size:18px;">The course overview provides a comprehensive view of all of the information regarding the course, as well as detailed charts from the information provided in the previous steps. You must fill in the previous steps in order to see some of the fields for the course overview.</p>
+            <p class="help-p my-3" style="font-size:18px;">The course overview can be downloaded as a PDF copy.</p>
+            <img class="img center my-3" src="{{asset('/img/guide/CourseOverview.png')}}" onclick="onClick(this)">
+            <br>
+            <button class="btn btn-primary float-left w-50" onclick="setStandards()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Standards and Strategic Priorities (Step 6)</button>
         `);
     }
 
@@ -633,7 +720,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Syllabi</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">This page is under construction.</p>
         `);
     }
 
@@ -667,7 +754,12 @@
     $('#programOverviewHelp').on('click', setProgramOverview);
     // Calls from course wizard
     $('#cloHelp').on('click', setCLO);
-    $('#samHelp').on('click', setSam);
+    $('#samHelp').on('click', setSAM);
+    $('#tlaHelp').on('click', setTLA);
+    $('#courseAlignmentHelp').on('click', setCourseAlignment);
+    $('#programOutcomeMappingHelp').on('click', setProgramOutcomeMapping);
+    $('#standardsHelp').on('click', setStandards);
+    $('#courseOverviewHelp').on('click', setCoursesSummary);
 
     function onClick(element) {
         document.getElementById("img01").src = element.src;

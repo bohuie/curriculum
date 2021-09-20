@@ -7,12 +7,17 @@
             @include('courses.wizard.header')
 
             <div class="card">
-                <div class="card-header text-start pt-4 pb-4" >
+                <div class="card-header wizard" >
                     <h3>
                         Teaching and Learning Activities
-                        <button type="button" class="btn btn-primary col-3 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
-                            <i class="bi bi-plus mr-2"></i>Learning Activities
-                        </button>
+                        <div style="float: right;">
+                            <button id="tlaHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle" style="color:#002145;"></i>
+                            </button>
+                        </div>
+                        <div class="text-left">
+                            @include('layouts.guide')
+                        </div>
                     </h3>
                 </div>
 
@@ -113,11 +118,23 @@
                 <!-- End of add student assessment methods modal -->
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 lh-lg">
-                        Input all teaching and learning activities or <a target="_blank" href="https://teaching.cornell.edu/teaching-resources/teaching-cornell-guide/instructional-strategies"><i class="bi bi-box-arrow-up-right"></i> instructional strategies</a> of the course individually. For increased accessibility and enhanced student participation, while still offering challenging learning opportunities,
-                        use there <a target="_blank" href="https://udlguidelines.cast.org/binaries/content/assets/udlguidelines/udlg-v2-2/udlg_graphicorganizer_v2-2_numbers-no.pdf"><i class="bi bi-box-arrow-up-right"></i> Universal Design for Learning Guildlines</a>
-                        (Offered by CAST) to design your course. You may also use <a target="_blank" href="https://udlguidelines.cast.org/binaries/content/assets/common/publications/articles/cast-udl-planningq-a11y.pdf"><i class="bi bi-box-arrow-up-right"></i> these key questions to guide</a> you.               
-                    </h6>
+
+                <div class="row">
+                    <div class="col">
+                        <h6 class="card-subtitle mb-4 lh-lg">
+                            Input all teaching and learning activities or <a target="_blank" href="https://teaching.cornell.edu/teaching-resources/teaching-cornell-guide/instructional-strategies"><i class="bi bi-box-arrow-up-right"></i> instructional strategies</a> of the course individually. For increased accessibility and enhanced student participation, while still offering challenging learning opportunities,
+                            use there <a target="_blank" href="https://udlguidelines.cast.org/binaries/content/assets/udlguidelines/udlg-v2-2/udlg_graphicorganizer_v2-2_numbers-no.pdf"><i class="bi bi-box-arrow-up-right"></i> Universal Design for Learning Guildlines</a>
+                            (Offered by CAST) to design your course. You may also use <a target="_blank" href="https://udlguidelines.cast.org/binaries/content/assets/common/publications/articles/cast-udl-planningq-a11y.pdf"><i class="bi bi-box-arrow-up-right"></i> these key questions to guide</a> you.               
+                        </h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-1">
+                        <button type="button" class="btn btn-primary col-3 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
+                            <i class="bi bi-plus mr-2"></i>Learning Activities
+                        </button>
+                    </div>
+                </div>
 
                     <div id="admins">
                         <div class="row">
