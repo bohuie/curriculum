@@ -12,11 +12,11 @@
                 <h3 class="card-header wizard">
                     Program Learning Outcomes (PLOs)
 
-                    <div style="float: right;">
+                    <!-- <div style="float: right;">
                         <button id="ploHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                             <i class="bi bi-question-circle" style="color:#002145;"></i>
                         </button>
-                    </div>
+                    </div> -->
                     <div class="text-left">
                         @include('layouts.guide')
                     </div>
