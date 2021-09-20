@@ -720,7 +720,7 @@
         $("#guideModal .update-content").html(`
             <h2 class="mb-4 head"><u>Syllabi</u></h2>
             <br>
-            <p class="help-p my-3 center" style="font-size:18px;">This section has not been finished yet</p>
+            <p class="help-p my-3 center" style="font-size:18px;">This page is under construction.</p>
         `);
     }
 
