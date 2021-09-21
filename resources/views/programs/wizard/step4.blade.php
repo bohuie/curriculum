@@ -152,6 +152,25 @@
                                     </table>
                                 @endif
                             </div>
+                        
+                            <!-- Column Chart -->
+                            <div class="mt-5">
+                                <form action="">
+                                    <div class=" mx-5 mt-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
+                                            <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
+                                            <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="container mt-0">
+                                    <div id="high-chart"></div>
+                                </div>
+                            </div>
 
                         <div class="card-body">
                             <nav class="mt-2">
@@ -1114,25 +1133,6 @@
                                 <!--End tab-pane-->
                             </div>
                             <!--End tab-content-->
-
-                            <!-- Column Chart -->
-                            <div class="mt-5">
-                                <form action="">
-                                    <div class=" mx-5 mt-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
-                                            <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
-                                            <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
-                                        </div>
-                                    </div>
-                                </form>
-                                <div class="container mt-0">
-                                    <div id="high-chart"></div>
-                                </div>
-                            </div>
 
                         </div>
                         <!--End card-body-->

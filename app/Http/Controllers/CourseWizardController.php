@@ -78,9 +78,11 @@ class CourseWizardController extends Controller
         //
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
         $course =  Course::where('course_id', $course_id)->first();
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
 
         return view('courses.wizard.step1')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
-        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount);
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories);
 
     }
 
@@ -127,10 +129,12 @@ class CourseWizardController extends Controller
         $custom_methods = Custom_assessment_methods::select('custom_methods')->get();
         $totalWeight = AssessmentMethod::where('course_id', $course_id)->sum('weight');
         $course =  Course::where('course_id', $course_id)->first();
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
 
         return view('courses.wizard.step2')->with('a_methods', $a_methods)->with('course', $course)->with("totalWeight", $totalWeight)->with('courseUsers', $courseUsers)
         ->with('user', $user)->with('custom_methods',$custom_methods)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
-        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount);
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories);
 
 
     }
@@ -176,10 +180,12 @@ class CourseWizardController extends Controller
         $l_activities = LearningActivity::where('course_id', $course_id)->get();
         $custom_activities = Custom_learning_activities::select('custom_activities')->get();
         $course =  Course::where('course_id', $course_id)->first();
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
 
         return view('courses.wizard.step3')->with('l_activities', $l_activities)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)
         ->with('custom_activities',$custom_activities)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
-        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount);
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories);
 
     }
 
@@ -225,10 +231,12 @@ class CourseWizardController extends Controller
         $course =  Course::where('course_id', $course_id)->first();
         $l_activities = LearningActivity::where('course_id', $course_id)->get();
         $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
 
         return view('courses.wizard.step4')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('l_activities', $l_activities)->with('a_methods', $a_methods)
         ->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
-        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount);
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories);
     }
 
     // Program Outcome Mapping
@@ -270,6 +278,8 @@ class CourseWizardController extends Controller
                                 ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
         
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
         // Returns the count of clos to plos for a courseProgram
         $coursePrograms = $course->programs;
         $clos = $course->learningOutcomes->pluck('l_outcome_id')->toArray();
@@ -297,7 +307,7 @@ class CourseWizardController extends Controller
 
         return view('courses.wizard.step5')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
-        ->with('outcomeMapsCountPerProgram', $outcomeMapsCountPerProgram)->with('outcomeMapsCountPerProgramCLO', $outcomeMapsCountPerProgramCLO);
+        ->with('outcomeMapsCountPerProgram', $outcomeMapsCountPerProgram)->with('outcomeMapsCountPerProgramCLO', $outcomeMapsCountPerProgramCLO)->with('standard_categories', $standard_categories);
     }
 
     public function step6($course_id, Request $request)
@@ -338,6 +348,8 @@ class CourseWizardController extends Controller
                                 ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
 
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
         // get learning outcomes for a course
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
         // get Standards and strategic outcomes for a course
@@ -360,7 +372,7 @@ class CourseWizardController extends Controller
             }
         }
 
-        return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standardsMapped', $standardsMapped);
+        return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standardsMapped', $standardsMapped)->with('standard_categories', $standard_categories);
     }
     
     public function step7($course_id, Request $request)
@@ -401,6 +413,8 @@ class CourseWizardController extends Controller
                                 ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
 
+        // returns a collection of standard_categories, used in the create course modal
+        $standard_categories = DB::table('standard_categories')->get();
         // get all the programs this course belongs to
         $coursePrograms = $course->programs;
         // get the PLOs for each program
@@ -462,7 +476,7 @@ class CourseWizardController extends Controller
         return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)
         ->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)
         ->with('standardsOutcomeMap', $standardsOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalSubcategories', $optionalSubcategories)
-        ->with('standardsOutcomeMapCount', $standardsOutcomeMapCount);
+        ->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories);
     }
 
 }
