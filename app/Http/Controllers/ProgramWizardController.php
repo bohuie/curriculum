@@ -229,7 +229,7 @@ class ProgramWizardController extends Controller
         // ploCount * cloCount = number of outcome map results for course and program
         $expectedTotalOutcomes = array();
         foreach ($programCourses as $programCourse) {
-            $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
+            $expectedTotalOutcomes[$programCourse->course_id] = count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
         }
 
         // Get all PLO Id's
