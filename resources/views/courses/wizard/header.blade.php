@@ -171,7 +171,7 @@
                                                         @endforeach
                                                     </select>
                                                     <small id="helpBlock" class="form-text text-danger">
-                                                        Warning: Changing the standards will erase any previously saved standard mapping outcomes.
+                                                        Warning: Changing the standards will overwrite any previously saved standard mapping outcomes.
                                                     </small>
                                                     <small id="helpBlock" class="form-text text-muted">
                                                         These are the standards from the Ministry of Advanced Education in BC.
