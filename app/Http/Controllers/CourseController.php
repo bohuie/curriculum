@@ -23,6 +23,7 @@ use App\Models\Optional_priorities;
 use App\Models\OutcomeMap;
 use App\Models\Standard;
 use App\Models\StandardCategory;
+use App\Models\StandardsOutcomeMap;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -306,6 +307,18 @@ class CourseController extends Controller
         $course->year = $request->input('course_year');
         $course->semester = $request->input('course_semester');
         $course->section = $request->input('course_section');
+        
+        // if standard category id has been updated then, delete all old standard mappings
+        if ($course->standard_category_id != $request->input('standard_category_id')) {
+            $clos = $course->learningOutcomes->pluck('l_outcome_id')->toArray();
+            foreach ($clos as $clo) {
+                StandardsOutcomeMap::where('l_outcome_id', $clo)->delete();
+            }
+            // assign new standard category id for course.
+            $course->standard_category_id = $request->input('standard_category_id');
+        }
+        
+
 
         if($course->save()){
             $request->session()->flash('success', 'Course updated');
