@@ -10,16 +10,11 @@
                 <div class="card-header wizard">
                     <h3>
                         Course Learning Outcomes (CLOs)
-                        
-                        <button type="button" class="btn btn-primary col-2 float-right bg-primary text-white fs-5"  data-toggle="modal" data-target="#addLearningOutcomeModal">
-                            <i class="bi bi-plus mr-2 "></i>CLO
-                        </button>
-
-                        <!-- <div style="float: right;">
+                        <div style="float: right;">
                             <button id="cloHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>
                             </button>
-                        </div> -->
+                        </div>
                         <div class="text-left">
                             @include('layouts.guide')
                         </div>

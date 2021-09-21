@@ -17,12 +17,12 @@
                         <h3 style="color: white;">
                         Programs
                         
-                        <!-- <div style="float:right;">
+                        <div style="float:right;">
                             <button id="programHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle text-white"></i>
                             </button>
-                        </div> -->
-                        @include('layouts.guide') 
+                        </div>
+                        @include('layouts.guide')
 
                         <div style="float:right;">
                             <button style="border: none; background: none; outline: none;" data-toggle="modal" data-target="#createProgramModal">
@@ -185,11 +185,11 @@
                     <h3 style="color: white;">
                         Courses
                     
-                    <!-- <div style="float:right;">
+                    <div style="float:right;">
                         <button id="coursesHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                             <i class="bi bi-question-circle text-white"></i>
                         </button>
-                    </div> -->
+                    </div>
                     @include('layouts.guide')
 
                         <div style="float:right;">
@@ -599,11 +599,11 @@
                         <h3 style="color: white;">
                         Syllabi
                         
-                        <!-- <div style="float:right;">
+                        <div style="float:right;">
                             <button id="syllabiHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle text-white"></i>
                             </button>
-                        </div> -->
+                        </div>
                         @include('layouts.guide')
 
                         <div style="float:right;">

@@ -20,14 +20,12 @@
                         <div class="col">
                             Program Overview
                         </div>
-                        <!-- REMOVE ONCE GUIDE IS COMPLETE -->
-                        <div class="col"></div>
 
-                        <!-- <div class="col text-right">
+                        <div class="col text-right">
                             <button id="programOverviewHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>
                             </button>
-                        </div> -->
+                        </div>
                         <div class="text-left">
                             @include('layouts.guide')
                         </div>
