@@ -100,6 +100,16 @@ class HomeController extends Controller
         $progressBarMsg = array();
         $count = 0;
         foreach($myCourses as $course) {
+
+            $numClos = LearningOutcome::where('course_id', $course->course_id)->count();
+            // get the total number of program outcome maps possible for a course
+            $coursePrograms = $course->programs;
+            $expectedProgramOutcomeMapCount = 0;
+            foreach ($coursePrograms as $program) {
+                // multiple number of CLOs by num of PLOs
+                $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
+            }
+
             // get course id for each course
             $courseId = $course->course_id;
             $progressBarMsg[$courseId]['statusMsg'] = '<b>Remaining Tasks</b> <ol>';
@@ -130,7 +140,7 @@ class HomeController extends Controller
             } else {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Learning Activities - Course Alignment (Step 4)</li>';
             }
-            if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() > 0) {
+            if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() >= $expectedProgramOutcomeMapCount) {
                 $count++;
             } else {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Program Outcome Mapping (Step 5)</li>';

@@ -69,7 +69,7 @@ class CourseWizardController extends Controller
                                 ->where('assessment_methods.course_id','=',$course_id)->count();
         $outcomeMapsCount = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
+                                ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
         $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
                                 ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
@@ -86,8 +86,6 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
-        //TODO: FIX outcomeMapsCount currently outputting wrong count (Overestimating)
-        dd($expectedProgramOutcomeMapCount, $outcomeMapsCount);
 
         //
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
