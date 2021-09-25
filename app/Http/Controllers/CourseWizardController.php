@@ -22,6 +22,7 @@ use App\Models\OptionalPriorities;
 use App\Models\MappingScale;
 use App\Models\OptionalPriorityCategories;
 use App\Models\OptionalPrioritySubcategories;
+use App\Models\OutcomeActivity;
 use App\Models\PLOCategory;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Standard;
@@ -272,9 +273,19 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
-
         //
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $hasAssessmentMethod = false;
+        $hasLearningActivity = false;
+        foreach ($l_outcomes as $clo) {
+            if (OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) {
+                $hasAssessmentMethod = True;
+            }
+            if (OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists()) {
+                $hasLearningActivity = True;
+            }
+        }
+
         $course =  Course::where('course_id', $course_id)->first();
         $l_activities = LearningActivity::where('course_id', $course_id)->get();
         $a_methods = AssessmentMethod::where('course_id', $course_id)->get();

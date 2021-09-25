@@ -11,6 +11,8 @@ class OutcomeAssessment extends Pivot
 {
     use HasFactory;
 
+    protected $table = 'outcome_assessments';
+
     protected $primaryKey = ['l_outcome_id','a_method_id'];
 
     public $incrementing = false;
