@@ -15,6 +15,8 @@ use App\Models\CourseUser;
 use App\Models\LearningActivity;
 use App\Models\LearningOutcome;
 use App\Models\OptionalPriorities;
+use App\Models\OutcomeActivity;
+use App\Models\OutcomeAssessment;
 use App\Models\ProgramUser;
 use App\Models\OutcomeMap;
 use App\Models\ProgramLearningOutcome;
@@ -109,6 +111,15 @@ class HomeController extends Controller
                 // multiple number of CLOs by num of PLOs
                 $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
             }
+            // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
+            $l_outcomes = LearningOutcome::where('course_id', $course->course_id)->get();
+            $hasNonAlignedCLO = false;
+            foreach ($l_outcomes as $clo) {
+                if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                    $hasNonAlignedCLO = true;
+                    break;
+                }
+            }
 
             // get course id for each course
             $courseId = $course->course_id;
@@ -130,15 +141,21 @@ class HomeController extends Controller
             } else {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Teaching and Learning Activities (Step 3)</li>';
             }
-            if (LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_activities.course_id','=',$courseId)->count() > 0) {
-                $count++;
+            if ((!LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_activities.course_id','=',$courseId)->count() > 0) && (!AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')->where('assessment_methods.course_id','=',$courseId)->count() > 0)) {
+                if (LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_activities.course_id','=',$courseId)->count() > 0) {
+                    $count++;
+                } else {
+                    $progressBarMsg[$courseId]['statusMsg'] .= '<li>Assessment Methods - Course Alignment (Step 4)</li>';
+                }
+                if (AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')->where('assessment_methods.course_id','=',$courseId)->count() > 0) {
+                    $count++;
+                } else {
+                    $progressBarMsg[$courseId]['statusMsg'] .= '<li>Learning Activities - Course Alignment (Step 4)</li>';
+                }
+            } elseif ($hasNonAlignedCLO) {
+                $progressBarMsg[$courseId]['statusMsg'] .= '<li>Course Alignment (Step 4)</li>';
             } else {
-                $progressBarMsg[$courseId]['statusMsg'] .= '<li>Assessment Methods - Course Alignment (Step 4)</li>';
-            }
-            if (AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')->where('assessment_methods.course_id','=',$courseId)->count() > 0) {
-                $count++;
-            } else {
-                $progressBarMsg[$courseId]['statusMsg'] .= '<li>Learning Activities - Course Alignment (Step 4)</li>';
+                $count = $count + 2;
             }
             if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() >= $expectedProgramOutcomeMapCount) {
                 $count++;
@@ -165,7 +182,8 @@ class HomeController extends Controller
             $progressBarMsg[$courseId]['statusMsg'] .= '</ol>';
         }
         // return dashboard view
-        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg);
+        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)
+        ->with('programUsers', $programUsers)->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg);
     }
 
 

@@ -87,7 +87,15 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
-
+        // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
+        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $hasNonAlignedCLO = false;
+        foreach ($l_outcomes as $clo) {
+            if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                $hasNonAlignedCLO = true;
+                break;
+            }
+        }
         //
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
         $course =  Course::where('course_id', $course_id)->first();
@@ -96,7 +104,7 @@ class CourseWizardController extends Controller
 
         return view('courses.wizard.step1')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
-        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount);
+        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
 
     }
 
@@ -149,6 +157,16 @@ class CourseWizardController extends Controller
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
         //
+        // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
+        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $hasNonAlignedCLO = false;
+        foreach ($l_outcomes as $clo) {
+            if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                $hasNonAlignedCLO = true;
+                break;
+            }
+        }
+
         $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
         $custom_methods = Custom_assessment_methods::select('custom_methods')->get();
         $totalWeight = AssessmentMethod::where('course_id', $course_id)->sum('weight');
@@ -159,7 +177,7 @@ class CourseWizardController extends Controller
         return view('courses.wizard.step2')->with('a_methods', $a_methods)->with('course', $course)->with("totalWeight", $totalWeight)->with('courseUsers', $courseUsers)
         ->with('user', $user)->with('custom_methods',$custom_methods)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
-        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount);
+        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
 
 
     }
@@ -211,7 +229,15 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
-        //
+        // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
+        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $hasNonAlignedCLO = false;
+        foreach ($l_outcomes as $clo) {
+            if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                $hasNonAlignedCLO = true;
+                break;
+            }
+        }
 
         $l_activities = LearningActivity::where('course_id', $course_id)->get();
         $custom_activities = Custom_learning_activities::select('custom_activities')->get();
@@ -222,7 +248,7 @@ class CourseWizardController extends Controller
         return view('courses.wizard.step3')->with('l_activities', $l_activities)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)
         ->with('custom_activities',$custom_activities)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
-        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount);
+        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
 
     }
 
@@ -273,16 +299,13 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
-        //
+        // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
-        $hasAssessmentMethod = false;
-        $hasLearningActivity = false;
+        $hasNonAlignedCLO = false;
         foreach ($l_outcomes as $clo) {
-            if (OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) {
-                $hasAssessmentMethod = True;
-            }
-            if (OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists()) {
-                $hasLearningActivity = True;
+            if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                $hasNonAlignedCLO = true;
+                break;
             }
         }
 
@@ -295,7 +318,7 @@ class CourseWizardController extends Controller
         return view('courses.wizard.step4')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('l_activities', $l_activities)->with('a_methods', $a_methods)
         ->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
-        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount);
+        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
     }
 
     // Program Outcome Mapping
@@ -346,6 +369,15 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
+        // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
+        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $hasNonAlignedCLO = false;
+        foreach ($l_outcomes as $clo) {
+            if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                $hasNonAlignedCLO = true;
+                break;
+            }
+        }
 
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
@@ -376,7 +408,7 @@ class CourseWizardController extends Controller
         return view('courses.wizard.step5')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
         ->with('outcomeMapsCountPerProgram', $outcomeMapsCountPerProgram)->with('outcomeMapsCountPerProgramCLO', $outcomeMapsCountPerProgramCLO)->with('standard_categories', $standard_categories)
-        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount);
+        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
     }
 
     public function step6($course_id, Request $request)
@@ -426,6 +458,15 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
+        // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
+        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $hasNonAlignedCLO = false;
+        foreach ($l_outcomes as $clo) {
+            if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                $hasNonAlignedCLO = true;
+                break;
+            }
+        }
 
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
@@ -456,7 +497,7 @@ class CourseWizardController extends Controller
         ->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)
         ->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
         ->with('standardsMapped', $standardsMapped)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
-        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount);
+        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
     }
     
     public function step7($course_id, Request $request)
@@ -505,6 +546,15 @@ class CourseWizardController extends Controller
         foreach ($coursePrograms as $program) {
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
+        }
+        // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
+        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $hasNonAlignedCLO = false;
+        foreach ($l_outcomes as $clo) {
+            if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
+                $hasNonAlignedCLO = true;
+                break;
+            }
         }
 
         // returns a collection of standard_categories, used in the create course modal
@@ -571,7 +621,7 @@ class CourseWizardController extends Controller
         ->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)
         ->with('standardsOutcomeMap', $standardsOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalSubcategories', $optionalSubcategories)
         ->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
-        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount);
+        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
     }
 
 }
