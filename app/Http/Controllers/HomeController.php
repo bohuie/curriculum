@@ -154,6 +154,7 @@ class HomeController extends Controller
                 }
             } elseif ($hasNonAlignedCLO) {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Course Alignment (Step 4)</li>';
+                $count++;
             } else {
                 $count = $count + 2;
             }
