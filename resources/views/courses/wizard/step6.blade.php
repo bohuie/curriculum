@@ -268,20 +268,26 @@
                                                                             @foreach ($optionalPrioritySubcategory->optionalPriorities as $optionalPriority)
                                                                                 <tr>
                                                                                     <td>
-                                                                                        @if (in_array($optionalPriority->op_id, $opStored))
-                                                                                            <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
-                                                                                        @else
-                                                                                            <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                        @if ($optionalPriority->isCheckable)
+                                                                                            @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                            @else
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                            @endif
                                                                                         @endif
                                                                                     </td>
                                                                                     <td>
-                                                                                        {!! $optionalPriority->optional_priority !!}
+                                                                                        @if ($optionalPriority->isCheckable) 
+                                                                                            {!! $optionalPriority->optional_priority !!}
+                                                                                        @else
+                                                                                            <b>{!! $optionalPriority->optional_priority !!}</b>
+                                                                                        @endif
                                                                                     </td>
                                                                                 </tr>
                                                                             @endforeach
                                                                         </tbody>
                                                                     </table>
-                                                                    <p>{!! $optionalPrioritySubcategory->subcat_postamble !!}</p>
+                                                                    <!-- <p>{!! $optionalPrioritySubcategory->subcat_postamble !!}</p> -->
                                                                 @endif
                                                             @endforeach
                                                         </div>
