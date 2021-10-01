@@ -206,10 +206,10 @@
                                                                 @if ($optionalPrioritySubcategory->subcat_id == 1)
                                                                     <div class="row">
                                                                         <div class="col-10">
-                                                                            <h6 class="fw-bold mb-3">
+                                                                            <!-- <h6 class="fw-bold mb-3">
                                                                                 {!! $optionalPrioritySubcategory->subcat_name !!}
                                                                             </h6>
-                                                                            <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
+                                                                            <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p> -->
                                                                         </div>
                                                                         <!-- UBC Mandate Date Filter -->
                                                                         <div class="col">
@@ -224,10 +224,15 @@
                                                                         <div class="collapse mandate show" id="{{$year}}-mandate">
                                                                             <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
                                                                                 <thead class="thead-light">
+                                                                                <tr>
+                                                                                    <th data-field="state" data-checkbox="true"></th>
+                                                                                    <th data-field="Description">{!! $optionalPrioritySubcategory->subcat_name !!}</th>
+                                                                                </tr>
+                                                                                @if (($optionalPrioritySubcategory->subcat_desc != NULL) || ($optionalPrioritySubcategory->subcat_desc != ''))
                                                                                     <tr>
-                                                                                        <th data-field="state" data-checkbox="true"></th>
-                                                                                        <th data-field="Description">Description</th>
+                                                                                        <td colspan="2">{!! $optionalPrioritySubcategory->subcat_desc !!}</td>
                                                                                     </tr>
+                                                                                @endif
                                                                                 </thead>
                                                                                 <tbody> 
                                                                                     @foreach ($optionalPrioritySubcategory->optionalPriorities->where('year', $year) as $optionalPriority)
@@ -251,18 +256,23 @@
                                                                     </div>
                                                                 <!-- End of UBC Mandate -->
                                                                 @else
-                                                                    <h6 class="fw-bold mb-3">
+                                                                    <!-- <h6 class="fw-bold mb-3">
                                                                         {!! $optionalPrioritySubcategory->subcat_name !!}
                                                                     </h6>
-                                                                    <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
+                                                                    <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p> -->
 
                                                                     <!--optional Priorities for subcategory-->
                                                                     <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
                                                                         <thead class="thead-light">
                                                                             <tr>
                                                                                 <th data-field="state" data-checkbox="true"></th>
-                                                                                <th data-field="Description">Description</th>
+                                                                                <th data-field="Description">{!! $optionalPrioritySubcategory->subcat_name !!}</th>
                                                                             </tr>
+                                                                            @if (($optionalPrioritySubcategory->subcat_desc != NULL) || ($optionalPrioritySubcategory->subcat_desc != ''))
+                                                                                <tr>
+                                                                                    <td colspan="2">{!! $optionalPrioritySubcategory->subcat_desc !!}</td>
+                                                                                </tr>
+                                                                            @endif
                                                                         </thead>
                                                                         <tbody>
                                                                             @foreach ($optionalPrioritySubcategory->optionalPriorities as $optionalPriority)
@@ -429,6 +439,19 @@
     }
 
 </script>
+
+<style>
+
+table, tbody, td, tfoot, th, thead, tr {
+    border: none;
+}
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: none;
+        border-bottom-color: rgb(0, 0, 0);
+}
+
+</style>
 
 
 @endsection
