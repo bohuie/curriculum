@@ -14,7 +14,7 @@
             
             <div class="card">
                 <h3 class="card-header wizard" >
-                    Standards and Strategic Priorities
+                    Ministry Standards and Strategic Priorities
                     <div style="float: right;">
                             <button id="standardsHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>
@@ -28,7 +28,7 @@
                 <div class="card-body">
                     <nav class="mt-2">
                         <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
-                            <button class="nav-link active" id="nav-standards-tab" data-bs-toggle="tab" data-bs-target="#nav-standards" type="button" role="tab" aria-controls="nav-standards" aria-selected="true">Standards</button>
+                            <button class="nav-link active" id="nav-standards-tab" data-bs-toggle="tab" data-bs-target="#nav-standards" type="button" role="tab" aria-controls="nav-standards" aria-selected="true">Ministry Standards</button>
                             <button class="nav-link" id="nav-priorities-tab" data-bs-toggle="tab" data-bs-target="#nav-priorities" type="button" role="tab" aria-controls="nav-priorities" aria-selected="false">Strategic Priorities</button>
                         </div>
                     </nav>
@@ -36,7 +36,7 @@
                         <div class="tab-pane fade show active" id="nav-standards" role="tabpanel" aria-labelledby="nav-standards-tab">
                             @if ($course->standard_category_id == 0) 
                                 <div class="alert alert-warning wizard">
-                                    <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this course to map to.                     
+                                    <i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for this course to map to.                     
                                 </div>
                             @elseif ($course->learningOutcomes->count() < 1)
                                 <div class="alert alert-warning wizard">

@@ -275,7 +275,7 @@
                         <td>Teaching and Learning Activities</td>
                         <td>Course Alignment</td>
                         <td>Program Outcome Mapping</td>
-                        <td>Standards and Strategic Priorities</td>
+                        <td>Ministry Standards and Strategic Priorities</td>
                         <td>Course Summary</td>
                     </tr>
                 </tbody>
