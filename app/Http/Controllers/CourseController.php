@@ -558,4 +558,10 @@ class CourseController extends Controller
     
         return redirect()->route('programWizard.step3', $request->input('program_id')); 
     }
+
+    public function duplicate(Request $request, $course_id) {
+        dd($course_id);
+
+        return redirect()->route('home');
+    }
 }
