@@ -560,8 +560,57 @@ class CourseController extends Controller
     }
 
     public function duplicate(Request $request, $course_id) {
-        dd($course_id);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        $this->validate($request, [
+            'course_code' => 'required',
+            'course_num' => 'required',
+            'course_title'=> 'required',
 
+            ]);
+        
+        $course_old = Course::find($course_id);
+        
+        $course = new Course;
+        $course->course_title = $request->input('course_title');
+        // remove leading zeros from course number
+        $CNum = $request->input('course_num');
+        for ($i = 0; $i < strlen($CNum); $i++) {
+            if ($CNum[$i] == '0') {
+                $CNum = ltrim($CNum, $CNum[$i]);
+            } else {
+                // Found a value that's not '0'
+                break;
+            }
+        }
+        $course->course_num = $CNum;
+        $course->course_code =  strtoupper($request->input('course_code'));
+        // status of mapping process
+        $course->status = -1;
+        // course required for program
+        //TODO: Might need to remove these as they are depreciated
+        $course->required = NULL;
+        $course->type = 'unassigned';
+
+        $course->delivery_modality = $course_old->delivery_modality;
+        $course->year = $course_old->year;
+        $course->semester = $course_old->semester;
+        $course->section = $course_old->section;
+        $course->standard_category_id = $course_old->standard_category_id;
+
+        // course assigned to user
+        $course->assigned = 1;
+        $course->save();
+        $user = User::find(Auth::id());
+        $courseUser = new CourseUser;
+        $courseUser->course_id = $course->course_id;
+        $courseUser->user_id = $user->id;
+        // assign the creator of the course the owner permission
+        $courseUser->permission = 1;
+        if($courseUser->save()){
+            $request->session()->flash('success', 'Course has been duplicated');
+        }else{
+            $request->session()->flash('error', 'There was an error duplicating the course');
+        }
         return redirect()->route('home');
     }
 }

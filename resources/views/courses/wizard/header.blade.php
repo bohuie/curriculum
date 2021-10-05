@@ -35,15 +35,14 @@
 
                                     <form action="{{ route('courses.duplicate', $course->course_id) }}" method="GET">
                                         @csrf
-                                        {{method_field('PUT')}}
+                                        {{method_field('GET')}}
                                         
                                         <div class="modal-body">
                                             <div class="form-group row">
                                                 <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
 
                                                 <div class="col-md-8">
-                                                    <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$course->course_code}}"
-                                                        name="course_code" required autofocus>
+                                                    <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$course->course_code}}" name="course_code" required autofocus>
 
                                                     @error('course_code')
                                                         <span class="invalid-feedback" role="alert">
@@ -69,7 +68,33 @@
                                                     </div>
                                                 </div>
 
-                                                
+                                                <div class="form-group row">
+                                                    <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+
+                                                    <div class="col-md-8">
+                                                        <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}}" required autofocus>
+
+                                                        @error('course_title')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label for="course_section" class="col-md-3 col-form-label text-md-right">Course Section</label>
+
+                                                    <div class="col-md-4">
+                                                        <input id="course_section" type="text" class="form-control @error('course_section') is-invalid @enderror" name="course_section" autofocus value= {{$course->section}}>
+
+                                                        @error('course_section')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
 
                                             </div>
                                         </div>
