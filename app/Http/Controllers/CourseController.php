@@ -560,7 +560,7 @@ class CourseController extends Controller
     }
 
     public function duplicate(Request $request, $course_id) {
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         $this->validate($request, [
             'course_code' => 'required',
             'course_num' => 'required',
@@ -596,10 +596,72 @@ class CourseController extends Controller
         $course->semester = $course_old->semester;
         $course->section = $course_old->section;
         $course->standard_category_id = $course_old->standard_category_id;
-
         // course assigned to user
         $course->assigned = 1;
         $course->save();
+
+        // This array is used to keep track of the id's for each assessment method duplicated
+        // This is used for the course alignment step to decide which assessment method will be aligned (checked) for each clo
+        $historyAssessmentMethods = array();
+        // duplicate student assessment methods if they exist
+        $assMeths = $course_old->assessmentMethods;
+        foreach($assMeths as $assMeth) {
+            $newAssessmentMethod = new AssessmentMethod;
+            $newAssessmentMethod->a_method = $assMeth->a_method;
+            $newAssessmentMethod->weight = $assMeth->weight;
+            $newAssessmentMethod->course_id = $course->course_id;
+            $newAssessmentMethod->save();
+            $historyAssessmentMethods[$assMeth->a_method_id] = $newAssessmentMethod->a_method_id;
+        }
+
+        // This array is used to keep track of the id's for each learning activity duplicated
+        // This is used for the course alignment step to decide which learning activity will be aligned (checked) for each clo
+        $historyLearningActivities = array();
+        // duplicate Teaching and Learning Activities if they exist
+        $tlas = $course_old->learningActivities;
+        foreach($tlas as $tla) {
+            $newLearningActivity = new LearningActivity;
+            $newLearningActivity->l_activity = $tla->l_activity;
+            $newLearningActivity->course_id = $course->course_id;
+            $newLearningActivity->save();
+            $historyLearningActivities[$tla->l_activity_id] = $newLearningActivity->l_activity_id;
+        }
+
+        
+        // duplicate clos and add them to the new course if they exist
+        $clos = $course_old->learningOutcomes;
+        foreach($clos as $clo) {
+            // CLOS
+            $newCLO = new LearningOutcome;
+            $newCLO->clo_shortphrase = $clo->clo_shortphrase;
+            $newCLO->l_outcome = $clo->l_outcome;
+            $newCLO->course_id = $course->course_id;
+            $newCLO->save();
+
+            // duplicate course alignment (Outcome Activities and Outcome Assessments) if they exist
+
+            // duplicate outcome activities
+            if($clo->learningActivities()->exists()){
+                $oldLearningActivities = $clo->learningActivities()->get();
+                foreach($oldLearningActivities as $oldLearningActivity) {
+                    $newOutcomeActivity = new OutcomeActivity;
+                    $newOutcomeActivity->l_outcome_id = $newCLO->l_outcome_id;
+                    $newOutcomeActivity->l_activity_id = $historyLearningActivities[$oldLearningActivity->l_activity_id];
+                    $newOutcomeActivity->save();
+                }
+            }
+            // duplicate outcome assessments
+            if($clo->assessmentMethods()->exists()){
+                $oldAssessmentMethods = $clo->assessmentMethods()->get();
+                foreach($oldAssessmentMethods as $oldAssessmentMethod) {
+                    $newOutcomeAssessment = new OutcomeAssessment;
+                    $newOutcomeAssessment->l_outcome_id = $newCLO->l_outcome_id;
+                    $newOutcomeAssessment->a_method_id = $historyAssessmentMethods[$oldAssessmentMethod->a_method_id];
+                    $newOutcomeAssessment->save();
+                }
+            }
+        }
+
         $user = User::find(Auth::id());
         $courseUser = new CourseUser;
         $courseUser->course_id = $course->course_id;
