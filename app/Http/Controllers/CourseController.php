@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\CourseUser;
 use App\Models\LearningOutcome;
 use App\Models\AssessmentMethod;
+use App\Models\CourseOptionalPriorities;
 use App\Models\LearningActivity;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
@@ -569,7 +570,6 @@ class CourseController extends Controller
             ]);
         
         $course_old = Course::find($course_id);
-        
         $course = new Course;
         $course->course_title = $request->input('course_title');
         // remove leading zeros from course number
@@ -596,6 +596,7 @@ class CourseController extends Controller
         $course->semester = $course_old->semester;
         $course->section = $course_old->section;
         $course->standard_category_id = $course_old->standard_category_id;
+        $course->scale_category_id = $course_old->scale_category_id;
         // course assigned to user
         $course->assigned = 1;
         $course->save();
@@ -660,6 +661,26 @@ class CourseController extends Controller
                     $newOutcomeAssessment->save();
                 }
             }
+            // duplicate standards 
+            if($clo->standardOutcomeMap()->exists()) {
+                $oldStandardOutcomes = $clo->standardOutcomeMap()->get();
+                foreach($oldStandardOutcomes as $oldStandardOutcome) {
+                    $oldStandardOutcomeMap = new StandardsOutcomeMap;
+                    $oldStandardOutcomeMap->l_outcome_id = $newCLO->l_outcome_id;
+                    $oldStandardOutcomeMap->standard_id = $oldStandardOutcome->pivot->standard_id;
+                    $oldStandardOutcomeMap->standard_scale_id = $oldStandardOutcome->pivot->standard_scale_id;
+                    $oldStandardOutcomeMap->save();
+                }
+            }
+        }
+
+        // duplicate strategic (Optional) priorities
+        $ops = $course_old->optionalPriorities;
+        foreach($ops as $op) {
+            $newOptionalPriority = new CourseOptionalPriorities;
+            $newOptionalPriority->op_id = $op->op_id;
+            $newOptionalPriority->course_id = $course->course_id;
+            $newOptionalPriority->save();
         }
 
         $user = User::find(Auth::id());

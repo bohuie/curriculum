@@ -106,7 +106,11 @@ class HomeController extends Controller
             $numClos = LearningOutcome::where('course_id', $course->course_id)->count();
             // get the total number of program outcome maps possible for a course
             $coursePrograms = $course->programs;
-            $expectedProgramOutcomeMapCount = 0;
+            if (count($coursePrograms) <= 1) {
+                $expectedProgramOutcomeMapCount = 1;
+            } else {
+                $expectedProgramOutcomeMapCount = 0;
+            }
             foreach ($coursePrograms as $program) {
                 // multiple number of CLOs by num of PLOs
                 $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
