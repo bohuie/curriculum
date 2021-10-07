@@ -111,6 +111,7 @@ class HomeController extends Controller
             } else {
                 $expectedProgramOutcomeMapCount = 0;
             }
+            // This loop will not run if the course does not have any programs
             foreach ($coursePrograms as $program) {
                 // multiple number of CLOs by num of PLOs
                 $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
@@ -124,7 +125,7 @@ class HomeController extends Controller
                     break;
                 }
             }
-
+            // Used for getting the status (progress) for each course displayed on the dashboard
             // get course id for each course
             $courseId = $course->course_id;
             $progressBarMsg[$courseId]['statusMsg'] = '<b>Remaining Tasks</b> <ol>';
