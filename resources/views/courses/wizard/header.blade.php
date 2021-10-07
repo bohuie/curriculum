@@ -22,7 +22,7 @@
                     <div class="col">
                     <button type="button" style="width:200px" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#duplicateCourse" >Duplicate Course</button>
 
-                        <!-- Delete Confirmation Modal -->
+                        <!-- Duplicate Course Confirmation Modal -->
                         <div class="modal fade" id="duplicateCourse" tabindex="-1" role="dialog" aria-labelledby="duplicateCourse" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -72,7 +72,7 @@
                                                     <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
 
                                                     <div class="col-md-8">
-                                                        <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}}" required autofocus>
+                                                        <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}} - Copy" required autofocus>
 
                                                         @error('course_title')
                                                         <span class="invalid-feedback" role="alert">

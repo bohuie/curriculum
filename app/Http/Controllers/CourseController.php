@@ -572,6 +572,8 @@ class CourseController extends Controller
         $course_old = Course::find($course_id);
         $course = new Course;
         $course->course_title = $request->input('course_title');
+        $course->section = $request->input('course_section');
+        $course->course_code =  strtoupper($request->input('course_code'));
         // remove leading zeros from course number
         $CNum = $request->input('course_num');
         for ($i = 0; $i < strlen($CNum); $i++) {
@@ -583,7 +585,6 @@ class CourseController extends Controller
             }
         }
         $course->course_num = $CNum;
-        $course->course_code =  strtoupper($request->input('course_code'));
         // status of mapping process
         $course->status = -1;
         // course required for program
@@ -594,7 +595,6 @@ class CourseController extends Controller
         $course->delivery_modality = $course_old->delivery_modality;
         $course->year = $course_old->year;
         $course->semester = $course_old->semester;
-        $course->section = $course_old->section;
         $course->standard_category_id = $course_old->standard_category_id;
         $course->scale_category_id = $course_old->scale_category_id;
         // course assigned to user
