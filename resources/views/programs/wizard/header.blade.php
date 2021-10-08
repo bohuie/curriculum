@@ -11,7 +11,7 @@
             <div class="row my-2">
                 <div class="col">
                     <button type="button" style="width:200px" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#duplicateConfirmation">Duplicate Program</button>
-                    <!-- Delete Confirmation Modal -->
+                    <!-- Duplicate Confirmation Modal -->
                     <div class="modal fade" id="duplicateConfirmation" tabindex="-1" role="dialog" aria-labelledby="duplicateConfirmation" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">

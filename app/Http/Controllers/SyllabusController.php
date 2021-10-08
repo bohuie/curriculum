@@ -1069,4 +1069,35 @@ class SyllabusController extends Controller
         return response()->download($documentName)->deleteFileAfterSend(true);            
 
     }
+
+    public function duplicate(Request $request, $syllabusId) {
+
+        // validate request
+        $request->validate([
+            'course_title' => ['required'],
+            'course_code' => ['required'],
+            'course_num' => ['required'],
+        ]);
+
+        $oldSyllabus = Syllabus::find($syllabusId);
+
+        $syllabus = new Syllabus;
+        $syllabus->course_title = $request->input('course_title');
+        $syllabus->course_code = $request->input('course_code');
+        $syllabus->course_num = $request->input('course_num');
+        $syllabus->campus = $oldSyllabus->campus;
+        $syllabus->course_instructor = $oldSyllabus->course_instructor;
+        $syllabus->save();
+
+        $user = User::find(Auth::id());
+        // create a new syllabus user
+        $syllabusUser = new SyllabusUser;
+        // set relationship between syllabus and user
+        $syllabusUser->syllabus_id = $syllabus->id;
+        $syllabusUser->user_id = $user->id;
+        $syllabusUser->permission = 1;
+        $syllabusUser->save();
+
+        return redirect()->route('home');
+    }
 }

@@ -46,6 +46,8 @@ Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->nam
 Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
 // route to download a syllabus
 Route::post('/syllabi/{syllabusId}/word','SyllabusController@syllabusToWordDoc')->name('syllabus.word');
+// rout to duplicate syllabi
+Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
