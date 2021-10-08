@@ -51,6 +51,8 @@ Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 //PDF for Program summary
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
+
 
 Route::resource('/courses','CourseController');
 Route::post('/courses', 'CourseController@store')->name('courses.store');
