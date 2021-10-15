@@ -131,6 +131,48 @@
                 </div>
             </div> 
 
+            <div class="accordion" id="FAQAccordion4">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader6">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion6" aria-expanded="false" aria-controls="collapseFAQAccordion6">
+                            How do I create a program?                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion6" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader6" data-bs-parent="FAQAccordion4">
+                        <div class="accordion-body lh-lg">
+                            <p>To create a program, first register a Curriculum MAP account or login. On your dashboard, you will see your "Programs".</p>
+                            <p class="fw-bold">From the dashboard</p>
+                            <ol style="list-style: none;">
+                                <li>Click the “+” sign on the right-hand side to begin creating a program. Fill in the required program information marked with a *.</li>
+                                <li>You can find your newly created program on your dashboard in the Programs section.</li>
+                                <li>Click on your program name or its edit icon to start building your program.</li>
+                            </ol>
+                            <p class="mt-3 fw-bold">The site will walk you through the steps needed to build your program, by:</p>
+                            <ol>
+                                <li>Identifying the program learning outcomes or PLOs</li>
+                                <ol type="a">
+                                    <li>You may organize your PLOs into "categories" to separate PLOs from discipline standards, skills, etc.</li>
+                                </ol>
+                                <li>Choosing a mapping scale</li>
+                                <ol type="a">
+                                    <li>This will be the scale used to map your PLOs to each course in the your program.</li>
+                                    <li>Depending on your discipline, you may want to create your own mapping scale or choose one of the default ones</li>
+                                </ol>
+                                <li>Identify the courses associated with the program. Once these have been identified, <b>they must be mapped individually to the program by the course owner.</b></li>
+                                <ol type="a">
+                                    <li>If you own one or many of those courses, this requires you to click on “map course” to complete the map between the course and the PLOs you identified.</li>
+                                    <li>If you do not own the course, you can let the course owner know that your PLOs are now ready to be mapped against their course by clicking “ask to map course”.</li>
+                                </ol>
+                                <li><b>Once all courses have been individually mapped to the program you created</b>, you may go to “Program Overview” or step 4. This page will summarize the program mapping done so far. Use the interactive table to find out strengths and weaknesses of your program. Consider printing and sharing this summary with your colleagues to engage in curriculum re-design!</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
         </div>
     </div>    
 </div>
