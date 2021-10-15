@@ -95,17 +95,7 @@ class CourseController extends Controller
 
         $course = new Course;
         $course->course_title = $request->input('course_title');
-        // remove leading zeros from course number
-        $CNum = $request->input('course_num');
-        for ($i = 0; $i < strlen($CNum); $i++) {
-            if ($CNum[$i] == '0') {
-                $CNum = ltrim($CNum, $CNum[$i]);
-            } else {
-                // Found a value that's not '0'
-                break;
-            }
-        }
-        $course->course_num = $CNum;
+        $course->course_num = $request->input('course_num');
         $course->course_code =  strtoupper($request->input('course_code'));
         // status of mapping process
         $course->status = -1;
@@ -288,17 +278,7 @@ class CourseController extends Controller
             ]);
 
         $course = Course::where('course_id', $course_id)->first();
-        // remove leading zeros from course number
-        $CNum = $request->input('course_num');
-        for ($i = 0; $i < strlen($CNum); $i++) {
-            if ($CNum[$i] == '0') {
-                $CNum = ltrim($CNum, $CNum[$i]);
-            } else {
-                // Found a value that's not '0'
-                break;
-            }
-        }
-        $course->course_num = $CNum;
+        $course->course_num = $request->input('course_num');
         $course->course_code = strtoupper($request->input('course_code'));
         $course->course_title = $request->input('course_title');
         $course->required = $request->input('required');
