@@ -23,6 +23,7 @@ use App\Models\syllabus\SyllabusResourceVancouver;
 use App\Models\syllabus\VancouverSyllabus;
 use App\Models\syllabus\SyllabusUser;
 use App\Models\syllabus\VancouverSyllabusResource;
+use Carbon\Carbon;
 use stdClass;
 
 define("INPUT_TIPS", array(
@@ -1069,5 +1070,68 @@ class SyllabusController extends Controller
         // force user browser to download the saved document
         return response()->download($documentName)->deleteFileAfterSend(true);            
 
+    }
+
+    public function duplicate(Request $request, $syllabusId) {
+
+        // validate request
+        $request->validate([
+            'course_title' => ['required'],
+            'course_code' => ['required'],
+            'course_num' => ['required'],
+        ]);
+
+        $oldSyllabus = Syllabus::find($syllabusId);
+
+        $syllabus = $oldSyllabus->replicate();
+        $syllabus->course_title = $request->input('course_title');
+        $syllabus->course_code = $request->input('course_code');
+        $syllabus->course_num = $request->input('course_num');
+        $syllabus->created_at = Carbon::now();
+        $syllabus->save();
+
+        if ($oldSyllabus->campus == 'O') {
+            $oldOkSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabusId)->first();
+
+            $okSyllabus = new OkanaganSyllabus;
+            $okSyllabus->syllabus_id = $syllabus->id;
+            $okSyllabus->course_format = $oldOkSyllabus->course_format;
+            $okSyllabus->course_overview = $oldOkSyllabus->course_overview;
+            $okSyllabus->save();
+
+            $oldOkSyllabiResources = SyllabusResourceOkanagan::where('syllabus_id', $syllabusId)->get();
+            foreach ($oldOkSyllabiResources as $oldOKSyllabiResource) {
+                $newOkSyllabusResource = new SyllabusResourceOkanagan;
+                $newOkSyllabusResource->syllabus_id = $syllabus->id;
+                $newOkSyllabusResource->o_syllabus_resource_id = $oldOKSyllabiResource->o_syllabus_resource_id;
+                $newOkSyllabusResource->save();
+            }
+        } elseif ($oldSyllabus->campus == 'V') {
+            $oldVanSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+
+            $newVanSyllabus = $oldVanSyllabus->replicate();
+            $newVanSyllabus->syllabus_id = $syllabus->id;
+            $newVanSyllabus->created_at = Carbon::now();
+            $newVanSyllabus->save();
+
+            $oldVanSyllabiResources = SyllabusResourceVancouver::where('syllabus_id', $syllabusId)->get();
+            foreach ($oldVanSyllabiResources as $oldVanSyllabiResource) {
+                $newVanSyllabusResource = new SyllabusResourceVancouver;
+                $newVanSyllabusResource->syllabus_id = $syllabus->id;
+                $newVanSyllabusResource->v_syllabus_resource_id = $oldVanSyllabiResource->v_syllabus_resource_id;
+                $newVanSyllabusResource->save();
+            }
+        }
+
+        $user = User::find(Auth::id());
+        // create a new syllabus user
+        $syllabusUser = new SyllabusUser;
+        // set relationship between syllabus and user
+        $syllabusUser->syllabus_id = $syllabus->id;
+        $syllabusUser->user_id = $user->id;
+        $syllabusUser->permission = 1;
+        $syllabusUser->save();
+
+        return redirect()->route('home');
     }
 }
