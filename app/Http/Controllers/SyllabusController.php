@@ -1079,33 +1079,14 @@ class SyllabusController extends Controller
             'course_code' => ['required'],
             'course_num' => ['required'],
         ]);
-        //dd($oldVanSyllabus = VancouverSyllabus::find($syllabusId));
 
         $oldSyllabus = Syllabus::find($syllabusId);
 
-        $syllabus = new Syllabus;
+        $syllabus = $oldSyllabus->replicate();
         $syllabus->course_title = $request->input('course_title');
         $syllabus->course_code = $request->input('course_code');
         $syllabus->course_num = $request->input('course_num');
-        $syllabus->course_term = $oldSyllabus->course_term;
-        $syllabus->course_year = $oldSyllabus->course_year;
-        $syllabus->campus = $oldSyllabus->campus;
-        $syllabus->course_instructor = $oldSyllabus->course_instructor;
-        $syllabus->course_location = $oldSyllabus->course_location;
-        $syllabus->office_hours = $oldSyllabus->office_hours;
-        $syllabus->class_meeting_days = $oldSyllabus->class_meeting_days;
-        $syllabus->other_instructional_staff = $oldSyllabus->other_instructional_staff;
-        $syllabus->class_start_time = $oldSyllabus->class_start_time;
-        $syllabus->class_end_time = $oldSyllabus->class_end_time;
-        $syllabus->learning_outcomes = $oldSyllabus->learning_outcomes;
-        $syllabus->learning_assessments = $oldSyllabus->learning_assessments;
-        $syllabus->learning_activities = $oldSyllabus->learning_activities;
-        $syllabus->late_policy = $oldSyllabus->late_policy;
-        $syllabus->missed_exam_policy = $oldSyllabus->missed_exam_policy;
-        $syllabus->missed_activity_policy = $oldSyllabus->missed_activity_policy;
-        $syllabus->passing_criteria = $oldSyllabus->passing_criteria;
-        $syllabus->learning_materials = $oldSyllabus->learning_materials;
-        $syllabus->learning_resources = $oldSyllabus->learning_resources;
+        $syllabus->created_at = Carbon::now();
         $syllabus->save();
 
         if ($oldSyllabus->campus == 'O') {
