@@ -22,8 +22,18 @@
                 </h3>
 
                 <div class="card-body">
-                    <h6 class="card-subtitle text-center mb-4 lh-lg">
-                    Add required and non-required courses to this program. After adding the courses, each course should be mapped to the Program Learning Outcomes (PLOs) of this Program. Once all courses have been individually mapped to this program, visit the “Program Summary/Step 4” to see the learning outcomes map of the program. 
+                    <h6 class="card-subtitle mb-4 lh-lg">
+                        <ol>
+                            <li>
+                                Add required and non-required courses to this program.
+                            </li>
+                            <li>
+                                After adding the courses, each course should be mapped to the Program Learning Outcomes (PLOs) of this Program.
+                            </li>
+                            <li>
+                                Once all courses have been individually mapped to this program, visit the “Program Summary/Step 4” to see the learning outcomes map of the program.
+                            </li>
+                        </ol>
 
                     </h6>
                     <h6 class="card-subtitle wizard text-primary fw-bold">
