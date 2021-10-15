@@ -23,6 +23,7 @@ use App\Models\syllabus\SyllabusResourceVancouver;
 use App\Models\syllabus\VancouverSyllabus;
 use App\Models\syllabus\SyllabusUser;
 use App\Models\syllabus\VancouverSyllabusResource;
+use Carbon\Carbon;
 use stdClass;
 
 define("INPUT_TIPS", array(
@@ -1078,6 +1079,7 @@ class SyllabusController extends Controller
             'course_code' => ['required'],
             'course_num' => ['required'],
         ]);
+        //dd($oldVanSyllabus = VancouverSyllabus::find($syllabusId));
 
         $oldSyllabus = Syllabus::find($syllabusId);
 
@@ -1105,6 +1107,39 @@ class SyllabusController extends Controller
         $syllabus->learning_materials = $oldSyllabus->learning_materials;
         $syllabus->learning_resources = $oldSyllabus->learning_resources;
         $syllabus->save();
+
+        if ($oldSyllabus->campus == 'O') {
+            $oldOkSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabusId)->first();
+
+            $okSyllabus = new OkanaganSyllabus;
+            $okSyllabus->syllabus_id = $syllabus->id;
+            $okSyllabus->course_format = $oldOkSyllabus->course_format;
+            $okSyllabus->course_overview = $oldOkSyllabus->course_overview;
+            $okSyllabus->save();
+
+            $oldOkSyllabiResources = SyllabusResourceOkanagan::where('syllabus_id', $syllabusId)->get();
+            foreach ($oldOkSyllabiResources as $oldOKSyllabiResource) {
+                $newOkSyllabusResource = new SyllabusResourceOkanagan;
+                $newOkSyllabusResource->syllabus_id = $syllabus->id;
+                $newOkSyllabusResource->o_syllabus_resource_id = $oldOKSyllabiResource->o_syllabus_resource_id;
+                $newOkSyllabusResource->save();
+            }
+        } elseif ($oldSyllabus->campus == 'V') {
+            $oldVanSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+
+            $newVanSyllabus = $oldVanSyllabus->replicate();
+            $newVanSyllabus->syllabus_id = $syllabus->id;
+            $newVanSyllabus->created_at = Carbon::now();
+            $newVanSyllabus->save();
+
+            $oldVanSyllabiResources = SyllabusResourceVancouver::where('syllabus_id', $syllabusId)->get();
+            foreach ($oldVanSyllabiResources as $oldVanSyllabiResource) {
+                $newVanSyllabusResource = new SyllabusResourceVancouver;
+                $newVanSyllabusResource->syllabus_id = $syllabus->id;
+                $newVanSyllabusResource->v_syllabus_resource_id = $oldVanSyllabiResource->v_syllabus_resource_id;
+                $newVanSyllabusResource->save();
+            }
+        }
 
         $user = User::find(Auth::id());
         // create a new syllabus user
