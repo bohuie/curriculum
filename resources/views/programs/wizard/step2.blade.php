@@ -30,8 +30,8 @@
 
                     <div class="d-flex justify-content-end">
                                 <!-- Show default mapping scale button  -->
-                                <button type="button" class="btn btn-outline-secondary btn-sm m-1" data-toggle="modal" data-target=".mapping-scales">Show Default Mapping Scales</button>
-                                <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target="#addMSModal" style="background-color:#002145; color:white;">
+                                <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target=".mapping-scales" style="background-color:#002145; color:white;">Show Default Mapping Scales</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm m-1" data-toggle="modal" data-target="#addMSModal">
                                     <i class="bi bi-plus pr-2"></i>My Own Mapping Scale Level
                                 </button>
                             </div>
@@ -82,7 +82,7 @@
                                                                 <p style="color: #e3342f; margin: auto;">If you have an existing mapping scale it will be deleted and replaced with the scale above.</p>
                                                             </div>
                                                             <div class="col-md-4 text-center" style="margin: auto;">
-                                                                <button type="submit" style="background-color:#002145;color:white;" class="btn btn-secondary btn-sm">+ Import Mapping Scale</button>
+                                                                <button type="submit" style="background-color:#002145;color:white;" class="btn btn-secondary btn-sm">+ Use this scale</button>
                                                             </div>
                                                         </div>
                                                     </form>
