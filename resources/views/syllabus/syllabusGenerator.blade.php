@@ -646,10 +646,10 @@
                         // set input attributes for column headers, otherwise set input attributes for data cells
                         if (rowIndex == 0) {
                             inputCell.setAttribute('placeholder', 'Column heading here ...');
-                            inputCell.setAttribute('name', 'courseScheduleHeadings[]');
+                            inputCell.setAttribute('name', 'courseScheduleTblHeadings[]');
                         } else {
                             inputCell.setAttribute('placeholder', 'Data here ...');                        
-                            inputCell.setAttribute('name', 'courseScheduleRows[]');
+                            inputCell.setAttribute('name', 'courseScheduleTblRows[]');
                         }
                         // add column on the correct side
                         switch (side) {
@@ -773,7 +773,7 @@
                     // create <textarea>
                     var inputCell = document.createElement('textarea');
                     inputCell.setAttribute('form', 'sylabusGenerator');
-                    inputCell.setAttribute('name', 'data[]');
+                    inputCell.setAttribute('name', 'courseScheduleTblRows[]');
                     inputCell.setAttribute('type', 'text');
                     inputCell.setAttribute('class', 'form-control');
                     inputCell.setAttribute('spellcheck', 'true');
