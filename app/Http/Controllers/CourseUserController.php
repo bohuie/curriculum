@@ -93,7 +93,10 @@ class CourseUserController extends Controller
                             // create a new collaborator
                             $courseUser = CourseUser::updateOrCreate(
                                 ['course_id' => $course->course_id, 'user_id' => $user->id],
+                                
                             );
+
+                            $courseUser = CourseUser::where([['course_id', '=', $courseUser->course_id], ['user_id', '=', $courseUser->user_id]])->first();
                             // set this course user permission level
                             switch ($permission) {
                                 case 'edit':
@@ -103,6 +106,7 @@ class CourseUserController extends Controller
                                     $courseUser->permission = 3;
                                 break;
                             }
+
                             if($courseUser->save()){
                                 Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $user->name));
                             } else {

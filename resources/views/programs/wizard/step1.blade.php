@@ -9,8 +9,17 @@
 
             <div class="card">
 
-                <h3 class="card-header wizard" >
+                <h3 class="card-header wizard">
                     Program Learning Outcomes (PLOs)
+
+                    <div style="float: right;">
+                        <button id="ploHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                            <i class="bi bi-question-circle" style="color:#002145;"></i>
+                        </button>
+                    </div>
+                    <div class="text-left">
+                        @include('layouts.guide')
+                    </div>
                 </h3>
 
                 <div class="card-body">
@@ -580,7 +589,7 @@
                 <div class="card-footer">
                     <div class="card-body mb-4">
                         <a href="{{route('programWizard.step2', $program->program_id)}}">
-                            <button class="btn btn-sm btn-primary col-3 float-right">Mapping Scales<i class="bi bi-arrow-right mr-2"></i></button>
+                            <button class="btn btn-sm btn-primary col-3 float-right">Mapping Scales <i class="bi bi-arrow-right mr-2"></i></button>
                         </a>
                     </div>
                 </div>

@@ -229,7 +229,7 @@ class ProgramWizardController extends Controller
         // ploCount * cloCount = number of outcome map results for course and program
         $expectedTotalOutcomes = array();
         foreach ($programCourses as $programCourse) {
-            $expectedTotalOutcomes[$programCourse->course_id] = count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
+            $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
         }
 
         // Get all PLO Id's
@@ -301,6 +301,49 @@ class ProgramWizardController extends Controller
         // get all of the required courses this program belongs to
         $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
 
+        // get all of the first year courses this program belongs to
+        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+
+        $count = 0;
+        foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
+            if ($firstYearProgramCourse->course_num[0] != '1') {           // if the first number in course_num is not 1 then remove it from the collection
+                $firstYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
+            if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 2 then remove it from the collection
+                $secondYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
+            if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 3 then remove it from the collection
+                $thirdYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
+            if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 4 then remove it from the collection
+                $fourthYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach ($graduateProgramCourses as $graduateProgramCourse) {
+            if ($graduateProgramCourse->course_num[0] != '5' && $graduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 5 or 6 then remove it from the collection
+                $graduateProgramCourses->forget($count);
+            }
+            $count++;
+        }
+
         // get all categories for program
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
@@ -359,8 +402,63 @@ class ProgramWizardController extends Controller
         $store = $this->replaceIdsWithAbv($store, $arr);
         $store = $this->assignColours($store);
 
+        // First Year Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $firstYearProgramCourses);
+        $arrFirst = array();
+        $arrFirst = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFirst);
+        $storeFirst = array();
+        $storeFirst = $this->createCDFArray($arrFirst, $storeFirst);
+        $storeFirst = $this->frequencyDistribution($arrFirst, $storeFirst);
+        $storeFirst = $this->replaceIdsWithAbv($storeFirst, $arrFirst);
+        $storeFirst = $this->assignColours($storeFirst);
+
+        // Second Year Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $secondYearProgramCourses);
+        $arrSecond = array();
+        $arrSecond = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrSecond);
+        $storeSecond = array();
+        $storeSecond = $this->createCDFArray($arrSecond, $storeSecond);
+        $storeSecond = $this->frequencyDistribution($arrSecond, $storeSecond);
+        $storeSecond = $this->replaceIdsWithAbv($storeSecond, $arrSecond);
+        $storeSecond = $this->assignColours($storeSecond);
+
+        // Third Year Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $thirdYearProgramCourses);
+        $arrThird = array();
+        $arrThird = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrThird);
+        $storeThird = array();
+        $storeThird = $this->createCDFArray($arrThird, $storeThird);
+        $storeThird = $this->frequencyDistribution($arrThird, $storeThird);
+        $storeThird = $this->replaceIdsWithAbv($storeThird, $arrThird);
+        $storeThird = $this->assignColours($storeThird);
+
+        // fourth Year Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $fourthYearProgramCourses);
+        $arrFourth = array();
+        $arrFourth = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFourth);
+        $storeFourth = array();
+        $storeFourth = $this->createCDFArray($arrFourth, $storeFourth);
+        $storeFourth = $this->frequencyDistribution($arrFourth, $storeFourth);
+        $storeFourth = $this->replaceIdsWithAbv($storeFourth, $arrFourth);
+        $storeFourth = $this->assignColours($storeFourth);
+
+        // graduate Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $graduateProgramCourses);
+        $arrGraduate = array();
+        $arrGraduate = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrGraduate);
+        $storeGraduate = array();
+        $storeGraduate = $this->createCDFArray($arrGraduate, $storeGraduate);
+        $storeGraduate = $this->frequencyDistribution($arrGraduate, $storeGraduate);
+        $storeGraduate = $this->replaceIdsWithAbv($storeGraduate, $arrGraduate);
+        $storeGraduate = $this->assignColours($storeGraduate);
+
         // Required Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcome = array();
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
         $arrRequired = array();
         $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
@@ -370,12 +468,52 @@ class ProgramWizardController extends Controller
         $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
         $storeRequired = $this->assignColours($storeRequired);
 
+        // Get Mapping Scales for high-chart
+        $programMappingScales = $mappingScales->pluck('abbreviation')->toArray();
+        $programMappingScales[count($programMappingScales)] = 'N/A';
+        // Get Mapping Scale Colours for high-chart
+        $programMappingScalesIds = $mappingScales->pluck('map_scale_id')->toArray();
+        $programMappingScalesIds[count($programMappingScalesIds)] = 0;
+        $programMappingScalesColours = [];
+        $freqOfMSIds = [];          // used in a later step
+        for ($i = 0; $i < count($programMappingScalesIds); $i++) {
+            $freqOfMSIds[$programMappingScalesIds[$i]] = [];
+            $programMappingScalesColours[$i] = (MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first() == "#FFFFFF" ? "#6c757d" : MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first());
+        }
+        // get categorized plo's for the program (ordered by category then outcome id)
+        $plos_order = ProgramLearningOutcome::where('program_id', $program_id)->whereNotNull('plo_category_id')->orderBy('plo_category_id', 'ASC')->orderBy('pl_outcome_id', 'ASC')->get();
+        // get UnCategorized PLO's
+        $uncatPLOS = ProgramLearningOutcome::where('program_id', $program_id)->whereNull('plo_category_id')->get();
+        // Merge Categorized PLOs and Uncategorized PLOs
+        $all_plos = $plos_order->toBase()->merge($uncatPLOS);
+        $plosInOrder = $all_plos->pluck('plo_shortphrase')->toArray();
+
+        // loop through $freqOfMSIds then
+        // loop through PLOs ($ploInOrderIds) and get array [countOfAbvFor(plo1), countOfAbvFor(plo2), ... , countOfAbvFor(plo7)]
+        $plosInOrderIds = $all_plos->pluck('pl_outcome_id')->toArray();
+        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+            foreach($plosInOrderIds as $plosInOrderId) {
+                array_push($freqOfMSIds[$ms_id], OutcomeMap::where('pl_outcome_id', $plosInOrderId)->where('map_scale_id', $ms_id)->count());
+            }
+        }
+        // Change key so that order isn't messed up when data is used in highcharts 
+        $index = 0;
+        $freqForMS = [];
+        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+            $freqForMS[$index] = $freqOfMSId;
+            $index++;
+        }
+
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('coursesOutcomes', $coursesOutcomes)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
                                             ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
-                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
+                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
+                                            ->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)->with('secondYearProgramCourses', $secondYearProgramCourses)->with('storeSecond', $storeSecond)
+                                            ->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('fourthYearProgramCourses', $fourthYearProgramCourses)->with('storeFourth', $storeFourth)
+                                            ->with('graduateProgramCourses', $graduateProgramCourses)->with('storeGraduate', $storeGraduate)
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'));
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {

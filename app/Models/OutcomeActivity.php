@@ -11,6 +11,8 @@ class OutcomeActivity extends Pivot
 {
     use HasFactory;
 
+    protected $table = 'outcome_activities';
+
     protected $primaryKey = ['l_outcome_id','l_activity_id'];
 
     public $incrementing = false;
