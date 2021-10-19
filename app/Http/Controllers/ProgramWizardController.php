@@ -298,6 +298,47 @@ class ProgramWizardController extends Controller
         // get all the courses this program belongs to
         $programCourses = $program->courses;
 
+        // All Learning Outcomes for program courses
+        $LearningOutcomesForProgramCourses = array();
+        foreach ($programCourses as $programCourse) {
+            $LearningOutcomesForProgramCourses[$programCourse->course_id] = LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray();
+        }
+
+        // ploCount * cloCount = number of outcome map results for course and program
+        $expectedTotalOutcomes = array();
+        foreach ($programCourses as $programCourse) {
+            $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
+        }
+
+                // Get all PLO Id's
+        $arrayPLOutcomeIds = ProgramLearningOutcome::where('program_id', $program_id)->pluck('pl_outcome_id')->toArray();
+
+        // Loop through All Learning Outcomes for program courses
+        $actualTotalOutcomes = array();
+        foreach($LearningOutcomesForProgramCourses as $courseId => $courseLOs) {
+            // Loop through each of the CLO IDs
+            $count = 0;
+            foreach ($courseLOs as $lo_Id) {
+                // loop through all of the PLO ID's
+                foreach ($arrayPLOutcomeIds as $pl_id) {
+                    // If entry for an Outcome map [l_outcome_id, pl_outcome_id] exists increment counter
+                    if (OutcomeMap::where('l_outcome_id', $lo_Id)->where('pl_outcome_id', $pl_id)->exists()) {
+                        $count++;
+                    }
+                }
+            }
+            // stores total count 
+            $actualTotalOutcomes[$courseId] = $count;
+        }
+
+        $hasUnMappedCourses = FALSE;
+        foreach ($expectedTotalOutcomes as $courseID => $expectedTotalOutcome) {
+            if ($expectedTotalOutcome != $actualTotalOutcomes[$courseID]) {
+                $hasUnMappedCourses = TRUE;
+                break;
+            }
+        }
+
         // get all of the required courses this program belongs to
         $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
 
@@ -512,7 +553,7 @@ class ProgramWizardController extends Controller
                                             ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
                                             ->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)->with('secondYearProgramCourses', $secondYearProgramCourses)->with('storeSecond', $storeSecond)
                                             ->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('fourthYearProgramCourses', $fourthYearProgramCourses)->with('storeFourth', $storeFourth)
-                                            ->with('graduateProgramCourses', $graduateProgramCourses)->with('storeGraduate', $storeGraduate)
+                                            ->with('graduateProgramCourses', $graduateProgramCourses)->with('storeGraduate', $storeGraduate)->with('hasUnMappedCourses', $hasUnMappedCourses)
                                             ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'));
     }
 
