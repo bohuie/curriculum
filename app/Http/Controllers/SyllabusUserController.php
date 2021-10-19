@@ -94,6 +94,8 @@ class SyllabusUserController extends Controller
                             $syllabusUser = SyllabusUser::updateOrCreate(
                                 ['syllabus_id' => $syllabus->id, 'user_id' => $user->id],
                             );
+                            $syllabusUser = SyllabusUser::where([['syllabus_id', '=', $syllabusUser->syllabus_id], ['user_id', '=', $syllabusUser->user_id]])->first();
+
                             // set this syllabus user permission level
                             switch ($permission) {
                                 case 'edit':

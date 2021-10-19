@@ -92,6 +92,8 @@ class ProgramUserController extends Controller
                             $programUser = ProgramUser::updateOrCreate(
                                 ['program_id' => $program->program_id, 'user_id' => $user->id],
                             );
+                            $programUser = ProgramUser::where([['program_id', '=', $programUser->program_id], ['user_id', '=', $programUser->user_id]])->first();
+
                             // set this program user permission level
                             switch ($permission) {
                                 case 'edit':

@@ -25,7 +25,6 @@ Route::get('/', function () {
 Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
-//Route::delete('/home/{course}/unassign', 'HomeController@destroy')->name('home.destroy');
 Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
 
 Route::get('/about', 'AboutController@index')->name('about');
@@ -47,24 +46,28 @@ Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->nam
 Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
 // route to download a syllabus
 Route::post('/syllabi/{syllabusId}/word','SyllabusController@syllabusToWordDoc')->name('syllabus.word');
+// rout to duplicate syllabi
+Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 //PDF for Program summary
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
+
 
 Route::resource('/courses','CourseController');
 Route::post('/courses', 'CourseController@store')->name('courses.store');
 
 Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
 Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');
-// Route::get('/courses/{course}/status','CourseController@status')->name('courses.status');
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
 Route::get('/courses/{course}/summary','CourseController@show')->name('courses.summary');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
+Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
 
 Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 
@@ -130,3 +133,9 @@ Route::get('/email','AdminEmailController@index')->name('email');
 Route::post('/email', 'AdminEmailController@send')->name('email.send');
 
 Auth::routes();
+
+// register backpack auth routes manually 
+Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_prefix')], function () {
+    Route::auth();
+    Route::get('logout', 'Auth\LoginController@logout');
+});

@@ -67,7 +67,7 @@ class OptionalPriorityCrudController extends CrudController
             'label' => 'Subcategory Name',// Table column heading
             'type' => 'strip_select',
             'name' => 'optionalPrioritySubcategory', // The db column name
-            'entity' =>'optionalPrioritySubcategories',
+            'entity' =>'optionalPrioritySubcategory',
             'attribute' => 'subcat_name',
             'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
@@ -80,11 +80,6 @@ class OptionalPriorityCrudController extends CrudController
                 $query ->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
             }
         ]);
-        
-        
-        
-        
-        
     }
 
     /**
@@ -136,6 +131,18 @@ class OptionalPriorityCrudController extends CrudController
         ]);*/
 
         $this->crud->addField([
+            'name' => 'isCheckable', // The db column name
+            'label' => "Is Checkable?&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
+            'type' => 'radio',
+            'options'     => [
+                // the key will be stored in the db, the value will be shown as label; 
+                0 => "Not a checkable Strategic Priority",
+                1 => "Checkable Strategic Priority"
+            ],
+            'attributes' => ['req' => 'true'],
+        ]);
+
+        $this->crud->addField([
             'label' => "Subcategory Name",// Table column heading
             'type' => 'select',
             'name' => 'subcat_id', // The db column name
@@ -172,6 +179,17 @@ class OptionalPriorityCrudController extends CrudController
             'label' => "Optional Priority&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
             'type' => 'valid_textarea',
             'attributes' => [ 'req' => 'true']
+        ]);
+        $this->crud->addField([
+            'name' => 'isCheckable', // The db column name
+            'label' => "Is Checkable?&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
+            'type' => 'radio',
+            'options'     => [
+                // the key will be stored in the db, the value will be shown as label; 
+                0 => "Not a checkable Strategic Priority",
+                1 => "Checkable Strategic Priority"
+            ],
+            'attributes' => ['req' => 'true'],
         ]);
 
         // Subcategory

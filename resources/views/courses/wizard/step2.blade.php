@@ -8,12 +8,17 @@
             @include('courses.wizard.header')
 
             <div class="card">
-                <div class="card-header text-start pt-4 pb-4" >
+                <div class="card-header wizard" >
                     <h3>
                         Student Assessment Methods
-                        <button type="button" class="btn btn-primary col-4 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addAssessmentMethodModal">
-                            <i class="bi bi-plus mr-2"></i>Student Assessment Methods
-                        </button>
+                        <div style="float: right;">
+                            <button id="samHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle" style="color:#002145;"></i>
+                            </button>
+                        </div>
+                        <div class="text-left">
+                            @include('layouts.guide')
+                        </div>
                     </h3>
                 </div>
 
@@ -143,9 +148,21 @@
                 <!-- End of add student assessment methods modal -->
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 lh-lg">
-                        Input all <a href="https://ctlt.ubc.ca/resources/webliography/assessmentevaluation/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> assessment methods</a> of the course individually. You may also choose to use the <a href="https://ubcoapps.elearning.ubc.ca/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> UBCO's Workload Calculator</a> to estimate the student time commitment in this course based on the chosen assignments.              
-                    </h6>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <h6 class="card-subtitle mb-4 lh-lg">
+                                Input all <a href="https://ctlt.ubc.ca/resources/webliography/assessmentevaluation/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> assessment methods</a> of the course individually. You may also choose to use the <a href="https://ubcoapps.elearning.ubc.ca/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> UBCO's Workload Calculator</a> to estimate the student time commitment in this course based on the chosen assignments.              
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col">
+                            <button type="button" class="btn btn-primary col-4 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addAssessmentMethodModal">
+                                <i class="bi bi-plus mr-2"></i>Student Assessment Methods
+                            </button>
+                        </div>
+                    </div>
 
                     <div id="admins">
                         <div class="row">
@@ -271,6 +288,7 @@
     });
 
     function deleteAssessmentMethod(submitter) {
+        console.log(submitter);
         $(submitter).parents('tr').remove();
     }
 

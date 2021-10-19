@@ -9,7 +9,28 @@
             <div class="card ">
 
                 <h3 class="card-header wizard" >
-                {{$course->course_code}}{{$course->course_num}}: Course Summary
+                    <div class="row">
+                        <div class="col text-left">
+                            <a class="w-25" href="{{route('courses.pdf', $course->course_id)}}">
+                                <button class="btn btn-primary" onclick="{{route('courses.pdf', $course->course_id)}}">
+                                    Download PDF<i class="bi bi-download pl-2"></i>
+                                </button>
+                            </a>
+                        </div>
+
+                        <div class="col">
+                            {{$course->course_code}} {{$course->course_num}}: Course Summary
+                        </div>
+
+                        <div class="col text-right">
+                            <button id="courseOverviewHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
+                                <i class="bi bi-question-circle" style="color:#002145;"></i>
+                            </button>
+                        </div>
+                        <div class="text-left">
+                            @include('layouts.guide')
+                        </div>
+                    </div>
                 </h3>
 
                 <div class="card-body m-2">
@@ -20,13 +41,6 @@
                             </h6>
                         </div>
 
-                        <div class="col-4 align-self-start">
-                            <a href="{{route('courses.pdf', $course->course_id)}}">
-                                <button class="btn btn-primary col mr-5" onclick="{{route('courses.pdf', $course->course_id)}}">
-                                    Download PDF<i class="bi bi-download pl-2"></i>
-                                </button>
-                            </a>
-                        </div>
                     </div>
 
                     <div class="card mt-4 mb-4">
