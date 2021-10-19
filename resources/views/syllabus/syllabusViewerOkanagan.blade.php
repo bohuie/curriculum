@@ -15,16 +15,16 @@
         <!-- land acknowledgement -->
         @if (in_array($okanaganSyllabusResources[0]->id, $selectedOkanaganSyllabusResourceIds))
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>{{$okanaganSyllabusResources[0]->title}}</h6>
+            <div>
+                <h6 class="oSyllabusHeader">{{$okanaganSyllabusResources[0]->title}}</h6>
             </div>
             <p>We respectfully acknowledge the Syilx Okanagan Nation and their peoples, in whose traditional, ancestral, unceded territory UBC Okanagan is situated.</p>
         </div>
         @endif
         <!-- course information -->
         <div class="mb-4">
-            <div class="oSyllabusHeader text-decoration-none">
-                <h5>{{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}}</h5>
+            <div>
+                <h5 class="oSyllabusHeader text-decoration-none">{{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}}</h5>
             </div>
             <p><b>Campus:</b> @if ($syllabus->campus == 'V') Vancouver @else Okanagan @endif</p>
             <p><b>Instructor:</b> {{$syllabus->course_instructor}}</p>
@@ -42,8 +42,8 @@
         </div>
         <!-- other instructional staff -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>
+            <div>
+                <h6 class="oSyllabusHeader">
                     Other Instructional Staff
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['otherCourseStaff']}}"></i>
@@ -54,8 +54,8 @@
         </div>
         <!-- course format -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>
+            <div>
+                <h6 class="oSyllabusHeader">
                     Course Format
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['courseStructure']}}"></i>
@@ -66,8 +66,8 @@
         </div>
         <!-- Course Overview, Content and Objectives -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>
+            <div>
+                <h6 class="oSyllabusHeader">
                     Course Overview, Content and Objectives
                 </h6>
             </div>
@@ -75,8 +75,8 @@
         </div>
         <!--  learning outcomes -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>
+            <div>
+                <h6 class="oSyllabusHeader">
                     Learning Outcomes
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningOutcomes']}}"></i>
@@ -88,8 +88,8 @@
         </div>
         <!--  learning activities -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>
+            <div>
+                <h6 class="oSyllabusHeader">
                     Learning Activities
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningActivities']}}"></i>
@@ -100,8 +100,8 @@
         </div>
         <!--  assessments of learning -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>
+            <div>
+                <h6 class="oSyllabusHeader">
                     Assessments of Learning
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningAssessments']}}"></i>
@@ -110,10 +110,52 @@
             </div>
             <p>{{$syllabus->learningAssessments}}</p>
         </div>
+        <!--  course schedule table -->
+        <div class="mb-4">
+            <div>
+                <h6 class="oSyllabusHeader">
+                    Course Schedule
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
+                    </span>
+                </h6>
+            </div>
+            <!-- course schedule table  -->
+            <div id="courseScheduleTblDiv" class="row">
+                @if (!empty($syllabus))
+                    @if ($myCourseScheduleTbl['rows']->count() > 0)
+                    <table id="courseScheduleTbl" class="table table-responsive">
+                        <tbody>
+                            @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
+                                <!-- table header -->
+                                @if ($rowIndex == 0)
+                                    <tr class="table-primary fw-bold">
+                                        @foreach ($row as $headerIndex => $header)
+                                        <td>
+                                            {{$header->val}}
+                                        </td>
+                                        @endforeach
+                                    </tr>
+                                @else
+                                    <tr>
+                                        @foreach ($row as $colIndex => $data)
+                                        <td>
+                                            {{$data->val}}
+                                        </td>
+                                        @endforeach
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                    @endif
+                @endif
+            </div>
+        </div>
         <!--  late policy -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>Late Policy
+            <div>
+                <h6 class="oSyllabusHeader">Late Policy
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
                     </span>
@@ -123,15 +165,15 @@
         </div>
         <!--  missed exam policy -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>Missed Exam Policy</h6>
+            <div>
+                <h6  class="oSyllabusHeader">Missed Exam Policy</h6>
             </div>
             <p>{{$syllabus->missed_exam_policy}}</p>
         </div>
         <!--  missed activity policy -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>Missed Activity Policy
+            <div>
+                <h6 class="oSyllabusHeader">Missed Activity Policy
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
                     </span>
@@ -141,15 +183,15 @@
         </div>
         <!--  passing criteria -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>Passing Criteria</h6>
+            <div>
+                <h6 class="oSyllabusHeader">Passing Criteria</h6>
             </div>
             <p>{{$syllabus->passing_criteria}}</p>
         </div>
         <!--  learning materials -->
         <div class="mb-4">
-            <div class="oSyllabusHeader">
-                <h6>
+            <div>
+                <h6 class="oSyllabusHeader">
                     Learning Materials
                     <span>
                         <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningMaterials']}}"></i>
@@ -160,13 +202,13 @@
         </div>
         <!-- other course policies -->
         <div class="mb-4">
-            <div class="oSyllabusHeader mb-4 text-decoration-none">
-                <h5>Other Course Policies and Student Service Resources</h5>
+            <div>
+                <h5 class="oSyllabusHeader mb-4 text-decoration-none">Other Course Policies and Student Service Resources</h5>
             </div>
             <!-- learning resources -->
             <div class="mb-4">
-                <div class="oSyllabusHeader">
-                    <h6>Learning Resources
+                <div>
+                    <h6 class="oSyllabusHeader">Learning Resources
                         <span>
                             <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
                         </span>
@@ -177,8 +219,8 @@
             @foreach ($okanaganSyllabusResources as $index => $resource) 
                 @if (in_array($resource->id, $selectedOkanaganSyllabusResourceIds) && $index != 0)
                 <div class="mb-4">
-                    <div class="oSyllabusHeader" @if ($resource->id_name == 'safewalk') style="text-align:center" @endif>
-                        <h6>{{$resource->title}}</h6>
+                    <div @if ($resource->id_name == 'safewalk') style="text-align:center" @endif>
+                        <h6 class="oSyllabusHeader">{{$resource->title}}</h6>
                     </div>
                     @switch ($resource->id_name)
                         @case('academic')
