@@ -705,7 +705,7 @@
                 // add col if there are less than 6 cols
                 if (numCols < $('#courseScheduleTblColsCount').attr('max')) {  
                     // add a new <td> to each <row>
-                    courseScheduleTbl.rows.forEach((row, rowIndex) => {
+                    Array.from(courseScheduleTbl.rows).forEach((row, rowIndex) => {
                         // create a <textarea>
                         var inputCell = document.createElement('textarea');
                         inputCell.setAttribute('form', 'sylabusGenerator');
@@ -762,7 +762,8 @@
                 var cols = courseScheduleTbl.rows[0].cells;
                 console.log(cols);
                 // foreach col create a checkbox with label and place it in the delColsModal 
-                cols.forEach((col, colIndex) => {
+                cols.for
+                Array.from(cols).forEach((col, colIndex) => {
                     // only add relevant col headers to del cols modal
                     if (colIndex < cols.length - 1) {
                         // <div> foreach <input> and <label>
@@ -811,9 +812,7 @@
             // if table exists, del specified cols
             if (courseScheduleTbl) {
                 // iterate over table rows 
-                console.log('Table Rows: ' + courseScheduleTbl.rows.toString());
-                console.log('Cols to Delete: ' + colsToDelete.toString());
-                courseScheduleTbl.rows.forEach((row, rowIndex) => {
+                Array.from(courseScheduleTbl.rows).forEach((row, rowIndex) => {
                     // iterate over columns to delete
                     colsToDelete.forEach((colToDelete) => {
                         // delete cells from every row
@@ -1326,122 +1325,6 @@
         });
 
     }
-
-    // bootstrap-tables custom code
-    var $table = $('#table')
-    var $remove = $('#remove')
-    var selections = []
-
-    function getIdSelections() {
-        return $.map($table.bootstrapTable('getSelections'), function (row) {
-        return row.id
-        })
-    }
-
-    function responseHandler(res) {
-        $.each(res.rows, function (i, row) {
-        row.state = $.inArray(row.id, selections) !== -1
-        })
-        return res
-    }
-
-    function detailFormatter(index, row) {
-        var html = []
-        $.each(row, function (key, value) {
-        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
-        })
-        return html.join('')
-    }
-
-    var initData = [
-        {
-            'dates': 'Week 1', 
-            'topics': 'Course Overview and Introduction to Research', 
-            'learningOutcomes': 'LOs 1-3',
-            'assessmentMethods': 'Quiz 1',
-            'learningActivities': 'Research Methods in Psychology 4th Edition–  Ch.1 (Sections 1-4; 6; Pgs 3-14 + 18); Research Methods in Psychology 2nd Edition – Chapter 4 (pgs 6-73)'
-        }, 
-        {
-            'dates': 'Week 2', 
-            'topics': 'Ethics & Research', 
-            'learningOutcomes': 'LOs 3',
-            'assessmentMethods': 'Quiz 2',
-            'learningActivities': 'Research Methods in Psychology – Ch. 3 (Section 3.1-3.3); OCAP by Alberta First Nations Information Governance Centre AND  MacDonald et al (2014) Canada’s shameful history of nutrition research on residential school children'
-        }, 
-        {
-            'dates': 'Week 3', 
-            'topics': 'Being a Critical Consumer', 
-            'learningOutcomes': 'LOs 1-2',
-            'assessmentMethods': 'Quiz 3, Midterm 1',
-            'learningActivities': 'Korownyk, Kolber et al. (2014). – Televised Medical Talk Shows…British Medical Journal, 349, g7346 Robeldo & Jankovic (2017) – Media Hype Patient and Scientific Perspectives on Misleading Medical News. Movement Disorders, 32 (9), 1319-1323'
-        }, 
-
-    ]
-
-    function initTable() {
-        $table.bootstrapTable('destroy').bootstrapTable({
-        data: initData,
-        height: 550,
-        columns: [
-            [{
-                title: 'When',
-                field: 'dates',
-                align: 'center',
-                valign: 'middle',
-                sortable: true,
-            }, {
-                field: 'topics',
-                title: 'Topic',
-                sortable: true,
-                align: 'center'
-            }, {
-                field: 'learningOutcomes',
-                title: 'Learning Outcomes',
-                sortable: true,
-                align: 'center',
-            }, {
-                field: 'assessmentMethods',
-                title: 'Assessment Methods',
-                align: 'center',
-                clickToSelect: false,
-            }, {
-                field: 'learningActivities',
-                title: 'Learning Activities',
-                align: 'center',
-                clickToSelect: false,
-            }, 
-        
-        ]]
-        })
-
-        $table.on('check.bs.table uncheck.bs.table ' + 'check-all.bs.table uncheck-all.bs.table', function() {
-            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
-
-            // save your data, here just save the current page
-            selections = getIdSelections()
-            // push or splice the selections if you want to save all data selections
-        })
-
-        $table.on('all.bs.table', function (e, name, args) {
-            console.log(name, args)
-        })
-
-        $remove.click(function () {
-            var ids = getIdSelections()
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: ids
-            })
-            $remove.prop('disabled', true)
-        })
-    }
-
-    $(function() {
-        initTable()
-
-        $('#locale').change(initTable)
-    })
-
 </script>
 
 @endsection
