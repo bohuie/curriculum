@@ -31,7 +31,11 @@
                         </div>
                     </div>
                 </h3>
-                        
+                        @if ($hasUnMappedCourses)
+                            <div class="alert alert-warning wizard">
+                                <b>Warning: </b>There are courses that haven't been fully mapped to this program.
+                            </div>
+                        @endif
                         <!-- Program Learning Outcomes -->
                         <div class="card-body">
                             <h5 class="card-title">

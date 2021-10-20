@@ -131,7 +131,7 @@
                 </div>
             </div> 
 
-            <div class="accordion" id="FAQAccordion4">
+            <div class="accordion" id="FAQAccordion6">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader6">
@@ -141,7 +141,7 @@
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion6" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader6" data-bs-parent="FAQAccordion4">
+                    <div id="collapseFAQAccordion6" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader6" data-bs-parent="FAQAccordion6">
                         <div class="accordion-body lh-lg">
                             <p>To create a program, first register a Curriculum MAP account or login. On your dashboard, you will see your "Programs".</p>
                             <p class="fw-bold">From the dashboard</p>
@@ -171,7 +171,31 @@
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
+            
+            <div class="accordion" id="FAQAccordion7">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader7">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion7" aria-expanded="false" aria-controls="collapseFAQAccordion7">
+                            How do I duplicate a course, program, or syllabus?                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion7" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader7" data-bs-parent="FAQAccordion7">
+                        <div class="accordion-body lh-lg">
+                            <p style="font-size:small" ><b>Note</b>: You must own the course, program, or syllabus in order to duplicate it.</p>
+                            <p class="fw-bold">From the dashboard</p>
+                            <ol>
+                                <li>Click on either the course, program, or syllabus you would like to duplicate.</li>
+                                <li>Click on the green 'Duplicate' button, which is located in the top right.</li>
+                                <li>You will then be prompted to fill out some information for the item you wish to duplicate, after submitting the form you will see the newly duplicated item on your dashboard.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>    
