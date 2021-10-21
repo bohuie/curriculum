@@ -11,6 +11,7 @@ use App\Models\Course;
 use App\Models\CourseProgram;
 use App\Models\CourseUser;
 use App\Models\MappingScale;
+use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
@@ -503,6 +504,95 @@ class ProgramController extends Controller
             }
         }
         return $store;
+    }
+
+    public function duplicate(Request $request, $program_id) {
+
+        //
+        $this->validate($request, [
+            'program'=> 'required',
+            ]);
+        
+        $oldProgram = Program::find($program_id);
+
+        $program = new Program;
+        $program->program = $request->input('program');
+        $program->level = $oldProgram->level;
+        $program->department = $oldProgram->department;
+        $program->faculty = $oldProgram->faculty;
+        $program->status = -1;
+        $program->save();
+
+        // This array is used to keep track of the id's for each category duplicated
+        // This is used for the program learning outcomes step to determine which plo belongs to which category
+        $historyCategories = array();
+        // duplicate plo categories
+        $ploCategories = $oldProgram->ploCategories;
+        foreach ($ploCategories as $ploCategory) {
+            $newCategory = new PLOCategory;
+            $newCategory->plo_category = $ploCategory->plo_category;
+            $newCategory->program_id = $program->program_id;
+            $newCategory->save();
+            $historyCategories[$ploCategory->plo_category_id] = $newCategory->plo_category_id;
+        }
+
+        // duplicate plos
+        $plos = $oldProgram->programLearningOutcomes;
+        foreach ($plos as $plo) {
+            $newProgramLearningOutcome = new ProgramLearningOutcome;
+            $newProgramLearningOutcome->plo_shortphrase = $plo->plo_shortphrase;
+            $newProgramLearningOutcome->pl_outcome = $plo->pl_outcome;
+            $newProgramLearningOutcome->program_id = $program->program_id;
+            if ($plo->plo_category_id == NULL) {
+                $newProgramLearningOutcome->plo_category_id = NULL;
+            } else {
+                $newProgramLearningOutcome->plo_category_id = $historyCategories[$plo->plo_category_id];
+            }
+            $newProgramLearningOutcome->save();
+        }
+
+        // duplicate mapping scales
+        $mapScalesProgram = $oldProgram->mappingScalePrograms;
+        foreach ($mapScalesProgram as $mapScaleProgram) {
+            $mapScale = MappingScale::find($mapScaleProgram->map_scale_id);
+            // if mapping scale category is NULL then it is a custom mapping scale. This means we will need to duplicate it in order to add it to the new program.
+            if ($mapScale->mapping_scale_categories_id == NULL) {
+                // create new mapping scale
+                $newMappingScale = new MappingScale;
+                $newMappingScale->title = $mapScale->title;
+                $newMappingScale->abbreviation = $mapScale->abbreviation;
+                $newMappingScale->description = $mapScale->description;
+                $newMappingScale->colour = $mapScale->colour;
+                $newMappingScale->save();
+
+                // create new mapping scale program
+                $newMappingScaleProgram = new MappingScaleProgram;
+                $newMappingScaleProgram->map_scale_id = $newMappingScale->map_scale_id;
+                $newMappingScaleProgram->program_id = $program->program_id;
+                $newMappingScaleProgram->save();
+            } else {
+                // create new mapping scale program
+                $newMappingScaleProgram = new MappingScaleProgram;
+                $newMappingScaleProgram->map_scale_id = $mapScaleProgram->map_scale_id;
+                $newMappingScaleProgram->program_id = $program->program_id;
+                $newMappingScaleProgram->save();
+            }
+        }
+        
+        $user = User::find(Auth::id());
+        $programUser = new ProgramUser;
+        $programUser->user_id = $user->id;
+
+        $programUser->program_id = $program->program_id;
+        // assign the creator of the program the owner permission
+        $programUser->permission = 1;
+        if($programUser->save()){
+            $request->session()->flash('success', 'Program has been successfully duplicated');
+        }else{
+            $request->session()->flash('error', 'There was an error duplicating the program');
+        }
+
+        return redirect()->route('home');
     }
 
 }

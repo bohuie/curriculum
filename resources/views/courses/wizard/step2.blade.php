@@ -288,6 +288,7 @@
     });
 
     function deleteAssessmentMethod(submitter) {
+        console.log(submitter);
         $(submitter).parents('tr').remove();
     }
 
