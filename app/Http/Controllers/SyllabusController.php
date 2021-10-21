@@ -1229,6 +1229,15 @@ class SyllabusController extends Controller
             }
         }
 
+        // duplicate course schedules
+        $oldCourseSchedules = CourseSchedule::where('syllabus_id', $syllabusId)->get();
+        foreach ($oldCourseSchedules as $oldCourseSchedule) {
+            $newCourseSchedule = $oldCourseSchedule->replicate();
+            $newCourseSchedule->syllabus_id = $syllabus->id;
+            $newCourseSchedule->created_at = Carbon::now();
+            $newCourseSchedule->save();
+        }
+
         $user = User::find(Auth::id());
         // create a new syllabus user
         $syllabusUser = new SyllabusUser;
