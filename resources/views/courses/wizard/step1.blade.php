@@ -33,115 +33,98 @@
                                     </button>
                                 </div>
 
-                                <form method="POST" action="{{ action('LearningOutcomeController@store') }}">
-                                    @csrf
                                     <div class="modal-body">
-                                        <div class="form-group row">
-                                            <label for="l_outcome" class="col-md-4 col-form-label text-md-center"><span class="requiredField">* </span>Course Learning Outcome (CLO) or Competency</label>
+                                        <form id="addCLOForm" class="needs-validation" novalidate>
+                                            <div class="form-group row">
+                                                <label for="l_outcome" class="col-md-4 col-form-label text-md-center"><span class="requiredField">* </span>Course Learning Outcome (CLO) or Competency</label>
 
-                                            <div class="col-md-8">
-                                                <textarea id="l_outcome" class="form-control" @error('l_outcome') is-invalid @enderror
-                                                rows="3" name="l_outcome" required autofocus placeholder="E.g. Develop..."></textarea>
+                                                <div class="col-md-8">
+                                                    <textarea id="l_outcome" class="form-control" @error('l_outcome') is-invalid @enderror
+                                                    rows="3" name="l_outcome" required autofocus placeholder="E.g. Develop..."></textarea>
 
-                                                @error('l_outcome')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                                @enderror
+                                                    @error('l_outcome')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                    @enderror
 
-                                                <small class="form-text text-muted">
-                                                    <a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><strong><i class="bi bi-box-arrow-up-right"></i> Click here</strong></a>
-                                                    for tips to write effective CLOs
-                                                </small>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label for="title" class="col-md-4 col-form-label text-md-right">Short Phrase</label>
-
-                                            <div class="col-md-8">
-                                                <input id="title" type="text" class="form-control @error('title') is-invalid @enderror"
-                                                name="title" autofocus placeholder="E.g Experiment..." maxlength="50">
-
-                                                @error('title')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                                @enderror
-
-                                                <small class="form-text text-muted">
-                                                    <strong>50 character limit.</strong> Having a short phrase helps with data visualization at the end of this process.
-                                                </small>
-                                            </div>
-
-                                            <div style="col-md-8; text-align: center; margin-top:20px">
-
-                                                <div>
-                                                    <p style="margin-top: 25px;margin-left:4px;margin-right:4px;">A well-written learning outcome states what students are expected to <span style="font-style: italic;">know, be able to do, or care about</span>, after successfully completing the course/program. Such statements begin with one measurable verb.</p>
-                                                    <p>The below are examples of verbs associated with different levels of Bloom’s Taxonomy of Learning.</p>
+                                                    <small class="form-text text-muted">
+                                                        <a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><strong><i class="bi bi-box-arrow-up-right"></i> Click here</strong></a>
+                                                        for tips to write effective CLOs
+                                                    </small>
                                                 </div>
-                                                <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
-                                                <!-- Bloom's Taxonomy Image -->
-                                                    <!--<div class="flex-container">
-                                                                                        <div class="box" style="background-color: #e8f4f8;">
-                                                                                            <strong>REMEMBER</strong>
-                                                                                            <p>Retrieve relevant knowledge from long-term memory</p>
-                                                                                        </div>
-                                                                                        <div class="box" style="background-color: #E6E6FA;">
-                                                                                            <strong>UNDERSTAND</strong>
-                                                                                            <p>Construct meaning from instructional messages</p>
-                                                                                        </div>
-                                                                                        <div class="box" style="background-color: #c1e1ec;">
-                                                                                            <strong>APPLY</strong>
-                                                                                            <p>Carry out or use a procedure in a given situation</p>
-                                                                                        </div>
-                                                                                        <div class="box" style="background-color: #ADD8E6;">
-                                                                                            <strong>ANALYZE</strong>
-                                                                                            <p>Break material into its constituent parts and determine how the parts relate</p>
-                                                                                        </div>
-                                                                                        <div class="box" style="background-color: #87CEEB;">
-                                                                                            <strong>EVALUATE</strong>
-                                                                                            <p>Make judgments based on criteria and standards</p>
-                                                                                        </div>
-                                                                                        <div class="box" style="background-color: #6495ED;">
-                                                                                            <strong>CREATE</strong>
-                                                                                            <p>Put elements together to form a coherent or functional whole</p>
-                                                                                        </div>
+                                            </div>
 
-                                                                                        <div class="box">
-                                                                                            <p class="CLO_example">Example: define, describe, identify, list, locate, match, memorize, recall, recognize, reproduce, select, state</p>
-                                                                                        </div>
-                                                                                        <div class="box">
-                                                                                            <p class="CLO_example">Example: classify，compare，discuss，distinguish，exemplify，explain，illustrate，infer，interpret，paraphrase，predict，summarize</p>
-                                                                                        </div>
-                                                                                        <div class="box">
-                                                                                            <p class="CLO_example">Example: calculate，construct，demonstrate，dramatize，employ，execute，implement，manipulate，modify，simulate, solve</p>
-                                                                                        </div>
-                                                                                        <div class="box">
-                                                                                            <p class="CLO_example">Example: attribute，categorize，classify，compare，correlate，deduce，differentiate，distinguish，organize</p>
-                                                                                        </div>
-                                                                                        <div class="box">
-                                                                                            <p class="CLO_example">Example: assess，check，critique，decide，defend，judge，justify，persuade，recommend，support</p>
-                                                                                        </div>
-                                                                                        <div class="box">
-                                                                                            <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify, plan，produce</p>
-                                                                                        </div>
-                                                    </div> -->                                                
-                                                <!-- End of Bloom's Taxonomy Image -->                                                
-                                                <small>
-                                                    Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
-                                                </small>
+                                            <div class="form-group row">
+                                                <label for="title" class="col-md-4 col-form-label text-md-right">Short Phrase</label>
+
+                                                <div class="col-md-8">
+                                                    <input id="title" type="text" class="form-control @error('title') is-invalid @enderror"
+                                                    name="title" autofocus placeholder="E.g Experiment..." maxlength="50">
+
+                                                    @error('title')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                    @enderror
+
+                                                    <small class="form-text text-muted">
+                                                        <strong>50 character limit.</strong> Having a short phrase helps with data visualization at the end of this process.
+                                                    </small>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <button id="addCLOBtn" type="submit" class="btn btn-primary col-2 btn-sm">Add</button>
+                                            </div>
+                                        </form>
+
+                                        <div class="row justify-content-center">
+                                            <div class="col-8">
+                                                <hr>
                                             </div>
                                         </div>
 
-                                        <input type="hidden" name="course_id" value="{{$course->course_id}}">
+                                        <div class="row m-1">
+                                            <table id="addCLOTbl" class="table table-light table-borderless">
+                                                <thead>
+                                                    <tr class="table-primary">
+                                                        <th class="text-left">Course Learning Outcomes or Competencies</th>
+                                                        <th class="text-left">Short Phrase</th>
+                                                        <th class="text-center">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($l_outcomes as $index => $l_outcome)
+                                                        <tr>
+                                                            <td>
+                                                                <textarea name="l_outcome{{$l_outcome->l_outcome_id}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
+                                                                class="form-control @error('l_outcome') is-invalid @enderror" rows="1" required>{{$l_outcome->l_outcome}}</textarea>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror" value="{{$l_outcome->clo_shortphrase}}" required>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
 
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary col-2 btn-sm">Add</button>
-                                    </div>
-                                </form>
+
+                                    <form method="POST" action="{{ action('LearningOutcomeController@store') }}">
+                                    @csrf
+                                        <div class="modal-footer">
+                                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
+                                            <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-success col-2 btn-sm">Save</button>
+                                        </div>
+                                    </form>
+
                             </div>
                         </div>
                     </div>
@@ -387,13 +370,33 @@
 <script type="application/javascript">
     $(document).ready(function () {
 
-        $("form").submit(function () {
-            // prevent duplicate form submissions
-            $(this).find(":submit").attr('disabled', 'disabled');
-            $(this).find(":submit").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+        $('#addCLOForm').submit(function (event) {
+            // prevent default form submission handling
+            event.preventDefault();
+            event.stopPropagation();
+            // check if input fields contain data
+            if ($('#l_outcome').val().length != 0 && $('#title').val().length != 0) {
+                addCLO();
 
+            }
         });
 
+        function addCLO() {
+            // prepend assessment method to the table
+            $('#addCLOTbl tbody').prepend(`
+                <tr>
+                    <td>
+                        <textarea name="new_l_outcomes[]" class="form-control @error('l_outcome') is-invalid @enderror" rows="1" required>${$('#l_outcome').val()}</textarea>
+                    </td>
+                    <td>
+                        <input type="text" name="l_outcome_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" value="${$('#title').val()}" required>
+                    </td>
+                    <td class="text-center">
+                        <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
+                    </td>
+                </tr>        
+            `);
+        }
     });
-  </script>
+</script>
 @endsection
