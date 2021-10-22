@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\LearningOutcome;
 use Illuminate\Http\Request;
+use Throwable;
 
 class LearningOutcomeController extends Controller
 {
@@ -39,24 +41,47 @@ class LearningOutcomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
-        $this->validate($request, [
-            'l_outcome'=> 'required',
-            ]);
+    {   
+        // try to update CLOs
+        try {
+            $courseId = $request->input('course_id');
+            $currentCLOs = $request->input('current_l_outcome');
+            $currentShortPhrases = $request->input('current_l_outcome_short_phrase');
+            $newCLOs = $request->input('new_l_outcomes');
+            $newShortPhrases = $request->input('new_short_phrases');
+            // get the course
+            $course = Course::find($courseId);
+            // get the saved CLOs for this course
+            $clos = $course->learningOutcomes;
+            // update current clos
+            foreach ($clos as $clo) {
+                if (array_key_exists($clo->l_outcome_id, $currentCLOs)) {
+                    // save Clo, l_outcome and ShortPhrase
+                    $clo->l_outcome = $currentCLOs[$clo->l_outcome_id];
+                    $clo->clo_shortphrase = $currentShortPhrases[$clo->l_outcome_id];
+                    $clo->save();
+                } else {
+                    // remove clo from course
+                    $clo->delete();
+                }
+            }
+            // add new clos
+            if ($newCLOs) {
+                foreach ($newCLOs as $index => $newCLO) {
+                    $newLearningOutcome = new LearningOutcome;
+                    $newLearningOutcome->l_outcome = $newCLO;
+                    $newLearningOutcome->clo_shortphrase = $newShortPhrases[$index];
+                    $newLearningOutcome->course_id = $courseId;
+                    $newLearningOutcome->save();
+                }
+            }
 
-        $lo = new LearningOutcome;
-        $lo->clo_shortphrase = $request->input('title');
-        $lo->l_outcome = $request->input('l_outcome');
-        $lo->course_id = $request->input('course_id');
-        
-        if($lo->save()){
-            $request->session()->flash('success', 'New course learning outcome saved');
-        }else{
-            $request->session()->flash('error', 'There was an error adding the course learning outcome');
+            $request->session()->flash('success','Your course learning outcomes were updated successfully!');
+        } catch (Throwable $exception) {
+            $request->session()->flash('error', 'There was an error updating your course learning outcomes');
+        } finally {
+            return redirect()->route('courseWizard.step1', $request->input('course_id'));
         }
-        
-        return redirect()->route('courseWizard.step1', $request->input('course_id'));
     }
 
     /**

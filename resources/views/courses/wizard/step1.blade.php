@@ -98,12 +98,12 @@
                                                     @foreach($l_outcomes as $index => $l_outcome)
                                                         <tr>
                                                             <td>
-                                                                <textarea name="l_outcome{{$l_outcome->l_outcome_id}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
-                                                                class="form-control @error('l_outcome') is-invalid @enderror" rows="1" required>{{$l_outcome->l_outcome}}</textarea>
+                                                                <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
+                                                                class="form-control @error('l_outcome') is-invalid @enderror" rows="1" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror" value="{{$l_outcome->clo_shortphrase}}" required>
+                                                                <input type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror" value="{{$l_outcome->clo_shortphrase}}" form="saveCLOChanges" required>
                                                             </td>
                                                             <td class="text-center">
                                                                 <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -116,11 +116,11 @@
 
                                     </div>
 
-                                    <form method="POST" action="{{ action('LearningOutcomeController@store') }}">
+                                    <form method="POST" id="saveCLOChanges" action="{{ action('LearningOutcomeController@store') }}">
                                     @csrf
                                         <div class="modal-footer">
-                                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                                            <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Cancel</button>
+                                            <input type="hidden" name="course_id" value="{{$course->course_id}}" form="saveCLOChanges">
+                                            <button id="cancel" type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Cancel</button>
                                             <button type="submit" class="btn btn-success col-2 btn-sm">Save</button>
                                         </div>
                                     </form>
@@ -368,6 +368,7 @@
 </div>
 
 <script type="application/javascript">
+    
     $(document).ready(function () {
 
         $('#addCLOForm').submit(function (event) {
@@ -377,26 +378,58 @@
             // check if input fields contain data
             if ($('#l_outcome').val().length != 0 && $('#title').val().length != 0) {
                 addCLO();
-
+                // reset form 
+                $(this).trigger('reset');
+                $(this).removeClass('was-validated');
+            } else {
+                // mark form as validated
+                $(this).addClass('was-validated');
             }
+            // readjust modal's position 
+            document.querySelector('#addLearningOutcomeModal').handleUpdate();
         });
 
-        function addCLO() {
-            // prepend assessment method to the table
-            $('#addCLOTbl tbody').prepend(`
-                <tr>
-                    <td>
-                        <textarea name="new_l_outcomes[]" class="form-control @error('l_outcome') is-invalid @enderror" rows="1" required>${$('#l_outcome').val()}</textarea>
-                    </td>
-                    <td>
-                        <input type="text" name="l_outcome_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" value="${$('#title').val()}" required>
-                    </td>
-                    <td class="text-center">
-                        <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
-                    </td>
-                </tr>        
+        $('#cancel').click(function(event) {
+            $('#addCLOTbl tbody').html(`
+                @foreach($l_outcomes as $index => $l_outcome)
+                    <tr>
+                        <td>
+                            <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
+                            class="form-control @error('l_outcome') is-invalid @enderror" rows="1" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
+                        </td>
+                        <td>
+                            <input type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                            class="form-control @error('clo_shortphrase') is-invalid @enderror" value="{{$l_outcome->clo_shortphrase}}" form="saveCLOChanges" required>
+                        </td>
+                        <td class="text-center">
+                            <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
+                        </td>
+                    </tr>
+                @endforeach 
             `);
-        }
+        });
     });
+
+    function deleteCLO(submitter) {
+            console.log(submitter);
+            $(submitter).parents('tr').remove();
+    }
+
+    function addCLO() {
+        // prepend assessment method to the table
+        $('#addCLOTbl tbody').append(`
+            <tr>
+                <td>
+                    <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" rows="1" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
+                </td>
+                <td>
+                    <input type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" value="${$('#title').val()}" form="saveCLOChanges" required>
+                </td>
+                <td class="text-center">
+                    <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
+                </td>
+            </tr>        
+        `);
+    }
 </script>
 @endsection

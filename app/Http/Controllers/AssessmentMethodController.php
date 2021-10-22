@@ -40,7 +40,7 @@ class AssessmentMethodController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
         // try update student assessment methods
         try {
             $courseId = $request->input('course_id');
