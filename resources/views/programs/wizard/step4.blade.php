@@ -32,8 +32,17 @@
                     </div>
                 </h3>
                         @if ($hasUnMappedCourses)
-                            <div class="alert alert-warning wizard">
-                                <b>Warning: </b>There are courses that haven't been fully mapped to this program.
+                            <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
+                                <div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                                    <div class="toast-header bg-warning">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <strong class="me-auto pl-2">Alert</strong>
+                                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                                    </div>
+                                    <div class="toast-body">
+                                        There are courses that haven't been fully mapped to this program.
+                                    </div>
+                                </div>
                             </div>
                         @endif
                         <!-- Program Learning Outcomes -->
@@ -1157,6 +1166,8 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        $("#notification").toast("show");
+
         // Enables functionality of tool tips
         $('[data-toggle="tooltip"]').tooltip({html:true});
 
