@@ -28,9 +28,6 @@
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="addLearningOutcomeModalLabel">Add Course Learning Outcome or Competency
                                     </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
                                 </div>
 
                                     <div class="modal-body">
@@ -114,6 +111,18 @@
                                             </table>
                                         </div>
 
+                                        <div>
+                                            <button id="showbtn" class="btn btn-primary bg-primary" onclick="tips()">Show Tips For Writing CLOs</button>
+                                        </div>
+                                        <div id="blooms" style="display: none;">
+                                            <p style="margin-top: 25px;margin-left:4px;margin-right:4px;">A well-written learning outcome states what students are expected to <span style="font-style: italic;">know, be able to do, or care about</span>, after successfully completing the course/program. Such statements begin with one measurable verb.</p>
+                                            <p>The below are examples of verbs associated with different levels of Bloom’s Taxonomy of Learning.</p>
+                                            <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
+                                            <small>
+                                                Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
+                                            </small>
+                                        </div>
+
                                     </div>
 
                                     <form method="POST" id="saveCLOChanges" action="{{ action('LearningOutcomeController@store') }}">
@@ -174,7 +183,7 @@
                                                     </td>
                                                     <td class="text-center align-middle">
 
-                                                        <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-toggle="modal" data-target="#editLearningOutcomeModal{{$l_outcome->l_outcome_id}}">
+                                                        <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-toggle="modal" data-target="#addLearningOutcomeModal">
                                                             Edit
                                                         </button>
 
@@ -183,7 +192,7 @@
                                                             Delete
                                                         </button>
 
-                                                        <!-- Bloom’s Taxonomy of Learning Modal -->
+                                                        <!-- Bloom’s Taxonomy of Learning Modal 
                                                         <div class="modal fade" id="editLearningOutcomeModal{{$l_outcome->l_outcome_id}}" tabindex="-1" role="dialog"
                                                             aria-labelledby="editLearningOutcomeModalLabel" aria-hidden="true">
                                                             <div class="modal-dialog modal-lg" role="document">
@@ -247,7 +256,7 @@
                                                                                     </div>
 
                                                                                     <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
-                                                                                    <!--<div class="flex-container">
+                                                                                    <div class="flex-container">
                                                                                         <div class="box" style="background-color: #e8f4f8;">
                                                                                             <strong>REMEMBER</strong>
                                                                                             <p>Retrieve relevant knowledge from long-term memory</p>
@@ -291,7 +300,7 @@
                                                                                         <div class="box">
                                                                                             <p class="CLO_example">Example: compile，compose，construct，design，develop，formulate，generate，hypothesize，integrate，modify, plan，produce</p>
                                                                                         </div>
-                                                                                    </div> -->
+                                                                                    </div>
 
                                                                                     <small>
                                                                                         Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
@@ -311,7 +320,7 @@
                                                                     </form>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
 
                                                         <!-- Delete Confirmation Modal -->
                                                         <div class="modal fade" id="CLOdeleteConfirmation{{$l_outcome->l_outcome_id}}" tabindex="-1" role="dialog" aria-labelledby="CLOdeleteConfirmation" aria-hidden="true">
@@ -324,7 +333,7 @@
                                                                         </button>
                                                                     </div>
 
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body text-left">
                                                                     Are you sure you want to delete {{$l_outcome->l_outcome}}
                                                                     </div>
 
@@ -409,6 +418,17 @@
             `);
         });
     });
+
+    function tips() {
+        var x = document.getElementById('blooms');
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            document.querySelector("#showbtn").innerHTML = "Hide Tips For Writing CLOs";
+        } else {
+            x.style.display = "none";
+            document.querySelector("#showbtn").innerHTML = "Show Tips For Writing CLOs";
+        }
+    }
 
     function deleteCLO(submitter) {
             console.log(submitter);
