@@ -39,6 +39,8 @@
                         
                         <!-- list of programs this course belongs to -->
                         <div class="jumbotron">
+                            <form action="{{action('OutcomeMapController@store')}}" method="POST">
+                            @csrf
                             @if (count($course->programs) < 1)
                                 <div class="alert alert-warning text-center">
                                     <i class="bi bi-exclamation-circle-fill pr-2 fs-3"></i>
@@ -128,7 +130,7 @@
                                                                                 <!-- CLO accordion body -->
                                                                                 <div class="accordion-body">
 
-                                                                                    <form id="{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('OutcomeMapController@store')}}" method="POST">
+                                                                                    <!-- <form id="{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('OutcomeMapController@store')}}" method="POST"> -->
                                                                                         @csrf
                                                                                         <input type="hidden" name="l_outcome_id" value="{{$courseLearningOutcome->l_outcome_id}}">
 
@@ -174,13 +176,13 @@
                                                                                                                                 @foreach($courseProgram->mappingScaleLevels as $programMappingScaleLevel)
                                                                                                                                     <td>
                                                                                                                                         <div class="form-check">
-                                                                                                                                            <input required class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="{{$programMappingScaleLevel->map_scale_id}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
+                                                                                                                                            <input  class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="{{$programMappingScaleLevel->map_scale_id}}" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == $programMappingScaleLevel->map_scale_id) checked=checked @endif @endif>
                                                                                                                                         </div>
                                                                                                                                     </td>
                                                                                                                                 @endforeach
                                                                                                                                 <td>
                                                                                                                                     <div class="form-check">
-                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif >
                                                                                                                                     </div>
                                                                                                                                 </td>
                                                                                                                             </tr>
@@ -211,7 +213,7 @@
                                                                                                                             @endforeach
                                                                                                                             <td>
                                                                                                                                 <div class="form-check">
-                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$plo->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($plo->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif >
                                                                                                                                 </div>
                                                                                                                             </td>
                                                                                                                         </tr>
@@ -238,7 +240,7 @@
                                                                                                                             @endforeach
                                                                                                                             <td>
                                                                                                                                 <div class="form-check">
-                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                                                    <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$pl_outcome->pl_outcome_id}}]" value="0" @if(isset($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot)) @if($courseLearningOutcome->programLearningOutcomes->find($pl_outcome->pl_outcome_id)->pivot->map_scale_id == 0) checked=checked @endif @endif >
                                                                                                                                 </div>
                                                                                                                             </td>
                                                                                                                         </tr>
@@ -247,7 +249,7 @@
                                                                                                             </tbody>
                                                                                                         </table>  
 
-                                                                                                        <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
+                                                                                                        <!-- <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button> -->
                                                                                                     @else 
                                                                                                         <div class="alert alert-warning text-center">
                                                                                                             <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
@@ -255,7 +257,7 @@
                                                                                                     @endif
                                                                                             </div>           
                                                                                         </div>
-                                                                                    </form>
+                                                                                    <!-- </form> -->
                                                                                 </div>
                                                                             </div>                                                                            
                                                                         </div>
@@ -275,6 +277,8 @@
                                     @endforeach
                                 </div>
                             @endif
+                            <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
+                            </form>
                         </div>
                     @endif
                     
@@ -381,7 +385,7 @@
                     `
                 </td>
                 <td>
-                    <input class = "form-control" type="text" name="inputItem[]" spellcheck="true" required>
+                    <input class = "form-control" type="text" name="inputItem[]" spellcheck="true" >
                 </td>
             </tr>`;
             var container = $('#highOpportunityTable tbody');

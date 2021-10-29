@@ -50,6 +50,9 @@ class OutcomeMapController extends Controller
             ]);
 
         $outcomeMap = $request->input('map');
+        
+        // dd($outcomeMap);
+
         foreach ($outcomeMap as $cloId => $ploToScaleIds) {
             foreach (array_keys($ploToScaleIds) as $ploId) {
                 DB::table('outcome_maps')->updateOrInsert(

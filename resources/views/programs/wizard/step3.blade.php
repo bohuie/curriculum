@@ -132,16 +132,28 @@
                                                         </button>
                                                     @elseif($programCourse->owners[0]->id == $user->id)
                                                         <!-- Allow owner to be redirected to the course to map it -->
-                                                        <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
-                                                            Map Course
-                                                        </a>
+                                                        @if ($programCourse->learningOutcomes->count() > 0)
+                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
+                                                                Map Course
+                                                            </a>
+                                                        @else
+                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                                Map Course
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                     @foreach($programCourse->editors as $editor)
                                                         @if($editor->id == $user->id && $programCourse->pivot->map_status != 1)
                                                             <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
-                                                            <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
-                                                                Map Course
-                                                            </a>
+                                                            @if ($programCourse->learningOutcomes->count() > 0)
+                                                                <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step5', $programCourse->course_id) }}">
+                                                                    Map Course
+                                                                </a>
+                                                            @else
+                                                                <a type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" href="{{ route('courseWizard.step1', $programCourse->course_id) }}">
+                                                                    Map Course
+                                                                </a>
+                                                            @endif
                                                             <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
                                                                 Ask to Map Course
                                                             </button>
