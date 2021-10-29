@@ -94,6 +94,7 @@
 
                                         <!-- list of course learning outcome accordions with mapping form -->
                                         <div class="cloAccordions mb-4">
+                                            <form action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
                                             @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
                                                 <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                     <div class="accordion-item mb-2">
@@ -109,7 +110,7 @@
                                                         </h2>
                                                         <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                             <div class="accordion-body">
-                                                                <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
+                                                                <!-- <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST"> -->
                                                                     @csrf
                                                                     <div class="card border-white">
                                                                         <div class="card-body">
@@ -147,14 +148,13 @@
                                                                                                     @endforeach
                                                                                                     <td>
                                                                                                         <div class="form-check">
-                                                                                                            <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                            <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @endif>
                                                                                                         </div>
                                                                                                     </td>
                                                                                                 </tr>
                                                                                             @endforeach
                                                                                         </tbody>
                                                                                     </table>
-                                                                                    <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
                                                                                 @else 
                                                                                     <div class="alert alert-warning text-center">
                                                                                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
@@ -162,13 +162,15 @@
                                                                                 @endif
                                                                         </div>                                                                                                    
                                                                     </div>
-                                                                </form>
+                                                                <!-- </form> -->
                                                             </div>
                                                         </div>                                                                            
                                                     </div>
                                                 </div>
                                         
                                             @endforeach
+                                            <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
+                                            </form>
                                         </div>
                                     </div>
                             @endif
