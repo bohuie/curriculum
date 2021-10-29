@@ -71,12 +71,12 @@
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <button id="addCLOBtn" type="submit" class="btn btn-primary col-2 btn-sm">Add</button>
-                                            </div>
-                                        </form>
+                                            <div class="row justify-content-center">
+                                                <div>
+                                                    <button id="addCLOBtn" type="submit" class="btn btn-primary col-2 btn-sm float-right">Add</button>
+                                                </div>
+                                            </form>
 
-                                        <div class="row justify-content-center">
                                             <div class="col-8">
                                                 <hr>
                                             </div>
@@ -111,7 +111,7 @@
                                             </table>
                                         </div>
 
-                                        <div>
+                                        <!-- <div>
                                             <button id="showbtn" class="btn btn-primary bg-primary" onclick="tips()">Show Tips For Writing CLOs</button>
                                         </div>
                                         <div id="blooms" style="display: none;">
@@ -121,7 +121,7 @@
                                             <small>
                                                 Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
                                             </small>
-                                        </div>
+                                        </div> -->
 
                                     </div>
 
