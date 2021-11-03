@@ -4,6 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addProgramCollaboratorsModalLabel{{$program->program_id}}"><i class="bi bi-person-plus-fill"></i> Share this program with others</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
