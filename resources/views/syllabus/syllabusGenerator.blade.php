@@ -367,34 +367,51 @@
                             <div class="col mb-3">
                                 <label for="courseSchedule">Course Schedule</label>
                                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
+                                <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount > 0) hidden @endif @endif id="createTableBtn" title="Create Course Schedule Table" type="button" class="btn bg-primary btn-sm fs-5 text-white" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal">
+                                    <i class="bi bi-plus pr-1"></i>                                    
+                                    <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>  
+                                </button>
                             </div>
                         </div>
+
                         <!-- course schedule toolbar -->
-                        <div class="row">
-                            <table class="table table-sm w-50 text-center table-borderless" style="table-layout:auto;">
-                                <tr>
-                                    <td>
-                                        <button id="createTable" title="Create Table" type="button" class="btn btn-sm btn-secondary fs-6" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal"><i class="bi bi-plus pr-1"></i><i class="bi bi-grid-3x3"></i></button>
-                                        <button id="delTable" title="Delete Table" type="button" class="btn btn-sm btn-danger fs-6" data-bs-toggle="modal" data-bs-target="#delCourseScheduleTbl"><i class="bi bi-trash-fill pr-1"></i><i class="bi bi-grid-3x3"></i></button> 
-                                    </td>
-                                    <td>
-                                        <button title="Add Column Right" type="button" class="addCol btn btn-sm btn-secondary fs-6" data-side="right"><i class="bi bi-plus pr-1"></i><i class="bi bi-layout-sidebar-inset-reverse"></i></button>
-                                        <button title="Add Column Left" type="button" class="addCol btn btn-sm btn-secondary fs-6" data-side="left"><i class="bi bi-plus pr-1"></i><i class="bi bi-layout-sidebar-inset"></i></button>
-                                        <button id="delCols" title="Delete Column(s)" type="button" class="btn btn-sm btn-danger fs-6" ><i class="bi bi-trash-fill pr-1"></i><i class="bi bi-layout-three-columns"></i></button>                                
-                                    </td>
-                                    <td>
-                                        <button title="Add Row Top" type="button" class="addRow btn btn-sm btn-secondary fs-6" data-side="top"><i class="bi bi-plus pr-1"></i><i class="bi bi-table"></i></i></button>
-                                        <button title="Add Row Bottom" type="button" class="addRow btn btn-sm btn-secondary fs-6" data-side="bottom"><i class="bi bi-plus pr-1"></i><i class="bi bi-border-bottom"></i></i></button>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div id="courseScheduleTblToolbar" class="row mb-1" @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount <= 0) hidden @endif @else hidden @endif>
+                            <div class="col-auto">
+                                <button id="delTable" title="Delete Table" type="button" class="btn btn-danger fs-5" data-bs-toggle="modal" data-bs-target="#delCourseScheduleTbl">
+                                    <i class="bi bi-trash-fill pr-1"></i>
+                                    <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>  
+                                </button>                                  
+                            </div>
+                            <div class="col-auto">
+                                <button title="Add Column Left" type="button" class="addCol btn btn-secondary fs-5" data-side="left">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
+                                </button>
+                                <button title="Add Column Right" type="button" class="addCol btn btn-secondary fs-5" data-side="right">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line"></span>
+                                </button>
+                                <button id="delCols" title="Delete Column(s)" type="button" class="btn btn-danger fs-5" >
+                                    <i class="bi bi-trash-fill pr-1"></i>
+                                    <span class="iconify-inline" data-icon="fluent:column-triple-20-filled"></span>                                        
+                                </button>                                
+                            </div>
+                            <div class="col-auto">
+                                <button title="Add Row Top" type="button" class="addRow btn btn-secondary fs-5" data-side="top">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
+                                </button>
+                                <button title="Add Row Bottom" type="button" class="addRow btn btn-secondary fs-5" data-side="bottom">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- div where course schedule table is created from scratch  -->
                         <div id="courseScheduleTblDiv" class="row">
-
                             @if (!empty($syllabus))
-                                @if ($myCourseScheduleTbl['rows']->count() > 0)
+                                @if ($courseScheduleTblRowsCount > 0)
                                 <table id="courseScheduleTbl" class="table table-responsive">
                                     <tbody>
                                         @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
@@ -518,10 +535,6 @@
             <form id="createCourseScheduleTblForm">
                 <div class="modal-body">
                     <div class="row g-3 mb-2">
-                        <div class="col-12">
-                            <label for="courseScheduleTblTitle" class="form-label">Title</label>
-                            <input id="courseScheduleTblTitle" name="courseScheduleTblTitle" id="courseScheduleTblTitle" type="text" class="form-control">
-                        </div>
                         <div class="col-6">
                             <label for="courseScheduleTblRowsCount" class="form-label">Number of Rows</label>
                             <input id="courseScheduleTblRowsCount" name="numRows" type="number" min="1" max="42" step="1" class="form-control">
@@ -595,8 +608,6 @@
             var courseScheduleTblDiv = document.getElementById('courseScheduleTblDiv');
             // create table if it doesn't exist
             if (!document.getElementById('courseScheduleTbl')) {
-                // get table title
-                var tblTitle = event.target.elements.courseScheduleTblTitle.value;
                 // get num rows 
                 var numRows = event.target.elements.numRows.value;
                 // get num cols
@@ -605,12 +616,6 @@
                 var tbl = document.createElement('table');
                 tbl.setAttribute('id', 'courseScheduleTbl');
                 tbl.setAttribute('class', 'table table-responsive');
-                // create table <caption> element with table title
-                var tblCaption = document.createElement('caption');
-                tblCaption.innerHTML = tblTitle;
-                tblCaption.setAttribute('class', 'caption-top');
-                // put <caption> in <table>
-                tbl.appendChild(tblCaption);
                 // create <tbody> element
                 var tblBody = document.createElement('tbody');
                 // iterate over rows 
@@ -670,6 +675,10 @@
                 tbl.appendChild(tblBody);
                 // put <table> in course schedule table div
                 courseScheduleTblDiv.appendChild(tbl);
+                // show the course schedule table toolbar
+                $('#courseScheduleTblToolbar').removeAttr('hidden');
+                // hide create table btn
+                $('#createTableBtn').attr('hidden', 'true');
             }
 
             createCourseScheduleTblModal.hide();
@@ -681,6 +690,10 @@
             var courseScheduleTblDiv = document.getElementById('courseScheduleTblDiv');
             // remove all child nodes 
             $(courseScheduleTblDiv).empty();
+            // show create a course schedule table button
+            $('#createTableBtn').removeAttr('hidden');
+            $('#courseScheduleTblToolbar').attr('hidden', 'true');
+
             var delCourseScheduleTblModal = bootstrap.Modal.getInstance(document.getElementById('delCourseScheduleTbl'));
             // close modal
             delCourseScheduleTblModal.hide();
@@ -1221,17 +1234,7 @@
                     <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['instructorBioStatement']}}"></i>
                     <textarea id = "courseInstructorBio" name = "courseInstructorBio" class ="form-control" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->instructor_bio : ''}}</textarea>
             </div>
-            `;
-
-        var courseSchedule = `
-            <div class="col mb-3">
-                <label for="courseSchedule">Course Schedule</label>
-                <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
-                <span class="requiredBySenate"></span>
-                <button type="button" class="btn bg-primary btn-sm text-white mb-2 float-right" data-bs-toggle="modal" data-bs-target="#courseScheduleModal"><i class="text-white bi bi-pencil-fill btn-icon"></i> Course Schedule Table</button> 
-                <textarea name = "courseSchedule" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_schedule : ''}}</textarea>
-            </div>
-            `;        
+            `;     
         
         var courseStructure = `
             <div class="col mb-3">
@@ -1283,7 +1286,6 @@
             $('#coursePrereqs').html(coursePrereqs);
             $('#courseCoreqs').html(courseCoreqs);
             $('#courseStructure').html(courseStructure);
-            $('#courseSchedule').html(courseSchedule);
             $('#courseInstructorBio').html(courseInstructorBio);
             $('#courseDescription').html(courseDescription);
             $('#learningAnalytics').html(learningAnalytics);
@@ -1309,7 +1311,6 @@
             $('#coursePrereqs').empty();
             $('#courseCoreqs').empty();
             $('#courseStructure').empty();
-            $('#courseSchedule').empty();
             $('#courseInstructorBio').empty();
             $('#courseDescription').empty();
             $('#learningAnalytics').empty();
