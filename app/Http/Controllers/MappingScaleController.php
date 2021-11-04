@@ -6,6 +6,7 @@ use App\Models\CourseProgram;
 use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
+use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use Illuminate\Http\Request;
 
@@ -69,6 +70,10 @@ class MappingScaleController extends Controller
 
         
         if($msp->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'Mapping scale level added');
         }else{
             $request->session()->flash('error', 'There was an error adding the mapping scale level');
@@ -125,6 +130,10 @@ class MappingScaleController extends Controller
         $ms->colour = $request->input('colour');
         
         if($ms->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'Mapping scale level updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the mapping scale level');
@@ -149,6 +158,10 @@ class MappingScaleController extends Controller
             $msp = MappingScaleProgram::where('program_id', $request->input('program_id'))->where('map_scale_id', $map_scale_id);
         
             if($msp->delete()){
+                // update courses 'updated_at' field
+                $program = Program::find($request->input('program_id'));
+                $program->touch();
+
                 $request->session()->flash('success', 'Mapping scale level deleted');
             }else{
                 $request->session()->flash('error', 'There was an error deleting the mapping scale level');
@@ -158,6 +171,10 @@ class MappingScaleController extends Controller
             $ms = MappingScale::where('map_scale_id', $map_scale_id)->first();
         
             if($ms->delete()){
+                // update courses 'updated_at' field
+                $program = Program::find($request->input('program_id'));
+                $program->touch();
+
                 $request->session()->flash('success', 'Mapping scale level deleted');
             }else{
                 $request->session()->flash('error', 'There was an error deleting the mapping scale level');
@@ -198,6 +215,10 @@ class MappingScaleController extends Controller
             $msp->program_id = $request->input('program_id');
             
             if($msp->save()){
+                // update courses 'updated_at' field
+                $program = Program::find($request->input('program_id'));
+                $program->touch();
+
                 $request->session()->flash('success', 'Default mapping scale value set');
             }else{
                 $request->session()->flash('error', 'There was an error deleting the plo category');

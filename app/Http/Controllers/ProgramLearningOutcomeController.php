@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CourseProgram;
+use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use Illuminate\Http\Request;
 
@@ -59,6 +60,10 @@ class ProgramLearningOutcomeController extends Controller
         }
         
         if($plo->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'New program learning outcome saved');
         }else{
             $request->session()->flash('error', 'There was an error adding the program learning outcome');
@@ -115,6 +120,10 @@ class ProgramLearningOutcomeController extends Controller
         
         
         if($plo->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'Program learning outcome updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the program learning outcome');
@@ -135,6 +144,10 @@ class ProgramLearningOutcomeController extends Controller
         $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome);
         
         if($plo->delete()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+            
             $request->session()->flash('success','Program learning outcome has been deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the program learning outcome');

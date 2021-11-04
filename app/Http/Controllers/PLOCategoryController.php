@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseProgram;
 use App\Models\PLOCategory;
+use App\Models\Program;
 use Illuminate\Http\Request;
 
 class PLOCategoryController extends Controller
@@ -52,6 +53,10 @@ class PLOCategoryController extends Controller
         $c->program_id = $request->input('program_id');
         
         if($c->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'New plo cateogry added');
         }else{
             $request->session()->flash('error', 'There was an error adding the plo category');
@@ -101,6 +106,10 @@ class PLOCategoryController extends Controller
         $c->plo_category = $request->input('category');
         
         if($c->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'Plo cateogry updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the plo category');
@@ -121,6 +130,10 @@ class PLOCategoryController extends Controller
         $c = PLOCategory::where('plo_category_id', $plo_category_id)->first();
         
         if($c->delete()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+            
             $request->session()->flash('success', 'Plo cateogry deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the plo category');

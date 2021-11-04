@@ -55,6 +55,10 @@ class CourseProgramController extends Controller
         }
 
         if ($numCoursesAddedSuccessfully == count($courseIds)) {
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+            
             $request->session()->flash('success', 'Successfully added ' . strval(count($courseIds)) . ' course(s) to this program.');
         } else {   
             $request->session()->flash('error', "There was an error adding " . strval(count($courseIds) - $numCoursesAddedSuccessfully));
@@ -78,7 +82,10 @@ class CourseProgramController extends Controller
             );
 
             CourseProgram::where(['course_id' => $courseId, 'program_id' => $programId])->update(['note' => $note]);
-            
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'Successfully updated: ' .strval($course->course_title));
         } else {
             $request->session()->flash('error', 'There was an error updating the course');

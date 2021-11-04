@@ -153,6 +153,10 @@ class ProgramController extends Controller
         $program->faculty = $request->input('faculty');
 
         if($program->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($program_id);
+            $program->touch();
+
             $request->session()->flash('success', 'Program updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the program');

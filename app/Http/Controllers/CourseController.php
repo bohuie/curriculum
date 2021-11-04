@@ -132,6 +132,10 @@ class CourseController extends Controller
 
             if($courseUser->save()){
                 if ($courseProgram->save()) {
+                    // update courses 'updated_at' field
+                    $program = Program::find($request->input('program_id'));
+                    $program->touch();
+                    
                     $request->session()->flash('success', 'New course added');
                 }
             }else{
@@ -514,6 +518,10 @@ class CourseController extends Controller
                 }
             }
         }
+
+        // update courses 'updated_at' field
+        $program = Program::find($request->input('program_id'));
+        $program->touch();
 
         $request->session()->flash('success', 'Course updated');
     }else{
