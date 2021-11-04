@@ -74,7 +74,10 @@ class AssessmentMethodController extends Controller
                     $newAssessmentMethod->save();
                 }
             }
-
+            // update courses 'updated_at' field
+            $course = Course::find($request->input('course_id'));
+            $course->touch();
+            
             $request->session()->flash('success','Your student assessments methods were updated successfully!');
         // flash error message if something goes wrong
         } catch (Throwable $exception) {
@@ -160,6 +163,10 @@ class AssessmentMethodController extends Controller
 
 
         if($am->delete()){
+            // update courses 'updated_at' field
+            $course = Course::find($course_id);
+            $course->touch();
+            
             $request->session()->flash('success','Student assessment method has been deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the student assessment method');

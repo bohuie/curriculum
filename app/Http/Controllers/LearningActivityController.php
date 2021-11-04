@@ -72,6 +72,9 @@ class LearningActivityController extends Controller
                     $newLearningActivity->save();
                 }
             }
+            // update courses 'updated_at' field
+            $course = Course::find($request->input('course_id'));
+            $course->touch();
 
             $request->session()->flash('success','Your teaching and learning activities were updated successfully!');
 
@@ -133,6 +136,10 @@ class LearningActivityController extends Controller
 
 
         if($la->delete()){
+            // update courses 'updated_at' field
+            $course = Course::find($course_id);
+            $course->touch();
+            
             $request->session()->flash('success','Teaching/learning activity has been deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the teaching/learning activity');

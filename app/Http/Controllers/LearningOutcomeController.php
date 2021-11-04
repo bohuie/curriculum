@@ -75,7 +75,8 @@ class LearningOutcomeController extends Controller
                     $newLearningOutcome->save();
                 }
             }
-
+            // update courses 'updated_at' field
+            $course->touch();
             $request->session()->flash('success','Your course learning outcomes were updated successfully!');
         } catch (Throwable $exception) {
             $request->session()->flash('error', 'There was an error updating your course learning outcomes');
@@ -147,6 +148,10 @@ class LearningOutcomeController extends Controller
         $lo = LearningOutcome::where('l_outcome_id', $l_outcome_id)->first();
 
         if($lo->delete()){
+            // update courses 'updated_at' field
+            $course = Course::find($request->input('course_id'));
+            $course->touch();
+            
             $request->session()->flash('success','Course learning outcome has been deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the course learning outcome');

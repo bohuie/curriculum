@@ -398,6 +398,9 @@ class CourseController extends Controller
             }
 
         }
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
 
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }

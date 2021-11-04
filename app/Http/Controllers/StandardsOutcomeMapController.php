@@ -48,6 +48,9 @@ class StandardsOutcomeMapController extends Controller
             }
         }
 
+        // update courses 'updated_at' field
+        $course = Course::find($request->input('course_id'));
+        $course->touch();
         return redirect()->back()->with('success', 'Your answers have been saved successfully.');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\CourseOptionalPriorities;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +50,9 @@ class OptionalPriorities extends Controller
             DB::table('course_optional_priorities')->where('course_id',$course_id)->delete();
             $request->session()->flash('success', 'Alignment to UBC/Ministry priorities updated.');
         }
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
 
         return redirect()->route('courseWizard.step6', $request->input('course_id'));
     }

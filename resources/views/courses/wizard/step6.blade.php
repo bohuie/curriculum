@@ -95,6 +95,8 @@
                                         <!-- list of course learning outcome accordions with mapping form -->
                                         <div class="cloAccordions mb-4">
                                             <form action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
                                             @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
                                                 <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                     <div class="accordion-item mb-2">
@@ -111,7 +113,7 @@
                                                         <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                             <div class="accordion-body">
                                                                 <!-- <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST"> -->
-                                                                    @csrf
+                                                                    <!-- @csrf -->
                                                                     <div class="card border-white">
                                                                         <div class="card-body">
                                                                             <h5 style="margin-bottom:16px;text-align:center;font-weight: bold;">{{$courseLearningOutcome->l_outcome}}</h5>
