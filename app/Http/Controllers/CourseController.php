@@ -306,6 +306,10 @@ class CourseController extends Controller
 
 
         if($course->save()){
+            // update courses 'updated_at' field
+            $course = Course::find($course_id);
+            $course->touch();
+
             $request->session()->flash('success', 'Course updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the course');
