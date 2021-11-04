@@ -197,6 +197,36 @@
                 </div>
             </div>
 
+            <div class="accordion" id="FAQAccordion8">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader8">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion8" aria-expanded="false" aria-controls="collapseFAQAccordion8">
+                            How do I add collaborators to my Course, Program, or Syllabus?             
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion8" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader8" data-bs-parent="FAQAccordion8">
+                        <div class="accordion-body lh-lg">
+                            <p>The collaborators feature allows an owner of a Course, Program or Syllabus to share their work with other users. The owner can select from two types of collaborators, viewers and editors. A Viewer is restricted to only being able to view the summary information, whereas an editor can make changes and create new elements, but cannot add collaborators or delete the Course, Program, or Syllabus. A use case of the collaborators feature would be to add a teaching assistant to your course or syllabus as a viewer, so they can access course information.</p>
+                            <p style="font-size:small" ><b>Note</b>: <ol><li>You must own the course, program, or syllabus in order to add collaborators.</li><li>    Your collaborator must have registered on this site before you can add them. If the user you are trying to invite does not already have an account, then you can send them a registration invitation by following this <a target="_blank" href="{{ url('/invite') }}">link</a>.</li></ol> </p>
+                            <p class="fw-bold">From the dashboard</p>
+                            <ol>
+                                <li>Click on the <div class="collabIcon btn bg-transparent position-relative pr-2 pl-2" data-bs-placement="right" style="cursor: default;"><div><i class="bi bi-person-plus-fill"></i><span class="position-absolute top-0 start-85 translate-middle badge rounded-pill badge badge-dark">?</span></div></div> button under actions.</li>
+                                <li>Enter the collaborators email and select either editor or viewer.</li>
+                                <ol type="a">
+                                    <li><b>Editors</b>: have access to edit and view your program but cannot delete your program or add/remove collaborators.</li>
+                                    <li><b>Viewers</b>: can view an overview of your program but cannot edit or delete your program or add/remove collaborators.</li>
+                                </ol>
+                                <li>Click the <div id="exampleBtn" class="btn btn-primary" style="cursor: default;"><i class="bi bi-plus"></i> Collaborator</div> button, you will then see the collaborator appear in the table below.</li>
+                                <li>Finally click the <div class="btn btn-success m-1" style="cursor: default;">Save Changes</div> button to add your collaborators.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>    
 </div>
