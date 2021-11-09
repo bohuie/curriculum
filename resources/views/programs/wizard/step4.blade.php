@@ -40,7 +40,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                                     </div>
                                     <div class="toast-body">
-                                        There are courses that haven't been fully mapped to this program.
+                                        There are courses that haven't been fully mapped to this program. To see which courses have not been fully mapped go to the <a href="{{route('programWizard.step3', $program->program_id)}}">previous step</a>.
                                     </div>
                                 </div>
                             </div>
