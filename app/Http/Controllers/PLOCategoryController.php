@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CourseProgram;
 use App\Models\PLOCategory;
 use App\Models\Program;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PLOCategoryController extends Controller
 {
@@ -51,6 +53,12 @@ class PLOCategoryController extends Controller
         $c = new PLOCategory;
         $c->plo_category = $request->input('category');
         $c->program_id = $request->input('program_id');
+        
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
         
         if($c->save()){
             // update courses 'updated_at' field
@@ -104,6 +112,12 @@ class PLOCategoryController extends Controller
 
         $c = PLOCategory::where('plo_category_id', $plo_category_id)->first();
         $c->plo_category = $request->input('category');
+
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
         
         if($c->save()){
             // update courses 'updated_at' field
@@ -128,6 +142,12 @@ class PLOCategoryController extends Controller
     {
         //
         $c = PLOCategory::where('plo_category_id', $plo_category_id)->first();
+
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
         
         if($c->delete()){
             // update courses 'updated_at' field

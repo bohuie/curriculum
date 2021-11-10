@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CourseProgram;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProgramLearningOutcomeController extends Controller
 {
@@ -52,6 +54,12 @@ class ProgramLearningOutcomeController extends Controller
         $plo->pl_outcome = $request->input('plo');
         $plo->plo_shortphrase = $request->input('title');
         $plo->program_id = $request->input('program_id');
+
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
 
         CourseProgram::where('program_id', $request->input('program_id'))->update(['map_status' => 0]);
 
@@ -114,6 +122,12 @@ class ProgramLearningOutcomeController extends Controller
         $plo->pl_outcome = $request->input('plo');
         $plo->plo_shortphrase = $request->input('title');
 
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
+
         if($request->has('category')){
             $plo->plo_category_id = $request->input('category');
         }
@@ -142,6 +156,12 @@ class ProgramLearningOutcomeController extends Controller
     {
         //
         $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome);
+
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
         
         if($plo->delete()){
             // update courses 'updated_at' field

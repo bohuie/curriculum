@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\Program;
 use App\Models\CourseProgram;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CourseProgramController extends Controller
@@ -58,6 +60,11 @@ class CourseProgramController extends Controller
             // update courses 'updated_at' field
             $program = Program::find($request->input('program_id'));
             $program->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $program->last_modified_user = $user->name;
+            $program->save();
             
             $request->session()->flash('success', 'Successfully added ' . strval(count($courseIds)) . ' course(s) to this program.');
         } else {   
@@ -85,6 +92,11 @@ class CourseProgramController extends Controller
             // update courses 'updated_at' field
             $program = Program::find($request->input('program_id'));
             $program->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $program->last_modified_user = $user->name;
+            $program->save();
 
             $request->session()->flash('success', 'Successfully updated: ' .strval($course->course_title));
         } else {

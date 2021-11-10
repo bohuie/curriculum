@@ -135,6 +135,11 @@ class CourseController extends Controller
                     // update courses 'updated_at' field
                     $program = Program::find($request->input('program_id'));
                     $program->touch();
+
+                    // get users name for last_modified_user
+                    $user = User::find(Auth::id());
+                    $program->last_modified_user = $user->name;
+                    $program->save();
                     
                     $request->session()->flash('success', 'New course added');
                 }
@@ -526,6 +531,11 @@ class CourseController extends Controller
         // update courses 'updated_at' field
         $program = Program::find($request->input('program_id'));
         $program->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
 
         $request->session()->flash('success', 'Course updated');
     }else{

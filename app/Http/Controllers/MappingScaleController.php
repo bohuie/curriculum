@@ -8,7 +8,9 @@ use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MappingScaleController extends Controller
 {
@@ -74,6 +76,11 @@ class MappingScaleController extends Controller
             $program = Program::find($request->input('program_id'));
             $program->touch();
 
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $program->last_modified_user = $user->name;
+            $program->save();
+
             $request->session()->flash('success', 'Mapping scale level added');
         }else{
             $request->session()->flash('error', 'There was an error adding the mapping scale level');
@@ -134,6 +141,11 @@ class MappingScaleController extends Controller
             $program = Program::find($request->input('program_id'));
             $program->touch();
 
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $program->last_modified_user = $user->name;
+            $program->save();
+
             $request->session()->flash('success', 'Mapping scale level updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the mapping scale level');
@@ -162,6 +174,11 @@ class MappingScaleController extends Controller
                 $program = Program::find($request->input('program_id'));
                 $program->touch();
 
+                // get users name for last_modified_user
+                $user = User::find(Auth::id());
+                $program->last_modified_user = $user->name;
+                $program->save();
+
                 $request->session()->flash('success', 'Mapping scale level deleted');
             }else{
                 $request->session()->flash('error', 'There was an error deleting the mapping scale level');
@@ -174,6 +191,11 @@ class MappingScaleController extends Controller
                 // update courses 'updated_at' field
                 $program = Program::find($request->input('program_id'));
                 $program->touch();
+
+                // get users name for last_modified_user
+                $user = User::find(Auth::id());
+                $program->last_modified_user = $user->name;
+                $program->save();
 
                 $request->session()->flash('success', 'Mapping scale level deleted');
             }else{
@@ -218,6 +240,11 @@ class MappingScaleController extends Controller
                 // update courses 'updated_at' field
                 $program = Program::find($request->input('program_id'));
                 $program->touch();
+
+                // get users name for last_modified_user
+                $user = User::find(Auth::id());
+                $program->last_modified_user = $user->name;
+                $program->save();
 
                 $request->session()->flash('success', 'Default mapping scale value set');
             }else{
