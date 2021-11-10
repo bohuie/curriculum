@@ -4939,7 +4939,6 @@ input[type=button].btn-block {
 }
 
 .card {
-  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -4947,7 +4946,6 @@ input[type=button].btn-block {
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 0.25rem;
 }
 
 .card > hr {
@@ -10577,26 +10575,7 @@ datalist {
     padding: 0.6rem;
 }
 
-.drag_container{
-    padding:0.6rem;
-    border-style:solid;
-    width:50%;
-}
 
-.draggable{
-    border:1px solid black;
-    cursor: move;
-    margin-bottom: 5px;
-}
-
-.draggable.dragging{
-    opacity: .5;
-}
-
-.dragItem{
-    margin-left:10px;
-    margin-top:3px;
-}
 
 .btn-icon {
     display: inline-block;
@@ -10708,6 +10687,8 @@ margin-left:-15px;
   font-weight: bold;
   text-decoration: underline;
 }
+
+
 
 
 

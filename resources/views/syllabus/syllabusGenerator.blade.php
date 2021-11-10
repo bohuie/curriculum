@@ -76,7 +76,7 @@
 
 <div id="app">
     <div class="home">
-        <div class="card mt-4">
+        <div class="card mt-4" style="position:static">
             <div class="card-header wizard text-start">
                 <h2>
                     Syllabus Generator 
@@ -407,14 +407,16 @@
                                 </button>
                             </div>
                         </div>
+                        <div>
 
                         <!-- div where course schedule table is created from scratch  -->
-                        <div id="courseScheduleTblDiv" class="row">
+                        <div id="courseScheduleTblDiv">
                             @if (!empty($syllabus))
                                 @if ($courseScheduleTblRowsCount > 0)
-                                <table id="courseScheduleTbl" class="table table-responsive">
+                                <table id="courseScheduleTbl" class="table align-middle">
                                     <thead>
                                         <tr class="table-primary">
+                                            <th></th>
                                             @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
                                                 <th>
                                                     <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
@@ -427,12 +429,13 @@
                                         @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
                                             @if ($rowIndex != 0)
                                                 <tr>
+                                                    <td class="align-middle fs-5">∴</td>
                                                     @foreach ($row as $colIndex => $data)
                                                     <td>
                                                         <textarea name="courseScheduleTblRows[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Data here ...">{{$data->val}}</textarea>
                                                     </td>
                                                     @endforeach
-                                                    <td style="vertical-align:center; text-align:center">
+                                                    <td class="align-middle">
                                                         <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="delCourseScheduleRow(this)"></i>
                                                     </td>
                                                 </tr>
@@ -534,7 +537,7 @@
                         </div>
                         <div class="col-6">
                             <label for="courseScheduleTblColsCount" class="form-label">Number of Columns</label>
-                            <input id="courseScheduleTblColsCount" name="numCols" type="number" min="1" max="6" step="1" class="form-control">
+                            <input id="courseScheduleTblColsCount" name="numCols" type="number" min="1" max="7" step="1" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -609,7 +612,6 @@
 
 <script type="application/javascript">
     $(document).ready(function () {
-
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 
             // prevent default submit procedure
@@ -627,7 +629,7 @@
                 // create <table> element
                 var tbl = document.createElement('table');
                 tbl.setAttribute('id', 'courseScheduleTbl');
-                tbl.setAttribute('class', 'table table-responsive');
+                tbl.setAttribute('class', 'table align-middle');
                 // create <thead> element
                 var tblHead = document.createElement('thead');
                 // create <tbody> element
@@ -638,7 +640,9 @@
                     var row = document.createElement('tr');
                     if (rowIndex === 0) row.setAttribute('class', 'table-primary');
                     // iterate over cols
-                    for (let colIndex = 0; colIndex < numCols; colIndex++) {
+
+                    for (let colIndex = 0; colIndex < parseInt(numCols) + 1; colIndex++) {
+                        
                         // create <textarea>
                         var inputCell = document.createElement('textarea');
                         inputCell.setAttribute('form', 'sylabusGenerator');
@@ -649,22 +653,29 @@
                         if (rowIndex === 0) {
                             // create <th> element
                             headerCell = document.createElement('th');
-                            // set input attributes for column headers
-                            inputCell.setAttribute('placeholder', 'Column heading here ...');
-                            inputCell.setAttribute('name', 'courseScheduleTblHeadings[]');
-                            headerCell.appendChild(inputCell);
-                            // put inputCell in <th>
-                            headerCell.appendChild(inputCell);
-                            // put <th> in <row>
+                            if (colIndex != 0) {
+                                // set input attributes for column headers
+                                inputCell.setAttribute('placeholder', 'Column heading here ...');
+                                inputCell.setAttribute('name', 'courseScheduleTblHeadings[]');
+                                headerCell.appendChild(inputCell);
+                                // put inputCell in <th>
+                                headerCell.appendChild(inputCell);
+                            }
+                            // put <th> in <row>                           
                             row.appendChild(headerCell);
                         } else {
                             // create <td> element 
                             var cell = document.createElement('td');
-                            // set input attributes for data cells
-                            inputCell.setAttribute('placeholder', 'Data here ...');                        
-                            inputCell.setAttribute('name', 'courseScheduleTblRows[]');
-                            // put inputCell in <td>
-                            cell.appendChild(inputCell);
+                            if (colIndex == 0) {
+                                cell.setAttribute('class', 'align-middle fs-5')
+                                cell.innerHTML = "∴";
+                            } else {
+                                // set input attributes for data cells
+                                inputCell.setAttribute('placeholder', 'Data here ...');                        
+                                inputCell.setAttribute('name', 'courseScheduleTblRows[]');
+                                // put inputCell in <td>
+                                cell.appendChild(inputCell);
+                            }
                             // put <td> in <row>
                             row.appendChild(cell);
                         }
@@ -807,7 +818,7 @@
                 // foreach col create a checkbox with label and place it in the delColsModal 
                 Array.from(cols).forEach((col, colIndex) => {
                     // only add relevant col headers to del cols modal
-                    if (colIndex < cols.length - 1) {
+                    if (colIndex < cols.length - 1 && colIndex > 0) {
                         // <div> foreach <input> and <label>
                         var colDiv = document.createElement('div');
                         // add bootstrap form elements styling
@@ -1372,5 +1383,9 @@
         });
     }
 </script>
+
+<script src="{{ asset('js/drag_drop_tbl_row.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/drag_drop_tbl_row.css' ) }}">
+
 
 @endsection
