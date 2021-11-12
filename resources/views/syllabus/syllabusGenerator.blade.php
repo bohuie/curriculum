@@ -413,7 +413,7 @@
                         <div id="courseScheduleTblDiv">
                             @if (!empty($syllabus))
                                 @if ($courseScheduleTblRowsCount > 0)
-                                <table id="courseScheduleTbl" class="table align-middle">
+                                <table id="courseScheduleTbl" class="table align-middle reorder-rows-tbl">
                                     <thead>
                                         <tr class="table-primary">
                                             <th></th>
@@ -537,7 +537,7 @@
                         </div>
                         <div class="col-6">
                             <label for="courseScheduleTblColsCount" class="form-label">Number of Columns</label>
-                            <input id="courseScheduleTblColsCount" name="numCols" type="number" min="1" max="7" step="1" class="form-control">
+                            <input id="courseScheduleTblColsCount" name="numCols" type="number" min="1" max="5" step="1" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -667,7 +667,8 @@
                             // create <td> element 
                             var cell = document.createElement('td');
                             if (colIndex == 0) {
-                                cell.setAttribute('class', 'align-middle fs-5')
+                                cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                cell.addEventListener('mousedown', mouseDownHandler);
                                 cell.innerHTML = "∴";
                             } else {
                                 // set input attributes for data cells
@@ -754,7 +755,7 @@
                 // get the num of cols in the tbl 
                 var numCols = courseScheduleTbl.rows[0].cells.length;
                 // add col if there are less than 6 cols
-                if (numCols < $('#courseScheduleTblColsCount').attr('max')) {  
+                if (numCols < parseInt($('#courseScheduleTblColsCount').attr('max')) + 2) {  
                     // add a new <td> to each <row>
                     Array.from(courseScheduleTbl.rows).forEach((row, rowIndex) => {
                         // create a <textarea>
@@ -778,9 +779,10 @@
                                 if (rowIndex == 0) {
                                     headerCell = document.createElement('th');
                                     headerCell.appendChild(inputCell);
-                                    row.prepend(headerCell);
+                                    row.cells[0].after(headerCell);
+                                    // row.prepend(headerCell);
                                 } else {
-                                    newCell = row.insertCell(0);
+                                    newCell = row.insertCell(1);
                                     newCell.appendChild(inputCell);
                                 }
                                 break;
@@ -834,7 +836,7 @@
                         var colLabel = document.createElement('label');
                         colLabel.setAttribute('for', 'col-heading-' + (colIndex + 1).toString());
                         colLabel.setAttribute('class', 'form-check-label');
-                        colLabel.innerHTML = (col.firstElementChild.value.length === 0) ? 'Column #' + (colIndex + 1).toString() : col.firstElementChild.value; 
+                        colLabel.innerHTML = (col.firstElementChild.value.length === 0) ? 'Column #' + (colIndex).toString() : col.firstElementChild.value; 
                         // put <input> in <div>
                         colDiv.appendChild(colCheckbox);
                         // put <label> in <div>
@@ -887,10 +889,9 @@
                 var side = event.currentTarget.dataset.side;
                 // get the number of cols in the tbl
                 var numCols = courseScheduleTbl.rows[0].cells.length;
+                console.log(numCols);
                 // if num rows in the tbl is less than the max, add row
                 if (courseScheduleTbl.rows.length < $('#courseScheduleTblRowsCount').attr('max')) {
-                    // create  <td> element 
-                    var cell = document.createElement('td');
                     // create <textarea>
                     var inputCell = document.createElement('textarea');
                     inputCell.setAttribute('form', 'sylabusGenerator');
@@ -900,8 +901,6 @@
                     inputCell.setAttribute('spellcheck', 'true');
                     // set placeholder values for <textarea>
                     inputCell.setAttribute('placeholder', 'Data here ...');
-                    // put inputCell in <td>
-                    cell.appendChild(inputCell);
                     // switch on side to add row
                     switch (side) {
                         case 'top':
@@ -909,13 +908,23 @@
                             let topRow = courseScheduleTbl.tBodies[0].insertRow(0);
                             // add a cell for each col to the new row
                             for (let colIndex = 0; colIndex < numCols - 1; colIndex++) {
-                                // clone input cell to add it to a row multiple times
-                                topRow.appendChild(cell.cloneNode(true));
+                                // create  <td> element 
+                                var cell = document.createElement('td');
+                                if (colIndex == 0) {
+                                    cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                    cell.addEventListener('mousedown', mouseDownHandler);
+                                    cell.innerHTML = "∴";
+                                } else { 
+                                    // put inputCell in <td>
+                                    cell.appendChild(inputCell.cloneNode());
+                                }
+                                topRow.appendChild(cell);
+
                             }
                             // create <td> element for row actions
                             var actionsCell = document.createElement('td');
                             // center row actions
-                            actionsCell.setAttribute('style', 'vertical-align:center;text-align:center;width:20px');
+                            actionsCell.setAttribute('class', 'align-middle');
                             // create delete action icon
                             var delAction = document.createElement('i');
                             // style delete action icon
@@ -934,12 +943,21 @@
                             // add a cell for each col to the new row
                             for (let colIndex = 0; colIndex < numCols - 1; colIndex++) {
                                 // clone input cell to add it to a row multiple times
-                                bottomRow.appendChild(cell.cloneNode(true));
+                                var cell = document.createElement('td');
+                                if (colIndex == 0) {
+                                    cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                    cell.addEventListener('mousedown', mouseDownHandler);
+                                    cell.innerHTML = "∴";
+                                } else { 
+                                    // put inputCell in <td>
+                                    cell.appendChild(inputCell.cloneNode());
+                                }
+                                bottomRow.appendChild(cell);
                             }
                             // create <td> element for row actions
                             var actionsCell = document.createElement('td');
                             // center row actions
-                            actionsCell.setAttribute('style', 'vertical-align:center;text-align:center');
+                            actionsCell.setAttribute('class', 'align-middle');
                             // create delete action icon
                             var delAction = document.createElement('i');
                             // style delete action icon
@@ -1062,8 +1080,6 @@
         delRowModal.show();
 
     }
-
-
 
     // Import course info into using GET AJAX call
     function importCourseInfo() {
