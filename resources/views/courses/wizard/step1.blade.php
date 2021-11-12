@@ -8,7 +8,7 @@
 
             <div class="card">
                 <div class="card-header wizard">
-                    <h3>
+                    <h3 class="">
                         Course Learning Outcomes (CLOs)
                         <div style="float: right;">
                             <button id="cloHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
@@ -26,68 +26,50 @@
                         <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="addLearningOutcomeModalLabel">Add Course Learning Outcome or Competency
+                                    <h5 class="modal-title" id="addLearningOutcomeModalLabel"><i class="bi bi-pencil-fill btn-icon mr-2"></i> Course Learning Outcomes or Competencies
                                     </h5>
                                 </div>
 
-                                    <div class="modal-body">
+                                <div class="modal-body text-left">
                                         <form id="addCLOForm" class="needs-validation" novalidate>
-                                            <div class="form-group row">
-                                                <label for="l_outcome" class="col-md-4 col-form-label text-md-center"><span class="requiredField">* </span>Course Learning Outcome (CLO) or Competency</label>
-
-                                                <div class="col-md-8">
-                                                    <textarea id="l_outcome" class="form-control" @error('l_outcome') is-invalid @enderror
-                                                    rows="3" name="l_outcome" required autofocus placeholder="E.g. Develop..."></textarea>
-
-                                                    @error('l_outcome')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                    @enderror
-
-                                                    <small class="form-text text-muted">
-                                                        <a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><strong><i class="bi bi-box-arrow-up-right"></i> Click here</strong></a>
-                                                        for tips to write effective CLOs
-                                                    </small>
+                                            <div class="form-group row align-items-end">
+                                                <div class="col-4">
+                                                    <label for="title" class="form-label fs-6">
+                                                        <b>Short Phrase</b>
+                                                        <div><small class="form-text text-muted" style="font-size:12px"><b><i class="bi bi-exclamation-circle-fill text-warning"></i> 50 character limit.</b></small></div>
+                                                    </label>
+                                                    <textarea id="title" class="form-control" name="title" autofocus placeholder="E.g Experimental Design..." maxlength="50" style="resize:none"></textarea> 
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="l_outcome" class="form-label fs-6">
+                                                        <span class="requiredField">* </span>
+                                                        <b>Course Learning Outcome (CLO)</b>
+                                                        <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
+                                                    </label>
+                
+                                                    <textarea id="l_outcome" class="form-control" name="l_outcome" required autofocus placeholder="E.g. Develop..." style="resize:none"></textarea>
+                                                    <div class="invalid-tooltip">
+                                                        You must input a course learning outcome or competency.
+                                                    </div>
+                                                </div>
+                                                <div class="col-2">
+                                                    <button id="addCLOBtn" type="submit" class="btn btn-primary col mb-1">Add</button>
                                                 </div>
                                             </div>
+                                        </form>
 
-                                            <div class="form-group row">
-                                                <label for="title" class="col-md-4 col-form-label text-md-right">Short Phrase</label>
-
-                                                <div class="col-md-8">
-                                                    <input id="title" type="text" class="form-control @error('title') is-invalid @enderror"
-                                                    name="title" autofocus placeholder="E.g Experiment..." maxlength="50">
-
-                                                    @error('title')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                    @enderror
-
-                                                    <small class="form-text text-muted">
-                                                        <strong>50 character limit.</strong> Having a short phrase helps with data visualization at the end of this process.
-                                                    </small>
-                                                </div>
-                                            </div>
-
-                                            <div class="row justify-content-center">
-                                                <div>
-                                                    <button id="addCLOBtn" type="submit" class="btn btn-primary col-2 btn-sm float-right">Add</button>
-                                                </div>
-                                            </form>
-
+                                        <div class="row justify-content-center">
                                             <div class="col-8">
                                                 <hr>
                                             </div>
-                                        </div>
+                                        </div>                
 
                                         <div class="row m-1">
                                             <table id="addCLOTbl" class="table table-light table-borderless">
                                                 <thead>
                                                     <tr class="table-primary">
-                                                        <th class="text-left">Course Learning Outcomes or Competencies</th>
                                                         <th class="text-left">Short Phrase</th>
+                                                        <th class="text-left">Course Learning Outcomes or Competencies</th>
                                                         <th class="text-center">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -95,12 +77,12 @@
                                                     @foreach($l_outcomes as $index => $l_outcome)
                                                         <tr>
                                                             <td>
-                                                                <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
-                                                                class="form-control @error('l_outcome') is-invalid @enderror" rows="1" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
+                                                                <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror" value="{{$l_outcome->clo_shortphrase}}" form="saveCLOChanges" required>
+                                                                <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
+                                                                class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
                                                             </td>
                                                             <td class="text-center">
                                                                 <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -129,8 +111,8 @@
                                     @csrf
                                         <div class="modal-footer">
                                             <input type="hidden" name="course_id" value="{{$course->course_id}}" form="saveCLOChanges">
-                                            <button id="cancel" type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-success col-2 btn-sm">Save</button>
+                                            <button id="cancel" type="button" class="btn btn-secondary col-3" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-success col-3">Save Changes</button>
                                         </div>
                                     </form>
 
@@ -403,12 +385,12 @@
                 @foreach($l_outcomes as $index => $l_outcome)
                     <tr>
                         <td>
-                            <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
-                            class="form-control @error('l_outcome') is-invalid @enderror" rows="1" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
+                            <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                            class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
                         </td>
                         <td>
-                            <input type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                            class="form-control @error('clo_shortphrase') is-invalid @enderror" value="{{$l_outcome->clo_shortphrase}}" form="saveCLOChanges" required>
+                            <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
+                            class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
                         </td>
                         <td class="text-center">
                             <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -440,10 +422,10 @@
         $('#addCLOTbl tbody').append(`
             <tr>
                 <td>
-                    <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" rows="1" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
+                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>${$('#title').val()}</textarea>
                 </td>
                 <td>
-                    <input type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" value="${$('#title').val()}" form="saveCLOChanges" required>
+                    <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
                 </td>
                 <td class="text-center">
                     <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
