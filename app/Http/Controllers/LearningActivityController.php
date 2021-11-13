@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\LearningActivity;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class LearningActivityController extends Controller
@@ -76,6 +78,11 @@ class LearningActivityController extends Controller
             $course = Course::find($request->input('course_id'));
             $course->touch();
 
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
+
             $request->session()->flash('success','Your teaching and learning activities were updated successfully!');
 
         } catch (Throwable $exception) {
@@ -139,6 +146,11 @@ class LearningActivityController extends Controller
             // update courses 'updated_at' field
             $course = Course::find($course_id);
             $course->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
             
             $request->session()->flash('success','Teaching/learning activity has been deleted');
         }else{

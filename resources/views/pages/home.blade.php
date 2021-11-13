@@ -58,7 +58,7 @@
                             <td>{{$program->faculty}} </td>
                             <td>{{$program->level}}</td>
                             @if ($program->last_modified_user != NULL) 
-                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$program->last_modified_user}} updated this program last.">{{$program->timeSince}}</p></td>
+                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$program->last_modified_user}}">{{$program->timeSince}}</p></td>
                             @else
                                 <td>{{$program->timeSince}}</td>
                             @endif
@@ -136,7 +136,7 @@
                             <td>{{$program->faculty}} </td>
                             <td>{{$program->level}}</td>
                             @if ($program->last_modified_user != NULL) 
-                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$program->last_modified_user}} updated this program last.">{{$program->timeSince}}</p></td>
+                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$program->last_modified_user}}">{{$program->timeSince}}</p></td>
                             @else
                                 <td>{{$program->timeSince}}</td>
                             @endif
@@ -178,7 +178,7 @@
                             <td>{{$program->faculty}} </td>
                             <td>{{$program->level}}</td>
                             @if ($program->last_modified_user != NULL) 
-                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$program->last_modified_user}} updated this program last.">{{$program->timeSince}}</p></td>
+                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$program->last_modified_user}}">{{$program->timeSince}}</p></td>
                             @else
                                 <td>{{$program->timeSince}}</td>
                             @endif
@@ -328,7 +328,7 @@
                                         </td>
                                     @endif
                                     @if ($course->last_modified_user != NULL) 
-                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$course->last_modified_user}} updated this course last.">{{$course->timeSince}}</p></td>
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$course->last_modified_user}}">{{$course->timeSince}}</p></td>
                                     @else
                                         <td>{{$course->timeSince}}</td>
                                     @endif
@@ -487,7 +487,7 @@
                                         </td>
                                     @endif
                                     @if ($course->last_modified_user != NULL) 
-                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$course->last_modified_user}} updated this course last.">{{$course->timeSince}}</p></td>
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$course->last_modified_user}}">{{$course->timeSince}}</p></td>
                                     @else
                                         <td>{{$course->timeSince}}</td>
                                     @endif
@@ -596,7 +596,7 @@
                                         </td>
                                     @endif
                                     @if ($course->last_modified_user != NULL) 
-                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$course->last_modified_user}} updated this course last.">{{$course->timeSince}}</p></td>
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$course->last_modified_user}}">{{$course->timeSince}}</p></td>
                                     @else
                                         <td>{{$course->timeSince}}</td>
                                     @endif
@@ -671,7 +671,7 @@
                                         {{$syllabus->course_year}} {{$syllabus->course_term}}
                                     </td>
                                     @if ($syllabus->last_modified_user != NULL) 
-                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$syllabus->last_modified_user}} updated this syllabi last.">{{$syllabus->timeSince}}</p></td>
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$syllabus->last_modified_user}}">{{$syllabus->timeSince}}</p></td>
                                     @else
                                         <td>{{$syllabus->timeSince}}</td>
                                     @endif
@@ -754,7 +754,7 @@
                                         {{$syllabus->course_year}} {{$syllabus->course_term}}
                                     </td>
                                     @if ($syllabus->last_modified_user != NULL) 
-                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$syllabus->last_modified_user}} updated this syllabi last.">{{$syllabus->timeSince}}</p></td>
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$syllabus->last_modified_user}}">{{$syllabus->timeSince}}</p></td>
                                     @else
                                         <td>{{$syllabus->timeSince}}</td>
                                     @endif
@@ -786,7 +786,7 @@
                                         {{$syllabus->course_year}} {{$syllabus->course_term}}
                                     </td>
                                     @if ($syllabus->last_modified_user != NULL) 
-                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="{{$syllabus->last_modified_user}} updated this syllabi last.">{{$syllabus->timeSince}}</p></td>
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$syllabus->last_modified_user}}">{{$syllabus->timeSince}}</p></td>
                                     @else
                                         <td>{{$syllabus->timeSince}}</td>
                                     @endif

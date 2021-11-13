@@ -315,6 +315,11 @@ class CourseController extends Controller
             $course = Course::find($course_id);
             $course->touch();
 
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
+
             $request->session()->flash('success', 'Course updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the course');
@@ -414,6 +419,11 @@ class CourseController extends Controller
         // update courses 'updated_at' field
         $course = Course::find($course_id);
         $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
 
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
