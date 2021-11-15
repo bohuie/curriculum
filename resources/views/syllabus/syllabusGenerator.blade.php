@@ -76,7 +76,7 @@
 
 <div id="app">
     <div class="home">
-        <div class="card mt-4">
+        <div class="card mt-4" style="position:static">
             <div class="card-header wizard text-start">
                 <h2>
                     Syllabus Generator 
@@ -407,14 +407,16 @@
                                 </button>
                             </div>
                         </div>
+                        <div>
 
                         <!-- div where course schedule table is created from scratch  -->
-                        <div id="courseScheduleTblDiv" class="row">
+                        <div id="courseScheduleTblDiv">
                             @if (!empty($syllabus))
                                 @if ($courseScheduleTblRowsCount > 0)
-                                <table id="courseScheduleTbl" class="table table-responsive">
+                                <table id="courseScheduleTbl" class="table align-middle reorder-rows-tbl">
                                     <thead>
                                         <tr class="table-primary">
+                                            <th></th>
                                             @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
                                                 <th>
                                                     <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
@@ -427,12 +429,13 @@
                                         @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
                                             @if ($rowIndex != 0)
                                                 <tr>
+                                                    <td class="align-middle fs-5">∴</td>
                                                     @foreach ($row as $colIndex => $data)
                                                     <td>
                                                         <textarea name="courseScheduleTblRows[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Data here ...">{{$data->val}}</textarea>
                                                     </td>
                                                     @endforeach
-                                                    <td style="vertical-align:center; text-align:center">
+                                                    <td class="align-middle">
                                                         <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="delCourseScheduleRow(this)"></i>
                                                     </td>
                                                 </tr>
@@ -534,7 +537,7 @@
                         </div>
                         <div class="col-6">
                             <label for="courseScheduleTblColsCount" class="form-label">Number of Columns</label>
-                            <input id="courseScheduleTblColsCount" name="numCols" type="number" min="1" max="6" step="1" class="form-control">
+                            <input id="courseScheduleTblColsCount" name="numCols" type="number" min="1" max="5" step="1" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -609,7 +612,6 @@
 
 <script type="application/javascript">
     $(document).ready(function () {
-
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 
             // prevent default submit procedure
@@ -627,7 +629,7 @@
                 // create <table> element
                 var tbl = document.createElement('table');
                 tbl.setAttribute('id', 'courseScheduleTbl');
-                tbl.setAttribute('class', 'table table-responsive');
+                tbl.setAttribute('class', 'table align-middle');
                 // create <thead> element
                 var tblHead = document.createElement('thead');
                 // create <tbody> element
@@ -638,7 +640,9 @@
                     var row = document.createElement('tr');
                     if (rowIndex === 0) row.setAttribute('class', 'table-primary');
                     // iterate over cols
-                    for (let colIndex = 0; colIndex < numCols; colIndex++) {
+
+                    for (let colIndex = 0; colIndex < parseInt(numCols) + 1; colIndex++) {
+                        
                         // create <textarea>
                         var inputCell = document.createElement('textarea');
                         inputCell.setAttribute('form', 'sylabusGenerator');
@@ -649,22 +653,30 @@
                         if (rowIndex === 0) {
                             // create <th> element
                             headerCell = document.createElement('th');
-                            // set input attributes for column headers
-                            inputCell.setAttribute('placeholder', 'Column heading here ...');
-                            inputCell.setAttribute('name', 'courseScheduleTblHeadings[]');
-                            headerCell.appendChild(inputCell);
-                            // put inputCell in <th>
-                            headerCell.appendChild(inputCell);
-                            // put <th> in <row>
+                            if (colIndex != 0) {
+                                // set input attributes for column headers
+                                inputCell.setAttribute('placeholder', 'Column heading here ...');
+                                inputCell.setAttribute('name', 'courseScheduleTblHeadings[]');
+                                headerCell.appendChild(inputCell);
+                                // put inputCell in <th>
+                                headerCell.appendChild(inputCell);
+                            }
+                            // put <th> in <row>                           
                             row.appendChild(headerCell);
                         } else {
                             // create <td> element 
                             var cell = document.createElement('td');
-                            // set input attributes for data cells
-                            inputCell.setAttribute('placeholder', 'Data here ...');                        
-                            inputCell.setAttribute('name', 'courseScheduleTblRows[]');
-                            // put inputCell in <td>
-                            cell.appendChild(inputCell);
+                            if (colIndex == 0) {
+                                cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                cell.addEventListener('mousedown', mouseDownHandler);
+                                cell.innerHTML = "∴";
+                            } else {
+                                // set input attributes for data cells
+                                inputCell.setAttribute('placeholder', 'Data here ...');                        
+                                inputCell.setAttribute('name', 'courseScheduleTblRows[]');
+                                // put inputCell in <td>
+                                cell.appendChild(inputCell);
+                            }
                             // put <td> in <row>
                             row.appendChild(cell);
                         }
@@ -743,7 +755,7 @@
                 // get the num of cols in the tbl 
                 var numCols = courseScheduleTbl.rows[0].cells.length;
                 // add col if there are less than 6 cols
-                if (numCols < $('#courseScheduleTblColsCount').attr('max')) {  
+                if (numCols < parseInt($('#courseScheduleTblColsCount').attr('max')) + 2) {  
                     // add a new <td> to each <row>
                     Array.from(courseScheduleTbl.rows).forEach((row, rowIndex) => {
                         // create a <textarea>
@@ -767,9 +779,10 @@
                                 if (rowIndex == 0) {
                                     headerCell = document.createElement('th');
                                     headerCell.appendChild(inputCell);
-                                    row.prepend(headerCell);
+                                    row.cells[0].after(headerCell);
+                                    // row.prepend(headerCell);
                                 } else {
-                                    newCell = row.insertCell(0);
+                                    newCell = row.insertCell(1);
                                     newCell.appendChild(inputCell);
                                 }
                                 break;
@@ -807,7 +820,7 @@
                 // foreach col create a checkbox with label and place it in the delColsModal 
                 Array.from(cols).forEach((col, colIndex) => {
                     // only add relevant col headers to del cols modal
-                    if (colIndex < cols.length - 1) {
+                    if (colIndex < cols.length - 1 && colIndex > 0) {
                         // <div> foreach <input> and <label>
                         var colDiv = document.createElement('div');
                         // add bootstrap form elements styling
@@ -823,7 +836,7 @@
                         var colLabel = document.createElement('label');
                         colLabel.setAttribute('for', 'col-heading-' + (colIndex + 1).toString());
                         colLabel.setAttribute('class', 'form-check-label');
-                        colLabel.innerHTML = (col.firstElementChild.value.length === 0) ? 'Column #' + (colIndex + 1).toString() : col.firstElementChild.value; 
+                        colLabel.innerHTML = (col.firstElementChild.value.length === 0) ? 'Column #' + (colIndex).toString() : col.firstElementChild.value; 
                         // put <input> in <div>
                         colDiv.appendChild(colCheckbox);
                         // put <label> in <div>
@@ -876,10 +889,9 @@
                 var side = event.currentTarget.dataset.side;
                 // get the number of cols in the tbl
                 var numCols = courseScheduleTbl.rows[0].cells.length;
+                console.log(numCols);
                 // if num rows in the tbl is less than the max, add row
                 if (courseScheduleTbl.rows.length < $('#courseScheduleTblRowsCount').attr('max')) {
-                    // create  <td> element 
-                    var cell = document.createElement('td');
                     // create <textarea>
                     var inputCell = document.createElement('textarea');
                     inputCell.setAttribute('form', 'sylabusGenerator');
@@ -889,8 +901,6 @@
                     inputCell.setAttribute('spellcheck', 'true');
                     // set placeholder values for <textarea>
                     inputCell.setAttribute('placeholder', 'Data here ...');
-                    // put inputCell in <td>
-                    cell.appendChild(inputCell);
                     // switch on side to add row
                     switch (side) {
                         case 'top':
@@ -898,13 +908,23 @@
                             let topRow = courseScheduleTbl.tBodies[0].insertRow(0);
                             // add a cell for each col to the new row
                             for (let colIndex = 0; colIndex < numCols - 1; colIndex++) {
-                                // clone input cell to add it to a row multiple times
-                                topRow.appendChild(cell.cloneNode(true));
+                                // create  <td> element 
+                                var cell = document.createElement('td');
+                                if (colIndex == 0) {
+                                    cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                    cell.addEventListener('mousedown', mouseDownHandler);
+                                    cell.innerHTML = "∴";
+                                } else { 
+                                    // put inputCell in <td>
+                                    cell.appendChild(inputCell.cloneNode());
+                                }
+                                topRow.appendChild(cell);
+
                             }
                             // create <td> element for row actions
                             var actionsCell = document.createElement('td');
                             // center row actions
-                            actionsCell.setAttribute('style', 'vertical-align:center;text-align:center;width:20px');
+                            actionsCell.setAttribute('class', 'align-middle');
                             // create delete action icon
                             var delAction = document.createElement('i');
                             // style delete action icon
@@ -923,12 +943,21 @@
                             // add a cell for each col to the new row
                             for (let colIndex = 0; colIndex < numCols - 1; colIndex++) {
                                 // clone input cell to add it to a row multiple times
-                                bottomRow.appendChild(cell.cloneNode(true));
+                                var cell = document.createElement('td');
+                                if (colIndex == 0) {
+                                    cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                    cell.addEventListener('mousedown', mouseDownHandler);
+                                    cell.innerHTML = "∴";
+                                } else { 
+                                    // put inputCell in <td>
+                                    cell.appendChild(inputCell.cloneNode());
+                                }
+                                bottomRow.appendChild(cell);
                             }
                             // create <td> element for row actions
                             var actionsCell = document.createElement('td');
                             // center row actions
-                            actionsCell.setAttribute('style', 'vertical-align:center;text-align:center');
+                            actionsCell.setAttribute('class', 'align-middle');
                             // create delete action icon
                             var delAction = document.createElement('i');
                             // style delete action icon
@@ -1051,8 +1080,6 @@
         delRowModal.show();
 
     }
-
-
 
     // Import course info into using GET AJAX call
     function importCourseInfo() {
@@ -1372,5 +1399,9 @@
         });
     }
 </script>
+
+<script src="{{ asset('js/drag_drop_tbl_row.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/drag_drop_tbl_row.css' ) }}">
+
 
 @endsection

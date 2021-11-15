@@ -1,0 +1,33 @@
+.draggable {
+    cursor: move;
+    user-select: none;
+}
+
+.placeholder {
+    background-color: #edf2f7;            
+    border: 2px dashed #cbd5e0;
+}
+            
+.clone-table {
+    border-collapse: collapse;
+    border: none;
+}
+    
+.clone-table th {
+    border-top: none;
+    border-bottom: 2px solid #000;
+    padding: 0.75rem;
+    background-color: #c6e0f5;
+}
+
+.clone-table td {
+    border-bottom: 1px solid #ccc;
+    border-top: none;
+    padding: 0.75rem;
+}
+
+.dragging {
+    background: #fff;
+    border-top: 1px solid #ccc;
+    z-index: 999;
+}
