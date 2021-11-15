@@ -33,13 +33,6 @@
                                 <div class="modal-body text-left">
                                         <form id="addCLOForm" class="needs-validation" novalidate>
                                             <div class="form-group row align-items-end">
-                                                <div class="col-4">
-                                                    <label for="title" class="form-label fs-6">
-                                                        <b>Short Phrase</b>
-                                                        <div><small class="form-text text-muted" style="font-size:12px"><b><i class="bi bi-exclamation-circle-fill text-warning"></i> 50 character limit.</b></small></div>
-                                                    </label>
-                                                    <textarea id="title" class="form-control" name="title" autofocus placeholder="E.g Experimental Design..." maxlength="50" style="resize:none"></textarea> 
-                                                </div>
                                                 <div class="col-6">
                                                     <label for="l_outcome" class="form-label fs-6">
                                                         <span class="requiredField">* </span>
@@ -51,6 +44,13 @@
                                                     <div class="invalid-tooltip">
                                                         You must input a course learning outcome or competency.
                                                     </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="title" class="form-label fs-6">
+                                                        <b>Short Phrase</b>
+                                                        <div><small class="form-text text-muted" style="font-size:12px"><b><i class="bi bi-exclamation-circle-fill text-warning" data-bs-toggle="tooltip" data-bs-placement="left" title="Having a short phrase helps with visualizing your course summary at the end of the mapping process"></i> 50 character limit.</b></small></div>
+                                                    </label>
+                                                    <textarea id="title" class="form-control" name="title" autofocus placeholder="E.g Experimental Design..." maxlength="50" style="resize:none"></textarea> 
                                                 </div>
                                                 <div class="col-2">
                                                     <button id="addCLOBtn" type="submit" class="btn btn-primary col mb-1">Add</button>
@@ -68,8 +68,8 @@
                                             <table id="addCLOTbl" class="table table-light table-borderless">
                                                 <thead>
                                                     <tr class="table-primary">
-                                                        <th class="text-left">Short Phrase</th>
                                                         <th class="text-left">Course Learning Outcomes or Competencies</th>
+                                                        <th class="text-left">Short Phrase</th>
                                                         <th class="text-center">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -77,12 +77,12 @@
                                                     @foreach($l_outcomes as $index => $l_outcome)
                                                         <tr>
                                                             <td>
-                                                                <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
-                                                            </td>
-                                                            <td>
                                                                 <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
                                                                 class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
+                                                            </td>
+                                                            <td>
+                                                                <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
                                                             </td>
                                                             <td class="text-center">
                                                                 <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -361,13 +361,16 @@
 <script type="application/javascript">
     
     $(document).ready(function () {
+        // Enables functionality of tool tips
+        $('[data-bs-toggle="tooltip"]').tooltip({html:true});
+
 
         $('#addCLOForm').submit(function (event) {
             // prevent default form submission handling
             event.preventDefault();
             event.stopPropagation();
             // check if input fields contain data
-            if ($('#l_outcome').val().length != 0 && $('#title').val().length != 0) {
+            if ($('#l_outcome').val().length != 0) {
                 addCLO();
                 // reset form 
                 $(this).trigger('reset');
@@ -385,12 +388,12 @@
                 @foreach($l_outcomes as $index => $l_outcome)
                     <tr>
                         <td>
-                            <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                            class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
-                        </td>
-                        <td>
                             <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
                             class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
+                        </td>
+                        <td>
+                            <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                            class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
                         </td>
                         <td class="text-center">
                             <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -419,13 +422,13 @@
 
     function addCLO() {
         // prepend assessment method to the table
-        $('#addCLOTbl tbody').append(`
+        $('#addCLOTbl tbody').prepend(`
             <tr>
                 <td>
-                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>${$('#title').val()}</textarea>
+                    <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
                 </td>
                 <td>
-                    <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
+                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>${$('#title').val()}</textarea>
                 </td>
                 <td class="text-center">
                     <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
