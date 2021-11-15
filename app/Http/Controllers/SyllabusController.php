@@ -197,6 +197,11 @@ class SyllabusController extends Controller
         }
         // set updated_at time
         $syllabus->updated_at = date('Y-m-d H:i:s');
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $syllabus->last_modified_user = $user->name;
+
         // save syllabus
         if ($syllabus->save()) {
             $request->session()->flash('success', 'Your syllabus was successfully saved!');

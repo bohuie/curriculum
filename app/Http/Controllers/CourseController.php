@@ -132,6 +132,15 @@ class CourseController extends Controller
 
             if($courseUser->save()){
                 if ($courseProgram->save()) {
+                    // update courses 'updated_at' field
+                    $program = Program::find($request->input('program_id'));
+                    $program->touch();
+
+                    // get users name for last_modified_user
+                    $user = User::find(Auth::id());
+                    $program->last_modified_user = $user->name;
+                    $program->save();
+                    
                     $request->session()->flash('success', 'New course added');
                 }
             }else{
@@ -302,6 +311,15 @@ class CourseController extends Controller
 
 
         if($course->save()){
+            // update courses 'updated_at' field
+            $course = Course::find($course_id);
+            $course->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
+
             $request->session()->flash('success', 'Course updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the course');
@@ -398,6 +416,14 @@ class CourseController extends Controller
             }
 
         }
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
 
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
@@ -511,6 +537,15 @@ class CourseController extends Controller
                 }
             }
         }
+
+        // update courses 'updated_at' field
+        $program = Program::find($request->input('program_id'));
+        $program->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
 
         $request->session()->flash('success', 'Course updated');
     }else{

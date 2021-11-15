@@ -41,6 +41,8 @@
                         <div class="jumbotron">
                             <form action="{{action('OutcomeMapController@store')}}" method="POST">
                             @csrf
+                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
+
                             @if (count($course->programs) < 1)
                                 <div class="alert alert-warning text-center">
                                     <i class="bi bi-exclamation-circle-fill pr-2 fs-3"></i>
@@ -131,7 +133,7 @@
                                                                                 <div class="accordion-body">
 
                                                                                     <!-- <form id="{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('OutcomeMapController@store')}}" method="POST"> -->
-                                                                                        @csrf
+                                                                                        <!-- @csrf -->
                                                                                         <input type="hidden" name="l_outcome_id" value="{{$courseLearningOutcome->l_outcome_id}}">
 
                                                                                         <div class="card border-white">

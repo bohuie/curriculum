@@ -342,6 +342,9 @@ class ProgramWizardController extends Controller
         // get all of the required courses this program belongs to
         $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
 
+        // get all of the non-required courses this program belongs to
+        $nonRequiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 0)->get();
+
         // get all of the first year courses this program belongs to
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
@@ -509,6 +512,17 @@ class ProgramWizardController extends Controller
         $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
         $storeRequired = $this->assignColours($storeRequired);
 
+        // Required Courses Frequency Distribution
+        $coursesOutcome = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $nonRequiredProgramCourses);
+        $arrNonRequired = array();
+        $arrNonRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrNonRequired);
+        $storeNonRequired = array();
+        $storeNonRequired = $this->createCDFArray($arrNonRequired, $storeNonRequired);
+        $storeNonRequired = $this->frequencyDistribution($arrNonRequired, $storeNonRequired);
+        $storeNonRequired = $this->replaceIdsWithAbv($storeNonRequired, $arrNonRequired);
+        $storeNonRequired = $this->assignColours($storeNonRequired);
+
         // Get Mapping Scales for high-chart
         $programMappingScales = $mappingScales->pluck('abbreviation')->toArray();
         $programMappingScales[count($programMappingScales)] = 'N/A';
@@ -554,6 +568,7 @@ class ProgramWizardController extends Controller
                                             ->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)->with('secondYearProgramCourses', $secondYearProgramCourses)->with('storeSecond', $storeSecond)
                                             ->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('fourthYearProgramCourses', $fourthYearProgramCourses)->with('storeFourth', $storeFourth)
                                             ->with('graduateProgramCourses', $graduateProgramCourses)->with('storeGraduate', $storeGraduate)->with('hasUnMappedCourses', $hasUnMappedCourses)
+                                            ->with('nonRequiredProgramCourses', $nonRequiredProgramCourses)->with('storeNonRequired', $storeNonRequired)
                                             ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'));
     }
 

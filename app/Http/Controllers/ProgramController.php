@@ -78,6 +78,10 @@ class ProgramController extends Controller
         $program->department = $request->input('department');
         $program->faculty = $request->input('faculty');
         $program->status = -1;
+        
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
 
         $programUser = new ProgramUser;
         $programUser->user_id = $request->input('user_id');
@@ -152,7 +156,15 @@ class ProgramController extends Controller
         $program->department = $request->input('department');
         $program->faculty = $request->input('faculty');
 
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+
         if($program->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($program_id);
+            $program->touch();
+
             $request->session()->flash('success', 'Program updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the program');
@@ -521,6 +533,11 @@ class ProgramController extends Controller
         $program->department = $oldProgram->department;
         $program->faculty = $oldProgram->faculty;
         $program->status = -1;
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+
         $program->save();
 
         // This array is used to keep track of the id's for each category duplicated
