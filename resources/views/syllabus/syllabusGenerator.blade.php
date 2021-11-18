@@ -383,28 +383,34 @@
                                 </button>                                  
                             </div>
                             <div class="col-auto">
-                                <button title="Add Column Left" type="button" class="addCol btn btn-secondary fs-5" data-side="left">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
-                                </button>
-                                <button title="Add Column Right" type="button" class="addCol btn btn-secondary fs-5" data-side="right">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line"></span>
-                                </button>
+                                <span title="Column Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="You have reached the maximum number of columns allowed">
+                                    <button title="Add Column Left" type="button" class="addCol btn btn-secondary fs-5" data-side="left">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
+                                    </button>
+
+                                    <button title="Add Column Right" type="button" class="addCol btn btn-secondary fs-5" data-side="right">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line"></span>
+                                    </button>
+                                </span>
+
                                 <button id="delCols" title="Delete Column(s)" type="button" class="btn btn-danger fs-5" >
                                     <i class="bi bi-trash-fill pr-1"></i>
                                     <span class="iconify-inline" data-icon="fluent:column-triple-20-filled"></span>                                        
                                 </button>                                
                             </div>
                             <div class="col-auto">
-                                <button title="Add Row Top" type="button" class="addRow btn btn-secondary fs-5" data-side="top">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
-                                </button>
-                                <button title="Add Row Bottom" type="button" class="addRow btn btn-secondary fs-5" data-side="bottom">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
-                                </button>
+                                <span title="Row Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="You have reached the maximum number of rows allowed">
+                                    <button title="Add Row Top" type="button" class="addRow btn btn-secondary fs-5" data-side="top">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
+                                    </button>                                
+                                    <button title="Add Row Bottom" type="button" class="addRow btn btn-secondary fs-5" data-side="bottom">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
+                                    </button>
+                                </span>
                             </div>
                         </div>
                         <div>
@@ -612,6 +618,11 @@
 
 <script type="application/javascript">
     $(document).ready(function () {
+
+        $(function () {
+            $('[data-bs-toggle="popover"]').popover()
+        })
+
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 
             // prevent default submit procedure
@@ -635,7 +646,7 @@
                 // create <tbody> element
                 var tblBody = document.createElement('tbody');
                 // iterate over rows 
-                for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
+                for (let rowIndex = 0; rowIndex < parseInt(numRows) + 1; rowIndex++) {
                     // create <row> element
                     var row = document.createElement('tr');
                     if (rowIndex === 0) row.setAttribute('class', 'table-primary');
@@ -797,6 +808,12 @@
                                 break;
                         }
                     });
+                } else {
+                    // 
+                    var popover = bootstrap.Popover.getInstance(event.currentTarget.parentNode);
+                    popover.show();
+                    // hide popover after 3 seconds
+                    setTimeout(function() { popover.hide(); }, 3000);
                 }
             }
         });
@@ -972,6 +989,11 @@
                         default:
                             let row = courseScheduleTbl.insertRow();                
                     }
+                } else {
+                    var popover = bootstrap.Popover.getInstance(event.currentTarget.parentNode);
+                    popover.show();
+                    // hide popover after 3 seconds
+                    setTimeout(function() { popover.hide(); }, 3000);
                 }
             }
         });

@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
     const reorderRowsTables = document.getElementsByClassName('reorder-rows-tbl');
-    console.log(reorderRowsTables);
 
     if (reorderRowsTables.length > 0) {
         Array.from(reorderRowsTables).forEach((reorderRowsTable, index) => {
@@ -35,11 +34,9 @@ const mouseDownHandler = function (e) {
     // Get the original row
     const originalRow = e.target.parentNode;
     draggingRowIndex = [].slice.call(table.querySelectorAll('tr')).indexOf(originalRow);
-    console.log(String(x) + ', ' + String(y));
     // Determine the mouse position
     x = e.clientX;
     y = e.clientY;
-    console.log(String(x) + ', ' + String(y));
 
 
     // Attach the listeners to `document`
