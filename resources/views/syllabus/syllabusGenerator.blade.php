@@ -413,7 +413,7 @@
                         <div id="courseScheduleTblDiv">
                             @if (!empty($syllabus))
                                 @if ($courseScheduleTblRowsCount > 0)
-                                <table id="courseScheduleTbl" class="table align-middle reorder-rows-tbl">
+                                <table id="courseScheduleTbl" class="table table-light align-middle reorder-tbl-rows">
                                     <thead>
                                         <tr class="table-primary">
                                             <th></th>
@@ -629,7 +629,7 @@
                 // create <table> element
                 var tbl = document.createElement('table');
                 tbl.setAttribute('id', 'courseScheduleTbl');
-                tbl.setAttribute('class', 'table align-middle');
+                tbl.setAttribute('class', 'table align-middle reorder-tbl-rows table-light');
                 // create <thead> element
                 var tblHead = document.createElement('thead');
                 // create <tbody> element
@@ -686,7 +686,7 @@
                         // create <td> element for row actions
                         var actionsCell = document.createElement('td');
                         // center row actions
-                        actionsCell.setAttribute('style', 'vertical-align:center;text-align:center');
+                        actionsCell.setAttribute('class', 'align-middle');
                         // create delete action icon
                         var delAction = document.createElement('i');
                         // style delete action icon

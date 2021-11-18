@@ -82,7 +82,7 @@
                                                             </td>
                                                             <td>
                                                                 <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
+                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges">{{$l_outcome->clo_shortphrase}}</textarea>
                                                             </td>
                                                             <td class="text-center">
                                                                 <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -393,7 +393,7 @@
                         </td>
                         <td>
                             <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                            class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
+                            class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges">{{$l_outcome->clo_shortphrase}}</textarea>
                         </td>
                         <td class="text-center">
                             <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -428,7 +428,7 @@
                     <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
                 </td>
                 <td>
-                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>${$('#title').val()}</textarea>
+                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges">${$('#title').val()}</textarea>
                 </td>
                 <td class="text-center">
                     <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
