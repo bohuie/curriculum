@@ -269,7 +269,7 @@
                                 <div class="btn-group">
                                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="{{route('programWizard.step1', $program->program_id)}}">View</a>
+                                        <a class="dropdown-item" href="{{route('programWizard.step4', $program->program_id)}}">View</a>
                                         <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($programUsers[$program->program_id] as $counter => $programUser){{$counter + 1}}. {{$programUser->name}}<br>@endforeach" data-modal="addProgramCollaboratorsModal{{$program->program_id}}">
                                             <div>
                                                 Collaborators 
@@ -436,28 +436,31 @@
                                         <td>{{$course->timeSince}}</td>
                                     @endif
                                     <td>
-                                        @if ($course->pivot->permission == 1) 
-                                            <a  class="pr-2" href="{{route('courseWizard.step1', $course->course_id)}}">
-                                            <i class="bi bi-pencil-fill btn-icon dropdown-item"></i></a>
-                                            <a data-toggle="modal" data-target="#deleteCourseConfirmation{{$index}}" href=#>
-                                            <i class="bi bi-trash-fill text-danger btn-icon dropdown-item"></i></a>
-                                            <!-- Collaborators Icon for Dashboard -->
-                                            <div class="collabIcon btn bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($courseUsers[$course->course_id] as $c => $courseUser){{$c + 1}}. {{$courseUser->name}}<br>@endforeach" data-modal="addCourseCollaboratorsModal{{$course->course_id}}">
-                                                <div>
-                                                    <i class="bi bi-person-plus-fill"></i>
-                                                    <span class="position-absolute top-0 start-85 translate-middle badge rounded-pill badge badge-dark">
-                                                        {{ count($courseUsers[$course->course_id]) }}
-                                                    </span>
+                                        <!-- actions drop down -->
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('courseWizard.step1', $course->course_id)}}">Edit</a>
+                                                <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
+                                                <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($courseUsers[$course->course_id] as $counter => $courseUser){{$counter + 1}}. {{$courseUser->name}}<br>@endforeach" data-modal="addCourseCollaboratorsModal{{$course->course_id}}">
+                                                    <div>
+                                                        Collaborators 
+                                                        <!-- <i class="bi bi-person-plus-fill"></i> -->
+                                                        <span class="badge rounded-pill badge badge-dark">
+                                                            {{ count($courseUsers[$course->course_id]) }}
+                                                        </span> 
+                                                    </div>
                                                 </div>
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#duplicateCourseConfirmation{{$course->course_id}}">Duplicate</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item text-danger" data-toggle="modal" data-target="#deleteCourseConfirmation{{$course->course_id}}" href=#>Delete</a>
                                             </div>
+                                        </div>
 
-                                            <!-- course collaborators modal -->
-                                            @include('courses.courseCollabs')
-
-                                        @endif
+                                        @include('courses.courseCollabs')
                                         
                                         <!-- Delete Confirmation Modal -->
-                                        <div class="modal fade show" id="deleteCourseConfirmation{{$index}}" tabindex="-1" role="dialog" aria-labelledby="deleteCourseConfirmation{{$index}}" aria-hidden="true">
+                                        <div class="modal fade show" id="deleteCourseConfirmation{{$course->course_id}}" tabindex="-1" role="dialog" aria-labelledby="deleteCourseConfirmation{{$course->course_id}}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -484,6 +487,82 @@
                                             </div>
                                         </div>
                                         <!-- End of Delete Course Confirmation Modal -->
+
+                                        <!-- Duplicate Course Confirmation Modal -->
+                                        <div class="modal fade" id="duplicateCourseConfirmation{{$course->course_id}}" tabindex="-1" role="dialog" aria-labelledby="duplicateCourseConfirmation{{$course->course_id}}" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="duplicateCourseConfirmation{{$course->course_id}}">Duplicate Course</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{{ route('courses.duplicate', $course->course_id) }}" method="GET">
+                                                        @csrf
+                                                        {{method_field('GET')}}
+
+                                                        <div class="modal-body">
+
+                                                            <div class="form-group row">
+                                                                <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$course->course_code}}" name="course_code" required autofocus>
+                                                                    @error('course_code')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                    <small id="helpBlock" class="form-text text-muted">
+                                                                        Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" required autofocus>
+                                                                    @error('course_num')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}} - Copy" required autofocus>
+                                                                    @error('course_title')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_section" class="col-md-3 col-form-label text-md-right">Course Section</label>
+                                                                <div class="col-md-4">
+                                                                    <input id="course_section" type="text" class="form-control @error('course_section') is-invalid @enderror" name="course_section" autofocus value= {{$course->section}}>
+                                                                    @error('course_section')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                            <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
 
@@ -594,7 +673,104 @@
                                     @else
                                         <td>{{$course->timeSince}}</td>
                                     @endif
-                                    <td></td>
+                                    <td>
+                                        <!-- actions drop down -->
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('courseWizard.step1', $course->course_id)}}">Edit</a>
+                                                <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
+                                                <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($courseUsers[$course->course_id] as $counter => $courseUser){{$counter + 1}}. {{$courseUser->name}}<br>@endforeach" data-modal="addCourseCollaboratorsModal{{$course->course_id}}">
+                                                    <div>
+                                                        Collaborators 
+                                                        <!-- <i class="bi bi-person-plus-fill"></i> -->
+                                                        <span class="badge rounded-pill badge badge-dark">
+                                                            {{ count($courseUsers[$course->course_id]) }}
+                                                        </span> 
+                                                    </div>
+                                                </div>
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#duplicateCourseConfirmation{{$course->course_id}}">Duplicate</a>
+                                            </div>
+                                        </div>
+
+                                        @include('courses.courseCollabs')
+                                        
+                                        <!-- Duplicate Course Confirmation Modal -->
+                                        <div class="modal fade" id="duplicateCourseConfirmation{{$course->course_id}}" tabindex="-1" role="dialog" aria-labelledby="duplicateCourseConfirmation{{$course->course_id}}" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="duplicateCourseConfirmation{{$course->course_id}}">Duplicate Course</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{{ route('courses.duplicate', $course->course_id) }}" method="GET">
+                                                        @csrf
+                                                        {{method_field('GET')}}
+
+                                                        <div class="modal-body">
+                                                            
+                                                            <div class="form-group row">
+                                                                <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$course->course_code}}" name="course_code" required autofocus>
+                                                                    @error('course_code')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                    <small id="helpBlock" class="form-text text-muted">
+                                                                        Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" required autofocus>
+                                                                    @error('course_num')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}} - Copy" required autofocus>
+                                                                    @error('course_title')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_section" class="col-md-3 col-form-label text-md-right">Course Section</label>
+                                                                <div class="col-md-4">
+                                                                    <input id="course_section" type="text" class="form-control @error('course_section') is-invalid @enderror" name="course_section" autofocus value= {{$course->section}}>
+                                                                    @error('course_section')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                            <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                             @endforeach
@@ -703,7 +879,27 @@
                                     @else
                                         <td>{{$course->timeSince}}</td>
                                     @endif
-                                    <td></td>
+                                    <td>
+                                        <!-- actions drop down -->
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('courseWizard.step7', $course->course_id)}}">View</a>
+                                                <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
+                                                <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($courseUsers[$course->course_id] as $counter => $courseUser){{$counter + 1}}. {{$courseUser->name}}<br>@endforeach" data-modal="addCourseCollaboratorsModal{{$course->course_id}}">
+                                                    <div>
+                                                        Collaborators 
+                                                        <!-- <i class="bi bi-person-plus-fill"></i> -->
+                                                        <span class="badge rounded-pill badge badge-dark">
+                                                            {{ count($courseUsers[$course->course_id]) }}
+                                                        </span> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @include('courses.courseCollabs')
+                                    </td>
                                 </tr>
                             </tbody>
                             @endforeach    
@@ -779,30 +975,32 @@
                                         <td>{{$syllabus->timeSince}}</td>
                                     @endif
                                     <td>
-                                        @if ($syllabus->pivot->permission == 1) 
-                                            <a  class="pr-2" href="{{route('syllabus', $syllabus->id)}}">
-                                            <i class="bi bi-pencil-fill btn-icon dropdown-item"></i></a>
-                                            <a data-toggle="modal" data-target="#deleteSyllabusConfirmation{{$index}}" href=#>
-                                            <i class="bi bi-trash-fill text-danger btn-icon dropdown-item"></i></a>
-                                            <!-- Syllabus collaborators icon -->
-                                            <div class="collabIcon btn bg-transparent position-relative pr-2 pl-2" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($syllabiUsers[$syllabus->id] as $userIndex => $syllabusUser){{$userIndex + 1}}. {{$syllabusUser->name}}<br>@endforeach" data-modal="addSyllabusCollaboratorsModal{{$syllabus->id}}">
-                                                <div>
-                                                    <i class="bi bi-person-plus-fill"></i>
-                                                    <span class="position-absolute top-0 start-85 translate-middle badge rounded-pill badge badge-dark">
-                                                        {{ count($syllabiUsers[$syllabus->id]) }}
-                                                    </span>
+                                        <!-- actions drop down -->
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('syllabus', $syllabus->id)}}">Edit</a>
+                                                <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
+                                                <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($syllabiUsers[$syllabus->id] as $userIndex => $syllabusUser){{$userIndex + 1}}. {{$syllabusUser->name}}<br>@endforeach" data-modal="addSyllabusCollaboratorsModal{{$syllabus->id}}">
+                                                    <div>
+                                                        Collaborators 
+                                                        <!-- <i class="bi bi-person-plus-fill"></i> -->
+                                                        <span class="badge rounded-pill badge badge-dark">
+                                                            {{ count($syllabiUsers[$syllabus->id]) }}
+                                                        </span> 
+                                                    </div>
                                                 </div>
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#duplicateSyllabusConfirmation{{$syllabus->id}}">Duplicate</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item text-danger" data-toggle="modal" data-target="#deleteSyllabusConfirmation{{$syllabus->id}}" href=#>Delete</a>
                                             </div>
-                                            <!-- End of syllabus collaborators icon -->
-                                        @else
-                                            <a  class="pr-2" href="{{route('syllabus', $syllabus->id)}}">
-                                            <i class="bi bi-pencil-fill btn-icon dropdown-item"></i></a>
-                                        @endif
+                                        </div>
+
 
                                         @include('syllabus.syllabusCollabs')
 
                                         <!-- Delete Syllabus Confirmation Modal -->
-                                        <div class="modal fade" id="deleteSyllabusConfirmation{{$index}}" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmation{{$index}}" aria-hidden="true">
+                                        <div class="modal fade" id="deleteSyllabusConfirmation{{$syllabus->id}}" tabindex="-1" role="dialog" aria-labelledby="deleteSyllabusConfirmation{{$syllabus->id}}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -823,6 +1021,70 @@
                                                         <div class="modal-footer">
                                                             <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
                                                             <button style="width:60px" type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Duplicate Confirmation Modal -->
+                                        <div class="modal fade" id="duplicateSyllabusConfirmation{{$syllabus->id}}" tabindex="-1" role="dialog" aria-labelledby="duplicateSyllabusConfirmation{{$syllabus->id}}" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Duplicate Syllabus</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{{ route('syllabus.duplicate', $syllabus->id) }}" method="GET">
+                                                        @csrf
+                                                        {{method_field('GET')}}
+                                                        <div class="modal-body">
+
+                                                            <div class="form-group row">
+                                                                <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$syllabus->course_code}}" name="course_code" required autofocus>
+                                                                    @error('course_code')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                    <small id="helpBlock" class="form-text text-muted">
+                                                                        Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$syllabus->course_num}}" required autofocus>
+                                                                    @error('course_num')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$syllabus->course_title}} - Copy" required autofocus>
+                                                                    @error('course_title')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                            <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -861,7 +1123,92 @@
                                     @else
                                         <td>{{$syllabus->timeSince}}</td>
                                     @endif
-                                    <td></td>
+                                    <td>
+                                        <!-- actions drop down -->
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('syllabus', $syllabus->id)}}">Edit</a>
+                                                <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
+                                                <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($syllabiUsers[$syllabus->id] as $userIndex => $syllabusUser){{$userIndex + 1}}. {{$syllabusUser->name}}<br>@endforeach" data-modal="addSyllabusCollaboratorsModal{{$syllabus->id}}">
+                                                    <div>
+                                                        Collaborators 
+                                                        <!-- <i class="bi bi-person-plus-fill"></i> -->
+                                                        <span class="badge rounded-pill badge badge-dark">
+                                                            {{ count($syllabiUsers[$syllabus->id]) }}
+                                                        </span> 
+                                                    </div>
+                                                </div>
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#duplicateSyllabusConfirmation{{$syllabus->id}}">Duplicate</a>
+                                            </div>
+                                        </div>
+
+                                        @include('syllabus.syllabusCollabs')
+
+                                        <!-- Duplicate Confirmation Modal -->
+                                        <div class="modal fade" id="duplicateSyllabusConfirmation{{$syllabus->id}}" tabindex="-1" role="dialog" aria-labelledby="duplicateSyllabusConfirmation{{$syllabus->id}}" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Duplicate Syllabus</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{{ route('syllabus.duplicate', $syllabus->id) }}" method="GET">
+                                                        @csrf
+                                                        {{method_field('GET')}}
+                                                        <div class="modal-body">
+
+                                                            <div class="form-group row">
+                                                                <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$syllabus->course_code}}" name="course_code" required autofocus>
+                                                                    @error('course_code')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                    <small id="helpBlock" class="form-text text-muted">
+                                                                        Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$syllabus->course_num}}" required autofocus>
+                                                                    @error('course_num')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                                                <div class="col-md-8">
+                                                                    <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$syllabus->course_title}} - Copy" required autofocus>
+                                                                    @error('course_title')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                            <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                             @endforeach
@@ -893,7 +1240,27 @@
                                     @else
                                         <td>{{$syllabus->timeSince}}</td>
                                     @endif
-                                    <td></td>
+                                    <td>
+                                        <!-- actions drop down -->
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('syllabus', $syllabus->id)}}">View</a>
+                                                <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
+                                                <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($syllabiUsers[$syllabus->id] as $userIndex => $syllabusUser){{$userIndex + 1}}. {{$syllabusUser->name}}<br>@endforeach" data-modal="addSyllabusCollaboratorsModal{{$syllabus->id}}">
+                                                    <div>
+                                                        Collaborators 
+                                                        <!-- <i class="bi bi-person-plus-fill"></i> -->
+                                                        <span class="badge rounded-pill badge badge-dark">
+                                                            {{ count($syllabiUsers[$syllabus->id]) }}
+                                                        </span> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @include('syllabus.syllabusCollabs')
+                                    </td>
                                 </tr>
                             </tbody>
                             @endforeach

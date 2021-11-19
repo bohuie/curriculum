@@ -36,6 +36,7 @@
                                     {{method_field('GET')}}
                                     
                                     <div class="modal-body">
+
                                         <div class="form-group row">
                                             <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
                                             <div class="col-md-8">
@@ -49,41 +50,45 @@
                                                     Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
                                                 </small>
                                             </div>
-                                            <div class="form-group row">
-                                                <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
-                                                <div class="col-md-8">
-                                                    <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" required autofocus>
-                                                    @error('course_num')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
-                                                <div class="col-md-8">
-                                                    <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}} - Copy" required autofocus>
-                                                    @error('course_title')
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                            <div class="col-md-8">
+                                                <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" required autofocus>
+                                                @error('course_num')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
                                                     </span>
-                                                    @enderror
-                                                </div>
+                                                @enderror
                                             </div>
-                                            <div class="form-group row">
-                                                <label for="course_section" class="col-md-3 col-form-label text-md-right">Course Section</label>
-                                                <div class="col-md-4">
-                                                    <input id="course_section" type="text" class="form-control @error('course_section') is-invalid @enderror" name="course_section" autofocus value= {{$course->section}}>
-                                                    @error('course_section')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                    @enderror
-                                                </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                            <div class="col-md-8">
+                                                <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}} - Copy" required autofocus>
+                                                @error('course_title')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label for="course_section" class="col-md-3 col-form-label text-md-right">Course Section</label>
+                                            <div class="col-md-4">
+                                                <input id="course_section" type="text" class="form-control @error('course_section') is-invalid @enderror" name="course_section" autofocus value= {{$course->section}}>
+                                                @error('course_section')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div class="modal-footer">
                                         <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
                                         <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
