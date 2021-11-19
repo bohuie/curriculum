@@ -108,6 +108,9 @@ class CourseUserController extends Controller
                             }
 
                             if($courseUser->save()){
+                                // update courses 'updated_at' field
+                                $course = Course::find($courseId);
+                                $course->touch();
                                 Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $user->name));
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to course ' . $course->course_code . ' ' . $course->course_num);

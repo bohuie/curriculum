@@ -39,7 +39,7 @@
                             <th scope="col">Program</th>
                             <th scope="col">Faculty and Department/School</th>
                             <th scope="col">Level</th>
-                            <th scope="col">Modified</th>
+                            <th scope="col">Last Updated</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -57,7 +57,11 @@
                             <td><a href="{{route('programWizard.step1', $program->program_id)}}">{{$program->program}}</a></td>
                             <td>{{$program->faculty}} </td>
                             <td>{{$program->level}}</td>
-                            <td>{{$program->timeSince}}</td>
+                            @if ($program->last_modified_user != NULL) 
+                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$program->last_modified_user}}">{{$program->timeSince}}</p></td>
+                            @else
+                                <td>{{$program->timeSince}}</td>
+                            @endif
                             <td>
                                 @if ($program->pivot->permission == 1) 
                                 <a class="pr-2 pl-2" href="{{route('programWizard.step1', $program->program_id)}}">
@@ -131,7 +135,11 @@
                             <td><a href="{{route('programWizard.step1', $program->program_id)}}">{{$program->program}}</a></td>
                             <td>{{$program->faculty}} </td>
                             <td>{{$program->level}}</td>
-                            <td>{{$program->timeSince}}</td>
+                            @if ($program->last_modified_user != NULL) 
+                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$program->last_modified_user}}">{{$program->timeSince}}</p></td>
+                            @else
+                                <td>{{$program->timeSince}}</td>
+                            @endif
                             <td class="text-center">
                                 @if ($program->pivot->permission == 1) 
                                 <a class="pr-2 pl-2" href="{{route('programWizard.step1', $program->program_id)}}">
@@ -169,7 +177,11 @@
                             <td><a href="{{route('programWizard.step1', $program->program_id)}}">{{$program->program}}</a></td>
                             <td>{{$program->faculty}} </td>
                             <td>{{$program->level}}</td>
-                            <td>{{$program->timeSince}}</td>
+                            @if ($program->last_modified_user != NULL) 
+                                <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$program->last_modified_user}}">{{$program->timeSince}}</p></td>
+                            @else
+                                <td>{{$program->timeSince}}</td>
+                            @endif
                             <td></td>
                         </tr>
                     </tbody>
@@ -210,7 +222,7 @@
                                     <th scope="col">Term</th>
                                     <th scope="col">Status</th>
                                     <th scope="col" class="text-center">Programs </th>
-                                    <th scope="col">Modified</th>
+                                    <th scope="col">Last Updated</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -315,9 +327,11 @@
                                             </div> 
                                         </td>
                                     @endif
-                                    <td>
-                                        {{$course->timeSince}}
-                                    </td>
+                                    @if ($course->last_modified_user != NULL) 
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$course->last_modified_user}}">{{$course->timeSince}}</p></td>
+                                    @else
+                                        <td>{{$course->timeSince}}</td>
+                                    @endif
                                     <td>
                                         @if ($course->pivot->permission == 1) 
                                             <a  class="pr-2" href="{{route('courseWizard.step1', $course->course_id)}}">
@@ -472,9 +486,11 @@
                                             </div>                                           
                                         </td>
                                     @endif
-                                    <td>
-                                        {{$course->timeSince}}
-                                    </td>
+                                    @if ($course->last_modified_user != NULL) 
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$course->last_modified_user}}">{{$course->timeSince}}</p></td>
+                                    @else
+                                        <td>{{$course->timeSince}}</td>
+                                    @endif
                                     <td></td>
                                 </tr>
                             </tbody>
@@ -579,9 +595,11 @@
                                             </div>                                           
                                         </td>
                                     @endif
-                                    <td>
-                                        {{$course->timeSince}}
-                                    </td>
+                                    @if ($course->last_modified_user != NULL) 
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$course->last_modified_user}}">{{$course->timeSince}}</p></td>
+                                    @else
+                                        <td>{{$course->timeSince}}</td>
+                                    @endif
                                     <td></td>
                                 </tr>
                             </tbody>
@@ -624,7 +642,7 @@
                                     <th scope="col">Course Title</th>
                                     <th scope="col">Course Code</th>
                                     <th scope="col">Term</th>
-                                    <th scope="col">Modified</th>
+                                    <th scope="col">Last Updated</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -652,9 +670,11 @@
                                     <td>
                                         {{$syllabus->course_year}} {{$syllabus->course_term}}
                                     </td>
-                                    <td>
-                                        {{$syllabus->timeSince}}
-                                    </td>
+                                    @if ($syllabus->last_modified_user != NULL) 
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$syllabus->last_modified_user}}">{{$syllabus->timeSince}}</p></td>
+                                    @else
+                                        <td>{{$syllabus->timeSince}}</td>
+                                    @endif
                                     <td>
                                         @if ($syllabus->pivot->permission == 1) 
                                             <a  class="pr-2" href="{{route('syllabus', $syllabus->id)}}">
@@ -733,9 +753,11 @@
                                     <td>
                                         {{$syllabus->course_year}} {{$syllabus->course_term}}
                                     </td>
-                                    <td>
-                                        {{$syllabus->timeSince}}
-                                    </td>
+                                    @if ($syllabus->last_modified_user != NULL) 
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$syllabus->last_modified_user}}">{{$syllabus->timeSince}}</p></td>
+                                    @else
+                                        <td>{{$syllabus->timeSince}}</td>
+                                    @endif
                                     <td></td>
                                 </tr>
                             </tbody>
@@ -763,9 +785,11 @@
                                     <td>
                                         {{$syllabus->course_year}} {{$syllabus->course_term}}
                                     </td>
-                                    <td>
-                                        {{$syllabus->timeSince}}
-                                    </td>
+                                    @if ($syllabus->last_modified_user != NULL) 
+                                        <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$syllabus->last_modified_user}}">{{$syllabus->timeSince}}</p></td>
+                                    @else
+                                        <td>{{$syllabus->timeSince}}</td>
+                                    @endif
                                     <td></td>
                                 </tr>
                             </tbody>

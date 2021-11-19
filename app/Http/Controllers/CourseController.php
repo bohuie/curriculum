@@ -132,6 +132,15 @@ class CourseController extends Controller
 
             if($courseUser->save()){
                 if ($courseProgram->save()) {
+                    // update courses 'updated_at' field
+                    $program = Program::find($request->input('program_id'));
+                    $program->touch();
+
+                    // get users name for last_modified_user
+                    $user = User::find(Auth::id());
+                    $program->last_modified_user = $user->name;
+                    $program->save();
+                    
                     $request->session()->flash('success', 'New course added');
                 }
             }else{
@@ -302,6 +311,15 @@ class CourseController extends Controller
 
 
         if($course->save()){
+            // update courses 'updated_at' field
+            $course = Course::find($course_id);
+            $course->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
+
             $request->session()->flash('success', 'Course updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the course');
@@ -356,48 +374,39 @@ class CourseController extends Controller
 
     public function outcomeDetails(Request $request, $course_id)
     {
-        //
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $l_outcomes_pos = $request->input('l_outcomes_pos');
+        $clos_l_activities = $request->input('l_activities') ? $request->input('l_activities') : array();
+        $clos_a_methods = $request->input('a_methods') ? $request->input('a_methods') : array();
 
+        if ($l_outcomes_pos) {
 
+            foreach ($l_outcomes_pos as $pos => $l_outcome_id) {
+                $learningOutcome = LearningOutcome::find($l_outcome_id);
+                $learningOutcome->pos_in_alignment = $pos + 1;
+                $learningOutcome->save();
 
-        foreach($l_outcomes as $l_outcome){
-            $i = $l_outcome->l_outcome_id;
+                if (array_key_exists($learningOutcome->l_outcome_id, $clos_l_activities)) {
+                    $learningOutcome->learningActivities()->sync($clos_l_activities[$learningOutcome->l_outcome_id]);
+                } else {
+                    $learningOutcome->learningActivities()->detach();
+                }
 
-            if($request->input('l_activities')== null){
-
-                $l_outcome->learningActivities()->detach();
-
-            }elseif (array_key_exists($i,$request->input('l_activities'))){
-                $arr=$request->input('l_activities');
-                $l_outcome->learningActivities()->detach();
-                $l_outcome->learningActivities()->sync($arr[$i]);
-
-            }else{
-
-                $l_outcome->learningActivities()->detach();
+                if (array_key_exists($learningOutcome->l_outcome_id, $clos_a_methods)) {
+                    $learningOutcome->assessmentMethods()->sync($clos_a_methods[$learningOutcome->l_outcome_id]);
+                } else {
+                    $learningOutcome->assessmentMethods()->detach();
+                }
             }
-
         }
 
-        foreach($l_outcomes as $l_outcome){
-            $i = $l_outcome->l_outcome_id;
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
 
-            if($request->input('a_methods')== null){
-
-                $l_outcome->assessmentMethods()->detach();
-
-            }elseif (array_key_exists($i,$request->input('a_methods'))){
-                $arr=$request->input('a_methods');
-                $l_outcome->assessmentMethods()->detach();
-                $l_outcome->assessmentMethods()->sync($arr[$i]);
-
-            }else{
-
-                $l_outcome->assessmentMethods()->detach();
-            }
-
-        }
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
 
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
@@ -511,6 +520,15 @@ class CourseController extends Controller
                 }
             }
         }
+
+        // update courses 'updated_at' field
+        $program = Program::find($request->input('program_id'));
+        $program->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
 
         $request->session()->flash('success', 'Course updated');
     }else{

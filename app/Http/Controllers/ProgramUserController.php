@@ -104,6 +104,15 @@ class ProgramUserController extends Controller
                                 break;
                             }
                             if($programUser->save()){
+                                // update courses 'updated_at' field
+                                $program = Program::find($request->input('program_id'));
+                                $program->touch();
+
+                                // get users name for last_modified_user
+                                $currUser = User::find(Auth::id());
+                                $program->last_modified_user = $currUser->name;
+                                $program->save();
+
                                 Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));                            
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program_code . ' ' . $program->program_num);

@@ -4,6 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addProgramCollaboratorsModalLabel{{$program->program_id}}"><i class="bi bi-person-plus-fill"></i> Share this program with others</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
@@ -87,6 +88,7 @@
 
             <form method="POST" id="saveProgramCollabChanges{{$program->program_id}}" action="{{ action('ProgramUserController@store', ['programId' => $program->program_id]) }}">
                 @csrf
+                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
                 <div class="modal-footer">
                     <button type="button" class="cancelProgramCollabChanges btn btn-secondary col-3" data-bs-dismiss="modal" data-program_id="{{$program->program_id}}">Cancel</button>
                     <button type="submit" class="btn btn-success btn col-3" >Save Changes</button>

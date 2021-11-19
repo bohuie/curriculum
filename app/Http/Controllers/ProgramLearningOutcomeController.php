@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\CourseProgram;
+use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProgramLearningOutcomeController extends Controller
 {
@@ -52,6 +55,12 @@ class ProgramLearningOutcomeController extends Controller
         $plo->plo_shortphrase = $request->input('title');
         $plo->program_id = $request->input('program_id');
 
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
+
         CourseProgram::where('program_id', $request->input('program_id'))->update(['map_status' => 0]);
 
         if($request->has('category')){
@@ -59,6 +68,10 @@ class ProgramLearningOutcomeController extends Controller
         }
         
         if($plo->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'New program learning outcome saved');
         }else{
             $request->session()->flash('error', 'There was an error adding the program learning outcome');
@@ -109,12 +122,22 @@ class ProgramLearningOutcomeController extends Controller
         $plo->pl_outcome = $request->input('plo');
         $plo->plo_shortphrase = $request->input('title');
 
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
+
         if($request->has('category')){
             $plo->plo_category_id = $request->input('category');
         }
         
         
         if($plo->save()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+
             $request->session()->flash('success', 'Program learning outcome updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the program learning outcome');
@@ -133,8 +156,18 @@ class ProgramLearningOutcomeController extends Controller
     {
         //
         $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome);
+
+        $program = Program::find($request->input('program_id'));
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
         
         if($plo->delete()){
+            // update courses 'updated_at' field
+            $program = Program::find($request->input('program_id'));
+            $program->touch();
+            
             $request->session()->flash('success','Program learning outcome has been deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the program learning outcome');
