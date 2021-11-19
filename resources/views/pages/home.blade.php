@@ -65,7 +65,7 @@
                             <td>
                                 <!-- actions drop down -->
                                 <div class="btn-group">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="{{route('programWizard.step1', $program->program_id)}}">Edit</a>
                                         <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
@@ -181,7 +181,7 @@
                             <td>
                                 <!-- actions drop down -->
                                 <div class="btn-group">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="{{route('programWizard.step1', $program->program_id)}}">Edit</a>
                                         <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
@@ -267,7 +267,7 @@
                             <td>
                                 <!-- actions drop down -->
                                 <div class="btn-group">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="{{route('programWizard.step4', $program->program_id)}}">View</a>
                                         <div class="dropdown-item collabIcon btn bg-transparent position-relative" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($programUsers[$program->program_id] as $counter => $programUser){{$counter + 1}}. {{$programUser->name}}<br>@endforeach" data-modal="addProgramCollaboratorsModal{{$program->program_id}}">
@@ -438,7 +438,7 @@
                                     <td>
                                         <!-- actions drop down -->
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{route('courseWizard.step1', $course->course_id)}}">Edit</a>
                                                 <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
@@ -676,7 +676,7 @@
                                     <td>
                                         <!-- actions drop down -->
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{route('courseWizard.step1', $course->course_id)}}">Edit</a>
                                                 <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
@@ -882,7 +882,7 @@
                                     <td>
                                         <!-- actions drop down -->
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{route('courseWizard.step7', $course->course_id)}}">View</a>
                                                 <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
@@ -977,7 +977,7 @@
                                     <td>
                                         <!-- actions drop down -->
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{route('syllabus', $syllabus->id)}}">Edit</a>
                                                 <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
@@ -1126,7 +1126,7 @@
                                     <td>
                                         <!-- actions drop down -->
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{route('syllabus', $syllabus->id)}}">Edit</a>
                                                 <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
@@ -1243,7 +1243,7 @@
                                     <td>
                                         <!-- actions drop down -->
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear"></i> </button>
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-gear-fill"></i> </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{route('syllabus', $syllabus->id)}}">View</a>
                                                 <!-- <a class="dropdown-item" href="#">Collaborators</a> -->
