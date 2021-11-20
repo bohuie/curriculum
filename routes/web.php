@@ -92,6 +92,7 @@ Route::resource('/ploCategory','PLOCategoryController');
 Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
 Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
+Route::get('/programUser','ProgramUserController@leave')->name('programUser.leave');
 
 // Program wizard controller used to sent info from database to the blade page
 Route::get('/programWizard/{program}/step1','ProgramWizardController@step1')->name('programWizard.step1');

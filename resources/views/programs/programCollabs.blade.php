@@ -58,28 +58,39 @@
 
                         <tbody>
                             @foreach($program->users as $programCollaborator)
-                            <tr>
-                                <td>
-                                    <b>{{$programCollaborator->name}} @if ($programCollaborator->email == $user->email) (Me) @endif</b>
-                                    <p>{{$programCollaborator->email}}</p>
-                                </td>
-                                @if ($programCollaborator->pivot->permission == 1)
-                                <td class="text-center">
-                                    <input form="saveProgramCollabChanges{{$program->program_id}}" class="form-control fw-bold" type="text" readonly value="Owner">
-                                </td>
-                                <td></td>
-                                @else
-                                <td >
-                                    <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" required>
-                                        <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
-                                        <option value="view" @if ($programCollaborator->pivot->permission == 3) selected @endif>Viewer</option>
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <button type="input" class="btn btn-danger btn" onclick="deleteProgramCollab(this)">Remove</button>
-                                </td>
-                                @endif
-                            </tr>
+                                <tr>
+                                    <td>
+                                        <b>{{$programCollaborator->name}} @if ($programCollaborator->email == $user->email) (Me) @endif</b>
+                                        <p>{{$programCollaborator->email}}</p>
+                                    </td>
+                                    @if ($programCollaborator->pivot->permission == 1)
+                                        <td class="text-center">
+                                            <input form="saveProgramCollabChanges{{$program->program_id}}" class="form-control fw-bold" type="text" readonly value="Owner">
+                                        </td>
+                                        <td></td>
+                                    @else
+                                        <td >
+                                            <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" required>
+                                                <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
+                                                <option value="view" @if ($programCollaborator->pivot->permission == 3) selected @endif>Viewer</option>
+                                            </select>
+                                        </td>
+                                        @if ($programCollaborator->email == $user->email)
+                                            <form action="{{ action('ProgramUserController@leave') }}">
+                                                @csrf
+                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
+                                                <input type="hidden" class="form-check-input " name="programCollaboratorId" value={{$programCollaborator->id}}>
+                                                <td class="text-center">
+                                                    <button type="submit" class="btn btn-danger btn">Leave</button>
+                                                </td>
+                                            </form> 
+                                        @else
+                                            <td class="text-center">
+                                                <button type="input" class="btn btn-danger btn" onclick="deleteProgramCollab(this)">Remove</button>
+                                            </td>
+                                        @endif
+                                    @endif
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

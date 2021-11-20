@@ -201,4 +201,15 @@ class ProgramUserController extends Controller
             $programUser->delete();
         }
     }
+
+    public function leave(Request $request) {
+        $program = Program::find($request->input('program_id'));
+        $programUser = ProgramUser::where('user_id', $request->input('programCollaboratorId'))->where('program_id', $request->input('program_id'))->first();
+        if ($programUser->delete()) {
+            $request->session()->flash('success', 'Successfully left ' .$program->program);
+        } else {
+            $request->session()->flash('error', 'Failed to leave the program');
+        }
+        return redirect()->back();
+    }
 }
