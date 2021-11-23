@@ -1,4 +1,5 @@
 <!-- start of add/edit program collaborators modal -->
+<?php $permission = $user->programs->where('program_id', $program->program_id)->first(); ?>
 <div id="addProgramCollaboratorsModal{{$program->program_id}}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="addProgramCollaboratorsModalLabel{{$program->program_id}}" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -69,12 +70,21 @@
                                         </td>
                                         <td></td>
                                     @else
-                                        <td >
-                                            <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" required>
-                                                <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
-                                                <option value="view" @if ($programCollaborator->pivot->permission == 3) selected @endif>Viewer</option>
-                                            </select>
-                                        </td>
+                                        @if ($permission->pivot->permission == 1)
+                                            <td>
+                                                <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" required>
+                                                    <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
+                                                    <option value="view" @if ($programCollaborator->pivot->permission == 3) selected @endif>Viewer</option>
+                                                </select>
+                                            </td>
+                                        @else
+                                            <td>
+                                                <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" disabled required>
+                                                    <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
+                                                    <option value="view" @if ($programCollaborator->pivot->permission == 3) selected @endif>Viewer</option>
+                                                </select>
+                                            </td>
+                                        @endif
                                         @if ($programCollaborator->email == $user->email)
                                             <form action="{{ action('ProgramUserController@leave') }}">
                                                 @csrf
@@ -85,9 +95,13 @@
                                                 </td>
                                             </form> 
                                         @else
-                                            <td class="text-center">
-                                                <button type="input" class="btn btn-danger btn" onclick="deleteProgramCollab(this)">Remove</button>
-                                            </td>
+                                            @if ($permission->pivot->permission == 1)
+                                                <td class="text-center">
+                                                    <button type="input" class="btn btn-danger btn" onclick="deleteProgramCollab(this)">Remove</button>
+                                                </td>
+                                            @else
+                                                <td class="text-center"></td>
+                                            @endif
                                         @endif
                                     @endif
                                 </tr>
