@@ -16,26 +16,28 @@
                     <p class=" text-center form-text text-primary font-weight-bold">Note: Your collaborator must have registered on this site before you can add them. <a target="_blank" href="{{ url('/invite') }}">Invite others to register<i class=" pb-3 pl-1 bi bi-box-arrow-up-right"></i></a></p>                    
                 </div>
 
-                <form class="addProgramCollabForm needs-validation" novalidate data-program_id="{{$program->program_id}}">
-                    @csrf
-                    <div class="row m-2">
-                        <div class="col-6">
-                            <input id="program_collab_email{{$program->program_id}}" type="email" name="email" class="form-control" placeholder="john.doe@ubc.ca" aria-label="email" required>
-                            <div class="invalid-tooltip">
-                                Please provide a valid email ending with ubc.ca.
-                            </div> 
+                @if ($permission->pivot->permission == 1)
+                    <form class="addProgramCollabForm needs-validation" novalidate data-program_id="{{$program->program_id}}">
+                        @csrf
+                        <div class="row m-2">
+                            <div class="col-6">
+                                <input id="program_collab_email{{$program->program_id}}" type="email" name="email" class="form-control" placeholder="john.doe@ubc.ca" aria-label="email" required>
+                                <div class="invalid-tooltip">
+                                    Please provide a valid email ending with ubc.ca.
+                                </div> 
+                            </div>
+                            <div class="col-3">
+                                <select class="form-select" id="program_collab_permission{{$program->program_id}}" name="permission">
+                                    <option value="edit" selected>Editor</option>
+                                    <option value="view">Viewer</option>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <button id="addProgramCollabBtn{{$program->program_id}}" type="submit" class="btn btn-primary col"><i class="bi bi-plus"></i> Collaborator</button>
+                            </div>
                         </div>
-                        <div class="col-3">
-                            <select class="form-select" id="program_collab_permission{{$program->program_id}}" name="permission">
-                                <option value="edit" selected>Editor</option>
-                                <option value="view">Viewer</option>
-                            </select>
-                        </div>
-                        <div class="col-3">
-                            <button id="addProgramCollabBtn{{$program->program_id}}" type="submit" class="btn btn-primary col"><i class="bi bi-plus"></i> Collaborator</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                @endif
 
                 <div class="row justify-content-center">
                     <div class="col-8">
@@ -53,32 +55,32 @@
                             <tr class="table-primary">
                                 <th>Collaborators</th>
                                 <th></th>
-                                <th class="text-center w-25">Actions</th>
+                                <th colspan="2" class="text-center w-25">Actions</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach($program->users as $programCollaborator)
                                 <tr>
-                                    <td>
+                                    <td class="align-middle">
                                         <b>{{$programCollaborator->name}} @if ($programCollaborator->email == $user->email) (Me) @endif</b>
                                         <p>{{$programCollaborator->email}}</p>
                                     </td>
                                     @if ($programCollaborator->pivot->permission == 1)
-                                        <td class="text-center">
+                                        <td class="text-center align-middle">
                                             <input form="saveProgramCollabChanges{{$program->program_id}}" class="form-control fw-bold" type="text" readonly value="Owner">
                                         </td>
-                                        <td></td>
+                                        <td colspan="2"></td>
                                     @else
                                         @if ($permission->pivot->permission == 1)
-                                            <td>
+                                            <td class="align-middle">
                                                 <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" required>
                                                     <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
                                                     <option value="view" @if ($programCollaborator->pivot->permission == 3) selected @endif>Viewer</option>
                                                 </select>
                                             </td>
                                         @else
-                                            <td>
+                                            <td class="align-middle">
                                                 <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" disabled required>
                                                     <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
                                                     <option value="view" @if ($programCollaborator->pivot->permission == 3) selected @endif>Viewer</option>
@@ -86,21 +88,52 @@
                                             </td>
                                         @endif
                                         @if ($programCollaborator->email == $user->email)
-                                            <form action="{{ action('ProgramUserController@leave') }}">
-                                                @csrf
-                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
-                                                <input type="hidden" class="form-check-input " name="programCollaboratorId" value={{$programCollaborator->id}}>
-                                                <td class="text-center">
-                                                    <button type="submit" class="btn btn-danger btn">Leave</button>
-                                                </td>
-                                            </form> 
+                                            <td class="text-center align-middle" colspan="2">
+                                                <button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#leaveConfirmation{{$program->program_id}}">Leave</button>
+                                            </td>
+
+                                            <!-- Delete Confirmation Modal -->
+                                            <div class="modal fade" id="leaveConfirmation{{$program->program_id}}" tabindex="-1" role="dialog" aria-labelledby="leaveConfirmation{{$program->program_id}}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">Leave Program Confirmation</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">Are you sure you want to leave {{$program->program}} program ?</div>
+                                                        <form action="{{ action('ProgramUserController@leave') }}" class="float-right">
+                                                            @csrf
+
+                                                            <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
+                                                            <input type="hidden" class="form-check-input " name="programCollaboratorId" value={{$programCollaborator->id}}>
+                                                            <div class="modal-footer">
+                                                                <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                                <button style="width:60px" type="submit" class="btn btn-danger btn-sm">Leave</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @else
                                             @if ($permission->pivot->permission == 1)
-                                                <td class="text-center">
+                                                <td class="text-center align-middle">
                                                     <button type="input" class="btn btn-danger btn" onclick="deleteProgramCollab(this)">Remove</button>
                                                 </td>
+
+                                                <td class="text-center align-middle">
+                                                    <form action="{{ action('ProgramUserController@transferOwnership') }}">
+                                                        @csrf
+                                                        <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
+                                                        <input type="hidden" class="form-check-input " name="newOwnerId" value={{$programCollaborator->id}}>
+                                                        <input type="hidden" class="form-check-input " name="oldOwnerId" value={{$user->id}}>
+
+                                                        <button type="input" class="btn btn-primary btn-sm">Transfer Ownership</button>
+                                                    </form>
+                                                </td>
                                             @else
-                                                <td class="text-center"></td>
+                                                <td class="text-center" colspan="2"></td>
                                             @endif
                                         @endif
                                     @endif
