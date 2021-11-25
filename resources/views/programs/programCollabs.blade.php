@@ -89,11 +89,11 @@
                                         @endif
                                         @if ($programCollaborator->email == $user->email)
                                             <td class="text-center align-middle" colspan="2">
-                                                <button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#leaveConfirmation{{$program->program_id}}">Leave</button>
+                                                <button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#leaveProgramConfirmation{{$program->program_id}}">Leave</button>
                                             </td>
 
                                             <!-- Delete Confirmation Modal -->
-                                            <div class="modal fade" id="leaveConfirmation{{$program->program_id}}" tabindex="-1" role="dialog" aria-labelledby="leaveConfirmation{{$program->program_id}}" aria-hidden="true">
+                                            <div class="modal fade" id="leaveProgramConfirmation{{$program->program_id}}" tabindex="-1" role="dialog" aria-labelledby="leaveProgramConfirmation{{$program->program_id}}" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -123,15 +123,35 @@
                                                 </td>
 
                                                 <td class="text-center align-middle">
-                                                    <form action="{{ action('ProgramUserController@transferOwnership') }}">
-                                                        @csrf
-                                                        <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
-                                                        <input type="hidden" class="form-check-input " name="newOwnerId" value={{$programCollaborator->id}}>
-                                                        <input type="hidden" class="form-check-input " name="oldOwnerId" value={{$user->id}}>
-
-                                                        <button type="input" class="btn btn-primary btn-sm">Transfer Ownership</button>
-                                                    </form>
+                                                    <button type="input" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#transferProgramConfirmation{{$program->program_id}}">Transfer Ownership</button>
                                                 </td>
+
+                                                <!-- Transfer Confirmation Modal -->
+                                                <div class="modal fade" id="transferProgramConfirmation{{$program->program_id}}" tabindex="-1" role="dialog" aria-labelledby="transferProgramConfirmation{{$program->program_id}}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Transfer Program Confirmation</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">Are you sure you want to give ownership of the program: {{$program->program}} to the user: {{$programCollaborator->name}}?</div>
+                                                            <form action="{{ action('ProgramUserController@transferOwnership') }}">
+                                                                @csrf
+                                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
+                                                                <input type="hidden" class="form-check-input " name="newOwnerId" value={{$programCollaborator->id}}>
+                                                                <input type="hidden" class="form-check-input " name="oldOwnerId" value={{$user->id}}>
+
+                                                                <div class="modal-footer">
+                                                                    <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                                                    <button type="input" class="btn btn-primary btn-sm">Transfer Ownership</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             @else
                                                 <td class="text-center" colspan="2"></td>
                                             @endif
@@ -246,6 +266,7 @@
                 <td class="text-center">
                     <button type="input" class="btn btn-danger" onclick="deleteProgramCollab(this)">Remove</button>
                 </td>
+                <td></td>
             </tr>
         `);
     }
