@@ -7,7 +7,7 @@
             <h5 class="text-muted">{{$program->level}}</h5>
         </div>
         <div class="col">
-        @if (!$isEditor && !$isViewer) 
+        @if (!$isViewer)
             <div class="row my-2">
                 <div class="col">
                     <button type="button" style="width:200px" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#duplicateConfirmation">Duplicate Program</button>
@@ -52,6 +52,8 @@
                     </div>
                 </div>
             </div>
+        @endif
+        @if (!$isEditor && !$isViewer) 
             <div class="row">
                 <div class="col">
                         <!-- Edit button -->

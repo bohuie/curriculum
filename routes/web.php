@@ -48,6 +48,9 @@ Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy'
 Route::post('/syllabi/{syllabusId}/word','SyllabusController@syllabusToWordDoc')->name('syllabus.word');
 // rout to duplicate syllabi
 Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
+// route for syllabus collaborator functions
+Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
+Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
@@ -61,6 +64,9 @@ Route::post('/courses', 'CourseController@store')->name('courses.store');
 
 Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
 Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');
+Route::get('/courseUser','CourseUserController@leave')->name('courseUser.leave');
+Route::get('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
+
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
 Route::get('/courses/{course}/summary','CourseController@show')->name('courses.summary');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
@@ -92,6 +98,8 @@ Route::resource('/ploCategory','PLOCategoryController');
 Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
 Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
+Route::get('/programUser','ProgramUserController@leave')->name('programUser.leave');
+Route::get('/programUserTransfer','ProgramUserController@transferOwnership')->name('programUser.transferOwnership');
 
 // Program wizard controller used to sent info from database to the blade page
 Route::get('/programWizard/{program}/step1','ProgramWizardController@step1')->name('programWizard.step1');

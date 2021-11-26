@@ -201,4 +201,37 @@ class ProgramUserController extends Controller
             $programUser->delete();
         }
     }
+
+    public function leave(Request $request) {
+        $program = Program::find($request->input('program_id'));
+        $programUser = ProgramUser::where('user_id', $request->input('programCollaboratorId'))->where('program_id', $request->input('program_id'))->first();
+        if ($programUser->delete()) {
+            $request->session()->flash('success', 'Successfully left ' .$program->program);
+        } else {
+            $request->session()->flash('error', 'Failed to leave the program');
+        }
+        return redirect()->back();
+    }
+
+    public function transferOwnership(Request $request) {
+        $program = Program::find($request->input('program_id'));
+        $oldProgramOwner = ProgramUser::where('user_id', $request->input('oldOwnerId'))->where('program_id', $request->input('program_id'))->first();
+        $newProgramOwner = ProgramUser::where('user_id', $request->input('newOwnerId'))->where('program_id', $request->input('program_id'))->first();
+
+        //transfer ownership and set old owner to be an editor
+        $newProgramOwner->permission = 1;
+        $oldProgramOwner->permission = 2;
+
+        if ($newProgramOwner->save()) {
+            if ($oldProgramOwner->save()) {
+                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$program->program. ' program.');
+            } else {
+                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
+            }
+        } else {
+            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
+        }
+        
+        return redirect()->back();
+    }
 }
