@@ -226,10 +226,10 @@ class ProgramUserController extends Controller
             if ($oldProgramOwner->save()) {
                 $request->session()->flash('success', 'Successfully transferred ownership for the ' .$program->program. ' program.');
             } else {
-                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' the program');
+                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
             }
         } else {
-            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' the program');
+            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
         }
         
         return redirect()->back();

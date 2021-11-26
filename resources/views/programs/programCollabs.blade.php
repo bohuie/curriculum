@@ -1,5 +1,5 @@
 <!-- start of add/edit program collaborators modal -->
-<?php $permission = $user->programs->where('program_id', $program->program_id)->first(); ?>
+<?php $programPermission = $user->programs->where('program_id', $program->program_id)->first(); ?>
 <div id="addProgramCollaboratorsModal{{$program->program_id}}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="addProgramCollaboratorsModalLabel{{$program->program_id}}" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -16,7 +16,7 @@
                     <p class=" text-center form-text text-primary font-weight-bold">Note: Your collaborator must have registered on this site before you can add them. <a target="_blank" href="{{ url('/invite') }}">Invite others to register<i class=" pb-3 pl-1 bi bi-box-arrow-up-right"></i></a></p>                    
                 </div>
 
-                @if ($permission->pivot->permission == 1)
+                @if ($programPermission->pivot->permission == 1)
                     <form class="addProgramCollabForm needs-validation" novalidate data-program_id="{{$program->program_id}}">
                         @csrf
                         <div class="row m-2">
@@ -72,7 +72,7 @@
                                         </td>
                                         <td colspan="2"></td>
                                     @else
-                                        @if ($permission->pivot->permission == 1)
+                                        @if ($programPermission->pivot->permission == 1)
                                             <td class="align-middle">
                                                 <select id="program_collab_permission{{$program->program_id}}-{{$programCollaborator->id}}" form="saveProgramCollabChanges{{$program->program_id}}" name="program_current_permissions[{{$programCollaborator->id}}]" class="form-select" required>
                                                     <option value="edit" @if ($programCollaborator->pivot->permission == 2) selected @endif>Editor</option>
@@ -92,7 +92,7 @@
                                                 <button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#leaveProgramConfirmation{{$program->program_id}}">Leave</button>
                                             </td>
 
-                                            <!-- Delete Confirmation Modal -->
+                                            <!-- Leave Confirmation Modal -->
                                             <div class="modal fade" id="leaveProgramConfirmation{{$program->program_id}}" tabindex="-1" role="dialog" aria-labelledby="leaveProgramConfirmation{{$program->program_id}}" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -102,7 +102,7 @@
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
-                                                        <div class="modal-body">Are you sure you want to leave {{$program->program}} program ?</div>
+                                                        <div class="modal-body">Are you sure you want to leave {{$program->program}} program?</div>
                                                         <form action="{{ action('ProgramUserController@leave') }}" class="float-right">
                                                             @csrf
 
@@ -117,7 +117,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            @if ($permission->pivot->permission == 1)
+                                            @if ($programPermission->pivot->permission == 1)
                                                 <td class="text-center align-middle">
                                                     <button type="input" class="btn btn-danger btn" onclick="deleteProgramCollab(this)">Remove</button>
                                                 </td>

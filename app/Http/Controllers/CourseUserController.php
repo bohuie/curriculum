@@ -199,4 +199,37 @@ class CourseUserController extends Controller
             $courseUser->delete();
         }
     }
+
+    public function leave(Request $request) {
+        $course = Course::find($request->input('course_id'));
+        $courseUser = CourseUser::where('user_id', $request->input('courseCollaboratorId'))->where('course_id', $request->input('course_id'))->first();
+        if ($courseUser->delete()) {
+            $request->session()->flash('success', 'Successfully left ' .$course->course_title);
+        } else {
+            $request->session()->flash('error', 'Failed to leave the course');
+        }
+        return redirect()->back();
+    }
+
+    public function transferOwnership(Request $request) {
+        $course = Course::find($request->input('course_id'));
+        $oldCourseOwner = CourseUser::where('user_id', $request->input('oldOwnerId'))->where('course_id', $request->input('course_id'))->first();
+        $newCourseOwner = CourseUser::where('user_id', $request->input('newOwnerId'))->where('course_id', $request->input('course_id'))->first();
+
+        //transfer ownership and set old owner to be an editor
+        $newCourseOwner->permission = 1;
+        $oldCourseOwner->permission = 2;
+
+        if ($newCourseOwner->save()) {
+            if ($oldCourseOwner->save()) {
+                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$course->course_title. ' course.');
+            } else {
+                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$course->course_title. ' course');
+            }
+        } else {
+            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$course->course_title. ' course');
+        }
+        
+        return redirect()->back();
+    }
 }
