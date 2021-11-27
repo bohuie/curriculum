@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 use App\Mail\NotifyInstructorMail;
+use App\Mail\NotifyInstructorOwnerMail;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -111,7 +112,16 @@ class CourseUserController extends Controller
                                 // update courses 'updated_at' field
                                 $course = Course::find($courseId);
                                 $course->touch();
-                                Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $user->name));
+
+                                // get users name for last_modified_user
+                                $currUser = User::find(Auth::id());
+                                $course->last_modified_user = $currUser->name;
+                                $course->save();
+
+                                // email user to be added
+                                Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $currentUser->name));
+                                // email the owner letting them know they have added a new collaborator
+                                Mail::to($currentUser->email)->send(new NotifyInstructorOwnerMail($course->course_code, $course->course_num, $course->course_title, $user->name));
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to course ' . $course->course_code . ' ' . $course->course_num);
                             }
