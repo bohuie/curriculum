@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Mail\NotifyProgramAdminMail;
+use App\Mail\NotifyProgramOwnerMail;
 use App\Models\Program;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
@@ -113,12 +114,15 @@ class ProgramUserController extends Controller
                                 $program->last_modified_user = $currUser->name;
                                 $program->save();
 
-                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));                            
+                                // email user to be added
+                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));
+                                // email the owner letting them know they have added a new collaborator
+                                Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $program->department, $user->name));                           
                             } else {
-                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program_code . ' ' . $program->program_num);
+                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program);
                             }
                         } else {
-                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on program ' . $program->program_code . ' ' . $program->program_num);
+                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on program ' . $program->program);
                         }
                     } else {
                         $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
@@ -132,7 +136,7 @@ class ProgramUserController extends Controller
 
         // if no errors or warnings, flash a success message
         if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
-            $request->session()->flash('success', 'Successfully updated collaborators on program ' . $program->program_code . ' ' . $program->program_num);
+            $request->session()->flash('success', 'Successfully updated collaborators on program ' . $program->program);
         }
 
         // return to the previous page

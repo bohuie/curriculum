@@ -7,6 +7,7 @@ use App\Models\syllabus\Syllabus;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\NotifySyllabusUserMail;
+use App\Mail\NotifySyllabusUserOwnerMail;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -115,7 +116,10 @@ class SyllabusUserController extends Controller
                                 $syllabus->last_modified_user = $currUser->name;
                                 $syllabus->save();
 
-                                Mail::to($user->email)->send(new NotifySyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
+                                // email user to be added
+                                Mail::to($user->email)->send(new NotifySyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $currentUser->name));
+                                // email the owner letting them know they have added a new collaborator
+                                Mail::to($currentUser->email)->send(new NotifySyllabusUserOwnerMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
                             }
