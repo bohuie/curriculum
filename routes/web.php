@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\Invitation;
 use App\Models\LearningOutcome;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,4 +147,10 @@ Auth::routes();
 Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_prefix')], function () {
     Route::auth();
     Route::get('logout', 'Auth\LoginController@logout');
+});
+
+Route::get('/clear-cache', function() {
+    $exitCode = Artisan::call('cache:clear');
+    $exitCode = Artisan::call('config:cache');
+    return 'DONE'; //Return anything
 });
