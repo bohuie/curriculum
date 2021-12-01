@@ -1300,6 +1300,28 @@
     </div>
 </div>
 
+<div>
+    <a href="javascript:;" id="getData" >Get Data</a>
+    <div id="allCoursesInput"></div>
+</div>
+
+<script type=text/javascript>
+    $(document).ready(function() {
+
+        $("#getData").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-something/",       
+                success: function (data) {
+                    $("#allCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+    });
+</script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $("#notification").toast("show");

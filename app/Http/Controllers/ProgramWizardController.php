@@ -295,6 +295,7 @@ class ProgramWizardController extends Controller
         $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
                                     ->where('mapping_scale_programs.program_id', $program_id)->get();
 
+        /////////////////////////////////////////////////////////////////////////// to be removed
         // get all the courses this program belongs to
         $programCourses = $program->courses;
 
@@ -309,6 +310,7 @@ class ProgramWizardController extends Controller
         foreach ($programCourses as $programCourse) {
             $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
         }
+        //////////////////////////////////////////////////////////////////////////
 
                 // Get all PLO Id's
         $arrayPLOutcomeIds = ProgramLearningOutcome::where('program_id', $program_id)->pluck('pl_outcome_id')->toArray();
@@ -769,4 +771,368 @@ class ProgramWizardController extends Controller
         return $store;
     }
 
+    // called when requested by ajax on step 4
+    public function getSomething($program_id) {
+        $program = Program::find($program_id);
+        $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
+        // get all the courses this program belongs to
+        $programCourses = $program->courses;
+        // get all categories for program
+        $ploCategories = PLOCategory::where('program_id', $program_id)->get();
+        // get plo categories for program
+        $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
+        // returns the number of Categories that contain at least one PLO
+        $numCatUsed = 0;
+        $uniqueCategories = array();
+        foreach ($ploProgramCategories as $ploInCategory) {
+            if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
+                $uniqueCategories[] += $ploInCategory->plo_category_id;
+                $numCatUsed++;
+            }
+        }
+        // get plo's for the program 
+        $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
+        // returns true if there exists a plo without a category
+        $hasUncategorized = false;
+        foreach ($plos as $plo) {
+            if ($plo->plo_category == NULL) {
+                $hasUncategorized = true;
+            }
+        }
+        
+        // All Learning Outcomes for program courses
+        $LearningOutcomesForProgramCourses = array();
+        foreach ($programCourses as $programCourse) {
+            $LearningOutcomesForProgramCourses[$programCourse->course_id] = LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray();
+        }
+
+        // ploCount * cloCount = number of outcome map results for course and program
+        $expectedTotalOutcomes = array();
+        foreach ($programCourses as $programCourse) {
+            $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
+        }
+        
+        // plosPerCategory returns the number of plo's belonging to each category
+        // used for setting the colspan in the view
+        $plosPerCategory = array();
+        foreach($ploProgramCategories as $ploCategory) {
+            $plosPerCategory[$ploCategory->plo_category_id] = 0;
+        }
+        foreach($ploProgramCategories as $ploCategory) {
+            $plosPerCategory[$ploCategory->plo_category_id] += 1;
+        }
+
+        // get all plo's
+        $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
+
+        // Used for setting colspan in view
+        $numUncategorizedPLOS = 0;
+        foreach ($allPLO as $plo) {
+            if ($plo->plo_category_id == null){
+                $numUncategorizedPLOS ++;
+            }
+        }
+
+        // All Courses Frequency Distribution
+        $coursesOutcomes = array();
+        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
+        $arr = array();
+        $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
+        $store = array();
+        $store = $this->createCDFArray($arr, $store);
+        $store = $this->frequencyDistribution($arr, $store);
+        $store = $this->replaceIdsWithAbv($store, $arr);
+        $store = $this->assignColours($store);
+
+        $output = $this->generateHTML($programCourses, $ploCount, $plos, $ploCategories, $numCatUsed, $plosPerCategory, $hasUncategorized, $numUncategorizedPLOS, $ploProgramCategories, $store);
+
+        return response()->json($output, 200);
+    }
+
+    public function generateHTML($programCourses, $ploCount, $plos, $ploCategories, $numCatUsed, $plosPerCategory, $hasUncategorized, $numUncategorizedPLOS, $ploProgramCategories, $store) {
+        $output = '';
+
+        $output = '<div class="card-body">
+                        <h5 class="card-title">
+                            Curriculum Map
+                        </h5>';
+        if (count($programCourses) < 1) {
+            $output .= '<div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                   
+                        </div>';
+        } elseif ($ploCount < 1) {
+            $output .= '<div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
+                        </div>';
+        } else {
+            $output .= '<p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
+                        <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
+                            <tr class="table-primary">
+                                <th colspan="1" class="w-auto">Courses</th>
+                                <th class="text-left" colspan=" '.count($plos).' ">Program-level Learning Outcomes</th>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>
+                                        <!-- Displays Categories -->';
+
+            foreach ($ploCategories as $index =>$plo) {
+                if ($plo->plo_category != NULL) {
+                    // Use short name for category if there are more than 3
+                    if (($numCatUsed > 3) && ($plo->plos->count() > 0)) {
+                        $output .= '<th colspan=" '.$plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
+                    }elseif ($plo->plos->count() > 0) {
+                        $output .= '<th colspan=" '.$plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_category.'</th>';
+                    }
+                }
+            }
+            if ($hasUncategorized) {
+                $output .= '<th colspan=" '.$numUncategorizedPLOS.' " style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>';
+            }
+            $output .= '</tr>
+                        <tr>
+                            <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>';
+
+            if (count($plos) < 7) {
+                //Categorized PLOs
+                foreach($ploProgramCategories as $plo) {
+                    if ($plo->plo_category != NULL) {
+                        $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                    }
+                }
+                //Uncategorized PLOs
+                foreach($plos as $plo) {
+                    if ($plo->plo_category == NULL) {
+                        $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                    }
+                }
+            } else {
+                foreach($plos as $index => $plo) {
+                    $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.($index + 1).'</th>';
+                }
+            }
+            $output .= '</>';
+            // Show all courses associated to the program
+            foreach ($programCourses as $course) {
+                $output .= '<tr>
+                                <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
+                                '.$course->course_code.' '.$course->course_num.' '.$course->section.'
+                                <br>
+                                '.$course->semester.' '.$course->year.'
+                                </th>';
+                                // Frequency distribution from each course 
+                                // For Each Categorized PLO
+                                foreach ($ploProgramCategories as $index => $plo) {
+                                    if ($plo->plo_category != NULL) {
+                                        // Check if ['pl_outcome_id']['course_id'] are in the array
+                                        if(isset($store[$plo->pl_outcome_id][$course->course_id])) {
+                                            // Check if a Tie is present
+                                            if(isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie'])) {
+                                                $output .= '<td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                                                                                // this loop is for the tool tip
+                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) { 
+                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
+                                                                                                }
+                                                                                                $output .= '">';
+
+                                                                                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                                                                                                </span>
+                                                                                            </td>';
+                                            } else {
+                                                $output .= '<td class="text-center align-middle" style="background-color: '.$store[$plo->pl_outcome_id][$course->course_id]["colour"].';" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) {
+                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
+                                                                                                }
+                                                                                                $output .='">';
+                                                                                                
+                                                                                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                                                                                                </span>
+                                                                                            </td>';
+                                            }
+                                        } else {
+                                            $output .= '<td class="text-center align-middle" style="background-color: white;">
+                                                            <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+                                                        </td>';
+                                        }
+                                    }
+                                }
+                                // For Each Uncategorized PLO
+                                foreach ($plos as $plo) {
+                                    if ($plo->plo_category == NULL) {
+                                        // Check if ['pl_outcome_id']['course_id'] are in the array
+                                        if(isset($store[$plo->pl_outcome_id][$course->course_id])) {
+                                            // Check if a Tie is present
+                                            if(isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie'])) {
+                                                $output .= '<td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                                                                                // this loop is for the tool tip
+                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) { 
+                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
+                                                                                                }
+                                                                                                $output .= '">';
+
+                                                                                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                                                                                                </span>
+                                                                                            </td>';
+                                            } else {
+                                                $output .= '<td class="text-center align-middle" style="background-color: '.$store[$plo->pl_outcome_id][$course->course_id]["colour"].';" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) {
+                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
+                                                                                                }
+                                                                                                $output .='">';
+                                                                                                
+                                                                                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                                                                                                </span>
+                                                                                            </td>';
+                                            }
+                                        }else {
+                                            $output .= '<td class="text-center align-middle" style="background-color: white;">
+                                                            <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+                                                        </td>';
+                                        } 
+                                    }
+                                }
+                $output .= '</tr>';
+            }
+            $output .= '</table>';
+        }
+        $output .= '</div>';
+
+        return $output;
+    }
+    // Sample for generating HTML.
+    // <!-- ALL COURSES frequency distribution table -->
+        //             <div class="card-body">
+        //                 <h5 class="card-title">
+        //                     Curriculum Map
+        //                 </h5>
+        //                 @if( $programCourses < 1 )
+        //                     <div class="alert alert-warning wizard">
+        //                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                   
+        //                     </div>
+        //                 @elseif ($ploCount < 1) 
+        //                     <div class="alert alert-warning wizard">
+        //                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
+        //                     </div>
+        //                 @else
+        //                     <p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
+
+        //                     <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
+        //                         <tr class="table-primary">
+        //                             <th colspan='1' class="w-auto">Courses</th>
+        //                             <th class="text-left" colspan='{{ count($plos) }}'>Program-level Learning Outcomes</th>
+        //                         </tr>
+        //                         <tr>
+        //                             <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
+        //                             <!-- Displays Categories -->
+        //                             @foreach($ploCategories as $index =>$plo)
+        //                                 @if ($plo->plo_category != NULL)
+        //                                     <!-- Use short name for category if there are more than 3 -->
+        //                                     @if (($numCatUsed > 3) && ($plo->plos->count() > 0))
+        //                                         <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">C - {{$index + 1}}</th>
+        //                                     @elseif ($plo->plos->count() > 0)
+        //                                         <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
+        //                                     @endif
+        //                                 @endif
+        //                             @endforeach
+        //                             <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
+        //                             @if($hasUncategorized)
+        //                                 <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
+        //                             @endif
+        //                         </tr>
+
+        //                         <tr>
+        //                             <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
+        //                             <!-- If there are less than 7 PLOs, use the short-phrase, else use PLO at index + 1 -->
+        //                             @if (count($plos) < 7) 
+        //                                 <!-- Categorized PLOs -->
+        //                                 @foreach($ploProgramCategories as $plo)
+        //                                     @if ($plo->plo_category != NULL)
+        //                                         <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
+        //                                     @endif
+        //                                 @endforeach
+        //                                 <!-- Uncategorized PLOs -->
+        //                                 @foreach($plos as $plo)
+        //                                     @if ($plo->plo_category == NULL)
+        //                                         <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
+        //                                     @endif
+        //                                 @endforeach
+        //                             @else
+        //                                 @foreach($plos as $index => $plo)
+        //                                     <th style="background-color: rgba(0, 0, 0, 0.03);">PLO: {{$index + 1}}</th>
+        //                                 @endforeach
+        //                             @endif
+        //                         </tr>
+        //                         <!-- Show all courses associated to the program -->
+        //                         @foreach($programCourses as $course)
+        //                             <tr>
+        //                                 <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
+        //                                 {{$course->course_code}} {{$course->course_num}} {{$course->section}}
+        //                                 <br>
+        //                                 {{$course->semester}} {{$course->year}}
+        //                                 </th>
+        //                                 <!-- Frequency distribution from each course -->
+        //                                 <!-- For Each Categorized PLO -->
+        //                                 @foreach($ploProgramCategories as $index => $plo)
+        //                                     @if ($plo->plo_category != NULL)
+        //                                     <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+        //                                         @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
+        //                                             <!-- Check if a Tie is present -->
+        //                                             @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+        //                                                 <td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+        //                                                     <span style="color: black;">
+        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+        //                                                     </span>
+        //                                                 </td>
+        //                                             @else
+        //                                                 <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+        //                                                     <span style="color: black;">
+        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+        //                                                     </span>
+        //                                                 </td>
+        //                                             @endif
+
+        //                                         @else
+        //                                             <td class="text-center align-middle" style="background-color: white;">
+        //                                                 <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+        //                                             </td>
+        //                                         @endif
+        //                                     @endif
+        //                                 @endforeach
+        //                                 <!-- For Each Uncategorized PLO-->
+        //                                 @foreach($plos as $plo)
+        //                                     @if ($plo->plo_category == NULL)
+        //                                         <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+        //                                         @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
+        //                                             <!-- Check if a Tie is present -->
+        //                                             @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+        //                                                 <td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 10px, #ccc 10px, #ccc 20px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+        //                                                     <span style="color: black;">
+        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+        //                                                     </span>
+        //                                                 </td>
+        //                                             @else
+        //                                                 <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+        //                                                     <span style="color: black;">
+        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+        //                                                     </span>
+        //                                                 </td>
+        //                                             @endif
+
+        //                                         @else
+        //                                             <td class="text-center align-middle" style="background-color: white;">
+        //                                                 <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+        //                                             </td>
+        //                                         @endif
+        //                                     @endif
+        //                                 @endforeach
+        //                             </tr>
+        //                         @endforeach
+        //                     </table>
+        //                 @endif
+        //             </div>  
+        //             <!-- end Courses to PLOs frequency Distribution card -->
 }
