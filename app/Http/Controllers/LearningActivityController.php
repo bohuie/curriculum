@@ -52,6 +52,10 @@ class LearningActivityController extends Controller
             $newActivities = $request->input('new_l_activities');
             // get the course
             $course = Course::find($courseId);
+            // case: delete all teaching and learning activities
+            if (!$currentActivities && !$newActivities) {
+                Course::find($courseId)->learningActivities()->delete();
+            }
             // get the saved assessment methods for this course
             $learningActivities = $course->learningActivities;
             // update current assessment methods

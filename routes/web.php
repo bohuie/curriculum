@@ -70,8 +70,11 @@ Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCour
 Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
 
 Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
+Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
+Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
+
 
 Route::resource('/la','LearningActivityController');
 

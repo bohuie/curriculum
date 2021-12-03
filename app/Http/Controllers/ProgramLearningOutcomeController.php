@@ -1,13 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
+// composer generates this autoload.php file so you can start using the classes in dependencies without any extra work
 
 use App\Models\CourseProgram;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\User;
+use App\Models\PLOCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use App\Helpers\ReadOutcomesFilter;
+use Illuminate\Support\Facades\Log;
 
 class ProgramLearningOutcomeController extends Controller
 {
@@ -174,5 +181,82 @@ class ProgramLearningOutcomeController extends Controller
         }
 
         return redirect()->route('programWizard.step1',$request->input('program_id'));
-}
+    }   
+
+    public function import(Request $request)
+    {   
+        // $this->validate($request, [
+        //     'upload'=> 'required|mimes:csv,xlsx,xlx,xls|max:2048',
+        // ]);
+        $programId = $request->input('program_id');
+        $file = $request->file('upload');
+        $clientFileName = $file->getClientOriginalName();
+        $path = $file->storeAs(
+            'temporary', $clientFileName
+        );
+        $absolutePath = storage_path('app\\temporary\\' . $clientFileName);
+
+        /**  Create a new reader of the type defined by $clientFileName extension  **/
+        $reader = IOFactory::createReaderForFile($absolutePath);
+        /**  Advise the reader that we only want to load cell data, not cell formatting info  **/
+        $reader->setReadDataOnly(true);
+        // a read filter can be used to set rules on which cells should be read from a file
+        $reader->setReadFilter( new ReadOutcomesFilter(0, 30, ['A', 'B']) );
+        /**  Load $inputFileName to a Spreadsheet Object  **/
+        $spreadsheet = $reader->load($absolutePath);  
+        $worksheets = $spreadsheet->getAllSheets();
+        foreach ($worksheets as $worksheet) {
+            // create a program learning outcome category
+            $worksheetTitle = $worksheet->getTitle();
+            Log::debug('Add PLO category: ' . $worksheetTitle);
+            $ploCategory = PLOCategory::create([
+                'plo_category' => $worksheetTitle,
+                'program_id' => $programId
+            ]);
+            foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
+                // skip header row
+                if ($rowIndex == 1) continue;
+                // get cell iterator
+                $cellIterator = $row->getCellIterator();
+                // loop through cells only when value is set
+                $cellIterator->setIterateOnlyExistingCells(TRUE); 
+                $plo = new ProgramLearningOutcome;
+                // set plo program id
+                $plo->program_id = $programId;
+                // set plo category
+                $plo->plo_category_id = $ploCategory->plo_category_id;
+
+                foreach ($cellIterator as $cell) {
+                    // get column index of cell
+                    $cellColumnIndex = Coordinate::columnIndexFromString($cell->getColumn());
+                    switch ($cellColumnIndex) {
+                        case 1: 
+                            // set PLO value
+                            $ploValue = $cell->getValue();
+                            if ($ploValue) $plo->pl_outcome = $ploValue;
+                            break;
+                        case 2:
+                            // set PLO Short Phrase
+                            $ploShortPhrase = $cell->getValue();
+                            if ($ploShortPhrase) $plo->plo_shortphrase = $ploShortPhrase;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                // save the new plo
+                if ($plo->pl_outcome) {
+                    $plo->save();
+                }
+            }
+        }
+        // delete file on server        
+        Storage::delete($path);
+        // before clearing the spreadsheet from memory, "break" the cyclic references to worksheets.
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        // return 
+        return redirect()->back();
+
+    }
 }

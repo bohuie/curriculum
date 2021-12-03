@@ -1,0 +1,14 @@
+Learning Outcomes,Short Phrase
+"A. Present to a group of peers the data characteristics of conditions or assumptions that can lead to different behaviors of specific algorithms and from the analysis, illustrate empirical studies to validate hypotheses about runtime measures.",Present to Peers
+"Illustrate informally the time and space complexity of algorithms and use big-O notation formally to show asymptotic upper 
+bounds and expected case bounds on time and space complexity, respectively.",Time and Space Complexity
+"Use recurrence relations to determine the time complexity of recursively defined algorithms by solve elementary recurrence 
+relations and present the results to a group of scholars. ",Recurrence
+"Determine an appropriate algorithmic approach to an industry problem and use appropriate techniques (e.g., greedy approach, 
+divide-and-conquer algorithm, recursive backtracking, dynamic programming, or heuristic approach) that considers the trade-
+offs between the brute force to solve a problem.",Industry Applications
+"Implement basic numerical algorithm methods (e.g., search algorithms, common quadratic and O(N log N) sorting algorithms, 
+fundamental graph algorithms, string-matching algorithm) to solve an industry problem and select the appreciate algorithm 
+for a particular context. ",Implement Algorithms
+"Design a deterministic finite state machine for a local engineering firm that accepts a specified language and generates a 
+regular expression to represent the language. ",Automata

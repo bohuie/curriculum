@@ -124,18 +124,26 @@
                 </div>
 
                 <div class="card-body">
-                    
                     <div class="row">
                         <div class="col">
-                            <h6 class="card-subtitle mb-4 lh-lg">
+                            <h6 class="card-subtitle mb-2 lh-lg">
                                 Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
                             </h6>
                         </div>
                     </div>
-                    <div class="row mb-1">
-                        <div class="col">
-                            <button type="button" class="btn btn-primary col-2 float-right bg-primary text-white fs-5"  data-toggle="modal" data-target="#addLearningOutcomeModal">
-                                <i class="bi bi-plus mr-2 "></i>CLO
+                    <div class="row mb-2 align-items-end">
+                        <form method="POST" class="col-6" action="{{ action('LearningOutcomeController@import') }}" enctype="multipart/form-data">
+                            <a href="{{asset('import_samples/import-clos-sample.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-clos-sample.csv</a>
+                            @csrf
+                            <div class="input-group">
+                                <input type="hidden" name="course_id" value="{{$course->course_id}}">
+                                <input type="file" name="upload" class="form-control" aria-label="Upload" required accept=".xlsx, .csv">
+                                <button class="btn bg-primary text-white" type="submit" ><b>Import CLOs</b><i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
+                            </div>
+                        </form>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-primary btn-lg col-4 fs-5 bg-primary text-white"  data-toggle="modal" data-target="#addLearningOutcomeModal">
+                                <b ><i class="bi bi-plus mr-2"></i>CLO</b>
                             </button>
                         </div>
                     </div>

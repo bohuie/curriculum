@@ -52,6 +52,10 @@ class AssessmentMethodController extends Controller
             $newWeights = $request->input('new_weights');
             // get the course
             $course = Course::find($courseId);
+            // case: delete all assessment methods
+            if (!$currentMethods && !$newMethods) {
+                Course::find($courseId)->assessmentMethods()->delete();
+            }
             // get the saved assessment methods for this course
             $assessmentMethods = $course->assessmentMethods;
             // update current assessment methods
