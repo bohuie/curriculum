@@ -24,31 +24,12 @@ use Illuminate\Support\Facades\DB;
 use function PHPUnit\Framework\isNull;
 
 class ProgramWizardController extends Controller
-{
+{   
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
         $this->middleware('hasAccess');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function step0($program_id)
-    // {
-    //     //header
-    //     $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okangan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
-    //     $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
-    //     $levels = array("Undergraduate", "Graduate", "Other");
-    //     $program = Program::where('program_id', $program_id)->first();
-    //     $user = User::where('id',Auth::id())->first();
-    //     $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
-    //                             ->select('users.email','program_users.user_id','program_users.program_id')
-    //                             ->where('program_users.program_id','=',$program_id)->get();
-
-    //     return view('programs.wizard.step1')->with('program', $program)->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers);
-    // }
 
     public function step1($program_id, Request $request)
     {
@@ -295,7 +276,6 @@ class ProgramWizardController extends Controller
         $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
                                     ->where('mapping_scale_programs.program_id', $program_id)->get();
 
-        /////////////////////////////////////////////////////////////////////////// to be removed
         // get all the courses this program belongs to
         $programCourses = $program->courses;
 
@@ -310,7 +290,6 @@ class ProgramWizardController extends Controller
         foreach ($programCourses as $programCourse) {
             $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
         }
-        //////////////////////////////////////////////////////////////////////////
 
                 // Get all PLO Id's
         $arrayPLOutcomeIds = ProgramLearningOutcome::where('program_id', $program_id)->pluck('pl_outcome_id')->toArray();
@@ -771,6 +750,63 @@ class ProgramWizardController extends Controller
         return $store;
     }
 
+    private $numCatUsed;
+
+    public function getNumCatUsed($ploProgramCategories) {
+        // returns the number of Categories that contain at least one PLO
+        $numCatUsed = 0;
+        $uniqueCategories = array();
+        foreach ($ploProgramCategories as $ploInCategory) {
+            if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
+                $uniqueCategories[] += $ploInCategory->plo_category_id;
+                $numCatUsed++;
+            }
+        }
+        $this->numCatUsed = $numCatUsed;
+    }
+
+    private $plosPerCategory;
+
+    public function getPlosPerCategory($ploProgramCategories) {
+        // plosPerCategory returns the number of plo's belonging to each category
+        // used for setting the colspan in the view
+        $plosPerCategory = array();
+        foreach($ploProgramCategories as $ploCategory) {
+            $plosPerCategory[$ploCategory->plo_category_id] = 0;
+        }
+        foreach($ploProgramCategories as $ploCategory) {
+            $plosPerCategory[$ploCategory->plo_category_id] += 1;
+        }
+        $this->plosPerCategory = $plosPerCategory;
+    }
+
+    private $hasUncategorized;
+
+    public function getHasUncategorized($plos) {
+        // returns true if there exists a plo without a category
+        $hasUncategorized = false;
+        foreach ($plos as $plo) {
+            if ($plo->plo_category == NULL) {
+                $hasUncategorized = true;
+            }
+        }
+        $this->hasUncategorized = $hasUncategorized;
+    }
+
+    private $numUncategorizedPLOS;
+
+    public function getNumUncategorizedPLOS($allPLO) {
+        // Used for setting colspan in view
+        $numUncategorizedPLOS = 0;
+        foreach ($allPLO as $plo) {
+            if ($plo->plo_category_id == null){
+                $numUncategorizedPLOS ++;
+            }
+        }
+        $this->numUncategorizedPLOS = $numUncategorizedPLOS;
+    }
+
+
     // called when requested by ajax on step 4
     public function getSomething($program_id) {
         $program = Program::find($program_id);
@@ -781,57 +817,16 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // returns the number of Categories that contain at least one PLO
-        $numCatUsed = 0;
-        $uniqueCategories = array();
-        foreach ($ploProgramCategories as $ploInCategory) {
-            if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
-                $uniqueCategories[] += $ploInCategory->plo_category_id;
-                $numCatUsed++;
-            }
-        }
         // get plo's for the program 
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
-        // returns true if there exists a plo without a category
-        $hasUncategorized = false;
-        foreach ($plos as $plo) {
-            if ($plo->plo_category == NULL) {
-                $hasUncategorized = true;
-            }
-        }
-        
-        // All Learning Outcomes for program courses
-        $LearningOutcomesForProgramCourses = array();
-        foreach ($programCourses as $programCourse) {
-            $LearningOutcomesForProgramCourses[$programCourse->course_id] = LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray();
-        }
-
-        // ploCount * cloCount = number of outcome map results for course and program
-        $expectedTotalOutcomes = array();
-        foreach ($programCourses as $programCourse) {
-            $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
-        }
-        
-        // plosPerCategory returns the number of plo's belonging to each category
-        // used for setting the colspan in the view
-        $plosPerCategory = array();
-        foreach($ploProgramCategories as $ploCategory) {
-            $plosPerCategory[$ploCategory->plo_category_id] = 0;
-        }
-        foreach($ploProgramCategories as $ploCategory) {
-            $plosPerCategory[$ploCategory->plo_category_id] += 1;
-        }
-
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
 
-        // Used for setting colspan in view
-        $numUncategorizedPLOS = 0;
-        foreach ($allPLO as $plo) {
-            if ($plo->plo_category_id == null){
-                $numUncategorizedPLOS ++;
-            }
-        }
+        // set global variables
+        $this->getHasUncategorized($plos);
+        $this->getNumCatUsed($ploProgramCategories);
+        $this->getPlosPerCategory($ploProgramCategories);
+        $this->getNumUncategorizedPLOS($allPLO);
 
         // All Courses Frequency Distribution
         $coursesOutcomes = array();
@@ -844,12 +839,12 @@ class ProgramWizardController extends Controller
         $store = $this->replaceIdsWithAbv($store, $arr);
         $store = $this->assignColours($store);
 
-        $output = $this->generateHTML($programCourses, $ploCount, $plos, $ploCategories, $numCatUsed, $plosPerCategory, $hasUncategorized, $numUncategorizedPLOS, $ploProgramCategories, $store);
+        $output = $this->generateHTML($programCourses, $ploCount, $plos, $ploCategories, $ploProgramCategories, $store);
 
         return response()->json($output, 200);
     }
 
-    public function generateHTML($programCourses, $ploCount, $plos, $ploCategories, $numCatUsed, $plosPerCategory, $hasUncategorized, $numUncategorizedPLOS, $ploProgramCategories, $store) {
+    public function generateHTML($programCourses, $ploCount, $plos, $ploCategories, $ploProgramCategories, $store) {
         $output = '';
 
         $output = '<div class="card-body">
@@ -879,15 +874,15 @@ class ProgramWizardController extends Controller
             foreach ($ploCategories as $index =>$plo) {
                 if ($plo->plo_category != NULL) {
                     // Use short name for category if there are more than 3
-                    if (($numCatUsed > 3) && ($plo->plos->count() > 0)) {
-                        $output .= '<th colspan=" '.$plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
+                    if (($this->numCatUsed > 3) && ($plo->plos->count() > 0)) {
+                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
                     }elseif ($plo->plos->count() > 0) {
-                        $output .= '<th colspan=" '.$plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_category.'</th>';
+                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_category.'</th>';
                     }
                 }
             }
-            if ($hasUncategorized) {
-                $output .= '<th colspan=" '.$numUncategorizedPLOS.' " style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>';
+            if ($this->hasUncategorized) {
+                $output .= '<th colspan=" '.$this->numUncategorizedPLOS.' " style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>';
             }
             $output .= '</tr>
                         <tr>
