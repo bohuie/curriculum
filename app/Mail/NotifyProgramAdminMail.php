@@ -18,7 +18,7 @@ class NotifyProgramAdminMail extends Mailable
      *
      * @return void
      */
-    public function __construct(String $program_title, String $program_dept, String $user_name)
+    public function __construct($program_title, $program_dept, $user_name)
     {
         $this->program_title = $program_title;   // program title (ex. Bachelor of Computer Science)
         $this->program_dept = $program_dept;     // program department (ex. Computer Science)

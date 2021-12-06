@@ -70,13 +70,15 @@
 
                                                     <div class="col-md-8">
                                                         <select id='department' class="custom-select" name="department" required>
-                                                            @for($i =0; $i<count($departments) ; $i++)
-                                                                @if($departments[$i]==$program->department)
+                                                            <option disabled selected hidden>Open this select menu</option>
+                                                            @foreach ($departments as $department)
+                                                                @if ($department == $program->department)
                                                                     <option value="{{$program->department}}" selected>{{$program->department}}</option>
-                                                                @else
-                                                                    <option value="{{$departments[$i]}}">{{$departments[$i]}}</option>
+                                                                @else 
+                                                                    <option value="{{$department}}">{{$department}}</option>
                                                                 @endif
-                                                            @endfor
+
+                                                            @endforeach
                                                         </select>
 
                                                         @error('department')
