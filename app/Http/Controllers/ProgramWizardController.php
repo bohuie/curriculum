@@ -417,92 +417,92 @@ class ProgramWizardController extends Controller
         }
 
         // All Courses Frequency Distribution
-        $coursesOutcomes = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
-        $arr = array();
-        $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
-        $store = array();
-        $store = $this->createCDFArray($arr, $store);
-        $store = $this->frequencyDistribution($arr, $store);
-        $store = $this->replaceIdsWithAbv($store, $arr);
-        $store = $this->assignColours($store);
+        // $coursesOutcomes = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
+        // $arr = array();
+        // $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
+        // $store = array();
+        // $store = $this->createCDFArray($arr, $store);
+        // $store = $this->frequencyDistribution($arr, $store);
+        // $store = $this->replaceIdsWithAbv($store, $arr);
+        // $store = $this->assignColours($store);
 
-        // First Year Courses Frequency Distribution
-        $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $firstYearProgramCourses);
-        $arrFirst = array();
-        $arrFirst = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFirst);
-        $storeFirst = array();
-        $storeFirst = $this->createCDFArray($arrFirst, $storeFirst);
-        $storeFirst = $this->frequencyDistribution($arrFirst, $storeFirst);
-        $storeFirst = $this->replaceIdsWithAbv($storeFirst, $arrFirst);
-        $storeFirst = $this->assignColours($storeFirst);
+        // // First Year Courses Frequency Distribution
+        // $coursesOutcome = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $firstYearProgramCourses);
+        // $arrFirst = array();
+        // $arrFirst = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFirst);
+        // $storeFirst = array();
+        // $storeFirst = $this->createCDFArray($arrFirst, $storeFirst);
+        // $storeFirst = $this->frequencyDistribution($arrFirst, $storeFirst);
+        // $storeFirst = $this->replaceIdsWithAbv($storeFirst, $arrFirst);
+        // $storeFirst = $this->assignColours($storeFirst);
 
-        // Second Year Courses Frequency Distribution
-        $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $secondYearProgramCourses);
-        $arrSecond = array();
-        $arrSecond = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrSecond);
-        $storeSecond = array();
-        $storeSecond = $this->createCDFArray($arrSecond, $storeSecond);
-        $storeSecond = $this->frequencyDistribution($arrSecond, $storeSecond);
-        $storeSecond = $this->replaceIdsWithAbv($storeSecond, $arrSecond);
-        $storeSecond = $this->assignColours($storeSecond);
+        // // Second Year Courses Frequency Distribution
+        // $coursesOutcome = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $secondYearProgramCourses);
+        // $arrSecond = array();
+        // $arrSecond = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrSecond);
+        // $storeSecond = array();
+        // $storeSecond = $this->createCDFArray($arrSecond, $storeSecond);
+        // $storeSecond = $this->frequencyDistribution($arrSecond, $storeSecond);
+        // $storeSecond = $this->replaceIdsWithAbv($storeSecond, $arrSecond);
+        // $storeSecond = $this->assignColours($storeSecond);
 
-        // Third Year Courses Frequency Distribution
-        $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $thirdYearProgramCourses);
-        $arrThird = array();
-        $arrThird = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrThird);
-        $storeThird = array();
-        $storeThird = $this->createCDFArray($arrThird, $storeThird);
-        $storeThird = $this->frequencyDistribution($arrThird, $storeThird);
-        $storeThird = $this->replaceIdsWithAbv($storeThird, $arrThird);
-        $storeThird = $this->assignColours($storeThird);
+        // // Third Year Courses Frequency Distribution
+        // $coursesOutcome = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $thirdYearProgramCourses);
+        // $arrThird = array();
+        // $arrThird = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrThird);
+        // $storeThird = array();
+        // $storeThird = $this->createCDFArray($arrThird, $storeThird);
+        // $storeThird = $this->frequencyDistribution($arrThird, $storeThird);
+        // $storeThird = $this->replaceIdsWithAbv($storeThird, $arrThird);
+        // $storeThird = $this->assignColours($storeThird);
 
-        // fourth Year Courses Frequency Distribution
-        $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $fourthYearProgramCourses);
-        $arrFourth = array();
-        $arrFourth = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFourth);
-        $storeFourth = array();
-        $storeFourth = $this->createCDFArray($arrFourth, $storeFourth);
-        $storeFourth = $this->frequencyDistribution($arrFourth, $storeFourth);
-        $storeFourth = $this->replaceIdsWithAbv($storeFourth, $arrFourth);
-        $storeFourth = $this->assignColours($storeFourth);
+        // // fourth Year Courses Frequency Distribution
+        // $coursesOutcome = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $fourthYearProgramCourses);
+        // $arrFourth = array();
+        // $arrFourth = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFourth);
+        // $storeFourth = array();
+        // $storeFourth = $this->createCDFArray($arrFourth, $storeFourth);
+        // $storeFourth = $this->frequencyDistribution($arrFourth, $storeFourth);
+        // $storeFourth = $this->replaceIdsWithAbv($storeFourth, $arrFourth);
+        // $storeFourth = $this->assignColours($storeFourth);
 
-        // graduate Courses Frequency Distribution
-        $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $graduateProgramCourses);
-        $arrGraduate = array();
-        $arrGraduate = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrGraduate);
-        $storeGraduate = array();
-        $storeGraduate = $this->createCDFArray($arrGraduate, $storeGraduate);
-        $storeGraduate = $this->frequencyDistribution($arrGraduate, $storeGraduate);
-        $storeGraduate = $this->replaceIdsWithAbv($storeGraduate, $arrGraduate);
-        $storeGraduate = $this->assignColours($storeGraduate);
+        // // graduate Courses Frequency Distribution
+        // $coursesOutcome = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $graduateProgramCourses);
+        // $arrGraduate = array();
+        // $arrGraduate = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrGraduate);
+        // $storeGraduate = array();
+        // $storeGraduate = $this->createCDFArray($arrGraduate, $storeGraduate);
+        // $storeGraduate = $this->frequencyDistribution($arrGraduate, $storeGraduate);
+        // $storeGraduate = $this->replaceIdsWithAbv($storeGraduate, $arrGraduate);
+        // $storeGraduate = $this->assignColours($storeGraduate);
 
-        // Required Courses Frequency Distribution
-        $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
-        $arrRequired = array();
-        $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
-        $storeRequired = array();
-        $storeRequired = $this->createCDFArray($arrRequired, $storeRequired);
-        $storeRequired = $this->frequencyDistribution($arrRequired, $storeRequired);
-        $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
-        $storeRequired = $this->assignColours($storeRequired);
+        // // Required Courses Frequency Distribution
+        // $coursesOutcome = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
+        // $arrRequired = array();
+        // $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
+        // $storeRequired = array();
+        // $storeRequired = $this->createCDFArray($arrRequired, $storeRequired);
+        // $storeRequired = $this->frequencyDistribution($arrRequired, $storeRequired);
+        // $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
+        // $storeRequired = $this->assignColours($storeRequired);
 
-        // Required Courses Frequency Distribution
-        $coursesOutcome = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $nonRequiredProgramCourses);
-        $arrNonRequired = array();
-        $arrNonRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrNonRequired);
-        $storeNonRequired = array();
-        $storeNonRequired = $this->createCDFArray($arrNonRequired, $storeNonRequired);
-        $storeNonRequired = $this->frequencyDistribution($arrNonRequired, $storeNonRequired);
-        $storeNonRequired = $this->replaceIdsWithAbv($storeNonRequired, $arrNonRequired);
-        $storeNonRequired = $this->assignColours($storeNonRequired);
+        // // Required Courses Frequency Distribution
+        // $coursesOutcome = array();
+        // $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $nonRequiredProgramCourses);
+        // $arrNonRequired = array();
+        // $arrNonRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrNonRequired);
+        // $storeNonRequired = array();
+        // $storeNonRequired = $this->createCDFArray($arrNonRequired, $storeNonRequired);
+        // $storeNonRequired = $this->frequencyDistribution($arrNonRequired, $storeNonRequired);
+        // $storeNonRequired = $this->replaceIdsWithAbv($storeNonRequired, $arrNonRequired);
+        // $storeNonRequired = $this->assignColours($storeNonRequired);
 
         // Get Mapping Scales for high-chart
         $programMappingScales = $mappingScales->pluck('abbreviation')->toArray();
@@ -542,15 +542,17 @@ class ProgramWizardController extends Controller
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('coursesOutcomes', $coursesOutcomes)
+                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
-                                            ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('testArr', $store)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('numCatUsed', $numCatUsed)
-                                            ->with('storeRequired', $storeRequired)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)->with('secondYearProgramCourses', $secondYearProgramCourses)->with('storeSecond', $storeSecond)
-                                            ->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('fourthYearProgramCourses', $fourthYearProgramCourses)->with('storeFourth', $storeFourth)
-                                            ->with('graduateProgramCourses', $graduateProgramCourses)->with('storeGraduate', $storeGraduate)->with('hasUnMappedCourses', $hasUnMappedCourses)
-                                            ->with('nonRequiredProgramCourses', $nonRequiredProgramCourses)->with('storeNonRequired', $storeNonRequired)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'));
+                                            ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('requiredProgramCourses', $requiredProgramCourses)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
+
+                                            // removed to optimize page
+                                            //->with('testArr', $store)->with('storeRequired', $storeRequired)->with('coursesOutcomes', $coursesOutcomes)
+                                            //->with('firstYearProgramCourses', $firstYearProgramCourses)->with('storeFirst', $storeFirst)->with('secondYearProgramCourses', $secondYearProgramCourses)->with('storeSecond', $storeSecond)
+                                            //->with('thirdYearProgramCourses', $thirdYearProgramCourses)->with('storeThird', $storeThird)->with('fourthYearProgramCourses', $fourthYearProgramCourses)->with('storeFourth', $storeFourth)
+                                            //->with('graduateProgramCourses', $graduateProgramCourses)->with('storeGraduate', $storeGraduate)
+                                            // ->with('nonRequiredProgramCourses', $nonRequiredProgramCourses)->with('storeNonRequired', $storeNonRequired)
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
@@ -847,10 +849,6 @@ class ProgramWizardController extends Controller
     public function generateHTML($programCourses, $ploCount, $plos, $ploCategories, $ploProgramCategories, $store) {
         $output = '';
 
-        $output = '<div class="card-body">
-                        <h5 class="card-title">
-                            Curriculum Map
-                        </h5>';
         if (count($programCourses) < 1) {
             $output .= '<div class="alert alert-warning wizard">
                             <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                   
@@ -860,8 +858,7 @@ class ProgramWizardController extends Controller
                             <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
                         </div>';
         } else {
-            $output .= '<p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
-                        <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
+            $output .= '<table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
                             <tr class="table-primary">
                                 <th colspan="1" class="w-auto">Courses</th>
                                 <th class="text-left" colspan=" '.count($plos).' ">Program-level Learning Outcomes</th>
@@ -994,7 +991,6 @@ class ProgramWizardController extends Controller
             }
             $output .= '</table>';
         }
-        $output .= '</div>';
 
         return $output;
     }
