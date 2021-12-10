@@ -57,7 +57,7 @@
                                 <button class="nav-link w-25" id="nav-mapping-scale-tab" data-bs-toggle="tab" data-bs-target="#nav-mapping-scale" type="button" role="tab" aria-controls="nav-mapping-scale" aria-selected="false">Mapping Scale</button>
                                 <button class="nav-link w-25" id="nav-bar-charts-tab" data-bs-toggle="tab" data-bs-target="#nav-bar-charts" type="button" role="tab" aria-controls="nav-bar-charts" aria-selected="false">Bar Charts</button>
                                 <!-- <button class="nav-link w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-map" type="button" role="tab" aria-controls="nav-plo-map" aria-selected="false">Charts</button> -->
-                                <button class="nav-link w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-charts" type="button" role="tab" aria-controls="nav-charts" aria-selected="false">Frequency Distribution Charts</button>
+                                <button class="nav-link w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-charts" type="button" role="tab" aria-controls="nav-charts" aria-selected="false">Frequency Distribution Tables</button>
                             </div>
                         </nav>
                         
@@ -155,33 +155,6 @@
                                                         </td>
                                                     </tr>
                                                 @endforeach
-                                                    <!--Legend-->
-                                                    <tr class="table-primary">
-                                                        <th class="text-left" colspan="2">Additional Denominations</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;">
-                                                        </td>
-                                                        <td>
-                                                            Occurs when two or more CLOs map to a PLO an equal number of times.
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-center align-middle">
-                                                            <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
-                                                        </td>
-                                                        <td>
-                                                            Occurs when a course has not yet been mapped to the set of PLOs.
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-center align-middle">
-                                                            N/A
-                                                        </td>
-                                                        <td>
-                                                            Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
-                                                        </td>
-                                                    </tr>
                                             </tbody>
                                         </table>
                                     @endif
@@ -192,8 +165,9 @@
                             <!-- Bar Charts Tab -->
                             <div class="tab-pane fade" id="nav-bar-charts" role="tabpanel" aria-labelledby="nav-bar-charts-tab">
                                 <div class="card-body">
+                                    <p>This chart shows how many CLOs (course learning outcomes) are aligned with each of the PLOs (program-level learning outcomes)</p>
                                     <!-- Column Chart -->
-                                    <div class="mt-5">
+                                    <div class="mt-3">
                                         <form action="">
                                             <div class=" mx-5 mt-2">
                                                 <div class="form-check">
@@ -217,14 +191,49 @@
                             <!-- Charts Tab -->
                             <div class="tab-pane fade" id="nav-charts" role="tabpanel" aria-labelledby="nav-charts">
                                 <div class="card-body">
-                                    <p>These charts show the alignment of courses to program learning outcomes for this program.</p>
+                                    <p>These tables use frequency distribution to show the alignment between individual courses and each PLO (program learning outcomes).</p>
+                                    <table class="table table-bordered table-sm" style="width: 95%; margin: auto; table-layout:auto;">
+                                        <!--Legend-->
+                                        <tr class="table-primary">
+                                            <th class="text-left" colspan="2">Additional Denominations</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="background:repeating-linear-gradient(45deg, transparent, transparent 4px, #ccc 4px, #ccc 8px), linear-gradient( to bottom, #fff, #999); height: 50px; width: 50px;">
+                                            </td>
+                                            <td>
+                                                Occurs when two or more CLOs map to a PLO an equal number of times.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center align-middle">
+                                                <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+                                            </td>
+                                            <td>
+                                                Occurs when a course has not yet been mapped to the set of PLOs.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center align-middle">
+                                                N/A
+                                            </td>
+                                            <td>
+                                                Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
+                                            </td>
+                                        </tr>
+                                    </table>
 
                                     <!-- Charts Inner Tabs -->
                                     <nav class="mt-4">
-                                        <div class="nav nav-tabs" id="nav-inner-tab" role="tablist">
+                                        <div class="nav nav-tabs justify-content-center" id="nav-inner-tab" role="tablist">
                                             <!-- Change this id name -->
-                                            <button class="nav-link active w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-all-courses" type="button" role="tab" aria-controls="nav-all-courses" aria-selected="true">All Courses</button>
-                                            <button class="nav-link w-25" id="nav-none-tab" data-bs-toggle="tab" data-bs-target="#nav-none" type="button" role="tab" aria-controls="nav-none" aria-selected="false">Required Courses</button>
+                                            <button class="nav-link active w-15" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-all-courses" type="button" role="tab" aria-controls="nav-all-courses" aria-selected="true">All Courses</button>
+                                            <button class="nav-link w-15" id="nav-required-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-required" type="button" role="tab" aria-controls="nav-required" aria-selected="false">Required Courses</button>
+                                            <button class="nav-link w-15" id="nav-non-required-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-non-required" type="button" role="tab" aria-controls="nav-none-required" aria-selected="false">Non-Required Courses</button>
+                                            <button class="nav-link w-15" id="nav-first-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-first" type="button" role="tab" aria-controls="nav-first" aria-selected="false">100 Level Courses</button>
+                                            <button class="nav-link w-15" id="nav-second-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-second" type="button" role="tab" aria-controls="nav-second" aria-selected="false">200 Level Courses</button>
+                                            <button class="nav-link w-15" id="nav-third-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-third" type="button" role="tab" aria-controls="nav-third" aria-selected="false">300 Level Courses</button>
+                                            <button class="nav-link w-15" id="nav-fourth-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-fourth" type="button" role="tab" aria-controls="nav-fourth" aria-selected="false">400 Level Courses</button>
+                                            <button class="nav-link w-15" id="nav-graduate-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-graduate" type="button" role="tab" aria-controls="nav-graduate" aria-selected="false">500/600 Level Courses</button>
                                         </div>
                                     </nav>
 
@@ -242,16 +251,89 @@
                                         </div>
                                         <!-- End Tab All Courses -->
 
-                                        <!-- Tab All Courses -->
-                                        <div class="tab-pane fade" id="nav-none" role="tabpanel" aria-labelledby="nav-none">
-                                            <div id='loading-div'>
+                                        <!-- Tab Required Courses -->
+                                        <div class="tab-pane fade" id="nav-required" role="tabpanel" aria-labelledby="nav-required">
+                                            <div id='loading-div-required'>
                                                 <h3 class="text-center">
                                                     Loading ...
                                                 </h3>
                                                 <div class="loader" style="margin: auto;"></div>
                                             </div>
+                                            <div id="requiredCoursesInput"></div>
                                         </div>
-                                        <!-- End Tab All Courses -->
+                                        <!-- End Tab Required Courses -->
+
+                                        <!-- Tab Non Required Courses -->
+                                        <div class="tab-pane fade" id="nav-non-required" role="tabpanel" aria-labelledby="nav-non-required">
+                                            <div id='loading-div-non-required'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            <div id="nonRequiredCoursesInput"></div>
+                                        </div>
+                                        <!-- End Non Tab Courses -->
+
+                                        <!-- Tab 100 Level Courses -->
+                                        <div class="tab-pane fade" id="nav-first" role="tabpanel" aria-labelledby="nav-first">
+                                            <div id='loading-div-first'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            <div id="firstCoursesInput"></div>
+                                        </div>
+                                        <!-- End 100 Level Courses -->
+
+                                        <!-- Tab 200 Level Courses -->
+                                        <div class="tab-pane fade" id="nav-second" role="tabpanel" aria-labelledby="nav-second">
+                                            <div id='loading-div-second'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            <div id="secondCoursesInput"></div>
+                                        </div>
+                                        <!-- End 200 Level Required Courses -->
+
+                                        <!-- Tab 300 Level Courses -->
+                                        <div class="tab-pane fade" id="nav-third" role="tabpanel" aria-labelledby="nav-third">
+                                            <div id='loading-div-third'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            <div id="thirdCoursesInput"></div>
+                                        </div>
+                                        <!-- End 300 Level Courses -->
+
+                                        <!-- Tab 400 Level Courses -->
+                                        <div class="tab-pane fade" id="nav-fourth" role="tabpanel" aria-labelledby="nav-fourth">
+                                            <div id='loading-div-fourth'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            <div id="fourthCoursesInput"></div>
+                                        </div>
+                                        <!-- End 400 Level Courses -->
+
+                                        <!-- Tab 500/600 Level Courses -->
+                                        <div class="tab-pane fade" id="nav-graduate" role="tabpanel" aria-labelledby="nav-graduate">
+                                            <div id='loading-div-graduate'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            <div id="graduateCoursesInput"></div>
+                                        </div>
+                                        <!-- End 500/600 Level Courses -->
 
                                     </div>
                                     <!-- End Charts Inner Tabs -->
@@ -290,6 +372,97 @@
                 success: function (data) {
                     $("#loading-div").fadeOut("fast");
                     $("#allCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-required-tab").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-required/",       
+                success: function (data) {
+                    $("#loading-div-required").fadeOut("fast");
+                    $("#requiredCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-non-required-tab").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-non-required/",       
+                success: function (data) {
+                    $("#loading-div-non-required").fadeOut("fast");
+                    $("#nonRequiredCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-first-tab").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-first/",       
+                success: function (data) {
+                    $("#loading-div-first").fadeOut("fast");
+                    $("#firstCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-second-tab").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-second/",       
+                success: function (data) {
+                    $("#loading-div-second").fadeOut("fast");
+                    $("#secondCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-third-tab").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-third/",       
+                success: function (data) {
+                    $("#loading-div-third").fadeOut("fast");
+                    $("#thirdCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-fourth-tab").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-fourth/",       
+                success: function (data) {
+                    $("#loading-div-fourth").fadeOut("fast");
+                    $("#fourthCoursesInput").html(data);
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-graduate-tab").click(function() { 
+            $.ajax({
+                type: "GET",
+                url: "get-graduate/",       
+                success: function (data) {
+                    $("#loading-div-graduate").fadeOut("fast");
+                    $("#graduateCoursesInput").html(data);
                     // Enables functionality of tool tips
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
@@ -349,10 +522,7 @@
             type: 'column'
         },
         title: {
-            text: 'Number of Course Outcomes'
-        },
-        subtitle: {
-            text: 'per Program Learning Outcomes'
+            text: 'Number of Course Outcomes per Program Learning Outcomes'
         },
         xAxis: {
             title: {

@@ -114,6 +114,13 @@ Route::post('/programWizard/{program}/step3/addCoursesToProgram', 'CourseProgram
 Route::post('/programWizard/{program}/step3/editCourseRequired', 'CourseProgramController@editCourseRequired')->name('courseProgram.editCourseRequired');
 // 
 Route::get('/programWizard/{program}/get-something', 'ProgramWizardController@getSomething');
+Route::get('/programWizard/{program}/get-required', 'ProgramWizardController@getRequiredCourses');
+Route::get('/programWizard/{program}/get-non-required', 'ProgramWizardController@getNonRequiredCourses');
+Route::get('/programWizard/{program}/get-first', 'ProgramWizardController@getFirstCourses');
+Route::get('/programWizard/{program}/get-second', 'ProgramWizardController@getSecondCourses');
+Route::get('/programWizard/{program}/get-third', 'ProgramWizardController@getThirdCourses');
+Route::get('/programWizard/{program}/get-fourth', 'ProgramWizardController@getFourthCourses');
+Route::get('/programWizard/{program}/get-graduate', 'ProgramWizardController@getGraduateCourses');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
