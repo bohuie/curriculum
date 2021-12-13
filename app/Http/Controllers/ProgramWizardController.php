@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssessmentMethod;
 use Illuminate\Http\Request;
 use App\Models\Program;
 use App\Models\ProgramUser;
@@ -340,24 +341,6 @@ class ProgramWizardController extends Controller
                 $numCatUsed++;
             }
         }
-        
-        // plosPerCategory returns the number of plo's belonging to each category
-        // used for setting the colspan in the view
-        $plosPerCategory = array();
-        foreach($ploProgramCategories as $ploCategory) {
-            $plosPerCategory[$ploCategory->plo_category_id] = 0;
-        }
-        foreach($ploProgramCategories as $ploCategory) {
-            $plosPerCategory[$ploCategory->plo_category_id] += 1;
-        }
-        
-        // Used for setting colspan in view
-        $numUncategorizedPLOS = 0;
-        foreach ($allPLO as $plo) {
-            if ($plo->plo_category_id == null){
-                $numUncategorizedPLOS ++;
-            }
-        }
 
         // returns true if there exists a plo without a category
         $hasUncategorized = false;
@@ -403,11 +386,22 @@ class ProgramWizardController extends Controller
             $index++;
         }
 
+        ///////////////////
+        $assessmentMethods = [];
+        foreach($programCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            // $assessmentMethods = AssessmentMethod::where('course_id', $programCourse->course_id)->get("a_method");
+        }
+        foreach ($assessmentMethods as $am) {
+            dd($am);
+        }
+        //dd($assessmentMethods);
+
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
-                                            ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)->with('plosPerCategory', $plosPerCategory)
-                                            ->with('numUncategorizedPLOS', $numUncategorizedPLOS)->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
+                                            ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
+                                            ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
                                             ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
     }
 

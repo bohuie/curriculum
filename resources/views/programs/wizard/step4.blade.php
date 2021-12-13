@@ -55,8 +55,7 @@
                             <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
                                 <button class="nav-link active w-25" id="nav-plo-tab" data-bs-toggle="tab" data-bs-target="#nav-plo" type="button" role="tab" aria-controls="nav-plo" aria-selected="true">Program Learning Outcomes</button>
                                 <button class="nav-link w-25" id="nav-mapping-scale-tab" data-bs-toggle="tab" data-bs-target="#nav-mapping-scale" type="button" role="tab" aria-controls="nav-mapping-scale" aria-selected="false">Mapping Scale</button>
-                                <button class="nav-link w-25" id="nav-bar-charts-tab" data-bs-toggle="tab" data-bs-target="#nav-bar-charts" type="button" role="tab" aria-controls="nav-bar-charts" aria-selected="false">Bar Charts</button>
-                                <!-- <button class="nav-link w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-map" type="button" role="tab" aria-controls="nav-plo-map" aria-selected="false">Charts</button> -->
+                                <button class="nav-link w-25" id="nav-bar-charts-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-bar-charts" type="button" role="tab" aria-controls="nav-bar-charts" aria-selected="false">Bar Charts</button>
                                 <button class="nav-link w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-charts" type="button" role="tab" aria-controls="nav-charts" aria-selected="false">Frequency Distribution Tables</button>
                             </div>
                         </nav>
@@ -163,27 +162,49 @@
                             <!-- End Mapping Scale Tab -->
 
                             <!-- Bar Charts Tab -->
-                            <div class="tab-pane fade" id="nav-bar-charts" role="tabpanel" aria-labelledby="nav-bar-charts-tab">
+                            <div class="tab-pane fade" id="nav-bar-charts" role="tabpanel" aria-labelledby="nav-bar-charts">
                                 <div class="card-body">
-                                    <p>This chart shows how many CLOs (course learning outcomes) are aligned with each of the PLOs (program-level learning outcomes)</p>
-                                    <!-- Column Chart -->
-                                    <div class="mt-3">
-                                        <form action="">
-                                            <div class=" mx-5 mt-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
-                                                    <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                    <!-- Charts Inner Tabs -->
+                                    <nav class="mt-2">
+                                        <div class="nav nav-tabs justify-content-center" id="nav-inner-charts-tab" role="tablist">
+                                            <!-- Change this id name -->
+                                            <button class="nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
+                                            <button class="nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Required Courses</button>
+                                        </div>
+                                    </nav>
+
+                                    <!-- PLO to CLO Tab -->
+                                    <div class="tab-pane fade show active" id="nav-plo-clo" role="tabpanel" aria-labelledby="nav-plo-clo">
+                                        <!-- Column Chart -->
+                                        <div class="mt-3" id="plo-clo-chart">
+                                            <p>This chart shows how many CLOs (course learning outcomes) are aligned with each of the PLOs (program-level learning outcomes)</p>
+                                            <form action="">
+                                                <div class=" mx-5 mt-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
+                                                        <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
+                                                        <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
-                                                    <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
-                                                </div>
+                                            </form>
+                                            <div class="container mt-0">
+                                                <div id="high-chart"></div>
                                             </div>
-                                        </form>
-                                        <div class="container mt-0">
-                                            <div id="high-chart"></div>
                                         </div>
                                     </div>
+                                    <!-- End PLO to CLO Tab -->
+
+                                    <!-- Assessment Methods Tab -->
+                                    <div class="tab-pane fade" id="nav-assessment-methods" role="tabpanel" aria-labelledby="nav-assessment-methods">
+                                        <div class="mt-3" id="assessment-methods-chart">
+                                            <p>This chart shows all of the assessment methods the courses belonging to this program use</p>
+
+                                        </div>
+                                    </div>
+                                    <!-- End Assessment Methods Tab -->
                                 </div>
                             </div>
                             <!-- End Bar Charts Tab -->
@@ -467,6 +488,20 @@
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
             });
+        });
+
+        $("#nav-plo-clo-tab").click(function() { 
+            // hide other charts 
+            $("assessment-methods-chart").hide();
+            // show plo-clo chart
+            $("#plo-clo-chart").show();
+        });
+
+        $("#nav-assessment-methods-tab").click(function() { 
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            //show plo-clo charts
+            $("assessment-methods-chart").show();
         });
     });
 </script>
