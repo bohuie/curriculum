@@ -169,7 +169,7 @@
                                         <div class="nav nav-tabs justify-content-center" id="nav-inner-charts-tab" role="tablist">
                                             <!-- Change this id name -->
                                             <button class="nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
-                                            <button class="nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Required Courses</button>
+                                            <button class="nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
                                         </div>
                                     </nav>
 
@@ -200,8 +200,10 @@
                                     <!-- Assessment Methods Tab -->
                                     <div class="tab-pane fade" id="nav-assessment-methods" role="tabpanel" aria-labelledby="nav-assessment-methods">
                                         <div class="mt-3" id="assessment-methods-chart">
-                                            <p>This chart shows all of the assessment methods the courses belonging to this program use</p>
-
+                                            <p>This chart shows the frequencies of the assessment methods for all courses belonging to this program.</p>
+                                            <div class="container mt-0">
+                                                <div id="high-chart-am"></div>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- End Assessment Methods Tab -->
@@ -490,9 +492,25 @@
             });
         });
 
+        $('#nav-bar-charts-tab').click(function() { 
+            // hide other charts and remove classes/set attributes
+            $("#assessment-methods-chart").hide();
+            $('#nav-assessment-methods-tab').removeClass('active');
+            $('#nav-assessment-methods-tab').attr('aria-selected', false);
+            $('#nav-assessment-methods').removeClass('show');
+            $('#nav-assessment-methods').removeClass('active');
+
+            // show plo-clo chart and add classes/set attributes
+            $('#nav-plo-clo-tab').addClass('active');
+            $('#nav-plo-clo-tab').attr('aria-selected', true);
+            $('#nav-plo-clo').addClass('show');
+            $('#nav-plo-clo').addClass('active');
+            $("#plo-clo-chart").show();
+        });
+
         $("#nav-plo-clo-tab").click(function() { 
             // hide other charts 
-            $("assessment-methods-chart").hide();
+            $("#assessment-methods-chart").hide();
             // show plo-clo chart
             $("#plo-clo-chart").show();
         });
@@ -501,7 +519,7 @@
             // hide other charts
             $("#plo-clo-chart").hide();
             //show plo-clo charts
-            $("assessment-methods-chart").show();
+            $("#assessment-methods-chart").show();
         });
     });
 </script>
@@ -524,7 +542,59 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+
 <script type="text/javascript">
+    // high chart for assessment methods
+    var amFreq = <?php echo json_encode($amFrequencies)?>;
+    var amTitles = $.map(amFreq, function(element,index) {return index});
+    var amValues = $.map(amFreq, function(element,index) {return element});
+    series = generateData();
+
+    function generateData() {
+        var series = [];
+
+        series.push({
+            name: '# of Occurrences',
+            data: amValues,
+            colorByPoint: true,
+        });
+        
+        return series;
+    }
+
+    $('#high-chart-am').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Assessment Method Frequencies'
+        },
+        xAxis: {
+            title: {
+                text: 'Assessment Methods',
+                margin: 20,
+                style: {
+                        fontWeight: 'bold',
+                },
+            },
+            categories: amTitles
+        },
+        yAxis: {
+            title: {
+                text: 'Frequency',
+                margin: 20,
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: series
+    });
+    
+</script>
+
+<script type="text/javascript">
+    // high chart for PLOs to CLOs 
     // This is required to set the radio button to checked, this is a known firefox bug.
     window.onload=check;
     function check() {
@@ -537,9 +607,9 @@
     var freq = <?php echo json_encode($freqForMS)?>;
     var series = [];
 
-    series = generateData(ms, colours);
+    series = generateData();
 
-    function generateData(ms, colours) {
+    function generateData() {
         var series = [];
 
         for (var i = 0; i < ms.length; i++) {
@@ -551,7 +621,6 @@
         }
         return series;
     }
-
     $('#high-chart').highcharts({
         chart: {
             type: 'column'
@@ -561,13 +630,18 @@
         },
         xAxis: {
             title: {
-                text: 'Program Learning Outcomes'
+                text: 'Program Learning Outcomes',
+                margin: 20,
+                style: {
+                    fontWeight: 'bold',
+                },
             },
             categories: plosInOrder
         },
         yAxis: {
             title: {
-                text: '# of Outcomes'
+                text: '# of Outcomes',
+                margin: 20,
             }
         },
         series: series
@@ -579,10 +653,7 @@
                 type: 'column'
             },
             title: {
-                text: 'Number of Course Outcomes'
-            },
-            subtitle: {
-                text: 'per Program Learning Outcomes'
+                text: 'Number of Course Outcomes per Program Learning Outcomes'
             },
             plotOptions: {
                 series: {
@@ -591,13 +662,18 @@
             },
             xAxis: {
                 title: {
-                    text: 'Program Learning Outcomes'
+                    text: 'Program Learning Outcomes',
+                    margin: 20,
+                    style: {
+                        fontWeight: 'bold',
+                    },
                 },
                 categories: plosInOrder
             },
             yAxis: {
                 title: {
-                    text: '# of Outcomes'
+                    text: '# of Outcomes',
+                    margin: 20,
                 }
             },
             series: series
@@ -610,20 +686,22 @@
                 type: 'column'
             },
             title: {
-                text: 'Number of Course Outcomes'
-            },
-            subtitle: {
-                text: 'per Program Learning Outcomes'
+                text: 'Number of Course Outcomes per Program Learning Outcomes'
             },
             xAxis: {
                 title: {
-                    text: 'Program Learning Outcomes'
+                    text: 'Program Learning Outcomes',
+                    margin: 20,
+                    style: {
+                        fontWeight: 'bold',
+                    },
                 },
                 categories: plosInOrder
             },
             yAxis: {
                 title: {
-                    text: '# of Outcomes'
+                    text: '# of Outcomes',
+                    margin: 20,
                 }
             },
             series: series

@@ -21,6 +21,8 @@ use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Sabberworm\CSS\Value\Size;
+use SebastianBergmann\Environment\Console;
 
 use function PHPUnit\Framework\isNull;
 
@@ -385,24 +387,48 @@ class ProgramWizardController extends Controller
             $freqForMS[$index] = $freqOfMSId;
             $index++;
         }
-
+        
         ///////////////////
         $assessmentMethods = [];
-        foreach($programCourses as $programCourse) {
+        foreach ($programCourses as $programCourse) {
             array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
-            // $assessmentMethods = AssessmentMethod::where('course_id', $programCourse->course_id)->get("a_method");
         }
-        foreach ($assessmentMethods as $am) {
-            dd($am);
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
         }
-        //dd($assessmentMethods);
+        // dd($allAM, $assessmentMethods);
+        // Get frequencies for all assessment methods
+        if (count($allAM) > 1) {
+            $amFrequencies = [];
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+        }
+        //dd($amFrequencies);
+        // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+        if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+            $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+            unset($amFrequencies['Final']);
+        }
+        //dd($amFrequencies);
+
+        // might have to seperate titles and values tbd... 
+        
+        ///////////////////
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
                                             ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)->with(compact('amFrequencies'));
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
