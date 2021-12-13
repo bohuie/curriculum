@@ -388,7 +388,6 @@ class ProgramWizardController extends Controller
             $index++;
         }
         
-        ///////////////////
         $assessmentMethods = [];
         foreach ($programCourses as $programCourse) {
             array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
@@ -399,10 +398,9 @@ class ProgramWizardController extends Controller
                 array_push($allAM, ucwords($am));
             }
         }
-        // dd($allAM, $assessmentMethods);
         // Get frequencies for all assessment methods
+        $amFrequencies = [];
         if (count($allAM) > 1) {
-            $amFrequencies = [];
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -410,18 +408,13 @@ class ProgramWizardController extends Controller
                     $amFrequencies += [ $allAM[$i] => 1 ];
                 }
             }
-        }
-        //dd($amFrequencies);
-        // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
-        if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
-            $amFrequencies['Final Exam'] += $amFrequencies['Final'];
-            unset($amFrequencies['Final']);
-        }
-        //dd($amFrequencies);
 
-        // might have to seperate titles and values tbd... 
-        
-        ///////////////////
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
