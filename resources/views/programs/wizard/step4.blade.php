@@ -95,10 +95,17 @@
                                                         @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                             <tr>
                                                                 <td class="text-center align-middle">{{$index + 1}}</td>
-                                                                <td>
-                                                                    <span style="font-weight: bold;">{{$ploCat->plo_shortphrase}}</span><br>
-                                                                    {{$ploCat->pl_outcome}}
-                                                                </td>
+                                                                @if ($ploCat->plo_shortphrase == '' || $ploCat->plo_shortphrase == NULL)
+                                                                    <td>
+                                                                        <span style="font-weight: bold;">PLO: {{$index + 1}}</span><br>
+                                                                        {{$ploCat->pl_outcome}}
+                                                                    </td>
+                                                                @else
+                                                                    <td>
+                                                                        <span style="font-weight: bold;">{{$ploCat->plo_shortphrase}}</span><br>
+                                                                        {{$ploCat->pl_outcome}}
+                                                                    </td>
+                                                                @endif
                                                             </tr>
                                                         @endif
                                                     @endforeach
@@ -112,10 +119,17 @@
                                                 @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                                     <tr>
                                                         <td class="text-center align-middle">{{count($ploProgramCategories) + $unCatIndex + 1}}</td>
-                                                        <td>
-                                                            <span style="font-weight: bold;">{{$unCatplo->plo_shortphrase}}</span><br>
-                                                            {{$unCatplo->pl_outcome}}
-                                                        </td>
+                                                        @if ($unCatplo->plo_shortphrase == '' || $unCatplo->plo_shortphrase == NULL)
+                                                            <td>
+                                                                <span style="font-weight: bold;">PLO: {{count($ploProgramCategories) + $unCatIndex + 1}}</span><br>
+                                                                {{$unCatplo->pl_outcome}}
+                                                            </td>
+                                                        @else
+                                                            <td>
+                                                                <span style="font-weight: bold;">{{$unCatplo->plo_shortphrase}}</span><br>
+                                                                {{$unCatplo->pl_outcome}}
+                                                            </td>
+                                                        @endif
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -170,6 +184,7 @@
                                             <!-- Change this id name -->
                                             <button class="nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
                                             <button class="nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
+                                            <button class="nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
                                         </div>
                                     </nav>
 
@@ -178,18 +193,20 @@
                                         <!-- Column Chart -->
                                         <div class="mt-3" id="plo-clo-chart">
                                             <p>This chart shows how many CLOs (course learning outcomes) are aligned with each of the PLOs (program-level learning outcomes)</p>
-                                            <form action="">
-                                                <div class=" mx-5 mt-2">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
-                                                        <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                            @if (!(count($programCourses) < 1)) 
+                                                <form action="">
+                                                    <div class=" mx-5 mt-2">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
+                                                            <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
+                                                            <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
+                                                        </div>
                                                     </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
-                                                        <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
-                                                    </div>
-                                                </div>
-                                            </form>
+                                                </form>
+                                            @endif
                                             <div class="container mt-0">
                                                 <div id="high-chart"></div>
                                             </div>
@@ -207,6 +224,17 @@
                                         </div>
                                     </div>
                                     <!-- End Assessment Methods Tab -->
+                                    
+                                    <!-- Learning Activities Tab -->
+                                    <div class="tab-pane fade" id="nav-learning-activity" role="tabpanel" aria-labelledby="nav-learning-activity">
+                                        <div class="mt-3" id="learning-activity-chart">
+                                            <p>This chart shows the frequencies of the learning activities for all courses belonging to this program.</p>
+                                            <div class="container mt-0">
+                                                <div id="high-chart-la"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Learning Activities Tab -->
                                 </div>
                             </div>
                             <!-- End Bar Charts Tab -->
@@ -391,7 +419,7 @@
         $("#getData").click(function() { 
             $.ajax({
                 type: "GET",
-                url: "get-something/",       
+                url: "get-courses/",       
                 success: function (data) {
                     $("#loading-div").fadeOut("fast");
                     $("#allCoursesInput").html(data);
@@ -495,10 +523,15 @@
         $('#nav-bar-charts-tab').click(function() { 
             // hide other charts and remove classes/set attributes
             $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
             $('#nav-assessment-methods-tab').removeClass('active');
+            $('#nav-learning-activity-tab').removeClass('active');
             $('#nav-assessment-methods-tab').attr('aria-selected', false);
+            $('#nav-learning-activity-tab').attr('aria-selected', false);
             $('#nav-assessment-methods').removeClass('show');
+            $('#nav-learning-activity').removeClass('show');
             $('#nav-assessment-methods').removeClass('active');
+            $('#nav-learning-activity').removeClass('active');
 
             // show plo-clo chart and add classes/set attributes
             $('#nav-plo-clo-tab').addClass('active');
@@ -511,6 +544,7 @@
         $("#nav-plo-clo-tab").click(function() { 
             // hide other charts 
             $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
             // show plo-clo chart
             $("#plo-clo-chart").show();
         });
@@ -518,8 +552,17 @@
         $("#nav-assessment-methods-tab").click(function() { 
             // hide other charts
             $("#plo-clo-chart").hide();
+            $("#learning-activity-chart").hide();
             //show plo-clo charts
             $("#assessment-methods-chart").show();
+        });
+
+        $("#nav-learning-activity-tab").click(function() { 
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            $("#assessment-methods-chart").hide();
+            //show plo-clo charts
+            $("#learning-activity-chart").show();
         });
     });
 </script>
@@ -545,6 +588,72 @@
 
 <script type="text/javascript">
     // high chart for assessment methods
+    var laFreq = <?php echo json_encode($laFrequencies)?>;
+    var laTitles = $.map(laFreq, function(element,index) {return index});
+    var laValues = $.map(laFreq, function(element,index) {return element});
+    series = generateData();
+
+    function generateData() {
+        var series = [];
+
+        series.push({
+            name: '# of Occurrences',
+            data: laValues,
+            colorByPoint: true,
+        });
+        
+        return series;
+    }
+
+    var programCourses = <?php echo json_encode($programCourses)?>;
+    if (programCourses.length < 1) {
+        $('#high-chart-la').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+            </div>
+        `);
+    } else if (laFreq.length < 1) {
+        $('#high-chart-la').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+            </div>
+        `);
+    } else {
+
+        $('#high-chart-la').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Learning Activities Frequencies'
+            },
+            xAxis: {
+                title: {
+                    text: 'Learning Activities',
+                    margin: 20,
+                    style: {
+                            fontWeight: 'bold',
+                    },
+                },
+                categories: laTitles
+            },
+            yAxis: {
+                title: {
+                    text: 'Frequency',
+                    margin: 20,
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            series: series
+        });
+    }
+    
+</script>
+
+<script type="text/javascript">
+    // high chart for assessment methods
     var amFreq = <?php echo json_encode($amFrequencies)?>;
     var amTitles = $.map(amFreq, function(element,index) {return index});
     var amValues = $.map(amFreq, function(element,index) {return element});
@@ -562,34 +671,51 @@
         return series;
     }
 
-    $('#high-chart-am').highcharts({
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Assessment Method Frequencies'
-        },
-        xAxis: {
-            title: {
-                text: 'Assessment Methods',
-                margin: 20,
-                style: {
-                        fontWeight: 'bold',
-                },
+    var programCourses = <?php echo json_encode($programCourses)?>;
+    if (programCourses.length < 1) {
+        $('#high-chart-am').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+            </div>
+        `);
+    } else if (amFreq.length < 1) {
+        $('#high-chart-am').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+            </div>
+        `);
+    } else {
+    
+        $('#high-chart-am').highcharts({
+            chart: {
+                type: 'column'
             },
-            categories: amTitles
-        },
-        yAxis: {
             title: {
-                text: 'Frequency',
-                margin: 20,
-            }
-        },
-        legend: {
-            enabled: false
-        },
-        series: series
-    });
+                text: 'Assessment Method Frequencies'
+            },
+            xAxis: {
+                title: {
+                    text: 'Assessment Methods',
+                    margin: 20,
+                    style: {
+                            fontWeight: 'bold',
+                    },
+                },
+                categories: amTitles
+            },
+            yAxis: {
+                title: {
+                    text: 'Frequency',
+                    margin: 20,
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            series: series
+        });
+
+    }
     
 </script>
 
@@ -606,7 +732,7 @@
     var plosInOrder = <?php echo json_encode($plosInOrder)?>;
     var freq = <?php echo json_encode($freqForMS)?>;
     var series = [];
-
+    
     series = generateData();
 
     function generateData() {
@@ -621,31 +747,41 @@
         }
         return series;
     }
-    $('#high-chart').highcharts({
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Number of Course Outcomes per Program Learning Outcomes'
-        },
-        xAxis: {
-            title: {
-                text: 'Program Learning Outcomes',
-                margin: 20,
-                style: {
-                    fontWeight: 'bold',
-                },
+
+    var programCourses = <?php echo json_encode($programCourses)?>;
+    if (programCourses.length < 1) {
+        $('#high-chart').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+            </div>
+        `);
+    } else {
+        $('#high-chart').highcharts({
+            chart: {
+                type: 'column'
             },
-            categories: plosInOrder
-        },
-        yAxis: {
             title: {
-                text: '# of Outcomes',
-                margin: 20,
-            }
-        },
-        series: series
-    });
+                text: 'Number of Course Outcomes per Program Learning Outcomes'
+            },
+            xAxis: {
+                title: {
+                    text: 'Program Learning Outcomes',
+                    margin: 20,
+                    style: {
+                        fontWeight: 'bold',
+                    },
+                },
+                categories: plosInOrder
+            },
+            yAxis: {
+                title: {
+                    text: '# of Outcomes',
+                    margin: 20,
+                }
+            },
+            series: series
+        });
+    }
 
     function StackedColumn() {
         $('#high-chart').highcharts({

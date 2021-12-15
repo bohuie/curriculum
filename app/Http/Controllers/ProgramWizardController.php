@@ -12,6 +12,7 @@ use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\Course;
 use App\Models\CourseProgram;
+use App\Models\LearningActivity;
 use App\Models\MappingScale;
 use App\Models\LearningOutcome;
 use App\Models\MappingScaleCategory;
@@ -409,10 +410,34 @@ class ProgramWizardController extends Controller
                 }
             }
 
+            // Special Case
             // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
             if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
                 $amFrequencies['Final Exam'] += $amFrequencies['Final'];
                 unset($amFrequencies['Final']);
+            }
+        }
+
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($programCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
             }
         }
 
@@ -421,7 +446,8 @@ class ProgramWizardController extends Controller
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
                                             ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)->with(compact('amFrequencies'));
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)->with(compact('amFrequencies'))
+                                            ->with(compact('laFrequencies'));
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
@@ -679,7 +705,7 @@ class ProgramWizardController extends Controller
 
 
     // called when requested by ajax on step 4
-    public function getSomething($program_id) {
+    public function getCourses($program_id) {
         $program = Program::find($program_id);
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all the courses this program belongs to
@@ -1031,15 +1057,26 @@ class ProgramWizardController extends Controller
 
             if (count($plos) < 7) {
                 //Categorized PLOs
-                foreach($ploProgramCategories as $plo) {
+                foreach($ploProgramCategories as $index => $plo) {
                     if ($plo->plo_category != NULL) {
-                        $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                        if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.($index + 1).'</th>';
+                        } else {
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                        }
                     }
                 }
                 //Uncategorized PLOs
+                $uncatIndex = 0;
                 foreach($plos as $plo) {
                     if ($plo->plo_category == NULL) {
-                        $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                        $uncatIndex++;
+                        if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.( count($ploProgramCategories) + $uncatIndex).'</th>';
+                        } else {
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                        }
+                        // $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
                     }
                 }
             } else {

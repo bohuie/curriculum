@@ -113,7 +113,7 @@ Route::post('/programWizard/{program}/step3/addCoursesToProgram', 'CourseProgram
 // Program step3 edit required status
 Route::post('/programWizard/{program}/step3/editCourseRequired', 'CourseProgramController@editCourseRequired')->name('courseProgram.editCourseRequired');
 // 
-Route::get('/programWizard/{program}/get-something', 'ProgramWizardController@getSomething');
+Route::get('/programWizard/{program}/get-courses', 'ProgramWizardController@getCourses');
 Route::get('/programWizard/{program}/get-required', 'ProgramWizardController@getRequiredCourses');
 Route::get('/programWizard/{program}/get-non-required', 'ProgramWizardController@getNonRequiredCourses');
 Route::get('/programWizard/{program}/get-first', 'ProgramWizardController@getFirstCourses');
