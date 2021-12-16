@@ -12,3 +12,4 @@ npm-debug.log
 yarn-error.log
 database/seeders/UserSeeder.php
 /nbproject
+resources/views/emails/
