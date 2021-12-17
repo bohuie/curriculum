@@ -1230,7 +1230,7 @@ class ProgramWizardController extends Controller
 
         return $output;
     }
-    // Sample for generating HTML.
+    // Sample for generating HTML. ( OLD CODE USED BEFORE, now we load this using ajax)
     // <!-- ALL COURSES frequency distribution table -->
         //             <div class="card-body">
         //                 <h5 class="card-title">
