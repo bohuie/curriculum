@@ -476,6 +476,174 @@ class ProgramWizardController extends Controller
         return response()->json($amFrequencies, 200);
     }
 
+    public function getAssessmentMethodsSecondYear($program_id) {
+        // get all the courses this program belongs to
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
+            if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 1 then remove it from the collection
+                $secondYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($secondYearProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getAssessmentMethodsThirdYear($program_id) {
+        // get all the courses this program belongs to
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
+            if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
+                $thirdYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($thirdYearProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getAssessmentMethodsFourthYear($program_id) {
+        // get all the courses this program belongs to
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
+            if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 1 then remove it from the collection
+                $fourthYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($fourthYearProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getAssessmentMethodsGraduate($program_id) {
+        // get all the courses this program belongs to
+        $GraduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($GraduateProgramCourses as $GraduateProgramCourse) {
+            if ($GraduateProgramCourse->course_num[0] != '5' || $GraduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 1 then remove it from the collection
+                $GraduateProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($GraduateProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
     public function getLearningActivities($program_id) {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to

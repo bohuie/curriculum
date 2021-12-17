@@ -127,6 +127,10 @@ Route::get('/programWizard/{program}/get-graduate', 'ProgramWizardController@get
 Route::get('/programWizard/{program}/get-la', 'ProgramWizardController@getLearningActivities');
 Route::get('/programWizard/{program}/get-am', 'ProgramWizardController@getAssessmentMethods');
 Route::get('/programWizard/{program}/get-am-first-year', 'ProgramWizardController@getAssessmentMethodsFirstYear');
+Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardController@getAssessmentMethodsSecondYear');
+Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
+Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
+Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
