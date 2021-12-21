@@ -388,7 +388,6 @@ class ProgramWizardController extends Controller
             $freqForMS[$index] = $freqOfMSId;
             $index++;
         }
-        
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
@@ -424,7 +423,7 @@ class ProgramWizardController extends Controller
                 }
             }
 
-            // Special Case
+            // Special Case (Might be removed in the future) 
             // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
             if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
                 $amFrequencies['Final Exam'] += $amFrequencies['Final'];
@@ -651,6 +650,176 @@ class ProgramWizardController extends Controller
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($programCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getFirstYearLearningActivities($program_id) {
+        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
+            if ($firstYearProgramCourse->course_num[0] != '1') {           // if the first number in course_num is not 1 then remove it from the collection
+                $firstYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($firstYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getSecondYearLearningActivities($program_id) {
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
+            if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 1 then remove it from the collection
+                $secondYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($secondYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getThirdYearLearningActivities($program_id) {
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
+            if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
+                $thirdYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($thirdYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getFourthYearLearningActivities($program_id) {
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
+            if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 1 then remove it from the collection
+                $fourthYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($fourthYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getGraduateLearningActivities($program_id) {
+        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($graduateProgramCourses as $graduateProgramCourse) {
+            if ($graduateProgramCourse->course_num[0] != '5' || $graduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 1 then remove it from the collection
+                $graduateProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($graduateProgramCourses as $programCourse) {
             array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
         }
         $allLA = [];
@@ -1251,22 +1420,24 @@ class ProgramWizardController extends Controller
                             <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
                         </div>';
         } else {
-            $output .= '<table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
-                            <tr class="table-primary">
-                                <th colspan="1" class="w-auto">Courses</th>
-                                <th class="text-left" colspan=" '.count($plos).' ">Program-level Learning Outcomes</th>
-                                    </tr>
+            $output .= '<table class="freq-table table table-bordered table-sm">
+                            <tbody class="freq-tbody">
+                                <tr class="table-primary">
+                                    <th colspan="1" class="w-auto">Courses</th>
+                                    <th class="text-left" colspan=" '.count($plos).' ">Program-level Learning Outcomes</th>
+                                        </tr>
 
-                                    <tr>
-                                        <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>
-                                        <!-- Displays Categories -->';
+                                        <tr>
+                                            <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>
+                                            <!-- Displays Categories -->';
 
             foreach ($ploCategories as $index =>$plo) {
                 if ($plo->plo_category != NULL) {
                     // Use short name for category if there are more than 3
-                    if (($this->numCatUsed > 3) && ($plo->plos->count() > 0)) {
-                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
-                    }elseif ($plo->plos->count() > 0) {
+                    // if (($this->numCatUsed > 3) && ($plo->plos->count() > 0)) {
+                    //     $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
+                    // }else
+                    if ($plo->plos->count() > 0) {
                         $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_category.'</th>';
                     }
                 }
@@ -1393,7 +1564,10 @@ class ProgramWizardController extends Controller
                                 }
                 $output .= '</tr>';
             }
-            $output .= '</table>';
+            $output .= '
+                            </tbody>
+                        </table>
+                        ';
         }
 
         return $output;

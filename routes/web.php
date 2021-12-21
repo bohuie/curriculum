@@ -124,7 +124,14 @@ Route::get('/programWizard/{program}/get-fourth', 'ProgramWizardController@getFo
 Route::get('/programWizard/{program}/get-graduate', 'ProgramWizardController@getGraduateCourses');
 
 // Program step 4 chart filters
+// learning activity filter routes
 Route::get('/programWizard/{program}/get-la', 'ProgramWizardController@getLearningActivities');
+Route::get('/programWizard/{program}/get-la-first-year', 'ProgramWizardController@getFirstYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-second-year', 'ProgramWizardController@getSecondYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-third-year', 'ProgramWizardController@getThirdYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-fourth-year', 'ProgramWizardController@getFourthYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-graduate', 'ProgramWizardController@getGraduateLearningActivities');
+// assessment method filter routes
 Route::get('/programWizard/{program}/get-am', 'ProgramWizardController@getAssessmentMethods');
 Route::get('/programWizard/{program}/get-am-first-year', 'ProgramWizardController@getAssessmentMethodsFirstYear');
 Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardController@getAssessmentMethodsSecondYear');
