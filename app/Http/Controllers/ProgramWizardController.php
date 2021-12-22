@@ -388,9 +388,64 @@ class ProgramWizardController extends Controller
             $freqForMS[$index] = $freqOfMSId;
             $index++;
         }
+
+        return view('programs.wizard.step4')->with('program', $program)
+                                            ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
+                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
+                                            ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
+                                            ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
+    }
+
+    public function getAssessmentMethods($program_id) {
+        $program = Program::where('program_id', $program_id)->first();
+        // get all the courses this program belongs to
+        $programCourses = $program->courses;
         
         $assessmentMethods = [];
         foreach ($programCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case (Might be removed in the future) 
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getAssessmentMethodsFirstYear($program_id) {
+        // get all the courses this program belongs to
+        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
+            if ($firstYearProgramCourse->course_num[0] != '1') {           // if the first number in course_num is not 1 then remove it from the collection
+                $firstYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($firstYearProgramCourses as $programCourse) {
             array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
         }
         $allAM = [];
@@ -417,7 +472,181 @@ class ProgramWizardController extends Controller
                 unset($amFrequencies['Final']);
             }
         }
+        return response()->json($amFrequencies, 200);
+    }
 
+    public function getAssessmentMethodsSecondYear($program_id) {
+        // get all the courses this program belongs to
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
+            if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 1 then remove it from the collection
+                $secondYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($secondYearProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getAssessmentMethodsThirdYear($program_id) {
+        // get all the courses this program belongs to
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
+            if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
+                $thirdYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($thirdYearProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getAssessmentMethodsFourthYear($program_id) {
+        // get all the courses this program belongs to
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
+            if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 1 then remove it from the collection
+                $fourthYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($fourthYearProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getAssessmentMethodsGraduate($program_id) {
+        // get all the courses this program belongs to
+        $GraduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($GraduateProgramCourses as $GraduateProgramCourse) {
+            if ($GraduateProgramCourse->course_num[0] != '5' || $GraduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 1 then remove it from the collection
+                $GraduateProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        
+        $assessmentMethods = [];
+        foreach ($GraduateProgramCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) > 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        return response()->json($amFrequencies, 200);
+    }
+
+    public function getLearningActivities($program_id) {
+        $program = Program::where('program_id', $program_id)->first();
+        // get all the courses this program belongs to
+        $programCourses = $program->courses;
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($programCourses as $programCourse) {
@@ -429,7 +658,7 @@ class ProgramWizardController extends Controller
                 array_push($allLA, ucwords($la));
             }
         }
-        // Get frequencies for all assessment methods
+        // Get frequencies for all Learning Activities
         $laFrequencies = [];
         if (count($allLA) > 1) {
             for ($i = 0; $i < count($allLA); $i++) {
@@ -440,14 +669,177 @@ class ProgramWizardController extends Controller
                 }
             }
         }
+        return response()->json($laFrequencies, 200);
+    }
 
-        return view('programs.wizard.step4')->with('program', $program)
-                                            ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
-                                            ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
-                                            ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)->with(compact('amFrequencies'))
-                                            ->with(compact('laFrequencies'));
+    public function getFirstYearLearningActivities($program_id) {
+        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
+            if ($firstYearProgramCourse->course_num[0] != '1') {           // if the first number in course_num is not 1 then remove it from the collection
+                $firstYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($firstYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getSecondYearLearningActivities($program_id) {
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
+            if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 1 then remove it from the collection
+                $secondYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($secondYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getThirdYearLearningActivities($program_id) {
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
+            if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
+                $thirdYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($thirdYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getFourthYearLearningActivities($program_id) {
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
+            if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 1 then remove it from the collection
+                $fourthYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($fourthYearProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
+    }
+
+    public function getGraduateLearningActivities($program_id) {
+        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($graduateProgramCourses as $graduateProgramCourse) {
+            if ($graduateProgramCourse->course_num[0] != '5' || $graduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 1 then remove it from the collection
+                $graduateProgramCourses->forget($count);
+            }
+            $count++;
+        }
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($graduateProgramCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) > 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+        return response()->json($laFrequencies, 200);
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
@@ -1028,22 +1420,24 @@ class ProgramWizardController extends Controller
                             <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
                         </div>';
         } else {
-            $output .= '<table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
-                            <tr class="table-primary">
-                                <th colspan="1" class="w-auto">Courses</th>
-                                <th class="text-left" colspan=" '.count($plos).' ">Program-level Learning Outcomes</th>
-                                    </tr>
+            $output .= '<table class="freq-table table table-bordered table-sm">
+                            <tbody class="freq-tbody">
+                                <tr class="table-primary">
+                                    <th colspan="1" class="w-auto">Courses</th>
+                                    <th class="text-left" colspan=" '.count($plos).' ">Program-level Learning Outcomes</th>
+                                        </tr>
 
-                                    <tr>
-                                        <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>
-                                        <!-- Displays Categories -->';
+                                        <tr>
+                                            <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>
+                                            <!-- Displays Categories -->';
 
             foreach ($ploCategories as $index =>$plo) {
                 if ($plo->plo_category != NULL) {
                     // Use short name for category if there are more than 3
-                    if (($this->numCatUsed > 3) && ($plo->plos->count() > 0)) {
-                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
-                    }elseif ($plo->plos->count() > 0) {
+                    // if (($this->numCatUsed > 3) && ($plo->plos->count() > 0)) {
+                    //     $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
+                    // }else
+                    if ($plo->plos->count() > 0) {
                         $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_category.'</th>';
                     }
                 }
@@ -1170,12 +1564,15 @@ class ProgramWizardController extends Controller
                                 }
                 $output .= '</tr>';
             }
-            $output .= '</table>';
+            $output .= '
+                            </tbody>
+                        </table>
+                        ';
         }
 
         return $output;
     }
-    // Sample for generating HTML.
+    // Sample for generating HTML. ( OLD CODE USED BEFORE, now we load this using ajax)
     // <!-- ALL COURSES frequency distribution table -->
         //             <div class="card-body">
         //                 <h5 class="card-title">

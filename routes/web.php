@@ -112,7 +112,8 @@ Route::get('/programWizard/{program}/step4','ProgramWizardController@step4')->na
 Route::post('/programWizard/{program}/step3/addCoursesToProgram', 'CourseProgramController@addCoursesToProgram')->name('courseProgram.addCoursesToProgram');
 // Program step3 edit required status
 Route::post('/programWizard/{program}/step3/editCourseRequired', 'CourseProgramController@editCourseRequired')->name('courseProgram.editCourseRequired');
-// 
+
+// Program step 4 Used to get frequency distribution tables 
 Route::get('/programWizard/{program}/get-courses', 'ProgramWizardController@getCourses');
 Route::get('/programWizard/{program}/get-required', 'ProgramWizardController@getRequiredCourses');
 Route::get('/programWizard/{program}/get-non-required', 'ProgramWizardController@getNonRequiredCourses');
@@ -121,6 +122,22 @@ Route::get('/programWizard/{program}/get-second', 'ProgramWizardController@getSe
 Route::get('/programWizard/{program}/get-third', 'ProgramWizardController@getThirdCourses');
 Route::get('/programWizard/{program}/get-fourth', 'ProgramWizardController@getFourthCourses');
 Route::get('/programWizard/{program}/get-graduate', 'ProgramWizardController@getGraduateCourses');
+
+// Program step 4 chart filters
+// learning activity filter routes
+Route::get('/programWizard/{program}/get-la', 'ProgramWizardController@getLearningActivities');
+Route::get('/programWizard/{program}/get-la-first-year', 'ProgramWizardController@getFirstYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-second-year', 'ProgramWizardController@getSecondYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-third-year', 'ProgramWizardController@getThirdYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-fourth-year', 'ProgramWizardController@getFourthYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-graduate', 'ProgramWizardController@getGraduateLearningActivities');
+// assessment method filter routes
+Route::get('/programWizard/{program}/get-am', 'ProgramWizardController@getAssessmentMethods');
+Route::get('/programWizard/{program}/get-am-first-year', 'ProgramWizardController@getAssessmentMethodsFirstYear');
+Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardController@getAssessmentMethodsSecondYear');
+Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
+Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
+Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');

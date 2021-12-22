@@ -85,16 +85,16 @@
                                                         @if ($plo->plos->count() > 0)
                                                             <tr class="table-secondary">
                                                                 <th class="text-left" colspan="2">{{$plo->plo_category}} 
-                                                                @if ($numCatUsed > 3)    
+                                                                <!-- @if ($numCatUsed > 3)    
                                                                     : (C - {{$catIndex + 1}})</th>
-                                                                @endif
+                                                                @endif -->
                                                             </tr>
                                                         @endif
                                                     @endif
                                                     @foreach($ploProgramCategories as $index => $ploCat)
                                                         @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                             <tr>
-                                                                <td class="text-center align-middle">{{$index + 1}}</td>
+                                                                <td class="text-left align-middle" style="width: 10%;">{{$index + 1}}</td>
                                                                 @if ($ploCat->plo_shortphrase == '' || $ploCat->plo_shortphrase == NULL)
                                                                     <td>
                                                                         <span style="font-weight: bold;">PLO: {{$index + 1}}</span><br>
@@ -118,7 +118,7 @@
                                                 @endif
                                                 @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                                     <tr>
-                                                        <td class="text-center align-middle">{{count($ploProgramCategories) + $unCatIndex + 1}}</td>
+                                                        <td class="text-left align-middle" style="width: 10%;">{{count($ploProgramCategories) + $unCatIndex + 1}}</td>
                                                         @if ($unCatplo->plo_shortphrase == '' || $unCatplo->plo_shortphrase == NULL)
                                                             <td>
                                                                 <span style="font-weight: bold;">PLO: {{count($ploProgramCategories) + $unCatIndex + 1}}</span><br>
@@ -180,11 +180,11 @@
                                 <div class="card-body">
                                     <!-- Charts Inner Tabs -->
                                     <nav class="mt-2">
-                                        <div class="nav nav-tabs justify-content-center" id="nav-inner-charts-tab" role="tablist">
+                                        <div class="inner-nav nav nav-tabs justify-content-center" id="nav-inner-charts-tab" role="tablist">
                                             <!-- Change this id name -->
-                                            <button class="nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
-                                            <button class="nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
-                                            <button class="nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
+                                            <button class="inner-nav-link nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
+                                            <button class="inner-nav-link nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
+                                            <button class="inner-nav-link nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
                                         </div>
                                     </nav>
 
@@ -193,14 +193,14 @@
                                         <!-- Column Chart -->
                                         <div class="mt-3" id="plo-clo-chart">
                                             <p>This chart shows how many CLOs (course learning outcomes) are aligned with each of the PLOs (program-level learning outcomes)</p>
-                                            @if (!(count($programCourses) < 1)) 
+                                            @if (!(count($programCourses) < 1) && !(count($plos) < 1) && !(count($mappingScales) < 1) ) 
                                                 <form action="">
-                                                    <div class=" mx-5 mt-2">
-                                                        <div class="form-check">
+                                                    <div class=" mx-5 mt-2 text-center">
+                                                        <div class="form-check form-check-inline">
                                                             <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked>
                                                             <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
                                                         </div>
-                                                        <div class="form-check">
+                                                        <div class="form-check form-check-inline">
                                                             <input class="form-check-input" type="radio" name="chart_select" id="Stacked">
                                                             <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
                                                         </div>
@@ -216,23 +216,117 @@
 
                                     <!-- Assessment Methods Tab -->
                                     <div class="tab-pane fade" id="nav-assessment-methods" role="tabpanel" aria-labelledby="nav-assessment-methods">
+                                        
                                         <div class="mt-3" id="assessment-methods-chart">
+
+                                            <div id='loading-div-am'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+
                                             <p>This chart shows the frequencies of the assessment methods for all courses belonging to this program.</p>
+                                            @if (!(count($programCourses) < 1)) 
+                                                <form action="">
+                                                    <div class=" mx-5 mt-2 text-center">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="am_select" id="all-am" checked>
+                                                            <label class="form-check-label" for="all-am"><b>All Assessment Methods</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="am_select" id="first-year-am">
+                                                            <label class="form-check-label" for="first-year-am"><b>100 Level Assessment Methods</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="am_select" id="second-year-am">
+                                                            <label class="form-check-label" for="second-year-am"><b>200 Level Assessment Methods</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="am_select" id="third-year-am">
+                                                            <label class="form-check-label" for="third-year-am"><b>300 Level Assessment Methods</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="am_select" id="fourth-year-am">
+                                                            <label class="form-check-label" for="fourth-year-am"><b>400 Level Assessment Methods</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="am_select" id="graduate-am">
+                                                            <label class="form-check-label" for="graduate-am"><b>500/600 Level Assessment Methods</b></label>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            @else  
+                                                <!-- THIS IS REQUIRED FOR JQUERY statement document.getElementById("all-am").checked = true; -->
+                                                <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-am'  -->
+                                                <input class="form-check-input" type="radio" name="am_select" id="all-am" checked hidden>
+                                            @endif
                                             <div class="container mt-0">
                                                 <div id="high-chart-am"></div>
                                             </div>
+                                            <div class="container mt-2">
+                                                <table class="table table-bordered table-sm w-auto " id="am-table" style="margin: auto;"></table>
+                                            </div>
                                         </div>
+
                                     </div>
                                     <!-- End Assessment Methods Tab -->
                                     
                                     <!-- Learning Activities Tab -->
                                     <div class="tab-pane fade" id="nav-learning-activity" role="tabpanel" aria-labelledby="nav-learning-activity">
+                                        
                                         <div class="mt-3" id="learning-activity-chart">
+
+                                            <div id='loading-div-la'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+
                                             <p>This chart shows the frequencies of the learning activities for all courses belonging to this program.</p>
+                                            @if (!(count($programCourses) < 1)) 
+                                                <form action="">
+                                                    <div class=" mx-5 mt-2 text-center">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="la_select" id="all-la" checked>
+                                                            <label class="form-check-label" for="all-la"><b>All Learning Activity</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="la_select" id="first-year-la">
+                                                            <label class="form-check-label" for="first-year-la"><b>100 Level Learning Activity</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="la_select" id="second-year-la">
+                                                            <label class="form-check-label" for="second-year-la"><b>200 Level Learning Activity</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="la_select" id="third-year-la">
+                                                            <label class="form-check-label" for="third-year-la"><b>300 Level Learning Activity</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="la_select" id="fourth-year-la">
+                                                            <label class="form-check-label" for="fourth-year-la"><b>400 Level Learning Activity</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="la_select" id="graduate-la">
+                                                            <label class="form-check-label" for="graduate-la"><b>500/600 Level Learning Activity</b></label>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            @else  
+                                                <!-- THIS IS REQUIRED FOR JQUERY statement document.getElementById("all-la").checked = true; -->
+                                                <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-la'  -->
+                                                <input class="form-check-input" type="radio" name="la_select" id="all-la" checked hidden>
+                                            @endif
                                             <div class="container mt-0">
                                                 <div id="high-chart-la"></div>
                                             </div>
+                                            <div class="container mt-2">
+                                                <table class="table table-bordered table-sm w-auto " id="la-table" style="margin: auto;"></table>
+                                            </div>
                                         </div>
+
                                     </div>
                                     <!-- End Learning Activities Tab -->
                                 </div>
@@ -272,123 +366,135 @@
                                             </td>
                                         </tr>
                                     </table>
-
-                                    <!-- Charts Inner Tabs -->
-                                    <nav class="mt-4">
-                                        <div class="nav nav-tabs justify-content-center" id="nav-inner-tab" role="tablist">
-                                            <!-- Change this id name -->
-                                            <button class="nav-link active w-15" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-all-courses" type="button" role="tab" aria-controls="nav-all-courses" aria-selected="true">All Courses</button>
-                                            <button class="nav-link w-15" id="nav-required-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-required" type="button" role="tab" aria-controls="nav-required" aria-selected="false">Required Courses</button>
-                                            <button class="nav-link w-15" id="nav-non-required-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-non-required" type="button" role="tab" aria-controls="nav-none-required" aria-selected="false">Non-Required Courses</button>
-                                            <button class="nav-link w-15" id="nav-first-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-first" type="button" role="tab" aria-controls="nav-first" aria-selected="false">100 Level Courses</button>
-                                            <button class="nav-link w-15" id="nav-second-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-second" type="button" role="tab" aria-controls="nav-second" aria-selected="false">200 Level Courses</button>
-                                            <button class="nav-link w-15" id="nav-third-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-third" type="button" role="tab" aria-controls="nav-third" aria-selected="false">300 Level Courses</button>
-                                            <button class="nav-link w-15" id="nav-fourth-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-fourth" type="button" role="tab" aria-controls="nav-fourth" aria-selected="false">400 Level Courses</button>
-                                            <button class="nav-link w-15" id="nav-graduate-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-graduate" type="button" role="tab" aria-controls="nav-graduate" aria-selected="false">500/600 Level Courses</button>
+                                    @if (count($plos) < 1)
+                                        <div class="alert alert-warning wizard">
+                                            <i class="bi bi-exclamation-circle-fill"></i>There are no program learning outcomes for this program.
                                         </div>
-                                    </nav>
-
-                                    <div class="tab-content" id="nav-tabContent-inner">
-                                        
-                                        <!-- Tab All Courses -->
-                                        <div class="tab-pane fade show active" id="nav-all-courses" role="tabpanel" aria-labelledby="nav-all-courses">
-                                            <div id='loading-div'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                    @elseif (count($mappingScales) < 1)
+                                        <div class="alert alert-warning wizard">
+                                            <i class="bi bi-exclamation-circle-fill"></i>There are no mapping scales for this program.
+                                        </div>
+                                    @elseif (count($programCourses) < 1) 
+                                        <div class="alert alert-warning wizard">
+                                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                                        </div>
+                                    @else
+                                        <!-- Charts Inner Tabs -->
+                                        <nav class="mt-4">
+                                            <div class="inner-nav nav nav-tabs justify-content-center" id="nav-inner-tab" role="tablist">
+                                                <!-- Change this id name -->
+                                                <button class="inner-nav-link nav-link active w-15" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-all-courses" type="button" role="tab" aria-controls="nav-all-courses" aria-selected="true">All Courses</button>
+                                                <button class="inner-nav-link nav-link w-15" id="nav-required-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-required" type="button" role="tab" aria-controls="nav-required" aria-selected="false">Required Courses</button>
+                                                <button class="inner-nav-link nav-link w-15" id="nav-non-required-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-non-required" type="button" role="tab" aria-controls="nav-none-required" aria-selected="false">Non-Required Courses</button>
+                                                <button class="inner-nav-link nav-link w-15" id="nav-first-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-first" type="button" role="tab" aria-controls="nav-first" aria-selected="false">100 Level Courses</button>
+                                                <button class="inner-nav-link nav-link w-15" id="nav-second-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-second" type="button" role="tab" aria-controls="nav-second" aria-selected="false">200 Level Courses</button>
+                                                <button class="inner-nav-link nav-link w-15" id="nav-third-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-third" type="button" role="tab" aria-controls="nav-third" aria-selected="false">300 Level Courses</button>
+                                                <button class="inner-nav-link nav-link w-15" id="nav-fourth-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-fourth" type="button" role="tab" aria-controls="nav-fourth" aria-selected="false">400 Level Courses</button>
+                                                <button class="inner-nav-link nav-link w-15" id="nav-graduate-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-graduate" type="button" role="tab" aria-controls="nav-graduate" aria-selected="false">500/600 Level Courses</button>
                                             </div>
-                                            <div id="allCoursesInput"></div>
-                                        </div>
-                                        <!-- End Tab All Courses -->
+                                        </nav>
 
-                                        <!-- Tab Required Courses -->
-                                        <div class="tab-pane fade" id="nav-required" role="tabpanel" aria-labelledby="nav-required">
-                                            <div id='loading-div-required'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                        <div class="tab-content" id="nav-tabContent-inner">
+
+                                            <!-- Tab All Courses -->
+                                            <div class="tab-pane fade show active" id="nav-all-courses" role="tabpanel" aria-labelledby="nav-all-courses">
+                                                <div id='loading-div'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="allCoursesInput" style="overflow: auto;"></div>
                                             </div>
-                                            <div id="requiredCoursesInput"></div>
-                                        </div>
-                                        <!-- End Tab Required Courses -->
+                                            <!-- End Tab All Courses -->
 
-                                        <!-- Tab Non Required Courses -->
-                                        <div class="tab-pane fade" id="nav-non-required" role="tabpanel" aria-labelledby="nav-non-required">
-                                            <div id='loading-div-non-required'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                            <!-- Tab Required Courses -->
+                                            <div class="tab-pane fade" id="nav-required" role="tabpanel" aria-labelledby="nav-required">
+                                                <div id='loading-div-required'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="requiredCoursesInput" style="overflow: auto;"></div>
                                             </div>
-                                            <div id="nonRequiredCoursesInput"></div>
-                                        </div>
-                                        <!-- End Non Tab Courses -->
+                                            <!-- End Tab Required Courses -->
 
-                                        <!-- Tab 100 Level Courses -->
-                                        <div class="tab-pane fade" id="nav-first" role="tabpanel" aria-labelledby="nav-first">
-                                            <div id='loading-div-first'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                            <!-- Tab Non Required Courses -->
+                                            <div class="tab-pane fade" id="nav-non-required" role="tabpanel" aria-labelledby="nav-non-required">
+                                                <div id='loading-div-non-required'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="nonRequiredCoursesInput" style="overflow: auto;"></div>
                                             </div>
-                                            <div id="firstCoursesInput"></div>
-                                        </div>
-                                        <!-- End 100 Level Courses -->
+                                            <!-- End Non Tab Courses -->
 
-                                        <!-- Tab 200 Level Courses -->
-                                        <div class="tab-pane fade" id="nav-second" role="tabpanel" aria-labelledby="nav-second">
-                                            <div id='loading-div-second'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                            <!-- Tab 100 Level Courses -->
+                                            <div class="tab-pane fade" id="nav-first" role="tabpanel" aria-labelledby="nav-first">
+                                                <div id='loading-div-first'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="firstCoursesInput" style="overflow: auto;"></div>
                                             </div>
-                                            <div id="secondCoursesInput"></div>
-                                        </div>
-                                        <!-- End 200 Level Required Courses -->
+                                            <!-- End 100 Level Courses -->
 
-                                        <!-- Tab 300 Level Courses -->
-                                        <div class="tab-pane fade" id="nav-third" role="tabpanel" aria-labelledby="nav-third">
-                                            <div id='loading-div-third'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                            <!-- Tab 200 Level Courses -->
+                                            <div class="tab-pane fade" id="nav-second" role="tabpanel" aria-labelledby="nav-second">
+                                                <div id='loading-div-second'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="secondCoursesInput" style="overflow: auto;"></div>
                                             </div>
-                                            <div id="thirdCoursesInput"></div>
-                                        </div>
-                                        <!-- End 300 Level Courses -->
+                                            <!-- End 200 Level Required Courses -->
 
-                                        <!-- Tab 400 Level Courses -->
-                                        <div class="tab-pane fade" id="nav-fourth" role="tabpanel" aria-labelledby="nav-fourth">
-                                            <div id='loading-div-fourth'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                            <!-- Tab 300 Level Courses -->
+                                            <div class="tab-pane fade" id="nav-third" role="tabpanel" aria-labelledby="nav-third">
+                                                <div id='loading-div-third'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="thirdCoursesInput" style="overflow: auto;"></div>
                                             </div>
-                                            <div id="fourthCoursesInput"></div>
-                                        </div>
-                                        <!-- End 400 Level Courses -->
+                                            <!-- End 300 Level Courses -->
 
-                                        <!-- Tab 500/600 Level Courses -->
-                                        <div class="tab-pane fade" id="nav-graduate" role="tabpanel" aria-labelledby="nav-graduate">
-                                            <div id='loading-div-graduate'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
+                                            <!-- Tab 400 Level Courses -->
+                                            <div class="tab-pane fade" id="nav-fourth" role="tabpanel" aria-labelledby="nav-fourth">
+                                                <div id='loading-div-fourth'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="fourthCoursesInput" style="overflow: auto;"></div>
                                             </div>
-                                            <div id="graduateCoursesInput"></div>
+                                            <!-- End 400 Level Courses -->
+
+                                            <!-- Tab 500/600 Level Courses -->
+                                            <div class="tab-pane fade" id="nav-graduate" role="tabpanel" aria-labelledby="nav-graduate">
+                                                <div id='loading-div-graduate'>
+                                                    <h3 class="text-center">
+                                                        Loading ...
+                                                    </h3>
+                                                    <div class="loader" style="margin: auto;"></div>
+                                                </div>
+                                                <div id="graduateCoursesInput" style="overflow: auto;"></div>
+                                            </div>
+                                            <!-- End 500/600 Level Courses -->
+
                                         </div>
-                                        <!-- End 500/600 Level Courses -->
-
-                                    </div>
-                                    <!-- End Charts Inner Tabs -->
-
+                                        <!-- End Charts Inner Tabs -->
+                                    @endif
                                 </div>
                             </div>
                             <!-- End Charts Tab -->
@@ -411,7 +517,11 @@
             </a>
         @endif
     </div>
-</div> 
+</div>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
 
 <script type=text/javascript>
     $(document).ready(function() {
@@ -519,6 +629,182 @@
                 }
             });
         });
+        
+        $("#nav-assessment-methods-tab").click(function() { 
+            // This is required to set the radio button to checked
+            document.getElementById("all-am").checked = true;
+
+            $.ajax({
+                type: "GET",
+                url: "get-am/",       
+                success: function (data) {
+                    $("#loading-div-am").fadeOut("fast");
+
+                    // high chart for assessment methods
+                    var amFreq = data;
+                    var amTitles = $.map(amFreq, function(element,index) {return index});
+                    var amValues = $.map(amFreq, function(element,index) {return element});
+                    series = generateData();
+                                
+                    function generateData() {
+                        var series = [];
+                    
+                        series.push({
+                            name: '# of Occurrences',
+                            data: amValues,
+                            colorByPoint: true,
+                        });
+                        
+                        return series;
+                    }
+                
+                    var programCourses = <?php echo json_encode($programCourses)?>;
+                    if (programCourses.length < 1) {
+                        $('#high-chart-am').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                            </div>
+                        `);
+                    } else if (amFreq.length < 1) {
+                        $('#high-chart-am').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+                            </div>
+                        `);
+                    } else {
+                    
+                        $('#high-chart-am').highcharts({
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: 'Assessment Method Frequencies'
+                            },
+                            xAxis: {
+                                title: {
+                                    text: 'Assessment Methods',
+                                    margin: 20,
+                                    style: {
+                                            fontWeight: 'bold',
+                                    },
+                                },
+                                categories: amTitles
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Frequency',
+                                    margin: 20,
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            series: series
+                        });
+                    
+                        // delete all child nodes
+                        $('#am-table').empty();
+                        // Append to table for all assessment methods frequencies
+                        $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                        for (var i = 0; i < amTitles.length; i++) {
+                            $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        }
+
+                    }
+
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-learning-activity-tab").click(function() { 
+            // This is required to set the radio button to checked
+            document.getElementById("all-la").checked = true;
+
+            $.ajax({
+                type: "GET",
+                url: "get-la/",       
+                success: function (data) {
+                    $("#loading-div-la").fadeOut("fast");
+                    // $("#graduateCoursesInput").html(data);
+                    // high chart for learning activities
+                    var laFreq = data;
+                    var laTitles = $.map(laFreq, function(element,index) {return index});
+                    var laValues = $.map(laFreq, function(element,index) {return element});
+                    series = generateData();
+
+                    function generateData() {
+                        var series = [];
+                    
+                        series.push({
+                            name: '# of Occurrences',
+                            data: laValues,
+                            colorByPoint: true,
+                        });
+
+                        return series;
+                    }
+                
+                    var programCourses = <?php echo json_encode($programCourses)?>;
+                    if (programCourses.length < 1) {
+                        $('#high-chart-la').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                            </div>
+                        `);
+                    } else if (laFreq.length < 1) {
+                        $('#high-chart-la').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+                            </div>
+                        `);
+                    } else {
+                    
+                        $('#high-chart-la').highcharts({
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: 'Learning Activities Frequencies'
+                            },
+                            xAxis: {
+                                title: {
+                                    text: 'Learning Activities',
+                                    margin: 20,
+                                    style: {
+                                            fontWeight: 'bold',
+                                    },
+                                },
+                                categories: laTitles
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Frequency',
+                                    margin: 20,
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            series: series
+                        });
+
+                        // delete all child nodes
+                        $('#la-table').empty();
+                        // Append to table for all assessment methods frequencies
+                        $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                        for (var i = 0; i < laTitles.length; i++) {
+                            $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        }
+
+                    }
+    
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
 
         $('#nav-bar-charts-tab').click(function() { 
             // hide other charts and remove classes/set attributes
@@ -565,6 +851,1016 @@
             $("#learning-activity-chart").show();
         });
     });
+
+    function allAM() {
+        $.ajax({
+            type: "GET",
+            url: "get-am/",       
+            success: function (data) {
+                $("#loading-div-am").fadeOut("fast");
+                // high chart for assessment methods
+                var amFreq = data;
+                var amTitles = $.map(amFreq, function(element,index) {return index});
+                var amValues = $.map(amFreq, function(element,index) {return element});
+                series = generateData();
+                            
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: amValues,
+                        colorByPoint: true,
+                    });
+                    
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (amFreq.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-am').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Assessment Method Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Assessment Methods',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: amTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                
+                    // Append to table for all assessment methods frequencies
+                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < amTitles.length; i++) {
+                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                    }
+
+                }
+
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+    function firstYearAM() {
+        $.ajax({
+            type: "GET",
+            url: "get-am-first-year/",       
+            success: function (data) {
+                $("#loading-div-am").fadeOut("fast");
+                // high chart for assessment methods
+                var amFreq = data;
+                var amTitles = $.map(amFreq, function(element,index) {return index});
+                var amValues = $.map(amFreq, function(element,index) {return element});
+                series = generateData();
+                            
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: amValues,
+                        colorByPoint: true,
+                    });
+                    
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (amFreq.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-am').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Assessment Method Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Assessment Methods',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: amTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                
+                    // Append to table for all assessment methods frequencies
+                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < amTitles.length; i++) {
+                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                    }
+
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function secondYearAM() {
+        $.ajax({
+            type: "GET",
+            url: "get-am-second-year/",       
+            success: function (data) {
+                $("#loading-div-am").fadeOut("fast");
+                // high chart for assessment methods
+                var amFreq = data;
+                var amTitles = $.map(amFreq, function(element,index) {return index});
+                var amValues = $.map(amFreq, function(element,index) {return element});
+                series = generateData();
+                            
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: amValues,
+                        colorByPoint: true,
+                    });
+                    
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (amFreq.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-am').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Assessment Method Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Assessment Methods',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: amTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                
+                    // Append to table for all assessment methods frequencies
+                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < amTitles.length; i++) {
+                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                    }
+
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function thirdYearAM() {
+        $.ajax({
+            type: "GET",
+            url: "get-am-third-year/",       
+            success: function (data) {
+                $("#loading-div-am").fadeOut("fast");
+                // high chart for assessment methods
+                var amFreq = data;
+                var amTitles = $.map(amFreq, function(element,index) {return index});
+                var amValues = $.map(amFreq, function(element,index) {return element});
+                series = generateData();
+                            
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: amValues,
+                        colorByPoint: true,
+                    });
+                    
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (amFreq.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-am').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Assessment Method Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Assessment Methods',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: amTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                
+                    // Append to table for all assessment methods frequencies
+                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < amTitles.length; i++) {
+                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                    }
+
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function fourthYearAM() {
+        $.ajax({
+            type: "GET",
+            url: "get-am-fourth-year/",       
+            success: function (data) {
+                $("#loading-div-am").fadeOut("fast");
+                // high chart for assessment methods
+                var amFreq = data;
+                var amTitles = $.map(amFreq, function(element,index) {return index});
+                var amValues = $.map(amFreq, function(element,index) {return element});
+                series = generateData();
+                            
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: amValues,
+                        colorByPoint: true,
+                    });
+                    
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (amFreq.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-am').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Assessment Method Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Assessment Methods',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: amTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                
+                    // Append to table for all assessment methods frequencies
+                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < amTitles.length; i++) {
+                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                    }
+
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function graduateAM() {
+        $.ajax({
+            type: "GET",
+            url: "get-am-graduate/",       
+            success: function (data) {
+                $("#loading-div-am").fadeOut("fast");
+                // high chart for assessment methods
+                var amFreq = data;
+                var amTitles = $.map(amFreq, function(element,index) {return index});
+                var amValues = $.map(amFreq, function(element,index) {return element});
+                series = generateData();
+                            
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: amValues,
+                        colorByPoint: true,
+                    });
+                    
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (amFreq.length < 1) {
+                    $('#high-chart-am').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-am').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Assessment Method Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Assessment Methods',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: amTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                
+                    // Append to table for all assessment methods frequencies
+                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < amTitles.length; i++) {
+                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                    }
+
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function allLA() {
+        $.ajax({
+            type: "GET",
+            url: "get-la/",       
+            success: function (data) {
+                $("#loading-div-la").fadeOut("fast");
+                // $("#graduateCoursesInput").html(data);
+                // high chart for learning activities
+                var laFreq = data;
+                var laTitles = $.map(laFreq, function(element,index) {return index});
+                var laValues = $.map(laFreq, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: laValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (laFreq.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-la').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Learning Activities Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Learning Activities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: laTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // delete all child nodes
+                    $('#la-table').empty();
+                    // Append to table for all assessment methods frequencies
+                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < laTitles.length; i++) {
+                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                    }
+                }
+
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function firstYearLA() {
+        $.ajax({
+            type: "GET",
+            url: "get-la-first-year/",       
+            success: function (data) {
+                $("#loading-div-la").fadeOut("fast");
+                // $("#graduateCoursesInput").html(data);
+                // high chart for learning activities
+                var laFreq = data;
+                var laTitles = $.map(laFreq, function(element,index) {return index});
+                var laValues = $.map(laFreq, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: laValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (laFreq.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-la').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Learning Activities Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Learning Activities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: laTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // delete all child nodes
+                    $('#la-table').empty();
+                    // Append to table for all assessment methods frequencies
+                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < laTitles.length; i++) {
+                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                    }
+                }
+
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function secondYearLA() {
+        $.ajax({
+            type: "GET",
+            url: "get-la-second-year/",       
+            success: function (data) {
+                $("#loading-div-la").fadeOut("fast");
+                // $("#graduateCoursesInput").html(data);
+                // high chart for learning activities
+                var laFreq = data;
+                var laTitles = $.map(laFreq, function(element,index) {return index});
+                var laValues = $.map(laFreq, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: laValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (laFreq.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-la').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Learning Activities Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Learning Activities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: laTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // delete all child nodes
+                    $('#la-table').empty();
+                    // Append to table for all assessment methods frequencies
+                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < laTitles.length; i++) {
+                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                    }
+                }
+
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function thirdYearLA() {
+        $.ajax({
+            type: "GET",
+            url: "get-la-third-year/",       
+            success: function (data) {
+                $("#loading-div-la").fadeOut("fast");
+                // $("#graduateCoursesInput").html(data);
+                // high chart for learning activities
+                var laFreq = data;
+                var laTitles = $.map(laFreq, function(element,index) {return index});
+                var laValues = $.map(laFreq, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: laValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (laFreq.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-la').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Learning Activities Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Learning Activities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: laTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // delete all child nodes
+                    $('#la-table').empty();
+                    // Append to table for all assessment methods frequencies
+                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < laTitles.length; i++) {
+                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                    }
+                }
+
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function fourthYearLA() {
+        $.ajax({
+            type: "GET",
+            url: "get-la-fourth-year/",       
+            success: function (data) {
+                $("#loading-div-la").fadeOut("fast");
+                // $("#graduateCoursesInput").html(data);
+                // high chart for learning activities
+                var laFreq = data;
+                var laTitles = $.map(laFreq, function(element,index) {return index});
+                var laValues = $.map(laFreq, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: laValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (laFreq.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-la').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Learning Activities Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Learning Activities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: laTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // delete all child nodes
+                    $('#la-table').empty();
+                    // Append to table for all assessment methods frequencies
+                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < laTitles.length; i++) {
+                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                    }
+                }
+
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function graduateLA() {
+        $.ajax({
+            type: "GET",
+            url: "get-la-graduate/",       
+            success: function (data) {
+                $("#loading-div-la").fadeOut("fast");
+                // $("#graduateCoursesInput").html(data);
+                // high chart for learning activities
+                var laFreq = data;
+                var laTitles = $.map(laFreq, function(element,index) {return index});
+                var laValues = $.map(laFreq, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                
+                    series.push({
+                        name: '# of Occurrences',
+                        data: laValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+            
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (laFreq.length < 1) {
+                    $('#high-chart-la').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-la').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Learning Activities Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                text: 'Learning Activities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            categories: laTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // delete all child nodes
+                    $('#la-table').empty();
+                    // Append to table for all assessment methods frequencies
+                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < laTitles.length; i++) {
+                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                    }
+                }
+
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    $('input[type=radio][name=am_select]').change(function() {
+        // delete all child nodes
+        $('#am-table').empty();
+        // change filter
+        if (this.id == 'all-am'){
+            allAM();
+        } else if (this.id == 'first-year-am') {
+            firstYearAM();
+        } else if (this.id == 'second-year-am') {
+            secondYearAM();
+        } else if (this.id == 'third-year-am') {
+            thirdYearAM();
+        } else if (this.id == 'fourth-year-am') {
+            fourthYearAM();
+        } else if (this.id == 'graduate-am') {
+            graduateAM();
+        }
+    });
+
+    $('input[type=radio][name=la_select]').change(function() {
+        // delete all child nodes
+        $('#la-table').empty();
+        // change filter
+        if (this.id == 'all-la'){
+            allLA();
+        } else if (this.id == 'first-year-la') {
+            firstYearLA();
+        } else if (this.id == 'second-year-la') {
+            secondYearLA();
+        } else if (this.id == 'third-year-la') {
+            thirdYearLA();
+        } else if (this.id == 'fourth-year-la') {
+            fourthYearLA();
+        } else if (this.id == 'graduate-la') {
+            graduateLA();
+        }
+    });
 </script>
 
 <script type="text/javascript">
@@ -582,143 +1878,6 @@
     });
 </script>
 
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
-
-<script type="text/javascript">
-    // high chart for assessment methods
-    var laFreq = <?php echo json_encode($laFrequencies)?>;
-    var laTitles = $.map(laFreq, function(element,index) {return index});
-    var laValues = $.map(laFreq, function(element,index) {return element});
-    series = generateData();
-
-    function generateData() {
-        var series = [];
-
-        series.push({
-            name: '# of Occurrences',
-            data: laValues,
-            colorByPoint: true,
-        });
-        
-        return series;
-    }
-
-    var programCourses = <?php echo json_encode($programCourses)?>;
-    if (programCourses.length < 1) {
-        $('#high-chart-la').html(`
-            <div class="alert alert-warning wizard">
-                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-            </div>
-        `);
-    } else if (laFreq.length < 1) {
-        $('#high-chart-la').html(`
-            <div class="alert alert-warning wizard">
-                <i class="bi bi-exclamation-circle-fill"></i>There are no learning activities for the courses belonging to this program.
-            </div>
-        `);
-    } else {
-
-        $('#high-chart-la').highcharts({
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Learning Activities Frequencies'
-            },
-            xAxis: {
-                title: {
-                    text: 'Learning Activities',
-                    margin: 20,
-                    style: {
-                            fontWeight: 'bold',
-                    },
-                },
-                categories: laTitles
-            },
-            yAxis: {
-                title: {
-                    text: 'Frequency',
-                    margin: 20,
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            series: series
-        });
-    }
-    
-</script>
-
-<script type="text/javascript">
-    // high chart for assessment methods
-    var amFreq = <?php echo json_encode($amFrequencies)?>;
-    var amTitles = $.map(amFreq, function(element,index) {return index});
-    var amValues = $.map(amFreq, function(element,index) {return element});
-    series = generateData();
-
-    function generateData() {
-        var series = [];
-
-        series.push({
-            name: '# of Occurrences',
-            data: amValues,
-            colorByPoint: true,
-        });
-        
-        return series;
-    }
-
-    var programCourses = <?php echo json_encode($programCourses)?>;
-    if (programCourses.length < 1) {
-        $('#high-chart-am').html(`
-            <div class="alert alert-warning wizard">
-                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-            </div>
-        `);
-    } else if (amFreq.length < 1) {
-        $('#high-chart-am').html(`
-            <div class="alert alert-warning wizard">
-                <i class="bi bi-exclamation-circle-fill"></i>There are no assessment methods for the courses belonging to this program.
-            </div>
-        `);
-    } else {
-    
-        $('#high-chart-am').highcharts({
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Assessment Method Frequencies'
-            },
-            xAxis: {
-                title: {
-                    text: 'Assessment Methods',
-                    margin: 20,
-                    style: {
-                            fontWeight: 'bold',
-                    },
-                },
-                categories: amTitles
-            },
-            yAxis: {
-                title: {
-                    text: 'Frequency',
-                    margin: 20,
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            series: series
-        });
-
-    }
-    
-</script>
-
 <script type="text/javascript">
     // high chart for PLOs to CLOs 
     // This is required to set the radio button to checked, this is a known firefox bug.
@@ -731,25 +1890,39 @@
     var colours = <?php echo json_encode($programMappingScalesColours)?>;
     var plosInOrder = <?php echo json_encode($plosInOrder)?>;
     var freq = <?php echo json_encode($freqForMS)?>;
-    var series = [];
+    var seriesPLOCLO = [];
     
-    series = generateData();
+    seriesPLOCLO = generateData();
 
     function generateData() {
-        var series = [];
+        var seriesPLOCLO = [];
 
         for (var i = 0; i < ms.length; i++) {
-            series.push({
+            seriesPLOCLO.push({
                 name: ms[i],
                 data: freq[i],
                 color: colours[i]
             });
         }
-        return series;
+        return seriesPLOCLO;
     }
 
     var programCourses = <?php echo json_encode($programCourses)?>;
-    if (programCourses.length < 1) {
+    var plos = <?php echo json_encode($plos)?>;
+    var ms = <?php echo json_encode($mappingScales)?>;
+    if (plos.length < 1) {
+        $('#high-chart').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no program learning outcomes for this program.
+            </div>
+        `);
+    }else if (ms.length < 1) {
+        $('#high-chart').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no mapping scales for this program.
+            </div>
+        `);
+    }  else if (programCourses.length < 1) {
         $('#high-chart').html(`
             <div class="alert alert-warning wizard">
                 <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
@@ -779,7 +1952,7 @@
                     margin: 20,
                 }
             },
-            series: series
+            series: seriesPLOCLO
         });
     }
 
@@ -812,7 +1985,7 @@
                     margin: 20,
                 }
             },
-            series: series
+            series: seriesPLOCLO
         });
     }
 
@@ -840,7 +2013,7 @@
                     margin: 20,
                 }
             },
-            series: series
+            series: seriesPLOCLO
         });
     }
 
@@ -888,6 +2061,35 @@ th {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* active */
+.nav-tabs .inner-nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: var(--secondary);
+    background-color: #40B4E5;
+    border-color: #dee2e6 #dee2e6 #f8fafc;
+    font-size: 1.0rem;
+}
+
+/* Not active */
+.nav-tabs .inner-nav-link, .nav-tabs .nav-item.show .nav-link {
+    border-color: #dee2e6 #dee2e6 #f8fafc;
+    color: #003fba;
+}
+
+.freq-table {
+    margin:auto; 
+    /* table-layout: fixed;  */
+    border: 1px solid white; 
+    color: black; 
+    /* display: block;  */
+    overflow-x: auto;  
+    white-space: nowrap;
+}
+
+.freq-tbody .freq-table {
+    display: table;
+    width: 100%; 
 }
 
 </style>
