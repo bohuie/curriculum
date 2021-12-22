@@ -315,8 +315,8 @@
                                                     </div>
                                                 </form>
                                             @else  
-                                                <!-- THIS IS REQUIRED FOR JQUERY statement document.getElementById("all-am").checked = true; -->
-                                                <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-am'  -->
+                                                <!-- THIS IS REQUIRED FOR JQUERY statement document.getElementById("all-la").checked = true; -->
+                                                <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-la'  -->
                                                 <input class="form-check-input" type="radio" name="la_select" id="all-la" checked hidden>
                                             @endif
                                             <div class="container mt-0">
