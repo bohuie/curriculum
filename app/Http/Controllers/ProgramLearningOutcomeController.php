@@ -139,34 +139,27 @@ class ProgramLearningOutcomeController extends Controller
      * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $programLearningOutcome)
+    public function update(Request $request, $programLearningOutcomeID)
     {
-        //
-        //
+        // validate request input 
         $this->validate($request, [
+            'program_id' => 'required',
             'plo'=> 'required',
-
             ]);
 
-        $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome)->first();
+        $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcomeID)->first();
         $plo->pl_outcome = $request->input('plo');
         $plo->plo_shortphrase = $request->input('title');
+        $plo->plo_category_id = $request->input('category');
 
-        $program = Program::find($request->input('program_id'));
-        // get users name for last_modified_user
-        $user = User::find(Auth::id());
-        $program->last_modified_user = $user->name;
-        $program->save();
-
-        if($request->has('category')){
-            $plo->plo_category_id = $request->input('category');
-        }
-        
-        
         if($plo->save()){
             // update courses 'updated_at' field
             $program = Program::find($request->input('program_id'));
             $program->touch();
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $program->last_modified_user = $user->name;
+            $program->save();
 
             $request->session()->flash('success', 'Program learning outcome updated');
         }else{
@@ -204,5 +197,5 @@ class ProgramLearningOutcomeController extends Controller
         }
 
         return redirect()->route('programWizard.step1',$request->input('program_id'));
-}
+    }
 }

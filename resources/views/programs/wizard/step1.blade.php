@@ -285,7 +285,7 @@
                                                             </div>
 
                                                             <div class="modal-body">
-                                                            Are you sure you want to delete {{$category->plo_category}}?
+                                                            Are you sure you want to delete category: {{$category->plo_category}}?
                                                             </div>
 
                                                             <form action="{{route('ploCategory.destroy', $category->plo_category_id)}}" method="POST">
@@ -379,7 +379,11 @@
                                                             </div>
 
                                                             <div class="modal-body">
-                                                                Are you sure you want to delete {{$ploCat->plo_shortphrase}}?
+                                                                @if ($ploCat->plo_shortphrase)
+                                                                    Are you sure you want to delete program learning outcome: {{$ploCat->plo_shortphrase}}?
+                                                                @else 
+                                                                    Are you sure you want to delete this program learning outcome?
+                                                                @endif
                                                             </div>
 
                                                             <form action="{{route('plo.destroy', $ploCat->pl_outcome_id)}}" method="POST">
@@ -426,7 +430,7 @@
                                                                                 <option value="{{$ploCat->plo_category_id}}" selected>{{$ploCat->plo_category}}</option>
                                                                                 @foreach($ploCategories as $ploCategory)
                                                                                     @if ($ploCategory->plo_category_id != $ploCat->plo_category_id)
-                                                                                        <option value="{{$ploCat->plo_category_id}}">{{$ploCategory->plo_category}}</option>
+                                                                                        <option value="{{$ploCategory->plo_category_id}}">{{$ploCategory->plo_category}}</option>
                                                                                     @endif
                                                                                 @endforeach
                                                                                 <option value="">None</option>
@@ -491,7 +495,11 @@
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Are you sure you want to delete {{$unCatplo->plo_shortphrase}}?
+                                                            @if ($unCatplo->plo_shortphrase)
+                                                                Are you sure you want to delete program learning outcome: {{$unCatplo->plo_shortphrase}}?
+                                                            @else 
+                                                                Are you sure you want to delete this program learning outcome?
+                                                            @endif
                                                         </div>
                                                         <form action="{{route('plo.destroy', $unCatplo->pl_outcome_id)}}" method="POST">
                                                             @csrf
