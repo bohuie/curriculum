@@ -75,16 +75,14 @@ class ProgramController extends Controller
         $program = new Program;
         $program->program = $request->input('program');
         $program->level = $request->input('level');
-        $program->department = $request->input('department');
         $program->faculty = $request->input('faculty');
+        $program->department = $request->input('department');
+        $program->campus = $request->input('campus');
         $program->status = -1;
         
         // get users name for last_modified_user
         $user = User::find(Auth::id());
         $program->last_modified_user = $user->name;
-
-        $programUser = new ProgramUser;
-        $programUser->user_id = $request->input('user_id');
         
         if($program->save()){
             $request->session()->flash('success', 'New program added');
@@ -92,17 +90,13 @@ class ProgramController extends Controller
             $request->session()->flash('error', 'There was an error Adding the program');
         }
 
+        $programUser = new ProgramUser;
+        $programUser->user_id = $request->input('user_id');
+
         $programUser->program_id = $program->program_id;
         // assign the creator of the program the owner permission
         $programUser->permission = 1;
         $programUser->save();
-        
-        // $adminRole = Role::where('role','administrator')->first();
-        // $user = User::where('id', Auth::id())->first();
-
-        // if($user->hasRole('administrator') == false){
-        //     $user->roles()->attach($adminRole);
-        // }
         
         return redirect()->route('home');
 

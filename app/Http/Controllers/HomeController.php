@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssessmentMethod;
+use App\Models\Campus;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\CourseOptionalPriorities;
@@ -12,6 +13,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\CourseUser;
+use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\LearningActivity;
 use App\Models\LearningOutcome;
 use App\Models\OptionalPriorities;
@@ -47,6 +50,9 @@ class HomeController extends Controller
     {
         //Artisan::call('route:clear', []);
 
+        $campuses =  Campus::all();
+        $faculties =  Faculty::all();
+        $departments =  Department::all();
         // get the current authenticated user
         $user = User::find(Auth::id());
         // get my programs
@@ -188,8 +194,9 @@ class HomeController extends Controller
             $progressBarMsg[$courseId]['statusMsg'] .= '</ol>';
         }
         // return dashboard view
-        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)
-        ->with('programUsers', $programUsers)->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg);
+        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)
+        ->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg)->with('campuses', $campuses)->with('faculties', $faculties)
+        ->with('departments', $departments);
     }
 
 
