@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\Invitation;
 use App\Models\LearningOutcome;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,6 @@ Route::get('/', function () {
 Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
-//Route::delete('/home/{course}/unassign', 'HomeController@destroy')->name('home.destroy');
 Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
 
 Route::get('/about', 'AboutController@index')->name('about');
@@ -47,24 +47,34 @@ Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->nam
 Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
 // route to download a syllabus
 Route::post('/syllabi/{syllabusId}/word','SyllabusController@syllabusToWordDoc')->name('syllabus.word');
+// rout to duplicate syllabi
+Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
+// route for syllabus collaborator functions
+Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
+Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 //PDF for Program summary
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
+
 
 Route::resource('/courses','CourseController');
 Route::post('/courses', 'CourseController@store')->name('courses.store');
 
 Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
 Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');
-// Route::get('/courses/{course}/status','CourseController@status')->name('courses.status');
+Route::get('/courseUser','CourseUserController@leave')->name('courseUser.leave');
+Route::get('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
+
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
 Route::get('/courses/{course}/summary','CourseController@show')->name('courses.summary');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
+Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
 
 Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 
@@ -89,6 +99,8 @@ Route::resource('/ploCategory','PLOCategoryController');
 Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
 Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
+Route::get('/programUser','ProgramUserController@leave')->name('programUser.leave');
+Route::get('/programUserTransfer','ProgramUserController@transferOwnership')->name('programUser.transferOwnership');
 
 // Program wizard controller used to sent info from database to the blade page
 Route::get('/programWizard/{program}/step1','ProgramWizardController@step1')->name('programWizard.step1');
@@ -100,6 +112,32 @@ Route::get('/programWizard/{program}/step4','ProgramWizardController@step4')->na
 Route::post('/programWizard/{program}/step3/addCoursesToProgram', 'CourseProgramController@addCoursesToProgram')->name('courseProgram.addCoursesToProgram');
 // Program step3 edit required status
 Route::post('/programWizard/{program}/step3/editCourseRequired', 'CourseProgramController@editCourseRequired')->name('courseProgram.editCourseRequired');
+
+// Program step 4 Used to get frequency distribution tables 
+Route::get('/programWizard/{program}/get-courses', 'ProgramWizardController@getCourses');
+Route::get('/programWizard/{program}/get-required', 'ProgramWizardController@getRequiredCourses');
+Route::get('/programWizard/{program}/get-non-required', 'ProgramWizardController@getNonRequiredCourses');
+Route::get('/programWizard/{program}/get-first', 'ProgramWizardController@getFirstCourses');
+Route::get('/programWizard/{program}/get-second', 'ProgramWizardController@getSecondCourses');
+Route::get('/programWizard/{program}/get-third', 'ProgramWizardController@getThirdCourses');
+Route::get('/programWizard/{program}/get-fourth', 'ProgramWizardController@getFourthCourses');
+Route::get('/programWizard/{program}/get-graduate', 'ProgramWizardController@getGraduateCourses');
+
+// Program step 4 chart filters
+// learning activity filter routes
+Route::get('/programWizard/{program}/get-la', 'ProgramWizardController@getLearningActivities');
+Route::get('/programWizard/{program}/get-la-first-year', 'ProgramWizardController@getFirstYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-second-year', 'ProgramWizardController@getSecondYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-third-year', 'ProgramWizardController@getThirdYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-fourth-year', 'ProgramWizardController@getFourthYearLearningActivities');
+Route::get('/programWizard/{program}/get-la-graduate', 'ProgramWizardController@getGraduateLearningActivities');
+// assessment method filter routes
+Route::get('/programWizard/{program}/get-am', 'ProgramWizardController@getAssessmentMethods');
+Route::get('/programWizard/{program}/get-am-first-year', 'ProgramWizardController@getAssessmentMethodsFirstYear');
+Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardController@getAssessmentMethodsSecondYear');
+Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
+Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
+Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
@@ -135,4 +173,10 @@ Auth::routes();
 Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_prefix')], function () {
     Route::auth();
     Route::get('logout', 'Auth\LoginController@logout');
+});
+
+Route::get('/clear-cache', function() {
+    $exitCode = Artisan::call('cache:clear');
+    $exitCode = Artisan::call('config:cache');
+    return 'DONE'; //Return anything
 });

@@ -14,7 +14,7 @@
             
             <div class="card">
                 <h3 class="card-header wizard" >
-                    Standards and Strategic Priorities
+                    Ministry Standards and Strategic Priorities
                     <div style="float: right;">
                             <button id="standardsHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>
@@ -28,7 +28,7 @@
                 <div class="card-body">
                     <nav class="mt-2">
                         <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
-                            <button class="nav-link active" id="nav-standards-tab" data-bs-toggle="tab" data-bs-target="#nav-standards" type="button" role="tab" aria-controls="nav-standards" aria-selected="true">Standards</button>
+                            <button class="nav-link active" id="nav-standards-tab" data-bs-toggle="tab" data-bs-target="#nav-standards" type="button" role="tab" aria-controls="nav-standards" aria-selected="true">Ministry Standards</button>
                             <button class="nav-link" id="nav-priorities-tab" data-bs-toggle="tab" data-bs-target="#nav-priorities" type="button" role="tab" aria-controls="nav-priorities" aria-selected="false">Strategic Priorities</button>
                         </div>
                     </nav>
@@ -36,7 +36,7 @@
                         <div class="tab-pane fade show active" id="nav-standards" role="tabpanel" aria-labelledby="nav-standards-tab">
                             @if ($course->standard_category_id == 0) 
                                 <div class="alert alert-warning wizard">
-                                    <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this course to map to.                     
+                                    <i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for this course to map to.                     
                                 </div>
                             @elseif ($course->learningOutcomes->count() < 1)
                                 <div class="alert alert-warning wizard">
@@ -94,6 +94,9 @@
 
                                         <!-- list of course learning outcome accordions with mapping form -->
                                         <div class="cloAccordions mb-4">
+                                            <form action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="course_id" value="{{$course->course_id}}">
                                             @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
                                                 <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                     <div class="accordion-item mb-2">
@@ -109,8 +112,8 @@
                                                         </h2>
                                                         <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                             <div class="accordion-body">
-                                                                <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
-                                                                    @csrf
+                                                                <!-- <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST"> -->
+                                                                    <!-- @csrf -->
                                                                     <div class="card border-white">
                                                                         <div class="card-body">
                                                                             <h5 style="margin-bottom:16px;text-align:center;font-weight: bold;">{{$courseLearningOutcome->l_outcome}}</h5>
@@ -147,14 +150,13 @@
                                                                                                     @endforeach
                                                                                                     <td>
                                                                                                         <div class="form-check">
-                                                                                                            <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @endif required>
+                                                                                                            <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @endif>
                                                                                                         </div>
                                                                                                     </td>
                                                                                                 </tr>
                                                                                             @endforeach
                                                                                         </tbody>
                                                                                     </table>
-                                                                                    <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
                                                                                 @else 
                                                                                     <div class="alert alert-warning text-center">
                                                                                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
@@ -162,13 +164,15 @@
                                                                                 @endif
                                                                         </div>                                                                                                    
                                                                     </div>
-                                                                </form>
+                                                                <!-- </form> -->
                                                             </div>
                                                         </div>                                                                            
                                                     </div>
                                                 </div>
                                         
                                             @endforeach
+                                            <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
+                                            </form>
                                         </div>
                                     </div>
                             @endif
@@ -206,10 +210,10 @@
                                                                 @if ($optionalPrioritySubcategory->subcat_id == 1)
                                                                     <div class="row">
                                                                         <div class="col-10">
-                                                                            <h6 class="fw-bold mb-3">
+                                                                            <!-- <h6 class="fw-bold mb-3">
                                                                                 {!! $optionalPrioritySubcategory->subcat_name !!}
                                                                             </h6>
-                                                                            <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
+                                                                            <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p> -->
                                                                         </div>
                                                                         <!-- UBC Mandate Date Filter -->
                                                                         <div class="col">
@@ -224,10 +228,15 @@
                                                                         <div class="collapse mandate show" id="{{$year}}-mandate">
                                                                             <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
                                                                                 <thead class="thead-light">
+                                                                                <tr>
+                                                                                    <th data-field="state" data-checkbox="true"></th>
+                                                                                    <th data-field="Description">{!! $optionalPrioritySubcategory->subcat_name !!}</th>
+                                                                                </tr>
+                                                                                @if (($optionalPrioritySubcategory->subcat_desc != NULL) || ($optionalPrioritySubcategory->subcat_desc != ''))
                                                                                     <tr>
-                                                                                        <th data-field="state" data-checkbox="true"></th>
-                                                                                        <th data-field="Description">Description</th>
+                                                                                        <td colspan="2">{!! $optionalPrioritySubcategory->subcat_desc !!}</td>
                                                                                     </tr>
+                                                                                @endif
                                                                                 </thead>
                                                                                 <tbody> 
                                                                                     @foreach ($optionalPrioritySubcategory->optionalPriorities->where('year', $year) as $optionalPriority)
@@ -251,37 +260,48 @@
                                                                     </div>
                                                                 <!-- End of UBC Mandate -->
                                                                 @else
-                                                                    <h6 class="fw-bold mb-3">
+                                                                    <!-- <h6 class="fw-bold mb-3">
                                                                         {!! $optionalPrioritySubcategory->subcat_name !!}
                                                                     </h6>
-                                                                    <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p>
+                                                                    <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p> -->
 
                                                                     <!--optional Priorities for subcategory-->
                                                                     <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
                                                                         <thead class="thead-light">
                                                                             <tr>
                                                                                 <th data-field="state" data-checkbox="true"></th>
-                                                                                <th data-field="Description">Description</th>
+                                                                                <th data-field="Description">{!! $optionalPrioritySubcategory->subcat_name !!}</th>
                                                                             </tr>
+                                                                            @if (($optionalPrioritySubcategory->subcat_desc != NULL) || ($optionalPrioritySubcategory->subcat_desc != ''))
+                                                                                <tr>
+                                                                                    <td colspan="2">{!! $optionalPrioritySubcategory->subcat_desc !!}</td>
+                                                                                </tr>
+                                                                            @endif
                                                                         </thead>
                                                                         <tbody>
                                                                             @foreach ($optionalPrioritySubcategory->optionalPriorities as $optionalPriority)
                                                                                 <tr>
                                                                                     <td>
-                                                                                        @if (in_array($optionalPriority->op_id, $opStored))
-                                                                                            <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
-                                                                                        @else
-                                                                                            <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                        @if ($optionalPriority->isCheckable)
+                                                                                            @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                            @else
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                            @endif
                                                                                         @endif
                                                                                     </td>
                                                                                     <td>
-                                                                                        {!! $optionalPriority->optional_priority !!}
+                                                                                        @if ($optionalPriority->isCheckable) 
+                                                                                            {!! $optionalPriority->optional_priority !!}
+                                                                                        @else
+                                                                                            <b>{!! $optionalPriority->optional_priority !!}</b>
+                                                                                        @endif
                                                                                     </td>
                                                                                 </tr>
                                                                             @endforeach
                                                                         </tbody>
                                                                     </table>
-                                                                    <p>{!! $optionalPrioritySubcategory->subcat_postamble !!}</p>
+                                                                    <!-- <p>{!! $optionalPrioritySubcategory->subcat_postamble !!}</p> -->
                                                                 @endif
                                                             @endforeach
                                                         </div>
@@ -423,6 +443,19 @@
     }
 
 </script>
+
+<style>
+
+table, tbody, td, tfoot, th, thead, tr {
+    border: none;
+}
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: none;
+        border-bottom-color: rgb(0, 0, 0);
+}
+
+</style>
 
 
 @endsection

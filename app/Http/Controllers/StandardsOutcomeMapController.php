@@ -6,7 +6,9 @@ use App\Models\ProgramLearningOutcome;
 use App\Models\LearningOutcome;
 use App\Models\Course;
 use App\Models\Program;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StandardsOutcomeMapController extends Controller
@@ -47,6 +49,15 @@ class StandardsOutcomeMapController extends Controller
                 );
             }
         }
+
+        // update courses 'updated_at' field
+        $course = Course::find($request->input('course_id'));
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
 
         return redirect()->back()->with('success', 'Your answers have been saved successfully.');
     }

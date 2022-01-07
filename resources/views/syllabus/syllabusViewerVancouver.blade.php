@@ -164,6 +164,39 @@
                 </h6>
             </div>
             <p>{{$vancouverSyllabus->course_schedule}}</p>
+            <br>
+            <!-- course schedule table  -->
+            <div id="courseScheduleTblDiv" class="row">
+
+                @if (!empty($syllabus))
+                    @if ($myCourseScheduleTbl['rows']->count() > 0)
+                    <table id="courseScheduleTbl" class="table table-responsive">
+                        <tbody>
+                            @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
+                                <!-- table header -->
+                                @if ($rowIndex == 0)
+                                    <tr class="table-primary fw-bold">
+                                        @foreach ($row as $headerIndex => $header)
+                                        <td>
+                                            {{$header->val}}
+                                        </td>
+                                        @endforeach
+                                    </tr>
+                                @else
+                                    <tr>
+                                        @foreach ($row as $colIndex => $data)
+                                        <td>
+                                            {{$data->val}}
+                                        </td>
+                                        @endforeach
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                    @endif
+                @endif
+            </div>
         </div>
         <!--  learning outcomes -->
         <div class="mb-4">

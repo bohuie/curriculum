@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Mail\NotifyProgramAdminMail;
+use App\Mail\NotifyProgramOwnerMail;
 use App\Models\Program;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
@@ -104,12 +105,24 @@ class ProgramUserController extends Controller
                                 break;
                             }
                             if($programUser->save()){
-                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));                            
+                                // update courses 'updated_at' field
+                                $program = Program::find($request->input('program_id'));
+                                $program->touch();
+
+                                // get users name for last_modified_user
+                                $currUser = User::find(Auth::id());
+                                $program->last_modified_user = $currUser->name;
+                                $program->save();
+
+                                // email user to be added
+                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));
+                                // email the owner letting them know they have added a new collaborator
+                                Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $program->department, $user->name));                           
                             } else {
-                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program_code . ' ' . $program->program_num);
+                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program);
                             }
                         } else {
-                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on program ' . $program->program_code . ' ' . $program->program_num);
+                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on program ' . $program->program);
                         }
                     } else {
                         $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
@@ -123,7 +136,7 @@ class ProgramUserController extends Controller
 
         // if no errors or warnings, flash a success message
         if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
-            $request->session()->flash('success', 'Successfully updated collaborators on program ' . $program->program_code . ' ' . $program->program_num);
+            $request->session()->flash('success', 'Successfully updated collaborators on program ' . $program->program);
         }
 
         // return to the previous page
@@ -191,5 +204,38 @@ class ProgramUserController extends Controller
         if ($currentUserPermission == 1 ) {
             $programUser->delete();
         }
+    }
+
+    public function leave(Request $request) {
+        $program = Program::find($request->input('program_id'));
+        $programUser = ProgramUser::where('user_id', $request->input('programCollaboratorId'))->where('program_id', $request->input('program_id'))->first();
+        if ($programUser->delete()) {
+            $request->session()->flash('success', 'Successfully left ' .$program->program);
+        } else {
+            $request->session()->flash('error', 'Failed to leave the program');
+        }
+        return redirect()->back();
+    }
+
+    public function transferOwnership(Request $request) {
+        $program = Program::find($request->input('program_id'));
+        $oldProgramOwner = ProgramUser::where('user_id', $request->input('oldOwnerId'))->where('program_id', $request->input('program_id'))->first();
+        $newProgramOwner = ProgramUser::where('user_id', $request->input('newOwnerId'))->where('program_id', $request->input('program_id'))->first();
+
+        //transfer ownership and set old owner to be an editor
+        $newProgramOwner->permission = 1;
+        $oldProgramOwner->permission = 2;
+
+        if ($newProgramOwner->save()) {
+            if ($oldProgramOwner->save()) {
+                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$program->program. ' program.');
+            } else {
+                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
+            }
+        } else {
+            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
+        }
+        
+        return redirect()->back();
     }
 }

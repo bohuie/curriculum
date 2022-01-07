@@ -7,6 +7,7 @@ use App\Models\syllabus\Syllabus;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\NotifySyllabusUserMail;
+use App\Mail\NotifySyllabusUserOwnerMail;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -106,7 +107,19 @@ class SyllabusUserController extends Controller
                                 break;
                             }
                             if($syllabusUser->save()){
-                                Mail::to($user->email)->send(new NotifySyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
+                                // update syllabus 'updated_at' field
+                                $syllabus = Syllabus::find($syllabusId);
+                                $syllabus->touch();
+
+                                // get users name for last_modified_user
+                                $currUser = User::find(Auth::id());
+                                $syllabus->last_modified_user = $currUser->name;
+                                $syllabus->save();
+
+                                // email user to be added
+                                Mail::to($user->email)->send(new NotifySyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $currentUser->name));
+                                // email the owner letting them know they have added a new collaborator
+                                Mail::to($currentUser->email)->send(new NotifySyllabusUserOwnerMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
                             }
@@ -191,5 +204,38 @@ class SyllabusUserController extends Controller
         if ($currentUserPermission == 1 ) {
             $syllabusUser->delete();
         }
+    }
+
+    public function leave(Request $request) {
+        $syllabus = Syllabus::find($request->input('syllabus_id'));
+        $syllabusUser = SyllabusUser::where('user_id', $request->input('syllabusCollaboratorId'))->where('syllabus_id', $request->input('syllabus_id'))->first();
+        if ($syllabusUser->delete()) {
+            $request->session()->flash('success', 'Successfully left ' .$syllabus->course_title);
+        } else {
+            $request->session()->flash('error', 'Failed to leave the syllabus');
+        }
+        return redirect()->back();
+    }
+
+    public function transferOwnership(Request $request) {
+        $syllabus = Syllabus::find($request->input('syllabus_id'));
+        $oldSyllabusOwner = SyllabusUser::where('user_id', $request->input('oldOwnerId'))->where('syllabus_id', $request->input('syllabus_id'))->first();
+        $newSyllabusOwner = SyllabusUser::where('user_id', $request->input('newOwnerId'))->where('syllabus_id', $request->input('syllabus_id'))->first();
+
+        //transfer ownership and set old owner to be an editor
+        $newSyllabusOwner->permission = 1;
+        $oldSyllabusOwner->permission = 2;
+
+        if ($newSyllabusOwner->save()) {
+            if ($oldSyllabusOwner->save()) {
+                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$syllabus->course_title. ' syllabus.');
+            } else {
+                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$syllabus->course_title. ' syllabus');
+            }
+        } else {
+            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$syllabus->course_title. ' syllabus');
+        }
+        
+        return redirect()->back();
     }
 }

@@ -7,7 +7,9 @@ use App\Models\LearningOutcome;
 use App\Models\Course;
 use App\Models\OutcomeMap;
 use App\Models\Program;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OutcomeMapController extends Controller
@@ -50,6 +52,9 @@ class OutcomeMapController extends Controller
             ]);
 
         $outcomeMap = $request->input('map');
+        
+        // dd($outcomeMap);
+
         foreach ($outcomeMap as $cloId => $ploToScaleIds) {
             foreach (array_keys($ploToScaleIds) as $ploId) {
                 DB::table('outcome_maps')->updateOrInsert(
@@ -58,7 +63,15 @@ class OutcomeMapController extends Controller
                 );
             }
         }
-        
+        // update courses 'updated_at' field
+        $course = Course::find($request->input('course_id'));
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
+
         return redirect()->back()->with('success', 'Your answers have been saved successfully.');
     }
 

@@ -3,9 +3,80 @@
 
 @section('content')
 
+@if (!empty($syllabus)) 
+    <div class="row my-2">
+        <div class="col">
+            <button type="button" style="width:200px" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#duplicateConfirmation">Duplicate Syllabus</button>
+            <!-- Duplicate Confirmation Modal -->
+            <div class="modal fade" id="duplicateConfirmation" tabindex="-1" role="dialog" aria-labelledby="duplicateConfirmation" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Duplicate Syllabus</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('syllabus.duplicate', $syllabus->id) }}" method="GET">
+                            @csrf
+                            {{method_field('GET')}}
+                            <div class="modal-body">
+
+                                <div class="form-group row">
+                                    <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                    <div class="col-md-8">
+                                        <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$syllabus->course_code}}" name="course_code" required autofocus>
+                                        @error('course_code')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                        <small id="helpBlock" class="form-text text-muted">
+                                            Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                    <div class="col-md-8">
+                                        <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$syllabus->course_num}}" required autofocus>
+                                        @error('course_num')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                    <div class="col-md-8">
+                                        <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$syllabus->course_title}} - Copy" required autofocus>
+                                        @error('course_title')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <div id="app">
     <div class="home">
-        <div class="card mt-4">
+        <div class="card mt-4" style="position:static">
             <div class="card-header wizard text-start">
                 <h2>
                     Syllabus Generator 
@@ -73,7 +144,7 @@
                 <h6 class="card-subtitle mb-4 lh-lg fs-6 ml-3 mt-2 mr-2">
                     To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank"href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
                 </h6>
-                <hr class="w-50 text-secondary mb-4 ml-3">
+                <hr class="w-auto text-secondary mb-4 ml-3 mr-3">
                 
                 <form class="courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
                     @csrf
@@ -252,6 +323,7 @@
                         <div class="row" id="courseFormat"></div>
                         <!-- Course Overview -->
                         <div class="row" id="courseOverview"></div>
+
                         <!-- Learning Outcomes -->
                         <div class="row mb-3">
                             <div class="col ">
@@ -288,6 +360,91 @@
                                 </div>                                            
                                 <textarea id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
                             </div>
+                        </div>
+
+                        <!-- course schedule table -->
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label for="courseSchedule">Course Schedule</label>
+                                <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
+                                <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount > 0) hidden @endif @endif id="createTableBtn" title="Create Course Schedule Table" type="button" class="btn bg-primary btn-sm fs-5 text-white" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal">
+                                    <i class="bi bi-plus pr-1"></i>                                    
+                                    <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>  
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- course schedule toolbar -->
+                        <div id="courseScheduleTblToolbar" class="row mb-1" @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount <= 0) hidden @endif @else hidden @endif>
+                            <div class="col-auto">
+                                <button id="delTable" title="Delete Table" type="button" class="btn btn-danger fs-5" data-bs-toggle="modal" data-bs-target="#delCourseScheduleTbl">
+                                    <i class="bi bi-trash-fill pr-1"></i>
+                                    <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>  
+                                </button>                                  
+                            </div>
+                            <div class="col-auto">
+                                <button title="Add Column Left" type="button" class="addCol btn btn-secondary fs-5" data-side="left">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
+                                </button>
+                                <button title="Add Column Right" type="button" class="addCol btn btn-secondary fs-5" data-side="right">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line"></span>
+                                </button>
+                                <button id="delCols" title="Delete Column(s)" type="button" class="btn btn-danger fs-5" >
+                                    <i class="bi bi-trash-fill pr-1"></i>
+                                    <span class="iconify-inline" data-icon="fluent:column-triple-20-filled"></span>                                        
+                                </button>                                
+                            </div>
+                            <div class="col-auto">
+                                <button title="Add Row Top" type="button" class="addRow btn btn-secondary fs-5" data-side="top">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
+                                </button>
+                                <button title="Add Row Bottom" type="button" class="addRow btn btn-secondary fs-5" data-side="bottom">
+                                    <i class="bi bi-plus pr-1"></i>
+                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+
+                        <!-- div where course schedule table is created from scratch  -->
+                        <div id="courseScheduleTblDiv">
+                            @if (!empty($syllabus))
+                                @if ($courseScheduleTblRowsCount > 0)
+                                <table id="courseScheduleTbl" class="table align-middle reorder-rows-tbl">
+                                    <thead>
+                                        <tr class="table-primary">
+                                            <th></th>
+                                            @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
+                                                <th>
+                                                    <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
+                                                </th>
+                                            @endforeach
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
+                                            @if ($rowIndex != 0)
+                                                <tr>
+                                                    <td class="align-middle fs-5">∴</td>
+                                                    @foreach ($row as $colIndex => $data)
+                                                    <td>
+                                                        <textarea name="courseScheduleTblRows[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Data here ...">{{$data->val}}</textarea>
+                                                    </td>
+                                                    @endforeach
+                                                    <td class="align-middle">
+                                                        <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="delCourseScheduleRow(this)"></i>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                @endif
+                            @endif
                         </div>
 
                         <!-- Late Policy -->
@@ -339,7 +496,7 @@
                         </div>
                         <!-- Course Overview -->
                         <div class="row" id="learningAnalytics"></div>
-                        
+
                         <!-- Course Optional Resources -->
                         <div class="row mb-3 mt-4" >
                             <div class="col">
@@ -364,8 +521,460 @@
     </div>
 </div>
 
+<div id="createCourseScheduleTblModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create a Course Schedule Table</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="createCourseScheduleTblForm">
+                <div class="modal-body">
+                    <div class="row g-3 mb-2">
+                        <div class="col-6">
+                            <label for="courseScheduleTblRowsCount" class="form-label">Number of Rows</label>
+                            <input id="courseScheduleTblRowsCount" name="numRows" type="number" min="1" max="42" step="1" class="form-control">
+                        </div>
+                        <div class="col-6">
+                            <label for="courseScheduleTblColsCount" class="form-label">Number of Columns</label>
+                            <input id="courseScheduleTblColsCount" name="numCols" type="number" min="1" max="5" step="1" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Course Schedule Table Modal -->
+<div id="delCourseScheduleTbl" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Course Schedule Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your course schedule?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary col-3" data-bs-dismiss="modal">Cancel</button>
+                <button id="delCourseScheduleBtn" type="button" class="btn btn-danger col-3">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Course Schedule Table Columns Modal -->
+<div id="delColsModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Column(s)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="delColsForm">
+                <div class="modal-body">
+                    <p>Which columns would you like to delete?</p>
+                    <div id="courseScheduleTblColsList"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary col-3" data-bs-dismiss="modal">Cancel</button>
+                    <button id="delColsBtn" type="submit" class="btn btn-danger col-3">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Course Schedule Table Row Confirmation Modal -->
+<div id="delRowModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete row</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this row?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary col-3" data-bs-dismiss="modal">Cancel</button>
+                <button id="delRowBtn" type="button" class="btn btn-danger col-3">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="application/javascript">
     $(document).ready(function () {
+        // event listener on create course schedule submit form button
+        $('#createCourseScheduleTblForm').on('submit', function(event) { 
+            // prevent default submit procedure
+            event.preventDefault();
+            event.stopPropagation();
+            var createCourseScheduleTblModal = bootstrap.Modal.getInstance(document.getElementById('createCourseScheduleTblModal'));
+            // get course schedule table div
+            var courseScheduleTblDiv = document.getElementById('courseScheduleTblDiv');
+            // create table if it doesn't exist
+            if (!document.getElementById('courseScheduleTbl')) {
+                // get num rows 
+                var numRows = event.target.elements.numRows.value;
+                // get num cols
+                var numCols = event.target.elements.numCols.value;
+                // create <table> element
+                var tbl = document.createElement('table');
+                tbl.setAttribute('id', 'courseScheduleTbl');
+                tbl.setAttribute('class', 'table align-middle');
+                // create <thead> element
+                var tblHead = document.createElement('thead');
+                // create <tbody> element
+                var tblBody = document.createElement('tbody');
+                // iterate over rows 
+                for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
+                    // create <row> element
+                    var row = document.createElement('tr');
+                    if (rowIndex === 0) row.setAttribute('class', 'table-primary');
+                    // iterate over cols
+
+                    for (let colIndex = 0; colIndex < parseInt(numCols) + 1; colIndex++) {
+                        
+                        // create <textarea>
+                        var inputCell = document.createElement('textarea');
+                        inputCell.setAttribute('form', 'sylabusGenerator');
+                        inputCell.setAttribute('type', 'text');
+                        inputCell.setAttribute('class', 'form-control');
+                        inputCell.setAttribute('spellcheck', 'true');
+                        // if first row, create and style <th> cells, otherwise create and style <td> cells
+                        if (rowIndex === 0) {
+                            // create <th> element
+                            headerCell = document.createElement('th');
+                            if (colIndex != 0) {
+                                // set input attributes for column headers
+                                inputCell.setAttribute('placeholder', 'Column heading here ...');
+                                inputCell.setAttribute('name', 'courseScheduleTblHeadings[]');
+                                headerCell.appendChild(inputCell);
+                                // put inputCell in <th>
+                                headerCell.appendChild(inputCell);
+                            }
+                            // put <th> in <row>                           
+                            row.appendChild(headerCell);
+                        } else {
+                            // create <td> element 
+                            var cell = document.createElement('td');
+                            if (colIndex == 0) {
+                                cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                cell.addEventListener('mousedown', mouseDownHandler);
+                                cell.innerHTML = "∴";
+                            } else {
+                                // set input attributes for data cells
+                                inputCell.setAttribute('placeholder', 'Data here ...');                        
+                                inputCell.setAttribute('name', 'courseScheduleTblRows[]');
+                                // put inputCell in <td>
+                                cell.appendChild(inputCell);
+                            }
+                            // put <td> in <row>
+                            row.appendChild(cell);
+                        }
+                    }
+                    // add action cell to row if it is not the header row
+                    if (rowIndex != 0) {
+                        // create <td> element for row actions
+                        var actionsCell = document.createElement('td');
+                        // center row actions
+                        actionsCell.setAttribute('style', 'vertical-align:center;text-align:center');
+                        // create delete action icon
+                        var delAction = document.createElement('i');
+                        // style delete action icon
+                        delAction.setAttribute('class', 'bi bi-x-circle-fill text-danger fs-4 btn');
+                        // add on click listener to del row
+                        delAction.onclick = delCourseScheduleRow;                        
+                        // put <i> in <td>
+                        actionsCell.appendChild(delAction);
+                        // put actions cell in <row>
+                        row.appendChild(actionsCell);
+                        // put <row> in <tbody>
+                        tblBody.appendChild(row);
+                    } else {
+                        // create empty <td>
+                        var actionColTdHeader = document.createElement('th');
+                        // put <td> in <row>
+                        row.appendChild(actionColTdHeader);
+                        // put <tr> in <thead>
+                        tblHead.appendChild(row);
+                    }
+                }
+                // put <thead> in <table>
+                tbl.appendChild(tblHead);
+                // put <tbody> in <table> 
+                tbl.appendChild(tblBody);
+                // put <table> in course schedule table div
+                courseScheduleTblDiv.appendChild(tbl);
+                // show the course schedule table toolbar
+                $('#courseScheduleTblToolbar').removeAttr('hidden');
+                // hide create table btn
+                $('#createTableBtn').attr('hidden', 'true');
+            }
+
+            createCourseScheduleTblModal.hide();
+
+        });
+
+        // event listener on delete course schedule button
+        $('#delCourseScheduleBtn').on('click', function(event) {
+            var courseScheduleTblDiv = document.getElementById('courseScheduleTblDiv');
+            // remove all child nodes 
+            $(courseScheduleTblDiv).empty();
+            // show create a course schedule table button
+            $('#createTableBtn').removeAttr('hidden');
+            $('#courseScheduleTblToolbar').attr('hidden', 'true');
+
+            var delCourseScheduleTblModal = bootstrap.Modal.getInstance(document.getElementById('delCourseScheduleTbl'));
+            // close modal
+            delCourseScheduleTblModal.hide();
+        });
+
+        // TODO
+        $('#courseScheduleTemplateBtn').on('click', function (event){
+            console.log('use a course schedule table template ')
+            $('#courseScheduleTableTemplate').removeClass('visually-hidden');
+        });
+
+        // event listener on add col buttons
+        $('.addCol').on('click', function (event) { 
+            // get the course schedule table 
+            var courseScheduleTbl = document.getElementById('courseScheduleTbl');
+            // if course schedule table exists, add col to the side indicated by the button clicked
+            if (courseScheduleTbl) {
+                // get which side to add the col to 
+                var side = event.currentTarget.dataset.side;
+                // get the num of cols in the tbl 
+                var numCols = courseScheduleTbl.rows[0].cells.length;
+                // add col if there are less than 6 cols
+                if (numCols < parseInt($('#courseScheduleTblColsCount').attr('max')) + 2) {  
+                    // add a new <td> to each <row>
+                    Array.from(courseScheduleTbl.rows).forEach((row, rowIndex) => {
+                        // create a <textarea>
+                        var inputCell = document.createElement('textarea');
+                        inputCell.setAttribute('form', 'sylabusGenerator');
+                        inputCell.setAttribute('type', 'text');
+                        inputCell.setAttribute('class', 'form-control');
+                        inputCell.setAttribute('spellcheck', 'true');
+                        // set input attributes for column headers, otherwise set input attributes for data cells
+                        if (rowIndex == 0) {
+                            inputCell.setAttribute('placeholder', 'Column heading here ...');
+                            inputCell.setAttribute('name', 'courseScheduleTblHeadings[]');
+                        } else {
+                            inputCell.setAttribute('placeholder', 'Data here ...');                        
+                            inputCell.setAttribute('name', 'courseScheduleTblRows[]');
+                        }
+                        // add column on the correct side
+                        switch (side) {
+                            case 'left':
+                                // put <td> in <row> at the front (insert col on left)
+                                if (rowIndex == 0) {
+                                    headerCell = document.createElement('th');
+                                    headerCell.appendChild(inputCell);
+                                    row.cells[0].after(headerCell);
+                                    // row.prepend(headerCell);
+                                } else {
+                                    newCell = row.insertCell(1);
+                                    newCell.appendChild(inputCell);
+                                }
+                                break;
+                            case 'right': 
+                                // put <td> in <row> at the back (insert col on the right)
+                                newCell = row.insertCell(numCols - 1);
+                                // if header row, make sure new cell has <th> tags
+                                if (rowIndex == 0) newCell.outerHTML = `<th>${inputCell.outerHTML}</th>`;
+                                // add <textarea> to data cell
+                                newCell.appendChild(inputCell);
+                                // row.appendChild(cell);
+                                break;
+                        }
+                    });
+                }
+            }
+        });
+
+        // event listener on delete column(s) button in course schedule table toolbar
+        // updates the delCols confirmation modal with info about the columns
+        $('#delCols').on('click', function (event) {
+            // get the course schedule table 
+            var courseScheduleTbl = document.getElementById('courseScheduleTbl');
+            // if table exists, update and show delCols confirmation modal 
+            if (courseScheduleTbl) {
+                // get modal for deleting cols
+                var delColsModalEl = document.getElementById('delColsModal');
+                var delColsModal = new bootstrap.Modal(delColsModalEl);
+                // get div where cols should be listed
+                var courseScheduleTblColsListDiv = document.getElementById('courseScheduleTblColsList');
+                // empty the div where cols should be listed to refresh the list
+                $(courseScheduleTblColsListDiv).empty();
+                // get the column cells from the first row
+                var cols = courseScheduleTbl.rows[0].cells;
+                // foreach col create a checkbox with label and place it in the delColsModal 
+                Array.from(cols).forEach((col, colIndex) => {
+                    // only add relevant col headers to del cols modal
+                    if (colIndex < cols.length - 1 && colIndex > 0) {
+                        // <div> foreach <input> and <label>
+                        var colDiv = document.createElement('div');
+                        // add bootstrap form elements styling
+                        colDiv.setAttribute('class', 'form-check form-check-inline');
+                        // create, style and set attributes for <input> 
+                        var colCheckbox = document.createElement('input');
+                        colCheckbox.setAttribute('id', 'col-heading-' + (colIndex + 1).toString());
+                        colCheckbox.setAttribute('type', 'checkbox');
+                        colCheckbox.setAttribute('name', 'colIndex');
+                        colCheckbox.setAttribute('class', 'form-check-input');
+                        colCheckbox.setAttribute('value', colIndex.toString());
+                        // create, style and set attributes for <label>
+                        var colLabel = document.createElement('label');
+                        colLabel.setAttribute('for', 'col-heading-' + (colIndex + 1).toString());
+                        colLabel.setAttribute('class', 'form-check-label');
+                        colLabel.innerHTML = (col.firstElementChild.value.length === 0) ? 'Column #' + (colIndex).toString() : col.firstElementChild.value; 
+                        // put <input> in <div>
+                        colDiv.appendChild(colCheckbox);
+                        // put <label> in <div>
+                        colDiv.appendChild(colLabel);
+                        // put inner <div> in outer <div> 
+                        courseScheduleTblColsListDiv.appendChild(colDiv);
+                    }
+                });
+                // show the delCols confirmation modal
+                delColsModal.show();
+            }
+        });
+
+        $('#delColsForm').on('submit', function (event) {
+            // prevent default submit procedure
+            event.preventDefault();
+            event.stopPropagation(); 
+            // get del cols confirmation modal   
+            var delColsModal = bootstrap.Modal.getInstance(document.getElementById('delColsModal'));   
+            // get the columns to delete from the del cols confirmation form 
+            var colsToDelete = $(this).serializeArray().map((input, index) => {
+                return input.value;
+            });
+            // sort colsToDelete in descending order to ensure cols with the greatest positions are deleted first. 
+            colsToDelete.sort(function(a, b) {return b - a});
+            // get the course schedule table 
+            var courseScheduleTbl = document.getElementById('courseScheduleTbl');
+            // if table exists, del specified cols
+            if (courseScheduleTbl) {
+                // iterate over table rows 
+                Array.from(courseScheduleTbl.rows).forEach((row, rowIndex) => {
+                    // iterate over columns to delete
+                    colsToDelete.forEach((colToDelete) => {
+                        // delete cells from every row
+                        row.deleteCell(colToDelete);
+                        
+                    });
+                });
+            }
+            delColsModal.hide();
+        });
+
+        $('.addRow').on('click', function (event) { 
+            // get the course schedule table 
+            var courseScheduleTbl = document.getElementById('courseScheduleTbl');
+
+            // if course schedule table has been created 
+            if (courseScheduleTbl) {
+                // get which side to add the row to 
+                var side = event.currentTarget.dataset.side;
+                // get the number of cols in the tbl
+                var numCols = courseScheduleTbl.rows[0].cells.length;
+                console.log(numCols);
+                // if num rows in the tbl is less than the max, add row
+                if (courseScheduleTbl.rows.length < $('#courseScheduleTblRowsCount').attr('max')) {
+                    // create <textarea>
+                    var inputCell = document.createElement('textarea');
+                    inputCell.setAttribute('form', 'sylabusGenerator');
+                    inputCell.setAttribute('name', 'courseScheduleTblRows[]');
+                    inputCell.setAttribute('type', 'text');
+                    inputCell.setAttribute('class', 'form-control');
+                    inputCell.setAttribute('spellcheck', 'true');
+                    // set placeholder values for <textarea>
+                    inputCell.setAttribute('placeholder', 'Data here ...');
+                    // switch on side to add row
+                    switch (side) {
+                        case 'top':
+                            // add a row at the top
+                            let topRow = courseScheduleTbl.tBodies[0].insertRow(0);
+                            // add a cell for each col to the new row
+                            for (let colIndex = 0; colIndex < numCols - 1; colIndex++) {
+                                // create  <td> element 
+                                var cell = document.createElement('td');
+                                if (colIndex == 0) {
+                                    cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                    cell.addEventListener('mousedown', mouseDownHandler);
+                                    cell.innerHTML = "∴";
+                                } else { 
+                                    // put inputCell in <td>
+                                    cell.appendChild(inputCell.cloneNode());
+                                }
+                                topRow.appendChild(cell);
+
+                            }
+                            // create <td> element for row actions
+                            var actionsCell = document.createElement('td');
+                            // center row actions
+                            actionsCell.setAttribute('class', 'align-middle');
+                            // create delete action icon
+                            var delAction = document.createElement('i');
+                            // style delete action icon
+                            delAction.setAttribute('class', 'bi bi-x-circle-fill text-danger fs-4 btn');
+                            // add on click listener to del row
+                            delAction.onclick = delCourseScheduleRow;                        
+                            // put <i> in <td>
+                            actionsCell.appendChild(delAction);
+                            // put actions cell in <row>
+                            topRow.appendChild(actionsCell);
+                            break;
+
+                        case 'bottom':
+                            // add a row at the bottom
+                            let bottomRow = courseScheduleTbl.tBodies[0].insertRow(-1);
+                            // add a cell for each col to the new row
+                            for (let colIndex = 0; colIndex < numCols - 1; colIndex++) {
+                                // clone input cell to add it to a row multiple times
+                                var cell = document.createElement('td');
+                                if (colIndex == 0) {
+                                    cell.setAttribute('class', 'align-middle fs-5 draggable');
+                                    cell.addEventListener('mousedown', mouseDownHandler);
+                                    cell.innerHTML = "∴";
+                                } else { 
+                                    // put inputCell in <td>
+                                    cell.appendChild(inputCell.cloneNode());
+                                }
+                                bottomRow.appendChild(cell);
+                            }
+                            // create <td> element for row actions
+                            var actionsCell = document.createElement('td');
+                            // center row actions
+                            actionsCell.setAttribute('class', 'align-middle');
+                            // create delete action icon
+                            var delAction = document.createElement('i');
+                            // style delete action icon
+                            delAction.setAttribute('class', 'bi bi-x-circle-fill text-danger fs-4 btn');
+                            // add on click listener to del row
+                            delAction.onclick = delCourseScheduleRow;                        
+                            // put <i> in <td>
+                            actionsCell.appendChild(delAction);
+                            // put actions cell in <row>
+                            bottomRow.appendChild(actionsCell);
+                            break;
+                        default:
+                            let row = courseScheduleTbl.insertRow();                
+                    }
+                }
+            }
+        });
 
         var syllabus = <?php echo json_encode($syllabus);?>;
         $('[data-toggle="tooltip"]').tooltip();
@@ -451,6 +1060,26 @@
         // update syllabus form with the campus specific info
         onChangeCampus();
     });
+
+
+
+    // delete a course schedule row
+    function delCourseScheduleRow(submitter) {
+        // get delete row confirmation modal
+        var delRowModalEl = document.getElementById('delRowModal');
+        // instantiate new bootstrap modal
+        var delRowModal = new bootstrap.Modal(delRowModalEl);
+        // set on click listener for delete confirmation
+        $('#delRowBtn').on('click', function (event) {
+            // delete row
+            (submitter.target) ? $(submitter.target).parents('tr').remove() : $(submitter).parents('tr').remove();
+            // hide modal
+            delRowModal.hide();
+        });
+        // show modal
+        delRowModal.show();
+
+    }
 
     // Import course info into using GET AJAX call
     function importCourseInfo() {
@@ -678,16 +1307,7 @@
                     <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['instructorBioStatement']}}"></i>
                     <textarea id = "courseInstructorBio" name = "courseInstructorBio" class ="form-control" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->instructor_bio : ''}}</textarea>
             </div>
-            `;
-
-        var courseSchedule = `
-            <div class="col mb-3">
-                <label for="courseSchedule">Course Schedule</label>
-                <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
-                <span class="requiredBySenate"></span>
-                <textarea name = "courseSchedule" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_schedule : ''}}</textarea>
-            </div>
-            `;        
+            `;     
         
         var courseStructure = `
             <div class="col mb-3">
@@ -739,7 +1359,6 @@
             $('#coursePrereqs').html(coursePrereqs);
             $('#courseCoreqs').html(courseCoreqs);
             $('#courseStructure').html(courseStructure);
-            $('#courseSchedule').html(courseSchedule);
             $('#courseInstructorBio').html(courseInstructorBio);
             $('#courseDescription').html(courseDescription);
             $('#learningAnalytics').html(learningAnalytics);
@@ -765,7 +1384,6 @@
             $('#coursePrereqs').empty();
             $('#courseCoreqs').empty();
             $('#courseStructure').empty();
-            $('#courseSchedule').empty();
             $('#courseInstructorBio').empty();
             $('#courseDescription').empty();
             $('#learningAnalytics').empty();
@@ -779,9 +1397,11 @@
                 collapseSection(note);
             }
         });
-
     }
-
 </script>
+
+<script src="{{ asset('js/drag_drop_tbl_row.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/drag_drop_tbl_row.css' ) }}">
+
 
 @endsection

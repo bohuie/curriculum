@@ -19,7 +19,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader1">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion1" aria-expanded="false" aria-controls="collapseFAQAccordion1">
-                            Can I use this mapping website if I don’t have all course details?                        
+                            <h5>Can I use this mapping website if I don’t have all course details?</h5>                        
                         </button>
                     </h2>
                                                         
@@ -37,7 +37,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader2">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion2" aria-expanded="false" aria-controls="collapseFAQAccordion2">
-                            Can I view how different courses map to different program learning outcomes?                        
+                            <h5>Can I <b>view</b> how different courses map to different program learning outcomes?</h5>                        
                         </button>
                     </h2>
                                                         
@@ -55,7 +55,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader3">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion3" aria-expanded="false" aria-controls="collapseFAQAccordion3">
-                            How do I retrieve a course or program that I deleted in the past?                         
+                            <h5>Can I retrieve a course or program that I <b>deleted</b> in the past?</h5>                         
                         </button>
                     </h2>
                                                         
@@ -73,7 +73,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader4">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion4" aria-expanded="false" aria-controls="collapseFAQAccordion4">
-                            Can somebody help me use this tool?                
+                            <h5>Can somebody <b>help</b> me use this tool?</h5>                
                         </button>
                     </h2>
                                                         
@@ -91,7 +91,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader5">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion5" aria-expanded="false" aria-controls="collapseFAQAccordion5">
-                            How do I generate a syllabus?                
+                            <h5>How do I <b>generate a syllabus</b>?</h5>                
                         </button>
                     </h2>
                                                         
@@ -130,6 +130,101 @@
                     </div>
                 </div>
             </div> 
+            <div class="accordion" id="FAQAccordion6">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader6">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion6" aria-expanded="false" aria-controls="collapseFAQAccordion6">
+                            <h5>How do I <b>create</b> a program?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion6" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader6" data-bs-parent="FAQAccordion6">
+                        <div class="accordion-body lh-lg">
+                            <p>To create a program, first register a Curriculum MAP account or login. On your dashboard, you will see your "Programs".</p>
+                            <p class="fw-bold">From the dashboard</p>
+                            <ol style="list-style: none;">
+                                <li>Click the “+” sign on the right-hand side to begin creating a program. Fill in the required program information marked with a *.</li>
+                                <li>You can find your newly created program on your dashboard in the Programs section.</li>
+                                <li>Click on your program name or its edit icon to start building your program.</li>
+                            </ol>
+                            <p class="mt-3 fw-bold">The site will walk you through the steps needed to build your program, by:</p>
+                            <ol>
+                                <li>Identifying the program learning outcomes or PLOs</li>
+                                <ol type="a">
+                                    <li>You may organize your PLOs into "categories" to separate PLOs from discipline standards, skills, etc.</li>
+                                </ol>
+                                <li>Choosing a mapping scale</li>
+                                <ol type="a">
+                                    <li>This will be the scale used to map your PLOs to each course in the your program.</li>
+                                    <li>Depending on your discipline, you may want to create your own mapping scale or choose one of the default ones</li>
+                                </ol>
+                                <li>Identify the courses associated with the program. Once these have been identified, <b>they must be mapped individually to the program by the course owner.</b></li>
+                                <ol type="a">
+                                    <li>If you own one or many of those courses, this requires you to click on “map course” to complete the map between the course and the PLOs you identified.</li>
+                                    <li>If you do not own the course, you can let the course owner know that your PLOs are now ready to be mapped against their course by clicking “ask to map course”.</li>
+                                </ol>
+                                <li><b>Once all courses have been individually mapped to the program you created</b>, you may go to “Program Overview” or step 4. This page will summarize the program mapping done so far. Use the interactive table to find out strengths and weaknesses of your program. Consider printing and sharing this summary with your colleagues to engage in curriculum re-design!</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion" id="FAQAccordion7">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader7">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion7" aria-expanded="false" aria-controls="collapseFAQAccordion7">
+                            <h5>How do I <b>duplicate</b> a course, program, or syllabus?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion7" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader7" data-bs-parent="FAQAccordion7">
+                        <div class="accordion-body lh-lg">
+                            <p style="font-size:small" ><b>Note</b>: You must own the course, program, or syllabus in order to duplicate it.</p>
+                            <p class="fw-bold">From the dashboard</p>
+                            <ol>
+                                <li>Click on either the course, program, or syllabus you would like to duplicate.</li>
+                                <li>Click on the green 'Duplicate' button, which is located in the top right.</li>
+                                <li>You will then be prompted to fill out some information for the item you wish to duplicate, after submitting the form you will see the newly duplicated item on your dashboard.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" id="FAQAccordion8">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader8">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion8" aria-expanded="false" aria-controls="collapseFAQAccordion8">
+                            <h5>How do I add <b>collaborators</b> to my course, program, or syllabus?</h5>         
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion8" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader8" data-bs-parent="FAQAccordion8">
+                        <div class="accordion-body lh-lg">
+                            <p>The collaborators feature allows an owner of a course, program or syllabus to share their work with other users. The owner can select from two types of collaborators, viewers and editors. A Viewer is restricted to only being able to view the summary information, whereas an editor can make changes and create new elements, but cannot add collaborators or delete the Course, Program, or Syllabus. An example of the collaborators feature would be to add a teaching assistant to your course or syllabus as a viewer, so they can access course information.</p>
+                            <p style="font-size:small" ><b>Notes</b>: <ol><li>You must own the course, program, or syllabus in order to add collaborators.</li><li>    Your collaborator must have registered on this site before you can add them. If the user you are trying to invite does not already have an account, then you can send them a registration invitation by following this <a target="_blank" href="{{ url('/invite') }}">link</a>.</li></ol> </p>
+                            <p class="fw-bold">From the dashboard</p>
+                            <ol>
+                                <li>Click on the <div class="collabIcon btn bg-transparent position-relative pr-2 pl-2" data-bs-placement="right" style="cursor: default;"><div><i class="bi bi-person-plus-fill"></i><span class="position-absolute top-0 start-85 translate-middle badge rounded-pill badge badge-dark">?</span></div></div> button under actions.</li>
+                                <li>Enter the collaborators email and select either viewer or editor.</li>
+                                <ol type="a">
+                                    <li><b>Viewers</b>: can view an overview of your program but cannot edit or delete your program or add/remove collaborators.</li>
+                                    <li><b>Editors</b>: have access to edit and view your program but cannot delete your program or add/remove collaborators.</li>
+                                </ol>
+                                <li>Click the <div id="exampleBtn" class="btn btn-primary" style="cursor: default;"><i class="bi bi-plus"></i> Collaborator</div> button, you will then see the collaborator appear in the table below.</li>
+                                <li>Finally click the <div class="btn btn-success m-1" style="cursor: default;">Save Changes</div> button to add your collaborators.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>    
