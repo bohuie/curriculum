@@ -15,7 +15,8 @@ class UpdateProgramsTable extends Migration
     {
         Schema::table('programs', function (Blueprint $table) {
             //
-            $table->string('campus')->default('Other');
+            $table->string('campus')->default('Other')->nullable();
+            $table->string('faculty')->nullable();
         });
     }
 

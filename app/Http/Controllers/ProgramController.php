@@ -69,7 +69,7 @@ class ProgramController extends Controller
         $this->validate($request, [
             'program'=> 'required',
             'level'=> 'required',
-            'faculty'=> 'required',
+            // 'faculty'=> 'required',
             ]);
 
         $program = new Program;
