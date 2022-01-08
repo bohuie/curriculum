@@ -1621,6 +1621,15 @@
 
 
 <script type="application/javascript">
+    var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
+    var vFaculties = faculties.filter(item => {
+        return item.campus_id === 1;
+    });
+    var oFaculties = faculties.filter(item => {
+        return item.campus_id === 2;
+    });
+    var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+
     $(document).ready(function () {
         // Enables functionality of tool tips
         $('[data-toggle="tooltip"]').tooltip({html:true});
@@ -1631,13 +1640,13 @@
             modal.show();
         });
 
-        var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
-        var vFaculties = faculties.filter(item => {
-            return item.campus_id === 1;
-        });
-        var oFaculties = faculties.filter(item => {
-            return item.campus_id === 2;
-        });
+        // var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
+        // var vFaculties = faculties.filter(item => {
+        //     return item.campus_id === 1;
+        // });
+        // var oFaculties = faculties.filter(item => {
+        //     return item.campus_id === 2;
+        // });
         
         $('#campus').change( function() {
             // filter faculty based on campus
@@ -1693,7 +1702,7 @@
 
         });
 
-        var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+        // var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
 
         $('#faculty').change( function() {
             var facultyId = parseInt($('#faculty').find(':selected').attr('name'));
@@ -1800,35 +1809,42 @@
         
     }
 
+    // function verification() {
+    //     if ($('#campus').find(':selected').text() !== 'Open list of campuses') {
+            
+    //         if ($('#campus').find(':selected').text() !== 'Other') {
+    //             alert('campus selected');
+    //             // load faculties based on campus
+
+    //             //TODO CHECK WHEN OTHER IS SELECTED FOR FACULTY AND DEPARTMENT
+    //             if ($('#faculty').find(':selected').text() !== 'Open list of faculties/schools') {
+    //                 alert('faculty selected');
+
+    //                 if ($('#department').find(':selected').text() !== 'Open list of departments') {
+    //                     alert('department selected');
+
+    //                 }
+    //             }
+    //         } else {
+    //             campusOtherOption();
+    //         }
+    
+    //     } else {
+    //         //
+    //         alert('new state'); 
+    //     }
+    // }
     function verification() {
+        console.log('here');
+        console.log(vFaculties);
         if ($('#campus').find(':selected').text() !== 'Open list of campuses') {
             
             if ($('#campus').find(':selected').text() !== 'Other') {
-                alert('campus selected');
-                // load faculties based on campus
-
-                //TODO CHECK WHEN OTHER IS SELECTED FOR FACULTY AND DEPARTMENT
-                if ($('#faculty').find(':selected').text() !== 'Open list of faculties/schools') {
-                    alert('faculty selected');
-
-                    if ($('#department').find(':selected').text() !== 'Open list of departments') {
-                        alert('department selected');
-
-                    }
+                if ($('#faculty').val() == '') {
+                    alert('true');
                 }
             } else {
                 campusOtherOption();
-                // redundent
-                // alert('campus Other');
-                // if ($('#faculty').find(':selected').text() !== 'Open list of faculties/schools') {
-                //     alert('faculty other');
-                //     facultyOtherOption();
-
-                //     if ($('#department').find(':selected').text() !== 'Open list of departments') {
-                //         alert('department other');
-                //         departmentOtherOption();
-                //     }
-                // }
             }
     
         } else {
