@@ -31,7 +31,7 @@
 
                     <form method="POST" class="col-6 ml-1" action="{{ action('ProgramLearningOutcomeController@import') }}" enctype="multipart/form-data">
                         @csrf
-                        <a href="{{asset('import_samples/import-plos-sample.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-plos-sample.xlsx</a>
+                        <a href="{{asset('import_samples/import-plos-template.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-plos-template.xlsx</a>
                         <div class="input-group">
                             <input type="hidden" name="program_id" value="{{$program->program_id}}">
                             <input type="file" name="upload" class="form-control" aria-label="Upload" required accept=".xlsx,.xls,.csv">

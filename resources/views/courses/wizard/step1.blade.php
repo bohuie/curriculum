@@ -133,7 +133,11 @@
                     </div>
                     <div class="row mb-2 align-items-end">
                         <form method="POST" class="col-6" action="{{ action('LearningOutcomeController@import') }}" enctype="multipart/form-data">
-                            <a href="{{asset('import_samples/import-clos-sample.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-clos-sample.csv</a>
+                            <p>
+                                <a href="{{asset('import_samples/import-clos-template.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-clos-template.xlsx</a>
+                                or
+                                <a href="{{asset('import_samples/import-clos-template.csv')}}" download><i class="bi bi-download mb-1"></i> import-clos-template.csv</a>
+                            </p>
                             @csrf
                             <div class="input-group">
                                 <input type="hidden" name="course_id" value="{{$course->course_id}}">
