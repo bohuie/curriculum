@@ -5014,10 +5014,8 @@ input[type=button].btn-block {
   padding: 1.5rem;
 }
 
-
 .wizard.alert-warning {
   text-align:center;
-  margin: 1rem;
 }
 
 .wizard.alert-warning > i {

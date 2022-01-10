@@ -204,6 +204,15 @@
                         Add, edit and delete PLOs below. Categories can be used to group PLOs.<strong> Please note this website can only support a total of 20 PLOs per program (future updates will allow for more PLOs)</strong>.               
                     </h6>
 
+                    <form method="POST" class="col-6 ml-1" action="{{ action('ProgramLearningOutcomeController@import') }}" enctype="multipart/form-data">
+                        @csrf
+                        <a href="{{asset('import_samples/import-plos-template.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-plos-template.xlsx</a>
+                        <div class="input-group">
+                            <input type="hidden" name="program_id" value="{{$program->program_id}}">
+                            <input type="file" name="upload" class="form-control" aria-label="Upload" required accept=".xlsx,.xls,.csv">
+                            <button class="btn bg-primary text-white" type="submit" >Import PLOs<i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
+                        </div>
+                    </form>
 
                     <div class="card m-3">
                         <h5 class="card-header wizard text-start">
