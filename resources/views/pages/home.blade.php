@@ -1805,54 +1805,25 @@
         $('#department-text').prop( "disabled", false );
     }
 
-    function loadFaculties() {
-        
-    }
-
-    // function verification() {
-    //     if ($('#campus').find(':selected').text() !== 'Open list of campuses') {
-            
-    //         if ($('#campus').find(':selected').text() !== 'Other') {
-    //             alert('campus selected');
-    //             // load faculties based on campus
-
-    //             //TODO CHECK WHEN OTHER IS SELECTED FOR FACULTY AND DEPARTMENT
-    //             if ($('#faculty').find(':selected').text() !== 'Open list of faculties/schools') {
-    //                 alert('faculty selected');
-
-    //                 if ($('#department').find(':selected').text() !== 'Open list of departments') {
-    //                     alert('department selected');
-
-    //                 }
-    //             }
-    //         } else {
-    //             campusOtherOption();
-    //         }
+    $(window).on('load', function(){
+        $('#campus').append($('<option disabled selected hidden>Open list of campuses</option>'));
+        $('#campus-text').prop( "hidden", true );
+        $('#campus-text').prop( "disabled", true );
+        $('#campus-text').val('');
+        $('#faculty').prop( "hidden", false );
+        $('#faculty').prop( "disabled", true );
+        $('#faculty').append($('<option disabled selected hidden>Open list of faculties/schools</option>'));
+        $('#faculty-text').prop( "hidden", true );
+        $('#faculty-text').prop( "disabled", true );
+        $('#faculty-text').val('');
+        $('#department').prop( "hidden", false );
+        $('#department').prop( "disabled", true );
+        $('#department').append($('<option disabled selected hidden>Open list of departments</option>'));
+        $('#department-text').prop( "hidden", true );
+        $('#department-text').prop( "disabled", true );
+        $('#department-text').val('');
+    });
     
-    //     } else {
-    //         //
-    //         alert('new state'); 
-    //     }
-    // }
-    function verification() {
-        console.log('here');
-        console.log(vFaculties);
-        if ($('#campus').find(':selected').text() !== 'Open list of campuses') {
-            
-            if ($('#campus').find(':selected').text() !== 'Other') {
-                if ($('#faculty').val() == '') {
-                    alert('true');
-                }
-            } else {
-                campusOtherOption();
-            }
-    
-        } else {
-            //
-            alert('new state'); 
-        }
-    }
-
 </script>
 
 <style> 
