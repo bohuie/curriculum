@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssessmentMethod;
+use App\Models\Campus;
 use Illuminate\Http\Request;
 use App\Models\Program;
 use App\Models\ProgramUser;
@@ -12,6 +13,8 @@ use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\Course;
 use App\Models\CourseProgram;
+use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\LearningActivity;
 use App\Models\MappingScale;
 use App\Models\LearningOutcome;
@@ -46,9 +49,13 @@ class ProgramWizardController extends Controller
             return redirect()->route('programWizard.step4', $program_id);
         }
 
+        $campuses =  Campus::all();
+        $faculties =  Faculty::all();
+        $departments =  Department::all();
+
         //header
-        $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
-        $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
+        // $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
+        // $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
         // get my programs
@@ -87,7 +94,7 @@ class ProgramWizardController extends Controller
         $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
 
         return view('programs.wizard.step1')->with('plos', $plos)->with('program', $program)->with('ploCategories', $ploCategories)
-                                            ->with("faculties", $faculties)->with("departments", $departments)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
+                                            ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('ploProgramCategories', $ploProgramCategories)
                                             ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }

@@ -27,8 +27,6 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $campusO->campus = 'Okanagan';
         $campusO->save();
 
-
-
         // create faculties for the vancouver campus
         $facultyAS = new Faculty;
         $facultyAS->faculty = 'Faculty of Applied Science';
@@ -863,5 +861,293 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->department = 'Pharmaceutical Sciences';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
+
+        // science
+        $faculty = new Faculty;
+        $faculty->faculty = 'Faculty of Science';
+        $faculty->campus_id = $campusV->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Applied Mathematics, Institute of (IAM)';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Bioinformatics';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Botany';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Chemistry';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Computer Science';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Earth and Ocean Sciences';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Fisheries Centre (FC)';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Fisheries Economics Research Unit';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Marine Mammal Research Unit';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Project Seahorse';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Sea Around Us Project';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Fisheries Ecosystems Restoration Research';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Quantitative Analysis and Modeling';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Mathematics';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+        
+        $department = new Department;
+        $department->department = 'Department of Microbiology and Immunology';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Physics and Astronomy';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+        
+        $department = new Department;
+        $department->department = 'Institute for Resources, Environment and Sustainability (IRES)';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Eco-Risk Research Unit';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Forest Economics and Policy Analysis';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Sustainable Development Research Initiative';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Westwater Research Unit';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Resources, Management and Environmental Studies';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Statistics';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Department of Zoology';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // social work
+        $faculty = new Faculty;
+        $faculty->faculty = 'School of Social Work';
+        $faculty->campus_id = $campusV->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Social Work';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // UBC Vantage College
+        $faculty = new Faculty;
+        $faculty->faculty = 'UBC Vantage College';
+        $faculty->campus_id = $campusV->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'UBC Vantage College';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // Irving K. Barber Faculty of Arts and Social Sciences
+        $faculty = new Faculty;
+        $faculty->faculty = 'Irving K. Barber Faculty of Arts and Social Sciences';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Community, Culture and Global Studies';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Economics, Philosophy and Political Science';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'History and Sociology';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Psychology';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // Faculty of Creative and critical Studies
+        $faculty = new Faculty;
+        $faculty->faculty = 'Faculty of Creative and critical Studies';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Creative and critical Studies';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // Okanagan School of Education
+        $faculty = new Faculty;
+        $faculty->faculty = 'Okanagan School of Education';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Education';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // School of Engineering
+        $faculty = new Faculty;
+        $faculty->faculty = 'School of Engineering';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Engineering';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // Faculty of Health and Social Development
+        $faculty = new Faculty;
+        $faculty->faculty = 'Faculty of Health and Social Development';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Health and Exercise Sciences';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Nursing';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Social Work';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // Faculty of Health and Social Development
+        $faculty = new Faculty;
+        $faculty->faculty = 'Faculty of Management';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Management';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // Irving K. Barber Faculty of Science
+        $faculty = new Faculty;
+        $faculty->faculty = 'Irving K. Barber Faculty of Science';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Biology';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Chemistry';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Computer Science, Mathematics, Physics, and Statistics';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Earth, Environmental and Geographic Sciences';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // Faculty of Medicine Southern Medical Program
+        $faculty = new Faculty;
+        $faculty->faculty = 'Faculty of Medicine Southern Medical Program';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Southern Medical Program';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        // College of Graduate Studies
+        $faculty = new Faculty;
+        $faculty->faculty = 'College of Graduate Studies';
+        $faculty->campus_id = $campusO->campus_id;
+        $faculty->save();
+
+        $department = new Department;
+        $department->department = 'Graduate Studies';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+    
     }
 }

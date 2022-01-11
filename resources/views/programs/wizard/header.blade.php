@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col">
                         <!-- Edit button -->
-                        <button type="button" style="width:200px" class="btn btn-secondary btn-sm float-right" data-toggle="modal" data-target="#editInfoModal">
+                        <button type="button" style="width:200px" class="btn btn-secondary btn-sm float-right" data-toggle="modal" data-target="#editInfoModal" onclick="fillInformation()">
                             Edit Program Information
                         </button>
                         <!-- Modal -->
@@ -90,17 +90,11 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label for="faculty" class="col-md-2 col-form-label text-md-right">Faculty</label>
+                                                    <label for="campus" class="col-md-2 col-form-label text-md-right">Campus</label>
 
                                                     <div class="col-md-8">
-                                                        <select id='faculty' class="custom-select" name="faculty" required>
-                                                            @for($i =0; $i<count($faculties) ; $i++)
-                                                                @if($faculties[$i]==$program->faculty)
-                                                                    <option value="{{$program->faculty}}" selected>{{$program->faculty}}</option>
-                                                                @else
-                                                                    <option value="{{$faculties[$i]}}">{{$faculties[$i]}} </option>
-                                                                @endif
-                                                            @endfor
+                                                        <select id='campus' class="custom-select" name="campus" required>
+                                                            
                                                         </select>
 
                                                         @error('faculty')
@@ -112,19 +106,37 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label for="department" class="col-md-2 col-form-label text-md-right">Department</label>
+                                                    <label for="faculty" class="col-md-2 col-form-label text-md-right">Faculty</label>
+                                                    <div class="col-md-8">
+                                                        <select id='faculty' class="custom-select" name="faculty" required>
+                                                            <!-- @for($i =0; $i<count($faculties) ; $i++)
+                                                                @if($faculties[$i]==$program->faculty)
+                                                                    <option value="{{$program->faculty}}" selected>{{$program->faculty}}</option>
+                                                                @else
+                                                                    <option value="{{$faculties[$i]}}">{{$faculties[$i]}} </option>
+                                                                @endif
+                                                            @endfor -->
+                                                        </select>
+                                                        @error('faculty')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
 
+                                                <div class="form-group row">
+                                                    <label for="department" class="col-md-2 col-form-label text-md-right">Department</label>
                                                     <div class="col-md-8">
                                                         <select id='department' class="custom-select" name="department" required>
-                                                            @for($i =0; $i<count($departments) ; $i++)
+                                                            <!-- @for($i =0; $i<count($departments) ; $i++)
                                                                 @if($departments[$i]==$program->department)
                                                                     <option value="{{$program->department}}" selected>{{$program->department}}</option>
                                                                 @else
                                                                     <option value="{{$departments[$i]}}">{{$departments[$i]}}</option>
                                                                 @endif
-                                                            @endfor
+                                                            @endfor -->
                                                         </select>
-
                                                         @error('department')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
@@ -234,3 +246,48 @@
     @endif
 
 </div>
+
+<script>
+    var program = {!! json_encode($program, JSON_HEX_TAG) !!};
+    var campuses = {!! json_encode($campuses, JSON_HEX_TAG) !!};
+    var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
+    var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+
+    function fillInformation() {
+        console.log(program.campus);
+        console.log(campuses);
+
+        // campuses.forEach(element => {
+        //     if (element.campus === program.campus) {
+        //         $('#campus').append('<option>'+program.campus+'</option>');
+        //         break
+        //     } else {
+        //         alert('not found')
+        //     }
+        // });
+        if (!(campuses.every(e => {
+            if (e.campus === program.campus) {
+                return false;
+            } else {
+                return true;
+            }
+        }))) {
+            alert('found');
+            $('#campus').append('<option>'+program.campus+'</option>');
+        } else {
+            alert('not found')
+        }
+        // campuses.every(e => {
+        //     if (e.campus === program.campus) {
+        //         $('#campus').append('<option>'+program.campus+'</option>');
+        //         return false;
+        //     } else {
+        //         alert('not found')
+        //         return true;
+        //     }
+        // });
+
+        $('#faculty').append('<option>'+program.faculty+'</option>');
+        $('#department').append('<option>'+program.department+'</option>');
+    }
+</script>
