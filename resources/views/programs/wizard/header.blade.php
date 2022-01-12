@@ -93,10 +93,10 @@
                                                     <label for="campus" class="col-md-2 col-form-label text-md-right">Campus</label>
 
                                                     <div class="col-md-8">
-                                                        <select id='campus' class="custom-select" name="campus" required>
+                                                        <select id='campus' class="custom-select" name="campus">
                                                             
                                                         </select>
-
+                                                        <input id='campus-text' class="form-control" name="campus" type="text" placeholder="(Optional) Enter the Campus" disabled hidden></input>
                                                         @error('faculty')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
@@ -106,9 +106,9 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label for="faculty" class="col-md-2 col-form-label text-md-right">Faculty</label>
+                                                    <label for="faculty" class="col-md-2 col-form-label text-md-right">Faculty/School</label>
                                                     <div class="col-md-8">
-                                                        <select id='faculty' class="custom-select" name="faculty" required>
+                                                        <select id='faculty' class="custom-select" name="faculty">
                                                             <!-- @for($i =0; $i<count($faculties) ; $i++)
                                                                 @if($faculties[$i]==$program->faculty)
                                                                     <option value="{{$program->faculty}}" selected>{{$program->faculty}}</option>
@@ -117,6 +117,7 @@
                                                                 @endif
                                                             @endfor -->
                                                         </select>
+                                                        <input id='faculty-text' class="form-control" name="faculty" type="text" placeholder="(Optional) Enter the faculty/School" disabled hidden></input>
                                                         @error('faculty')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
@@ -128,7 +129,7 @@
                                                 <div class="form-group row">
                                                     <label for="department" class="col-md-2 col-form-label text-md-right">Department</label>
                                                     <div class="col-md-8">
-                                                        <select id='department' class="custom-select" name="department" required>
+                                                        <select id='department' class="custom-select" name="department">
                                                             <!-- @for($i =0; $i<count($departments) ; $i++)
                                                                 @if($departments[$i]==$program->department)
                                                                     <option value="{{$program->department}}" selected>{{$program->department}}</option>
@@ -137,6 +138,7 @@
                                                                 @endif
                                                             @endfor -->
                                                         </select>
+                                                        <input id='department-text' class="form-control" name="department" type="text" placeholder="(Optional) Enter the department" disabled hidden></input>
                                                         @error('department')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
@@ -253,18 +255,58 @@
     var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
     var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
 
-    function fillInformation() {
-        console.log(program.campus);
-        console.log(campuses);
+    function appendCampuses() {
+        // empty options
+        $('#campus').empty();
+        // append all campuses
+        campuses.forEach(function(campus) {
+            $('#campus').append('<option name="'+campus.campus_id+'" value="'+campus.campus+'">'+campus.campus+'</option>');
+        });
+        $('#campus').append('<option name="-1" value="Other">Other</option>');
+        // select campus option
+        $('#campus').val(program.campus).change();
+    }
 
-        // campuses.forEach(element => {
-        //     if (element.campus === program.campus) {
-        //         $('#campus').append('<option>'+program.campus+'</option>');
-        //         break
-        //     } else {
-        //         alert('not found')
-        //     }
-        // });
+    function appendFaculties() {
+        // empty options
+        $('#faculty').empty();
+        // get faculties for campus_id
+        var campusId = parseInt($('#campus').find(':selected').attr('name'));
+        var filteredFaculties =  faculties.filter(item => {
+            return item.campus_id === campusId;
+        });
+        // append all filtered faculties
+        filteredFaculties.forEach(function(faculty) {
+            $('#faculty').append('<option name="'+faculty.faculty_id+'" value="'+faculty.faculty+'">'+faculty.faculty+'</option>');
+        });
+        $('#faculty').append('<option name="-1" value="Other">Other</option>');
+        // select faculty value
+        $('#faculty').val(program.faculty).change();
+    }
+
+    function appendDepartments() {
+        // empty options
+        $('#department').empty();
+        // get faculties for campus_id
+        var facultyId = parseInt($('#faculty').find(':selected').attr('name'));
+        var filteredDepartments =  departments.filter(item => {
+            return item.faculty_id === facultyId;
+        });
+        // append all filtered faculties
+        filteredDepartments.forEach(function(department) {
+            $('#department').append('<option name="'+department.department_id+'" value="'+department.department+'">'+department.department+'</option>');
+        });
+        $('#department').append('<option name="-1" value="Other">Other</option>');
+        // select faculty value
+        $('#department').val(program.department).change();
+    }
+
+    appendCampuses();
+    appendFaculties();
+    appendDepartments();
+
+    function fillInformation() {
+
         if (!(campuses.every(e => {
             if (e.campus === program.campus) {
                 return false;
@@ -272,22 +314,66 @@
                 return true;
             }
         }))) {
-            alert('found');
-            $('#campus').append('<option>'+program.campus+'</option>');
-        } else {
-            alert('not found')
-        }
-        // campuses.every(e => {
-        //     if (e.campus === program.campus) {
-        //         $('#campus').append('<option>'+program.campus+'</option>');
-        //         return false;
-        //     } else {
-        //         alert('not found')
-        //         return true;
-        //     }
-        // });
+            alert('campus found');
 
-        $('#faculty').append('<option>'+program.faculty+'</option>');
-        $('#department').append('<option>'+program.department+'</option>');
+            // search for faculty
+            if (!(faculties.every(e => {
+                if (e.faculty === program.faculty) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }))) {
+                alert('Faculty found');
+                appendFaculties()
+
+                // search for faculty
+                if (!(departments.every(e => {
+                    if (e.department === program.department) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }))) {
+                    alert('department found');
+                    appendDepartments();
+                } else {
+                    alert('OTHER department');
+                    $('#department').val('Other').change();
+                    $('#department-text').prop( "hidden", false );
+                    $('#department-text').prop( "disabled", false );
+                    $('#department-text').val(program.department);
+                }
+
+            } else {
+                alert('OTHER faculty');
+                $('#faculty').val('Other').change();
+                $('#faculty-text').prop( "hidden", false );
+                $('#faculty-text').prop( "disabled", false );
+                $('#faculty-text').val(program.faculty);
+                $('#department').prop( "disabled", true );
+                $('#department').text('');
+                $('#department-text').prop( "hidden", false );
+                $('#department-text').prop( "disabled", false );
+                $('#department-text').val(program.department);
+            }
+
+        } else {
+            alert('OTHER campus')
+            $('#campus').val('Other').change();
+            $('#campus-text').prop( "hidden", false );
+            $('#campus-text').prop( "disabled", false );
+            $('#campus-text').val(program.campus);
+            $('#faculty').prop( "disabled", true );
+            $('#faculty').text('');
+            $('#faculty-text').prop( "hidden", false );
+            $('#faculty-text').prop( "disabled", false );
+            $('#faculty-text').val(program.faculty);
+            $('#department').prop( "disabled", true );
+            $('#department').text('');
+            $('#department-text').prop( "hidden", false );
+            $('#department-text').prop( "disabled", false );
+            $('#department-text').val(program.department);
+        }
     }
 </script>

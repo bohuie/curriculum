@@ -141,7 +141,7 @@ class ProgramController extends Controller
         $this->validate($request, [
             'program'=> 'required',
             'level'=> 'required',
-            'faculty'=> 'required',
+            // 'faculty'=> 'required',
             ]);
 
         $program = Program::where('program_id', $program_id)->first();
@@ -149,6 +149,7 @@ class ProgramController extends Controller
         $program->level = $request->input('level');
         $program->department = $request->input('department');
         $program->faculty = $request->input('faculty');
+        $program->campus = $request->input('campus');
 
         // get users name for last_modified_user
         $user = User::find(Auth::id());
