@@ -49,13 +49,10 @@ class ProgramWizardController extends Controller
             return redirect()->route('programWizard.step4', $program_id);
         }
 
+        //header
         $campuses =  Campus::all();
         $faculties =  Faculty::all();
         $departments =  Department::all();
-
-        //header
-        // $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
-        // $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
         // get my programs
@@ -110,8 +107,9 @@ class ProgramWizardController extends Controller
             return redirect()->route('programWizard.step4', $program_id);
         }
         //header
-        $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
-        $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
+        $campuses =  Campus::all();
+        $faculties =  Faculty::all();
+        $departments =  Department::all();
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
         // get my programs
@@ -172,8 +170,9 @@ class ProgramWizardController extends Controller
             return redirect()->route('programWizard.step4', $program_id);
         }
         //header
-        $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
-        $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
+        $campuses =  Campus::all();
+        $faculties =  Faculty::all();
+        $departments =  Department::all();
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
         // get my programs
@@ -261,8 +260,9 @@ class ProgramWizardController extends Controller
             $isViewer = true;
         }
         //header
-        $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
-        $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
+        $campuses =  Campus::all();
+        $faculties =  Faculty::all();
+        $departments =  Department::all();
         $levels = array("Undergraduate", "Graduate", "Other");
         $user = User::where('id',Auth::id())->first();
         // get my programs
