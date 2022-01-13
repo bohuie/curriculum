@@ -314,8 +314,6 @@
                 return true;
             }
         }))) {
-            alert('campus found');
-
             // search for faculty
             if (!(faculties.every(e => {
                 if (e.faculty === program.faculty) {
@@ -324,7 +322,6 @@
                     return true;
                 }
             }))) {
-                alert('Faculty found');
                 appendFaculties()
 
                 // search for faculty
@@ -335,10 +332,9 @@
                         return true;
                     }
                 }))) {
-                    alert('department found');
                     appendDepartments();
                 } else {
-                    alert('OTHER department');
+                    // other department selected
                     $('#department').val('Other').change();
                     $('#department-text').prop( "hidden", false );
                     $('#department-text').prop( "disabled", false );
@@ -346,7 +342,7 @@
                 }
 
             } else {
-                alert('OTHER faculty');
+                // other faculty selected
                 $('#faculty').val('Other').change();
                 $('#faculty-text').prop( "hidden", false );
                 $('#faculty-text').prop( "disabled", false );
@@ -359,7 +355,7 @@
             }
 
         } else {
-            alert('OTHER campus')
+            // other campus selected
             $('#campus').val('Other').change();
             $('#campus-text').prop( "hidden", false );
             $('#campus-text').prop( "disabled", false );
