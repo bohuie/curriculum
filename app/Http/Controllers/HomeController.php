@@ -169,15 +169,15 @@ class HomeController extends Controller
             } else {
                 $count = $count + 2;
             }
-            if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() >= $expectedProgramOutcomeMapCount) {
+            if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() >= ($expectedProgramOutcomeMapCount == 1 ? $expectedProgramOutcomeMapCount : $expectedProgramOutcomeMapCount - 1)) {
                 $count++;
             } else {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Program Outcome Mapping (Step 5)</li>';
             }
-            $course = Course::find($courseId);
+            $course = Course::find($courseId); 
             if ($course->standard_category_id == 0) {
                 $hasNoStandards = true;
-            } elseif ((Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count()) == ( LearningOutcome::where('course_id', $courseId)->count() * Course::find($courseId)->standards->count())) {
+            } elseif ((Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count() == 0 ? 1: Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count()) == ( LearningOutcome::where('course_id', $courseId)->count() * Course::find($courseId)->standards->count())) {
                 $count++;
             } else {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Standards (Step 6)</li>';
