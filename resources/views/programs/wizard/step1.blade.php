@@ -14,7 +14,10 @@
                 <form id="addPLOCategoryForm" class="needs-validation" novalidate>
                     <div class="row justify-content-between align-items-end m-2">
                         <div class="col-10">
-                            <label for="PLOCategory" class="form-label fs-6"><b>PLO Category</b></label>
+                            <label for="PLOCategory" class="form-label fs-6">
+                                <b>PLO Category</b>
+                                <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="Program learning outcome (PLO) categories can be used to group PLOs"></i>
+                            </label>
                             <input id="PLOCategory" class="form-control" required>
                             <div class="invalid-tooltip">Please provide a PLO category.</div>                                            
                         </div>
@@ -611,6 +614,7 @@
 
         // Enables functionality of tool tips
         $('[data-bs-toggle="tooltip"]').tooltip({html:true});
+
         // autofocus edit category name input field in edit category modals
         Array.from(document.getElementsByClassName('editCatModal')).forEach(function(editCatModal) {
             editCatModal.addEventListener('shown.bs.modal', function() {
