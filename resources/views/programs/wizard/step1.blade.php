@@ -96,7 +96,7 @@
                             </label>
                             <input type="text" id="ploShortphrase" class="form-control mb-1" name="title" autofocus placeholder="E.g. Experimental Design..." maxlength="50" style="resize:none">
                             <div class="form-floating">
-                                <select class="form-select custom-select" style="font-size:12px;" name="category" id="ploCategory" required>
+                                <select class="form-select custom-select" style="font-size:12px;" name="category" id="ploCategory">
                                     <option value="" selected>None</option>
                                     @foreach($ploCategories as $c)
                                         <option value="{{$c->plo_category_id}}">{{$c->plo_category}}</option>
@@ -136,7 +136,7 @@
                                     <textarea type="text" name="current_pl_outcome_short_phrase[{{$pl_outcome->pl_outcome_id}}]" id="pl_outcome_short_phrase{{$pl_outcome->pl_outcome_id}}" class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="savePLOChanges" maxlength="50" style="resize:none">{{$pl_outcome->plo_shortphrase}}</textarea>
                                 </td>
                                 <td>                  
-                                    <select class="form-select form-control" name="current_plo_category[{{$pl_outcome->pl_outcome_id}}]" style="height:4.7rem" id="plo_category{{$pl_outcome->pl_outcome_id}}" form="savePLOChanges" required>
+                                    <select class="form-select form-control" name="current_plo_category[{{$pl_outcome->pl_outcome_id}}]" style="height:4.7rem" id="plo_category{{$pl_outcome->pl_outcome_id}}" form="savePLOChanges">
                                         @if ($pl_outcome->category)
                                             <option value="{{$pl_outcome->category->plo_category_id}}" selected>{{$pl_outcome->category->plo_category}}</option>
                                             @foreach($ploCategories as $ploCat)
