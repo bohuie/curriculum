@@ -493,6 +493,7 @@
         $('#faculty-text').prop( "hidden", false );
         $('#faculty-text').prop( "disabled", false );
         $('#department').prop( "disabled", true );
+        $('#department').prop( "hidden", true );
         $('#department').text('');
         $('#department-text').prop( "hidden", false );
         $('#department-text').prop( "disabled", false );
@@ -517,10 +518,12 @@
         $('#campus-text').prop( "hidden", false );
         $('#campus-text').prop( "disabled", false );
         $('#faculty').prop( "disabled", true );
+        $('#faculty').prop( "hidden", true );
         $('#faculty').text('');
         $('#faculty-text').prop( "hidden", false );
         $('#faculty-text').prop( "disabled", false );
         $('#department').prop( "disabled", true );
+        $('#department').prop( "hidden", true );
         $('#department').text('');
         $('#department-text').prop( "hidden", false );
         $('#department-text').prop( "disabled", false );
