@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifyNewProgramUserMail;
 use App\Models\ProgramUser;
 use App\Models\User;
 use App\Models\Role;
@@ -116,9 +117,9 @@ class ProgramUserController extends Controller
                                 $program->save();
 
                                 // email user to be added
-                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));
+                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $currentUser->name));
                                 // email the owner letting them know they have added a new collaborator
-                                Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $program->department, $user->name));                           
+                                Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $user->name));                           
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program);
                             }
@@ -170,14 +171,13 @@ class ProgramUserController extends Controller
                             $program->save();
 
                             // email user to be added
-                            // Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));
+                            //TODO: SEND EMAIL TO NEW USER WITH THEIR PASSWORD 
+                            Mail::to($newUser->email)->send(new NotifyNewProgramUserMail($program->program, $newUser->name, implode($pass)));
                             // email the owner letting them know they have added a new collaborator
-                            Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $program->department, $newUser->name));                           
+                            Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $newUser->name));                           
                         } else {
                             $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to program ' . $program->program);
                         }
-
-                        //TODO: SEND EMAIL TO NEW USER WITH THEIR PASSWORD 
 
                         // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
