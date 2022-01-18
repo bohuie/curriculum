@@ -11,8 +11,9 @@ use App\Mail\NotifyProgramAdminMail;
 use App\Mail\NotifyProgramOwnerMail;
 use App\Models\Program;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
+use SebastianBergmann\Environment\Console;
 
 class ProgramUserController extends Controller
 {
@@ -125,7 +126,60 @@ class ProgramUserController extends Controller
                             $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on program ' . $program->program);
                         }
                     } else {
-                        $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
+                        $name = explode('@', $newCollab);
+                        $newUser = new User;
+                        $newUser->name = $name[0];
+                        $newUser->email = $newCollab;
+                        // generate random password
+                        $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                        $pass = array(); 
+                        $combLen = strlen($comb) - 1; 
+                        for ($i = 0; $i < 8; $i++) {
+                            $n = rand(0, $combLen);
+                            $pass[] = $comb[$n];
+                        }
+                        // store random password
+                        $newUser->password = Hash::make(implode($pass));
+                        $newUser->save();
+
+                        // get their given permission level
+                        $permission = $newPermissions[$index];
+                        // create a new collaborator
+                        $programUser = ProgramUser::updateOrCreate(
+                            ['program_id' => $program->program_id, 'user_id' => $newUser->id],
+                        );
+                        $programUser = ProgramUser::where([['program_id', '=', $programUser->program_id], ['user_id', '=', $programUser->user_id]])->first();
+
+                        // set this program user permission level
+                        switch ($permission) {
+                            case 'edit':
+                                $programUser->permission = 2;
+                            break;
+                            case 'view':
+                                $programUser->permission = 3;
+                            break;
+                        }
+                        if($programUser->save()){
+                            // update courses 'updated_at' field
+                            $program = Program::find($request->input('program_id'));
+                            $program->touch();
+
+                            // get users name for last_modified_user
+                            $currUser = User::find(Auth::id());
+                            $program->last_modified_user = $currUser->name;
+                            $program->save();
+
+                            // email user to be added
+                            // Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));
+                            // email the owner letting them know they have added a new collaborator
+                            Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $program->department, $newUser->name));                           
+                        } else {
+                            $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to program ' . $program->program);
+                        }
+
+                        //TODO: SEND EMAIL TO NEW USER WITH THEIR PASSWORD 
+
+                        // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
                 }
             }
