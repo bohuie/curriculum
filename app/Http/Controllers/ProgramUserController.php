@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Mail\NotifyProgramAdminMail;
 use App\Mail\NotifyProgramOwnerMail;
 use App\Models\Program;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -141,6 +142,7 @@ class ProgramUserController extends Controller
                         }
                         // store random password
                         $newUser->password = Hash::make(implode($pass));
+                        $newUser->email_verified_at = Carbon::now();
                         $newUser->save();
 
                         // get their given permission level
@@ -172,7 +174,7 @@ class ProgramUserController extends Controller
 
                             // email user to be added
                             //TODO: SEND EMAIL TO NEW USER WITH THEIR PASSWORD 
-                            Mail::to($newUser->email)->send(new NotifyNewProgramUserMail($program->program, $newUser->name, implode($pass)));
+                            Mail::to($newUser->email)->send(new NotifyNewProgramUserMail($program->program, $currentUser->name, implode($pass), $newUser->email));
                             // email the owner letting them know they have added a new collaborator
                             Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $newUser->name));                           
                         } else {
