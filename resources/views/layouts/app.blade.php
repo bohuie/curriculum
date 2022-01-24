@@ -98,6 +98,10 @@
                                             </a>
                                         @endcan
 
+                                        <a class="dropdown-item" href="{{ route('accountInformation') }}">
+                                            Account Information
+                                        </a>
+
                                         <a class="dropdown-item" href="{{ route('requestInvitation') }}">
                                             Registration invite
                                         </a>

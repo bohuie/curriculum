@@ -175,6 +175,10 @@ Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_pre
     Route::get('logout', 'Auth\LoginController@logout');
 });
 
+Route::get('/accountInformation','auth\AccountInformationController@index')->name('accountInformation');
+Route::post('/accountInformation-update','auth\AccountInformationController@update')->name('accountInformation.update');
+
+
 Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');
     $exitCode = Artisan::call('config:cache');
