@@ -175,6 +175,7 @@ Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_pre
     Route::get('logout', 'Auth\LoginController@logout');
 });
 
+// account information page and update method
 Route::get('/accountInformation','auth\AccountInformationController@index')->name('accountInformation');
 Route::post('/accountInformation-update','auth\AccountInformationController@update')->name('accountInformation.update');
 

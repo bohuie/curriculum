@@ -132,6 +132,7 @@ class ProgramUserController extends Controller
                         $newUser = new User;
                         $newUser->name = $name[0];
                         $newUser->email = $newCollab;
+                        $newUser->has_temp = 1;
                         // generate random password
                         $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
                         $pass = array(); 

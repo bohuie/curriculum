@@ -26,7 +26,7 @@ class AccountInformationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'verified']);
     }
 
     public function index(Request $request) {
@@ -41,13 +41,14 @@ class AccountInformationController extends Controller
                 $user->name = $request->input('name');
             }
         } else {
-            
+            $request->session()->flash('error','You must enter a valid name');
+            return redirect('accountInformation')->with('user', $user);
         }
 
         if ($user->save()) {
-
+            $request->session()->flash('success','Successfully changed name');
         } else {
-
+            $request->session()->flash('error','Failed to change name');
         }
 
         return redirect('accountInformation')->with('user', $user);
