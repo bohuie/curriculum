@@ -135,9 +135,6 @@
         <div style="width:100%;">
             <iframe src="{{ asset('footer.html') }}" width="100%" scrolling="no" style="border:none; margin-bottom:-30px; min-height:426px; max-height: 821px;"/>
         </div>
-        <!-- <footer class="" id="footer">
-            <iframe src="{{ asset('footer.html') }}" width="100%" scrolling="no" style=" min-height:426px; "/>
-        </footer>  -->
     
 </body>
 </html>

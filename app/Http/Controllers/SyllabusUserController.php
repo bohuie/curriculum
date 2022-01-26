@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifyNewSyllabusUserMail;
 use App\Models\syllabus\SyllabusUser;
 use App\Models\syllabus\Syllabus;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\NotifySyllabusUserMail;
 use App\Mail\NotifySyllabusUserOwnerMail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Throwable;
 
 class SyllabusUserController extends Controller
@@ -127,7 +130,59 @@ class SyllabusUserController extends Controller
                             $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
                         }
                     } else {
-                        $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
+                        $name = explode('@', $newCollab);
+                        $newUser = new User;
+                        $newUser->name = $name[0];
+                        $newUser->email = $newCollab;
+                        $newUser->has_temp = 1;
+                        // generate random password
+                        $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                        $pass = array(); 
+                        $combLen = strlen($comb) - 1; 
+                        for ($i = 0; $i < 8; $i++) {
+                            $n = rand(0, $combLen);
+                            $pass[] = $comb[$n];
+                        }
+                        // store random password
+                        $newUser->password = Hash::make(implode($pass));
+                        $newUser->email_verified_at = Carbon::now();
+                        $newUser->save();
+
+                        // get their given permission level
+                        $permission = $newPermissions[$index];
+                        // create a new collaborator
+                        $syllabusUser = SyllabusUser::updateOrCreate(
+                            ['syllabus_id' => $syllabus->id, 'user_id' => $newUser->id],
+                        );
+                        $syllabusUser = SyllabusUser::where([['syllabus_id', '=', $syllabusUser->syllabus_id], ['user_id', '=', $syllabusUser->user_id]])->first();
+
+                        // set this syllabus user permission level
+                        switch ($permission) {
+                            case 'edit':
+                                $syllabusUser->permission = 2;
+                            break;
+                            case 'view':
+                                $syllabusUser->permission = 3;
+                            break;
+                        }
+                        if($syllabusUser->save()){
+                            // update syllabus 'updated_at' field
+                            $syllabus = syllabus::find($syllabusId);
+                            $syllabus->touch();
+
+                            // get users name for last_modified_user
+                            $currUser = User::find(Auth::id());
+                            $syllabus->last_modified_user = $currUser->name;
+                            $syllabus->save();
+
+                            // email user to be added
+                            Mail::to($newUser->email)->send(new NotifyNewSyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $currentUser->name, implode($pass), $newUser->email));
+                            // email the owner letting them know they have added a new collaborator
+                            Mail::to($currentUser->email)->send(new NotifySyllabusUserOwnerMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $newUser->name));                      
+                        } else {
+                            $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to course ' . $syllabus->course_title);
+                        }
+                        // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
                 }
             }
