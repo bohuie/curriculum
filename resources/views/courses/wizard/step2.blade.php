@@ -88,7 +88,7 @@
                                         </div>
                                         <div class="col-4">
                                             <label for="weight" class="form-label fs-6"><b>Weight</b></label>
-                                            <input id="weight" type="number" step="1" class="form-control " min="0" max="100" required>
+                                            <input id="weight" type="number" step="0.1" class="form-control " min="0" max="100" required>
                                             <div class="invalid-tooltip">
                                                 Please provide a valid weight.
                                             </div>
@@ -121,7 +121,7 @@
                                                     name="current_a_methods[{{$a_method->a_method_id}}]" value = "{{$a_method->a_method}}" placeholder="Choose from the dropdown list or type your own" form="saveAssessmentMethodChanges" required>
                                                 </td>
                                                 <td>                                                 
-                                                    <input class="p-1" id="a_method_weight{{$a_method->a_method_id}}" type="number" step="1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="{{$a_method->weight}}" name="current_weights[{{$a_method->a_method_id}}]" min="0" max="100" required>
+                                                    <input class="p-1" id="a_method_weight{{$a_method->a_method_id}}" type="number" step="0.1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="{{$a_method->weight}}" name="current_weights[{{$a_method->a_method_id}}]" min="0" max="100" required>
                                                     <label for="a_method_weight{{$a_method->a_method_id}}" style="font-size: medium; margin-top:5px;margin-left:5px"><strong>%</strong></label>
                                                 </td>
                                                 <td class="text-center">
@@ -275,7 +275,7 @@
                             <input list="assessmentMethodOptions" id="a_method{{$a_method->a_method_id}}" type="text" class="form-control @error('a_method') is-invalid @enderror" name="current_a_methods[{{$a_method->a_method_id}}]" value = "{{$a_method->a_method}}" placeholder="Choose from the dropdown list or type your own" form="saveAssessmentMethodChanges" required>
                         </td>
                         <td>                                                 
-                            <input class="p-1" id="a_method_weight{{$a_method->a_method_id}}" type="number" step="1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="{{$a_method->weight}}" name="current_weights[{{$a_method->a_method_id}}]" min="0" max="100" required>
+                            <input class="p-1" id="a_method_weight{{$a_method->a_method_id}}" type="number" step="0.1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="{{$a_method->weight}}" name="current_weights[{{$a_method->a_method_id}}]" min="0" max="100" required>
                             <label for="a_method_weight{{$a_method->a_method_id}}" style="font-size: medium; margin-top:5px;margin-left:5px"><strong>%</strong></label>
                         </td>
                         <td class="text-center">
@@ -300,7 +300,7 @@
                     <input list="assessmentMethodOptions" type="text" class="form-control @error('a_method') is-invalid @enderror" name="new_a_methods[]" value="${$('#assessmentMethod').val()}" placeholder="Choose from the dropdown list or type your own" form="saveAssessmentMethodChanges" required >
                 </td>
                 <td>                                                 
-                    <input class="p-1" type="number" step="1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="${$('#weight').val()}" name="new_weights[]" min="0" max="100" required >
+                    <input class="p-1" type="number" step="0.1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="${$('#weight').val()}" name="new_weights[]" min="0" max="100" required >
                     <label style="font-size: medium; margin-top:5px;margin-left:5px"><strong>%</strong></label>
                 </td>
                 <td class="text-center">
@@ -387,5 +387,5 @@
         return datalist;
     }
 
-  </script>
+</script>
 @endsection
