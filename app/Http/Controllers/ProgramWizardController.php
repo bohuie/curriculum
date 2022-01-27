@@ -196,7 +196,7 @@ class ProgramWizardController extends Controller
         });
 
         // get all courses that belong to this user that don't yet belong to this program
-        $userCoursesNotInProgram = $user->courses()->whereNotIn('courses.course_id', $programCourseIds)->get();
+        $userCoursesNotInProgram = $user->courses()->whereNotIn('courses.course_id', $programCourseIds)->orderBy('courses.course_title')->get();
 
         $programCoursesUsers = array();
         foreach ($programCourses as $programCourse) {

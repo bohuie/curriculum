@@ -169,7 +169,7 @@ class CourseWizardController extends Controller
 
         $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
         $custom_methods = Custom_assessment_methods::select('custom_methods')->get();
-        $totalWeight = AssessmentMethod::where('course_id', $course_id)->sum('weight');
+        $totalWeight = number_format(AssessmentMethod::where('course_id', $course_id)->sum('weight'), 1);
         $course =  Course::where('course_id', $course_id)->first();
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
