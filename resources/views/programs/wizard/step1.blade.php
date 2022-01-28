@@ -206,7 +206,7 @@
                         <div>
                             Program learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study. Add, edit and delete PLOs below. 
                             Categories can be used to group PLOs. 
-                            You may use an excel spreadsheet to import multiple PLOs/Categories. Download the template to save them on your computer first, and then upload them to this page.
+                            You may use an excel spreadsheet to import multiple PLOs/Categories. Follow the template below to save them on your computer first, and then upload them to this page.
                             <strong> Please note this website can only support a total of 20 PLOs per program (future updates will allow for more PLOs)</strong>.
                         </div>
                     </div>
