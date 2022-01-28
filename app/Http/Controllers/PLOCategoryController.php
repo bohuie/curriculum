@@ -58,7 +58,11 @@ class PLOCategoryController extends Controller
             // get the current plo categories
             $currentPLOCategories = $request->input('current_plo_categories');
             // get the new plo categories
-            $newPLOCategories = $request->input('new_plo_categories');    
+            $newPLOCategories = $request->input('new_plo_categories'); 
+            // case: delete all program learning outcome categories
+            if (!$currentPLOCategories && !$newPLOCategories) {
+                $program->ploCategories()->delete();
+            }
             // get the saved PLO categories for this program
             $ploCategories = $program->ploCategories;
             // update current plo categories

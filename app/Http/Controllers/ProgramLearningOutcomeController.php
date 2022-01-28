@@ -69,6 +69,10 @@ class ProgramLearningOutcomeController extends Controller
             $newPLOs = $request->input('new_pl_outcome');    
             $newPLOShortphrases = $request->input('new_pl_outcome_short_phrase');
             $newPLOCategories = $request->input('new_plo_category');
+            // case: delete all program learning outcomes
+            if (!$currentPLOs && !$newPLOs) {
+                $program->programLearningOutcomes()->delete();
+            }
             // get the saved plos for this program
             $plos = $program->programLearningOutcomes;
             // update current plos
@@ -101,7 +105,7 @@ class ProgramLearningOutcomeController extends Controller
             $user = User::find(Auth::id());
             $program->last_modified_user = $user->name;
             $program->save();
-            $request->session()->flash('success','Your PLO categories were updated successfully!');
+            $request->session()->flash('success','Your program learning outcomes were updated successfully!');
         } catch (Throwable $exception) {
             $message = 'There was an error updating your program learning outcomes';
             Log::error($message . ' ...\n');

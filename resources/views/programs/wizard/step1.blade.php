@@ -188,7 +188,7 @@
             <div class="card">
 
                 <h3 class="card-header wizard">
-                    Program Learning Outcomes (PLOs)
+                    <b>P</b>rogram <b>L</b>earning <b>O</b>utcomes
 
                     <div style="float: right;">
                         <button id="ploHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
@@ -201,11 +201,15 @@
                 </h3>
 
                 <div class="card-body">
-
-                    <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.
-                        Add, edit and delete PLOs below. Categories can be used to group PLOs.<strong> Please note this website can only support a total of 20 PLOs per program (future updates will allow for more PLOs)</strong>.               
-                    </h6>
+                    <div class="alert alert-primary d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div>
+                            Program learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study. Add, edit and delete PLOs below. 
+                            Categories can be used to group PLOs. 
+                            You may use an excel spreadsheet to import multiple PLOs/Categories. Download the template to save them on your computer first, and then upload them to this page.
+                            <strong> Please note this website can only support a total of 20 PLOs per program (future updates will allow for more PLOs)</strong>.
+                        </div>
+                    </div>
 
                     <form method="POST" class="col-6 ml-1" action="{{ action('ProgramLearningOutcomeController@import') }}" enctype="multipart/form-data">
                         @csrf
@@ -381,6 +385,7 @@
                                                         </td>
                                                     </tr>
                                                 @endif
+                                                
                                                 <!-- Delete PLO Confirmation Model -->
                                                 <div class="modal fade" id="deletePLO{{$ploCat->pl_outcome_id}}" tabindex="-1" role="dialog" aria-labelledby="deletePLO{{$ploCat->pl_outcome_id}}" aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
@@ -415,7 +420,7 @@
                                                 <!-- End of Delete PLO Confirmation Modal -->
 
                                                 <!-- Edit PLO Modal -->
-                                                <div class="modal fade" id="editPLO{{$ploCat->pl_outcome_id}}" tabindex="-1" role="dialog" aria-labelledby="editPLO{{$ploCat->pl_outcome_id}}" aria-hidden="true">
+                                                <div class="modal fade" data-bs-keyboard="false" id="editPLO{{$ploCat->pl_outcome_id}}" tabindex="-1" role="dialog" aria-labelledby="editPLO{{$ploCat->pl_outcome_id}}" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -527,9 +532,8 @@
                                             </div>
                                             <!-- End of Delete PLO Confirmation Modal -->
 
-                                            <!-- Edit PLO Modal -->
                                             <div class="modal fade" id="editPLOunCat{{$unCatplo->pl_outcome_id}}" tabindex="-1" role="dialog" aria-labelledby="editPLOunCat{{$unCatplo->pl_outcome_id}}" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="editPLOModalLabel">Edit Program Learning Outcome (PLO)</h5>
@@ -648,7 +652,7 @@
             event.preventDefault();
             event.stopPropagation();
             // check if input fields contain data
-            if ($('#pl_outcome').val().length != 0 && $('#category').val()) {
+            if ($('#pl_outcome').val().length != 0) {
                 addPLO();
                 removeHTMLSelectDuplicates();
                 // reset form 
@@ -658,7 +662,8 @@
                 // mark form as validated
                 $(this).addClass('was-validated');
             }
-            // readjust modal's position 
+            // readjust modal's position
+            var addP 
             document.querySelector('#addPLOModal').handleUpdate();
         });
 
