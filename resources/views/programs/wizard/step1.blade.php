@@ -588,8 +588,6 @@
                                 </table>
                             @endif
                         </div>
-                        <div class="card-footer p-3">
-                        </div>
                     </div>
                     <!-- End Program Learning Outcomes -->
 
