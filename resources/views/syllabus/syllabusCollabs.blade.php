@@ -13,7 +13,6 @@
                     <p>Give others access to this syllabus and assign them roles.</p>
                     <li class="mb-1 mr-4 ml-4"><b>Editors</b> have access to edit and view your syllabus but cannot delete your syllabus or add/remove collaborators.</li>
                     <li class="mb-3 mr-4 ml-4"><b>Viewers</b> have access to view your syllabus but cannot edit or delete your syllabus or add/remove collaborators.</li>
-                    <p class=" text-center form-text text-primary font-weight-bold">Note: Your collaborator must have registered on this site before you can add them. <a target="_blank" href="{{ url('/invite') }}">Invite others to register<i class=" pb-3 pl-1 bi bi-box-arrow-up-right"></i></a></p>                    
                 </div>
 
                 @if ($syllabusPermission->pivot->permission == 1)
