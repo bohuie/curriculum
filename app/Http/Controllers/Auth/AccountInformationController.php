@@ -30,8 +30,9 @@ class AccountInformationController extends Controller
     }
 
     public function index(Request $request) {
+        $token = $request->route()->parameter('token');
         $user = User::find(Auth::id());
-        return view('auth.accountInformation')->with('user', $user);
+        return view('auth.accountInformation')->with('user', $user)->with('token', $token);
     }
 
     public function update(Request $request) {
