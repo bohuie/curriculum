@@ -515,7 +515,7 @@
                     </div>
                     <!-- End Create Course Modal -->
 
-                    <!-- Add existing course Modal ( Drag and drop effect)-->
+                    <!-- Add existing course Modal -->
                     <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="createCourseModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document" style="width:1250px;">
                             <div class="modal-content">

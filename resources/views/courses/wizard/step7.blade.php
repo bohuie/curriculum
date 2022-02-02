@@ -174,7 +174,7 @@
                                             <th>Teaching and Learning Activity</th>
                                         </tr>
                                     
-                                        @foreach($course->learningOutcomes as $index => $l_outcome)
+                                        @foreach($course->learningOutcomes->sortBy('pos_in_alignment')->values() as $index => $l_outcome)
                                         <tr>
                                             <td style="width:5%" >{{$index+1}}</td>
                                             <td>{{$l_outcome->l_outcome}}</td>

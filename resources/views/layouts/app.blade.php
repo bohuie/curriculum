@@ -98,6 +98,10 @@
                                             </a>
                                         @endcan
 
+                                        <a class="dropdown-item" href="{{ route('accountInformation') }}">
+                                            Account Information
+                                        </a>
+
                                         <a class="dropdown-item" href="{{ route('requestInvitation') }}">
                                             Registration invite
                                         </a>
@@ -130,7 +134,7 @@
     </div>
         <div style="width:100%;">
             <iframe src="{{ asset('footer.html') }}" width="100%" scrolling="no" style="border:none; margin-bottom:-30px; min-height:426px; max-height: 821px;"/>
-        </div> 
+        </div>
     
 </body>
 </html>

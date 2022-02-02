@@ -7,7 +7,11 @@ use App\Models\LearningOutcome;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use App\Helpers\ReadOutcomesFilter;
 
 class LearningOutcomeController extends Controller
 {
@@ -51,6 +55,10 @@ class LearningOutcomeController extends Controller
             $currentShortPhrases = $request->input('current_l_outcome_short_phrase');
             $newCLOs = $request->input('new_l_outcomes');
             $newShortPhrases = $request->input('new_short_phrases');
+            // case: delete all course learning outcomes
+            if (!$currentCLOs && !$newCLOs) {
+                Course::find($courseId)->learningOutcomes()->delete();
+            }
             // get the course
             $course = Course::find($courseId);
             // get the saved CLOs for this course
@@ -170,5 +178,77 @@ class LearningOutcomeController extends Controller
             $request->session()->flash('error', 'There was an error deleting the course learning outcome');
         }
         return redirect()->route('courseWizard.step1', $request->input('course_id'));
+    }
+
+    /* Import clos from a file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function import(Request $request)
+    {   
+        // $this->validate($request, [
+        //     'upload'=> 'required|mimes:csv,xlsx,xlx,xls|max:2048',
+        // ]);
+        $courseId = $request->input('course_id');
+        $file = $request->file('upload');
+        $clientFileName = $file->getClientOriginalName();
+        $path = $file->storeAs(
+            'temporary', $clientFileName
+        );
+        $absolutePath = storage_path('app\\temporary\\' . $clientFileName);
+
+        /**  Create a new reader of the type defined by $clientFileName extension  **/
+        $reader = IOFactory::createReaderForFile($absolutePath);
+        /**  Advise the reader that we only want to load cell data, not cell formatting info  **/
+        $reader->setReadDataOnly(true);
+        // a read filter can be used to set rules on which cells should be read from a file
+        $reader->setReadFilter( new ReadOutcomesFilter(0, 30, ['A', 'B']) );
+        /**  Load $inputFileName to a Spreadsheet Object  **/
+        $spreadsheet = $reader->load($absolutePath); 
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
+            // skip header row
+            if ($rowIndex == 1) continue;
+            // get cell iterator
+            $cellIterator = $row->getCellIterator();
+            // loop through cells only when value is set
+            $cellIterator->setIterateOnlyExistingCells(TRUE); 
+            $learningOutcome = new LearningOutcome;
+            // set clo course id
+            $learningOutcome->course_id = $courseId;
+
+            foreach ($cellIterator as $cell) {
+                // get column index of cell
+                $cellColumnIndex = Coordinate::columnIndexFromString($cell->getColumn());
+                switch ($cellColumnIndex) {
+                    case 1: 
+                        // set CLO value
+                        $cloValue = $cell->getValue();
+                        if ($cloValue) $learningOutcome->l_outcome = $cloValue;
+                        break;
+                    case 2:
+                        // set CLO Short Phrase
+                        $cloShortPhrase = $cell->getValue();
+                        if ($cloShortPhrase) $learningOutcome->clo_shortphrase = $cloShortPhrase;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            // save the new plo
+            if ($learningOutcome->l_outcome) {
+                $learningOutcome->save();
+            }
+        }
+        // delete file on server        
+        Storage::delete($path);
+        // before clearing the spreadsheet from memory, "break" the cyclic references to worksheets.
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        // return 
+        return redirect()->back();
+
     }
 }

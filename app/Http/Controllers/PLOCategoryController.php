@@ -8,6 +8,7 @@ use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class PLOCategoryController extends Controller
 {
@@ -44,33 +45,61 @@ class PLOCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate request data 
         $this->validate($request, [
-            
-            'category'=> 'required',
-            ]);
+            'program_id'=> 'required',
+        ]);
 
-        $c = new PLOCategory;
-        $c->plo_category = $request->input('category');
-        $c->program_id = $request->input('program_id');
-        
-        $program = Program::find($request->input('program_id'));
-        // get users name for last_modified_user
-        $user = User::find(Auth::id());
-        $program->last_modified_user = $user->name;
-        $program->save();
-        
-        if($c->save()){
+        // try update PLO categories
+        try {
+            $programId = $request->input('program_id');
+            // get this program
+            $program = Program::find($programId);
+            // get the current plo categories
+            $currentPLOCategories = $request->input('current_plo_categories');
+            // get the new plo categories
+            $newPLOCategories = $request->input('new_plo_categories'); 
+            // case: delete all program learning outcome categories
+            if (!$currentPLOCategories && !$newPLOCategories) {
+                $program->ploCategories()->delete();
+            }
+            // get the saved PLO categories for this program
+            $ploCategories = $program->ploCategories;
+            // update current plo categories
+            foreach ($ploCategories as $ploCategory) {
+                if (array_key_exists($ploCategory->plo_category_id, $currentPLOCategories)) {
+                    // save and update plo category
+                    $ploCategory->plo_category = $currentPLOCategories[$ploCategory->plo_category_id];
+                    $ploCategory->save();
+                } else {
+                    // remove plo category from program 
+                    // TODO: update plo category of plos
+                    $ploCategory->delete();
+                }
+            }
+            // add new plo categories
+            if ($newPLOCategories) {
+                foreach ($newPLOCategories as $index => $newPLOCategory) {
+                    $newPLOCat = new PLOCategory;
+                    $newPLOCat->plo_category = $newPLOCategory;
+                    $newPLOCat->program_id = $programId;
+                    $newPLOCat->save();
+                }
+            }
             // update courses 'updated_at' field
-            $program = Program::find($request->input('program_id'));
             $program->touch();
 
-            $request->session()->flash('success', 'New plo cateogry added');
-        }else{
-            $request->session()->flash('error', 'There was an error adding the plo category');
-        }
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $program->last_modified_user = $user->name;
+            $program->save();          
+            $request->session()->flash('success','Your PLO categories were updated successfully!');
         
-        return redirect()->route('programWizard.step1', $request->input('program_id'));
+        } catch (Throwable $exception) {
+            $request->session()->flash('error', 'There was an error updating your PLO Categories');
+        } finally {
+            return redirect()->route('programWizard.step1', $programId);
+        }
     }
 
     /**
