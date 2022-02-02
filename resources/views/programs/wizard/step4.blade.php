@@ -53,17 +53,17 @@
                     <div class="card-body">
                         <nav class="mt-2">
                             <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
-                                <button class="nav-link active w-25" id="nav-plo-tab" data-bs-toggle="tab" data-bs-target="#nav-plo" type="button" role="tab" aria-controls="nav-plo" aria-selected="true">Program Learning Outcomes</button>
-                                <button class="nav-link w-25" id="nav-mapping-scale-tab" data-bs-toggle="tab" data-bs-target="#nav-mapping-scale" type="button" role="tab" aria-controls="nav-mapping-scale" aria-selected="false">Mapping Scale</button>
-                                <button class="nav-link w-25" id="nav-bar-charts-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-bar-charts" type="button" role="tab" aria-controls="nav-bar-charts" aria-selected="false">Bar Charts</button>
+                                <button class="nav-link active w-25" id="nav-bar-charts-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-bar-charts" type="button" role="tab" aria-controls="nav-bar-charts" aria-selected="false">Bar Charts</button>
                                 <button class="nav-link w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-charts" type="button" role="tab" aria-controls="nav-charts" aria-selected="false">Frequency Distribution Tables</button>
+                                <button class="nav-link w-25" id="nav-plo-tab" data-bs-toggle="tab" data-bs-target="#nav-plo" type="button" role="tab" aria-controls="nav-plo" aria-selected="true">Program Learning Outcomes</button>
+                                <button class="nav-link w-25" id="nav-mapping-scale-tab" data-bs-toggle="tab" data-bs-target="#nav-mapping-scale" type="button" role="tab" aria-controls="nav-mapping-scale" aria-selected="false">Mapping Scale</button>
                             </div>
                         </nav>
                         
                         <div class="tab-content" id="nav-tabContent">
                             
                             <!-- Program Learning Outcome Tab -->
-                            <div class="tab-pane fade show active" id="nav-plo" role="tabpanel" aria-labelledby="nav-plo-tab">
+                            <div class="tab-pane fade" id="nav-plo" role="tabpanel" aria-labelledby="nav-plo-tab">
                                 <div class="card-body">
                                     <!-- <h5 class="card-title">
                                         Program Learning Outcomes
@@ -176,7 +176,7 @@
                             <!-- End Mapping Scale Tab -->
 
                             <!-- Bar Charts Tab -->
-                            <div class="tab-pane fade" id="nav-bar-charts" role="tabpanel" aria-labelledby="nav-bar-charts">
+                            <div class="tab-pane fade show active" id="nav-bar-charts" role="tabpanel" aria-labelledby="nav-bar-charts">
                                 <div class="card-body">
                                     <!-- Charts Inner Tabs -->
                                     <nav class="mt-2">
@@ -1879,6 +1879,11 @@
 </script>
 
 <script type="text/javascript">
+
+    $(window).on('load', function(){
+        document.getElementById("assessment-methods-chart").style.display='none';
+        document.getElementById("learning-activity-chart").style.display='none';
+    });
     // high chart for PLOs to CLOs 
     // This is required to set the radio button to checked, this is a known firefox bug.
     window.onload=check;

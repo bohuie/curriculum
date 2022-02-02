@@ -370,7 +370,7 @@ class ProgramWizardController extends Controller
         $freqOfMSIds = [];          // used in a later step
         for ($i = 0; $i < count($programMappingScalesIds); $i++) {
             $freqOfMSIds[$programMappingScalesIds[$i]] = [];
-            $programMappingScalesColours[$i] = (MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first() == "#FFFFFF" ? "#6c757d" : MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first());
+            $programMappingScalesColours[$i] = (strtolower(MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first());
         }
         // get categorized plo's for the program (ordered by category then outcome id)
         $plos_order = ProgramLearningOutcome::where('program_id', $program_id)->whereNotNull('plo_category_id')->orderBy('plo_category_id', 'ASC')->orderBy('pl_outcome_id', 'ASC')->get();
