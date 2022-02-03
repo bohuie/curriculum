@@ -185,6 +185,7 @@
                                             <button class="inner-nav-link nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
+                                            <button class="inner-nav-link nav-link w-15" id="nav-optional-priority-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-optional-priorities" type="button" role="tab" aria-controls="nav-optional-priorities" aria-selected="false">Optional Priorities</button>
                                         </div>
                                     </nav>
 
@@ -850,6 +851,19 @@
             //show plo-clo charts
             $("#learning-activity-chart").show();
         });
+
+        // $("#nav-optional-priorities-tab").click(function() {
+        //     // hide other charts
+        //     $("#plo-clo-chart").hide();
+        //     $("#assessment-methods-chart").hide();
+        //     $("#learning-activity-chart").hide();
+        //     // show optional priorities charts
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "get-op/",       
+        //         success: function (data) {}
+        //     });
+        // });
     });
 
     function allAM() {

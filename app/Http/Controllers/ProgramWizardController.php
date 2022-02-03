@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\Course;
+use App\Models\CourseOptionalPriorities;
 use App\Models\CourseProgram;
 use App\Models\Department;
 use App\Models\Faculty;
@@ -402,6 +403,18 @@ class ProgramWizardController extends Controller
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
                                             ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
                                             ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
+    }
+
+    public function getOptionalPriorities($program_id) {
+        $program = Program::where('program_id', $program_id)->first();
+        // get all the courses this program belongs to
+        $programCourses = $program->courses;
+
+        $optionalPriorities = [];
+        foreach ($programCourses as $programCourse) {
+            array_push($optionalPriorities, CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id"));
+        }
+        dd($optionalPriorities);
     }
 
     public function getAssessmentMethods($program_id) {
