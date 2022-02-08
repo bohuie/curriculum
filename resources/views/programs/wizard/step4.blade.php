@@ -227,7 +227,7 @@
                                                 <div class="loader" style="margin: auto;"></div>
                                             </div>
 
-                                            <p>This chart shows the frequencies of the assessment methods for all courses belonging to this program.</p>
+                                            <p>This chart shows the frequencies of the assessment methods for courses belonging to this program.</p>
                                             @if (!(count($programCourses) < 1)) 
                                                 <form action="">
                                                     <div class=" mx-5 mt-2 text-center">
@@ -285,7 +285,7 @@
                                                 <div class="loader" style="margin: auto;"></div>
                                             </div>
 
-                                            <p>This chart shows the frequencies of the learning activities for all courses belonging to this program.</p>
+                                            <p>This chart shows the frequencies of the learning activities for courses belonging to this program.</p>
                                             @if (!(count($programCourses) < 1)) 
                                                 <form action="">
                                                     <div class=" mx-5 mt-2 text-center">
@@ -343,7 +343,7 @@
                                                 <div class="loader" style="margin: auto;"></div>
                                             </div>
 
-                                            <p>This chart shows the frequencies of the optional priorities for all courses belonging to this program.</p>
+                                            <p>This chart shows the frequencies of the optional priorities for courses belonging to this program.</p>
 
                                             <!-- *** start if *** -->
 
@@ -901,11 +901,16 @@
                 type: "GET",
                 url: "get-op/",       
                 success: function (data) {
-                    var opFreq = data;
+                    $("#loading-div-op").fadeOut("fast");
+
+                    var opFreq = data[0];
                     var opTitles = $.map(opFreq, function(element,index) {return index});
                     var opValues = $.map(opFreq, function(element,index) {return element});
+                    // html tags included
+                    var opFreqHTML = data[1];
+                    var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
+                    var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
                     series = generateData();
-
                     // // 
                     // let adjTitles = []
                     // opTitles.forEach(reduceTitle);
@@ -957,20 +962,15 @@
                                     },
                                 },
                                 labels: {
-                                	formatter: function() {
-                                  	    var ret = this.value,
-                                    	len = ret.length;
-                                        console.log(len);
-                                        if( len > 10 ) {
-                                        	ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                    formatter: function() {
+                                        var ret = this.value,
+                                        len = ret.length;
+                                        if( len > 14 ) {
+                                            ret = ret.slice(0,14) + '...';
+                                        }else if( len > 10 ) {
+                                            ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
                                         }
-
-                                        if( len > 25 ) {
-                                        	ret = ret.slice(0,25) + '...';
-                                        }
-
-                                        console.log(ret);
-                                  	    return ret;
+                                        return ret;
                                     }
                                 },
                                 categories: opTitles
@@ -988,9 +988,9 @@
                         });
                     
                         // Append to table for all optional priority frequencies
-                        $('#op-table').append('<tr class="table-secondary"><th>Optional Priorities</th><th>Frequency</th></tr>');
-                        for (var i = 0; i < opTitles.length; i++) {
-                            $('#op-table').append('<tr><td>' + opTitles[i] + '</td><td>' + opValues[i] + '</td></tr>');
+                        $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                        for (var i = 0; i < opTitlesHTML.length; i++) {
+                            $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                         }
                     }
 

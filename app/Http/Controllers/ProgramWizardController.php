@@ -431,15 +431,26 @@ class ProgramWizardController extends Controller
                 $opFrequencies[$op_id] += 1; 
             }
         }
+        // duplicate array for html tags
+        $opFrequencies_html = $opFrequencies;
         // replace id's with optional priorities name
         foreach($opFrequencies as $op_id => $freq) {
             $op_title = strip_tags(OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first());
-            //$op_title = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+            $op_title_html = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+            // striped tags (HighCharts doesn't output <a> for chart titles so this is needed)
             $opFrequencies[$op_title] = $opFrequencies[$op_id];
             unset($opFrequencies[$op_id]);
+            // html tags included for summary table
+            $opFrequencies_html[$op_title_html] = $opFrequencies_html[$op_id];
+            unset($opFrequencies_html[$op_id]);
         }
+        
+        // sort by frequency descending
+        arsort($opFrequencies, SORT_NUMERIC);
+        arsort($opFrequencies_html, SORT_NUMERIC);
+        // remove (mor)
 
-        return response()->json($opFrequencies, 200);
+        return response()->json([$opFrequencies, $opFrequencies_html], 200);
     }
 
     public function getAssessmentMethods($program_id) {
