@@ -22,6 +22,7 @@ use App\Models\LearningOutcome;
 use App\Models\MappingScaleCategory;
 use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
+use App\Models\OptionalPriorities;
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -410,11 +411,35 @@ class ProgramWizardController extends Controller
         // get all the courses this program belongs to
         $programCourses = $program->courses;
 
-        $optionalPriorities = [];
+        $tempOptionalPriorities = [];
         foreach ($programCourses as $programCourse) {
-            array_push($optionalPriorities, CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id"));
+            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
         }
-        dd($optionalPriorities);
+        $optionalPriorities = [];
+        foreach($tempOptionalPriorities as $op_ids) {
+            foreach ($op_ids as $op_id) {
+                $optionalPriorities[] += $op_id;
+            }
+        }
+        $opFrequencies = [];
+        foreach($optionalPriorities as $op_id) {
+            // add to opFrequencies if not already in array
+            if (!array_key_exists($op_id, $opFrequencies)) {
+                $opFrequencies[$op_id] = 1; 
+            } else {
+                // otherwise increment if key (op_id) in array already
+                $opFrequencies[$op_id] += 1; 
+            }
+        }
+        // replace id's with optional priorities name
+        foreach($opFrequencies as $op_id => $freq) {
+            $op_title = strip_tags(OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first());
+            //$op_title = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+            $opFrequencies[$op_title] = $opFrequencies[$op_id];
+            unset($opFrequencies[$op_id]);
+        }
+
+        return response()->json($opFrequencies, 200);
     }
 
     public function getAssessmentMethods($program_id) {

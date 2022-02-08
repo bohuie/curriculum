@@ -185,7 +185,7 @@
                                             <button class="inner-nav-link nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
-                                            <button class="inner-nav-link nav-link w-15" id="nav-optional-priority-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-optional-priorities" type="button" role="tab" aria-controls="nav-optional-priorities" aria-selected="false">Optional Priorities</button>
+                                            <button class="inner-nav-link nav-link w-15" id="nav-optional-priorities-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-optional-priorities" type="button" role="tab" aria-controls="nav-optional-priorities" aria-selected="false">Optional Priorities</button>
                                         </div>
                                     </nav>
 
@@ -330,6 +330,40 @@
 
                                     </div>
                                     <!-- End Learning Activities Tab -->
+
+                                    <!-- Optional Priorities Tab -->
+                                    <div class="tab-pane fade" id="nav-optional-priorities" role="tabpanel" aria-labelledby="nav-optional-priorities">
+    
+                                        <div class="mt-3" id="optional-priority-chart">
+
+                                            <div id='loading-div-op'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+
+                                            <p>This chart shows the frequencies of the optional priorities for all courses belonging to this program.</p>
+
+                                            <!-- *** start if *** -->
+
+                                                <!-- THIS IS REQUIRED FOR JQUERY statement document.getElementById("all-op").checked = true; -->
+                                                <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-op'  -->
+                                                <input class="form-check-input" type="radio" name="op_select" id="all-op" checked hidden>
+
+                                            <!-- *** end if here *** -->
+
+                                            <div class="container mt-0">
+                                                <div id="high-chart-op"></div>
+                                            </div>
+                                            <div class="container mt-2">
+                                                <table class="table table-bordered table-sm w-auto " id="op-table" style="margin: auto;"></table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- End Optional Priorities Tab -->
+
                                 </div>
                             </div>
                             <!-- End Bar Charts Tab -->
@@ -832,6 +866,7 @@
             // hide other charts 
             $("#assessment-methods-chart").hide();
             $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
             // show plo-clo chart
             $("#plo-clo-chart").show();
         });
@@ -840,6 +875,7 @@
             // hide other charts
             $("#plo-clo-chart").hide();
             $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
             //show plo-clo charts
             $("#assessment-methods-chart").show();
         });
@@ -848,22 +884,121 @@
             // hide other charts
             $("#plo-clo-chart").hide();
             $("#assessment-methods-chart").hide();
+            $("#optional-priority-chart").hide();
             //show plo-clo charts
             $("#learning-activity-chart").show();
         });
 
-        // $("#nav-optional-priorities-tab").click(function() {
-        //     // hide other charts
-        //     $("#plo-clo-chart").hide();
-        //     $("#assessment-methods-chart").hide();
-        //     $("#learning-activity-chart").hide();
-        //     // show optional priorities charts
-        //     $.ajax({
-        //         type: "GET",
-        //         url: "get-op/",       
-        //         success: function (data) {}
-        //     });
-        // });
+        $("#nav-optional-priorities-tab").click(function() {
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
+            // show optional priorities charts
+            $("#optional-priority-chart").show();
+
+            $.ajax({
+                type: "GET",
+                url: "get-op/",       
+                success: function (data) {
+                    var opFreq = data;
+                    var opTitles = $.map(opFreq, function(element,index) {return index});
+                    var opValues = $.map(opFreq, function(element,index) {return element});
+                    series = generateData();
+
+                    // // 
+                    // let adjTitles = []
+                    // opTitles.forEach(reduceTitle);
+                    // function shortenTitle(reduceTitle) {
+
+                    // } 
+
+                    function generateData() {
+                        var series = [];
+                        
+                        series.push({
+                            name: '# of Occurrences',
+                            data: opValues,
+                            colorByPoint: true,
+                        });
+
+                        return series;
+                    }
+
+                    var programCourses = <?php echo json_encode($programCourses)?>;
+                    if (programCourses.length < 1) {
+                        $('#high-chart-op').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                            </div>
+                        `);
+                    } else if (opFreq.length < 1) {
+                        $('#high-chart-op').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                            </div>
+                        `);
+                    } else {
+                    
+                        $('#high-chart-op').highcharts({
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: 'Optional Priority Frequencies'
+                            },
+                            xAxis: {
+                                title: {
+                                    useHTML: true,
+                                    text: 'Optional Priorities',
+                                    margin: 20,
+                                    style: {
+                                            fontWeight: 'bold',
+                                    },
+                                },
+                                labels: {
+                                	formatter: function() {
+                                  	    var ret = this.value,
+                                    	len = ret.length;
+                                        console.log(len);
+                                        if( len > 10 ) {
+                                        	ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                        }
+
+                                        if( len > 25 ) {
+                                        	ret = ret.slice(0,25) + '...';
+                                        }
+
+                                        console.log(ret);
+                                  	    return ret;
+                                    }
+                                },
+                                categories: opTitles
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Frequency',
+                                    margin: 20,
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            series: series
+                        });
+                    
+                        // Append to table for all optional priority frequencies
+                        $('#op-table').append('<tr class="table-secondary"><th>Optional Priorities</th><th>Frequency</th></tr>');
+                        for (var i = 0; i < opTitles.length; i++) {
+                            $('#op-table').append('<tr><td>' + opTitles[i] + '</td><td>' + opValues[i] + '</td></tr>');
+                        }
+                    }
+
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
     });
 
     function allAM() {
