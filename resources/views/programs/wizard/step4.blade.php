@@ -346,11 +346,40 @@
                                             <p>This chart shows the frequencies of the optional priorities for courses belonging to this program.</p>
 
                                             <!-- *** start if *** -->
-
+                                            @if (!(count($programCourses) < 1)) 
+                                                <form action="">
+                                                    <div class=" mx-5 mt-2 text-center">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="all-op" checked>
+                                                            <label class="form-check-label" for="all-op"><b>All Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="first-year-op">
+                                                            <label class="form-check-label" for="first-year-op"><b>100 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="second-year-op">
+                                                            <label class="form-check-label" for="second-year-op"><b>200 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="third-year-op">
+                                                            <label class="form-check-label" for="third-year-op"><b>300 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="fourth-year-op">
+                                                            <label class="form-check-label" for="fourth-year-op"><b>400 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="graduate-op">
+                                                            <label class="form-check-label" for="graduate-op"><b>500/600 Level Optional Priority</b></label>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            @else  
                                                 <!-- THIS IS REQUIRED FOR JQUERY statement document.getElementById("all-op").checked = true; -->
                                                 <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-op'  -->
                                                 <input class="form-check-input" type="radio" name="op_select" id="all-op" checked hidden>
-
+                                            @endif
                                             <!-- *** end if here *** -->
 
                                             <div class="container mt-0">
@@ -841,68 +870,15 @@
             });
         });
 
-        $('#nav-bar-charts-tab').click(function() { 
-            // hide other charts and remove classes/set attributes
-            $("#assessment-methods-chart").hide();
-            $("#learning-activity-chart").hide();
-            $('#nav-assessment-methods-tab').removeClass('active');
-            $('#nav-learning-activity-tab').removeClass('active');
-            $('#nav-assessment-methods-tab').attr('aria-selected', false);
-            $('#nav-learning-activity-tab').attr('aria-selected', false);
-            $('#nav-assessment-methods').removeClass('show');
-            $('#nav-learning-activity').removeClass('show');
-            $('#nav-assessment-methods').removeClass('active');
-            $('#nav-learning-activity').removeClass('active');
-
-            // show plo-clo chart and add classes/set attributes
-            $('#nav-plo-clo-tab').addClass('active');
-            $('#nav-plo-clo-tab').attr('aria-selected', true);
-            $('#nav-plo-clo').addClass('show');
-            $('#nav-plo-clo').addClass('active');
-            $("#plo-clo-chart").show();
-        });
-
-        $("#nav-plo-clo-tab").click(function() { 
-            // hide other charts 
-            $("#assessment-methods-chart").hide();
-            $("#learning-activity-chart").hide();
-            $("#optional-priority-chart").hide();
-            // show plo-clo chart
-            $("#plo-clo-chart").show();
-        });
-
-        $("#nav-assessment-methods-tab").click(function() { 
-            // hide other charts
-            $("#plo-clo-chart").hide();
-            $("#learning-activity-chart").hide();
-            $("#optional-priority-chart").hide();
-            //show plo-clo charts
-            $("#assessment-methods-chart").show();
-        });
-
-        $("#nav-learning-activity-tab").click(function() { 
-            // hide other charts
-            $("#plo-clo-chart").hide();
-            $("#assessment-methods-chart").hide();
-            $("#optional-priority-chart").hide();
-            //show plo-clo charts
-            $("#learning-activity-chart").show();
-        });
-
         $("#nav-optional-priorities-tab").click(function() {
-            // hide other charts
-            $("#plo-clo-chart").hide();
-            $("#assessment-methods-chart").hide();
-            $("#learning-activity-chart").hide();
-            // show optional priorities charts
-            $("#optional-priority-chart").show();
+            // This is required to set the radio button to checked
+            document.getElementById("all-op").checked = true;
 
             $.ajax({
                 type: "GET",
                 url: "get-op/",       
                 success: function (data) {
                     $("#loading-div-op").fadeOut("fast");
-
                     var opFreq = data[0];
                     var opTitles = $.map(opFreq, function(element,index) {return index});
                     var opValues = $.map(opFreq, function(element,index) {return element});
@@ -911,25 +887,16 @@
                     var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
                     var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
                     series = generateData();
-                    // // 
-                    // let adjTitles = []
-                    // opTitles.forEach(reduceTitle);
-                    // function shortenTitle(reduceTitle) {
-
-                    // } 
-
                     function generateData() {
                         var series = [];
-                        
+
                         series.push({
                             name: '# of Occurrences',
                             data: opValues,
                             colorByPoint: true,
                         });
-
                         return series;
                     }
-
                     var programCourses = <?php echo json_encode($programCourses)?>;
                     if (programCourses.length < 1) {
                         $('#high-chart-op').html(`
@@ -986,20 +953,270 @@
                             },
                             series: series
                         });
-                    
+                        // empty table before loading new data
+                        $('#op-table').empty();
                         // Append to table for all optional priority frequencies
                         $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
                         for (var i = 0; i < opTitlesHTML.length; i++) {
                             $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                         }
                     }
-
                     // Enables functionality of tool tips
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
             });
         });
+
+        $('#nav-bar-charts-tab').click(function() { 
+            // hide other charts and remove classes/set attributes
+            $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
+            $('#nav-assessment-methods-tab').removeClass('active');
+            $('#nav-learning-activity-tab').removeClass('active');
+            $('#nav-optional-priorities-tab').removeClass('active');
+            $('#nav-assessment-methods-tab').attr('aria-selected', false);
+            $('#nav-learning-activity-tab').attr('aria-selected', false);
+            $('#nav-optional-priorities-tab').attr('aria-selected', false);
+            $('#nav-assessment-methods').removeClass('show');
+            $('#nav-learning-activity').removeClass('show');
+            $('#nav-optional-priorities').removeClass('show');
+            $('#nav-assessment-methods').removeClass('active');
+            $('#nav-learning-activity').removeClass('active');
+            $('#nav-optional-priorities').removeClass('active');
+
+            // show plo-clo chart and add classes/set attributes
+            $('#nav-plo-clo-tab').addClass('active');
+            $('#nav-plo-clo-tab').attr('aria-selected', true);
+            $('#nav-plo-clo').addClass('show');
+            $('#nav-plo-clo').addClass('active');
+            $("#plo-clo-chart").show();
+        });
+
+        $("#nav-plo-clo-tab").click(function() { 
+            // hide other charts 
+            $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
+            // show plo-clo chart
+            $("#plo-clo-chart").show();
+        });
+
+        $("#nav-assessment-methods-tab").click(function() { 
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
+            //show plo-clo charts
+            $("#assessment-methods-chart").show();
+        });
+
+        $("#nav-learning-activity-tab").click(function() { 
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            $("#assessment-methods-chart").hide();
+            $("#optional-priority-chart").hide();
+            //show plo-clo charts
+            $("#learning-activity-chart").show();
+        });
+
+        $("#nav-optional-priorities-tab").click(function() {
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
+            // show optional priorities charts
+            $("#optional-priority-chart").show();
+        });
     });
+
+    function allOP() {
+        $.ajax({
+            type: "GET",
+            url: "get-op/",       
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data[0];
+                var opTitles = $.map(opFreq, function(element,index) {return index});
+                var opValues = $.map(opFreq, function(element,index) {return element});
+                // html tags included
+                var opFreqHTML = data[1];
+                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
+                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                    
+                    series.push({
+                        name: '# of Occurrences',
+                        data: opValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (opFreq.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-op').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Optional Priority Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                useHTML: true,
+                                text: 'Optional Priorities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            labels: {
+                                formatter: function() {
+                                    var ret = this.value,
+                                    len = ret.length;
+                                    if( len > 14 ) {
+                                        ret = ret.slice(0,14) + '...';
+                                    }else if( len > 10 ) {
+                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                    }
+                                    return ret;
+                                }
+                            },
+                            categories: opTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < opTitlesHTML.length; i++) {
+                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
+                    }
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function firstYearOP() {
+        $.ajax({
+            type: "GET",
+            url: "get-op-first-year/",       
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data[0];
+                var opTitles = $.map(opFreq, function(element,index) {return index});
+                var opValues = $.map(opFreq, function(element,index) {return element});
+                // html tags included
+                var opFreqHTML = data[1];
+                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
+                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                    
+                    series.push({
+                        name: '# of Occurrences',
+                        data: opValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (opFreq.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-op').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Optional Priority Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                useHTML: true,
+                                text: 'Optional Priorities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            labels: {
+                                formatter: function() {
+                                    var ret = this.value,
+                                    len = ret.length;
+                                    if( len > 14 ) {
+                                        ret = ret.slice(0,14) + '...';
+                                    }else if( len > 10 ) {
+                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                    }
+                                    return ret;
+                                }
+                            },
+                            categories: opTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < opTitlesHTML.length; i++) {
+                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
+                    }
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
 
     function allAM() {
         $.ajax({
@@ -2010,6 +2227,25 @@
             graduateLA();
         }
     });
+
+    $('input[type=radio][name=op_select]').change(function() {
+        // delete all child nodes
+        $('#op-table').empty();
+        // change filter
+        if (this.id == 'all-op'){
+            allOP();
+        } else if (this.id == 'first-year-op') {
+            firstYearOP();
+        } else if (this.id == 'second-year-op') {
+            //secondYearOP();
+        } else if (this.id == 'third-year-op') {
+            //thirdYearOP();
+        } else if (this.id == 'fourth-year-op') {
+            //fourthYearOP();
+        } else if (this.id == 'graduate-op') {
+            //graduateOP();
+        }
+    });
 </script>
 
 <script type="text/javascript">
@@ -2030,8 +2266,9 @@
 <script type="text/javascript">
 
     $(window).on('load', function(){
-        document.getElementById("assessment-methods-chart").style.display='none';
-        document.getElementById("learning-activity-chart").style.display='none';
+        $("#assessment-methods-chart").hide();
+        $("#learning-activity-chart").hide();
+        $("#optional-priority-chart").hide();
     });
     // high chart for PLOs to CLOs 
     // This is required to set the radio button to checked, this is a known firefox bug.
