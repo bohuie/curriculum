@@ -144,6 +144,10 @@ Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@
 // optional priorities filter routes
 Route::get('/programWizard/{program}/get-op', 'ProgramWizardController@getOptionalPriorities');
 Route::get('/programWizard/{program}/get-op-first-year', 'ProgramWizardController@getOptionalPrioritiesFirstYear');
+Route::get('/programWizard/{program}/get-op-second-year', 'ProgramWizardController@getOptionalPrioritiesSecondYear');
+Route::get('/programWizard/{program}/get-op-third-year', 'ProgramWizardController@getOptionalPrioritiesThirdYear');
+Route::get('/programWizard/{program}/get-op-fourth-year', 'ProgramWizardController@getOptionalPrioritiesFourthYear');
+Route::get('/programWizard/{program}/get-op-graduate', 'ProgramWizardController@getOptionalPrioritiesGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');

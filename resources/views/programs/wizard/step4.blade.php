@@ -1218,6 +1218,382 @@
         });
     }
 
+    function secondYearOP() {
+        $.ajax({
+            type: "GET",
+            url: "get-op-second-year/",       
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data[0];
+                var opTitles = $.map(opFreq, function(element,index) {return index});
+                var opValues = $.map(opFreq, function(element,index) {return element});
+                // html tags included
+                var opFreqHTML = data[1];
+                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
+                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                    
+                    series.push({
+                        name: '# of Occurrences',
+                        data: opValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (opFreq.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-op').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Optional Priority Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                useHTML: true,
+                                text: 'Optional Priorities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            labels: {
+                                formatter: function() {
+                                    var ret = this.value,
+                                    len = ret.length;
+                                    if( len > 14 ) {
+                                        ret = ret.slice(0,14) + '...';
+                                    }else if( len > 10 ) {
+                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                    }
+                                    return ret;
+                                }
+                            },
+                            categories: opTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < opTitlesHTML.length; i++) {
+                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
+                    }
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function thirdYearOP() {
+        $.ajax({
+            type: "GET",
+            url: "get-op-third-year/",       
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data[0];
+                var opTitles = $.map(opFreq, function(element,index) {return index});
+                var opValues = $.map(opFreq, function(element,index) {return element});
+                // html tags included
+                var opFreqHTML = data[1];
+                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
+                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                    
+                    series.push({
+                        name: '# of Occurrences',
+                        data: opValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (opFreq.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-op').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Optional Priority Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                useHTML: true,
+                                text: 'Optional Priorities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            labels: {
+                                formatter: function() {
+                                    var ret = this.value,
+                                    len = ret.length;
+                                    if( len > 14 ) {
+                                        ret = ret.slice(0,14) + '...';
+                                    }else if( len > 10 ) {
+                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                    }
+                                    return ret;
+                                }
+                            },
+                            categories: opTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < opTitlesHTML.length; i++) {
+                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
+                    }
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function fourthYearOP() {
+        $.ajax({
+            type: "GET",
+            url: "get-op-fourth-year/",       
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data[0];
+                var opTitles = $.map(opFreq, function(element,index) {return index});
+                var opValues = $.map(opFreq, function(element,index) {return element});
+                // html tags included
+                var opFreqHTML = data[1];
+                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
+                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                    
+                    series.push({
+                        name: '# of Occurrences',
+                        data: opValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (opFreq.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-op').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Optional Priority Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                useHTML: true,
+                                text: 'Optional Priorities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            labels: {
+                                formatter: function() {
+                                    var ret = this.value,
+                                    len = ret.length;
+                                    if( len > 14 ) {
+                                        ret = ret.slice(0,14) + '...';
+                                    }else if( len > 10 ) {
+                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                    }
+                                    return ret;
+                                }
+                            },
+                            categories: opTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < opTitlesHTML.length; i++) {
+                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
+                    }
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function graduateOP() {
+        $.ajax({
+            type: "GET",
+            url: "get-op-graduate/",       
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data[0];
+                var opTitles = $.map(opFreq, function(element,index) {return index});
+                var opValues = $.map(opFreq, function(element,index) {return element});
+                // html tags included
+                var opFreqHTML = data[1];
+                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
+                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
+                series = generateData();
+                function generateData() {
+                    var series = [];
+                    
+                    series.push({
+                        name: '# of Occurrences',
+                        data: opValues,
+                        colorByPoint: true,
+                    });
+                    return series;
+                }
+                var programCourses = <?php echo json_encode($programCourses)?>;
+                if (programCourses.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                        </div>
+                    `);
+                } else if (opFreq.length < 1) {
+                    $('#high-chart-op').html(`
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                        </div>
+                    `);
+                } else {
+                
+                    $('#high-chart-op').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Optional Priority Frequencies'
+                        },
+                        xAxis: {
+                            title: {
+                                useHTML: true,
+                                text: 'Optional Priorities',
+                                margin: 20,
+                                style: {
+                                        fontWeight: 'bold',
+                                },
+                            },
+                            labels: {
+                                formatter: function() {
+                                    var ret = this.value,
+                                    len = ret.length;
+                                    if( len > 14 ) {
+                                        ret = ret.slice(0,14) + '...';
+                                    }else if( len > 10 ) {
+                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                                    }
+                                    return ret;
+                                }
+                            },
+                            categories: opTitles
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Frequency',
+                                margin: 20,
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        series: series
+                    });
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    for (var i = 0; i < opTitlesHTML.length; i++) {
+                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
+                    }
+                }
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
     function allAM() {
         $.ajax({
             type: "GET",
@@ -2237,13 +2613,13 @@
         } else if (this.id == 'first-year-op') {
             firstYearOP();
         } else if (this.id == 'second-year-op') {
-            //secondYearOP();
+            secondYearOP();
         } else if (this.id == 'third-year-op') {
-            //thirdYearOP();
+            thirdYearOP();
         } else if (this.id == 'fourth-year-op') {
-            //fourthYearOP();
+            fourthYearOP();
         } else if (this.id == 'graduate-op') {
-            //graduateOP();
+            graduateOP();
         }
     });
 </script>

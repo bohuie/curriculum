@@ -503,6 +503,210 @@ class ProgramWizardController extends Controller
         return response()->json([$opFrequencies, $opFrequencies_html], 200);
     }
 
+    public function getOptionalPrioritiesSecondYear($program_id) {
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
+            if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 1 then remove it from the collection
+                $secondYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+
+        $tempOptionalPriorities = [];
+        foreach ($secondYearProgramCourses as $programCourse) {
+            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+        }
+        $optionalPriorities = [];
+        foreach($tempOptionalPriorities as $op_ids) {
+            foreach ($op_ids as $op_id) {
+                $optionalPriorities[] += $op_id;
+            }
+        }
+        $opFrequencies = [];
+        foreach($optionalPriorities as $op_id) {
+            // add to opFrequencies if not already in array
+            if (!array_key_exists($op_id, $opFrequencies)) {
+                $opFrequencies[$op_id] = 1; 
+            } else {
+                // otherwise increment if key (op_id) in array already
+                $opFrequencies[$op_id] += 1; 
+            }
+        }
+        // duplicate array for html tags
+        $opFrequencies_html = $opFrequencies;
+        // replace id's with optional priorities name
+        foreach($opFrequencies as $op_id => $freq) {
+            $op_title = strip_tags(OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first());
+            $op_title_html = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+            // striped tags (HighCharts doesn't output <a> for chart titles so this is needed)
+            $opFrequencies[$op_title] = $opFrequencies[$op_id];
+            unset($opFrequencies[$op_id]);
+            // html tags included for summary table
+            $opFrequencies_html[$op_title_html] = $opFrequencies_html[$op_id];
+            unset($opFrequencies_html[$op_id]);
+        }
+        // then sort by frequency descending
+        arsort($opFrequencies, SORT_NUMERIC);
+        arsort($opFrequencies_html, SORT_NUMERIC);
+        // remove (mor)
+
+        return response()->json([$opFrequencies, $opFrequencies_html], 200);
+    }
+
+    public function getOptionalPrioritiesThirdYear($program_id) {
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
+            if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
+                $thirdYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+
+        $tempOptionalPriorities = [];
+        foreach ($thirdYearProgramCourses as $programCourse) {
+            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+        }
+        $optionalPriorities = [];
+        foreach($tempOptionalPriorities as $op_ids) {
+            foreach ($op_ids as $op_id) {
+                $optionalPriorities[] += $op_id;
+            }
+        }
+        $opFrequencies = [];
+        foreach($optionalPriorities as $op_id) {
+            // add to opFrequencies if not already in array
+            if (!array_key_exists($op_id, $opFrequencies)) {
+                $opFrequencies[$op_id] = 1; 
+            } else {
+                // otherwise increment if key (op_id) in array already
+                $opFrequencies[$op_id] += 1; 
+            }
+        }
+        // duplicate array for html tags
+        $opFrequencies_html = $opFrequencies;
+        // replace id's with optional priorities name
+        foreach($opFrequencies as $op_id => $freq) {
+            $op_title = strip_tags(OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first());
+            $op_title_html = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+            // striped tags (HighCharts doesn't output <a> for chart titles so this is needed)
+            $opFrequencies[$op_title] = $opFrequencies[$op_id];
+            unset($opFrequencies[$op_id]);
+            // html tags included for summary table
+            $opFrequencies_html[$op_title_html] = $opFrequencies_html[$op_id];
+            unset($opFrequencies_html[$op_id]);
+        }
+        // then sort by frequency descending
+        arsort($opFrequencies, SORT_NUMERIC);
+        arsort($opFrequencies_html, SORT_NUMERIC);
+        // remove (mor)
+
+        return response()->json([$opFrequencies, $opFrequencies_html], 200);
+    }
+
+    public function getOptionalPrioritiesFourthYear($program_id) {
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
+            if ($fourthYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
+                $fourthYearProgramCourses->forget($count);
+            }
+            $count++;
+        }
+
+        $tempOptionalPriorities = [];
+        foreach ($fourthYearProgramCourses as $programCourse) {
+            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+        }
+        $optionalPriorities = [];
+        foreach($tempOptionalPriorities as $op_ids) {
+            foreach ($op_ids as $op_id) {
+                $optionalPriorities[] += $op_id;
+            }
+        }
+        $opFrequencies = [];
+        foreach($optionalPriorities as $op_id) {
+            // add to opFrequencies if not already in array
+            if (!array_key_exists($op_id, $opFrequencies)) {
+                $opFrequencies[$op_id] = 1; 
+            } else {
+                // otherwise increment if key (op_id) in array already
+                $opFrequencies[$op_id] += 1; 
+            }
+        }
+        // duplicate array for html tags
+        $opFrequencies_html = $opFrequencies;
+        // replace id's with optional priorities name
+        foreach($opFrequencies as $op_id => $freq) {
+            $op_title = strip_tags(OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first());
+            $op_title_html = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+            // striped tags (HighCharts doesn't output <a> for chart titles so this is needed)
+            $opFrequencies[$op_title] = $opFrequencies[$op_id];
+            unset($opFrequencies[$op_id]);
+            // html tags included for summary table
+            $opFrequencies_html[$op_title_html] = $opFrequencies_html[$op_id];
+            unset($opFrequencies_html[$op_id]);
+        }
+        // then sort by frequency descending
+        arsort($opFrequencies, SORT_NUMERIC);
+        arsort($opFrequencies_html, SORT_NUMERIC);
+        // remove (mor)
+
+        return response()->json([$opFrequencies, $opFrequencies_html], 200);
+    }
+
+    public function getOptionalPrioritiesGraduate($program_id) {
+        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $count = 0;
+        foreach ($graduateProgramCourses as $graduateProgramCourse) {
+            if ($graduateProgramCourse->course_num[0] != '5' || $graduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 1 then remove it from the collection
+                $graduateProgramCourses->forget($count);
+            }
+            $count++;
+        }
+
+        $tempOptionalPriorities = [];
+        foreach ($graduateProgramCourses as $programCourse) {
+            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+        }
+        $optionalPriorities = [];
+        foreach($tempOptionalPriorities as $op_ids) {
+            foreach ($op_ids as $op_id) {
+                $optionalPriorities[] += $op_id;
+            }
+        }
+        $opFrequencies = [];
+        foreach($optionalPriorities as $op_id) {
+            // add to opFrequencies if not already in array
+            if (!array_key_exists($op_id, $opFrequencies)) {
+                $opFrequencies[$op_id] = 1; 
+            } else {
+                // otherwise increment if key (op_id) in array already
+                $opFrequencies[$op_id] += 1; 
+            }
+        }
+        // duplicate array for html tags
+        $opFrequencies_html = $opFrequencies;
+        // replace id's with optional priorities name
+        foreach($opFrequencies as $op_id => $freq) {
+            $op_title = strip_tags(OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first());
+            $op_title_html = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+            // striped tags (HighCharts doesn't output <a> for chart titles so this is needed)
+            $opFrequencies[$op_title] = $opFrequencies[$op_id];
+            unset($opFrequencies[$op_id]);
+            // html tags included for summary table
+            $opFrequencies_html[$op_title_html] = $opFrequencies_html[$op_id];
+            unset($opFrequencies_html[$op_id]);
+        }
+        // then sort by frequency descending
+        arsort($opFrequencies, SORT_NUMERIC);
+        arsort($opFrequencies_html, SORT_NUMERIC);
+        // remove (mor)
+
+        return response()->json([$opFrequencies, $opFrequencies_html], 200);
+    }
+
     public function getAssessmentMethods($program_id) {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
