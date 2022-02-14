@@ -185,7 +185,7 @@
                                             <button class="inner-nav-link nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
-                                            <button class="inner-nav-link nav-link w-15" id="nav-optional-priorities-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-optional-priorities" type="button" role="tab" aria-controls="nav-optional-priorities" aria-selected="false">Optional Priorities</button>
+                                            <button class="inner-nav-link nav-link w-15" id="nav-optional-priorities-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-optional-priorities" type="button" role="tab" aria-controls="nav-optional-priorities" aria-selected="false">Strategic Priorities</button>
                                         </div>
                                     </nav>
 
@@ -343,7 +343,7 @@
                                                 <div class="loader" style="margin: auto;"></div>
                                             </div>
 
-                                            <p>This chart shows the frequencies of the optional priorities for courses belonging to this program.</p>
+                                            <p>This chart shows the frequencies of the Strategic Priorities for courses belonging to this program.</p>
 
                                             <!-- *** start if *** -->
                                             @if (!(count($programCourses) < 1)) 
@@ -907,7 +907,7 @@
                     } else if (opFreq.length < 1) {
                         $('#high-chart-op').html(`
                             <div class="alert alert-warning wizard">
-                                <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
                             </div>
                         `);
                     } else {
@@ -922,7 +922,7 @@
                             xAxis: {
                                 title: {
                                     useHTML: true,
-                                    text: 'Optional Priorities',
+                                    text: 'Strategic Priorities',
                                     margin: 20,
                                     style: {
                                             fontWeight: 'bold',
@@ -956,7 +956,7 @@
                         // empty table before loading new data
                         $('#op-table').empty();
                         // Append to table for all optional priority frequencies
-                        $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                        $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
                         for (var i = 0; i < opTitlesHTML.length; i++) {
                             $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                         }
@@ -1064,7 +1064,7 @@
                 } else if (opFreq.length < 1) {
                     $('#high-chart-op').html(`
                         <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
                         </div>
                     `);
                 } else {
@@ -1079,7 +1079,7 @@
                         xAxis: {
                             title: {
                                 useHTML: true,
-                                text: 'Optional Priorities',
+                                text: 'Strategic Priorities',
                                 margin: 20,
                                 style: {
                                         fontWeight: 'bold',
@@ -1113,7 +1113,7 @@
                     // empty table before loading new data
                     $('#op-table').empty();
                     // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
                     for (var i = 0; i < opTitlesHTML.length; i++) {
                         $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                     }
@@ -1158,7 +1158,7 @@
                 } else if (opFreq.length < 1) {
                     $('#high-chart-op').html(`
                         <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
                         </div>
                     `);
                 } else {
@@ -1173,7 +1173,7 @@
                         xAxis: {
                             title: {
                                 useHTML: true,
-                                text: 'Optional Priorities',
+                                text: 'Strategic Priorities',
                                 margin: 20,
                                 style: {
                                         fontWeight: 'bold',
@@ -1207,7 +1207,7 @@
                     // empty table before loading new data
                     $('#op-table').empty();
                     // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
                     for (var i = 0; i < opTitlesHTML.length; i++) {
                         $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                     }
@@ -1252,7 +1252,7 @@
                 } else if (opFreq.length < 1) {
                     $('#high-chart-op').html(`
                         <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
                         </div>
                     `);
                 } else {
@@ -1267,7 +1267,7 @@
                         xAxis: {
                             title: {
                                 useHTML: true,
-                                text: 'Optional Priorities',
+                                text: 'Strategic Priorities',
                                 margin: 20,
                                 style: {
                                         fontWeight: 'bold',
@@ -1301,7 +1301,7 @@
                     // empty table before loading new data
                     $('#op-table').empty();
                     // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
                     for (var i = 0; i < opTitlesHTML.length; i++) {
                         $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                     }
@@ -1346,7 +1346,7 @@
                 } else if (opFreq.length < 1) {
                     $('#high-chart-op').html(`
                         <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
                         </div>
                     `);
                 } else {
@@ -1361,7 +1361,7 @@
                         xAxis: {
                             title: {
                                 useHTML: true,
-                                text: 'Optional Priorities',
+                                text: 'Strategic Priorities',
                                 margin: 20,
                                 style: {
                                         fontWeight: 'bold',
@@ -1395,7 +1395,7 @@
                     // empty table before loading new data
                     $('#op-table').empty();
                     // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
                     for (var i = 0; i < opTitlesHTML.length; i++) {
                         $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                     }
@@ -1440,7 +1440,7 @@
                 } else if (opFreq.length < 1) {
                     $('#high-chart-op').html(`
                         <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
                         </div>
                     `);
                 } else {
@@ -1455,7 +1455,7 @@
                         xAxis: {
                             title: {
                                 useHTML: true,
-                                text: 'Optional Priorities',
+                                text: 'Strategic Priorities',
                                 margin: 20,
                                 style: {
                                         fontWeight: 'bold',
@@ -1489,7 +1489,7 @@
                     // empty table before loading new data
                     $('#op-table').empty();
                     // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
                     for (var i = 0; i < opTitlesHTML.length; i++) {
                         $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                     }
@@ -1534,7 +1534,7 @@
                 } else if (opFreq.length < 1) {
                     $('#high-chart-op').html(`
                         <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no optional priorities for the courses belonging to this program.
+                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
                         </div>
                     `);
                 } else {
@@ -1549,7 +1549,7 @@
                         xAxis: {
                             title: {
                                 useHTML: true,
-                                text: 'Optional Priorities',
+                                text: 'Strategic Priorities',
                                 margin: 20,
                                 style: {
                                         fontWeight: 'bold',
@@ -1583,7 +1583,7 @@
                     // empty table before loading new data
                     $('#op-table').empty();
                     // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Optional Priorities</th><th>Frequency</th></tr>');
+                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
                     for (var i = 0; i < opTitlesHTML.length; i++) {
                         $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
                     }
