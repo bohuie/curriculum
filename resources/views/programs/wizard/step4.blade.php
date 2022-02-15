@@ -879,14 +879,14 @@
                 url: "get-op/",       
                 success: function (data) {
                     $("#loading-div-op").fadeOut("fast");
-                    var opFreq = data[0];
+                    var opFreq = data;
+                    console.log(opFreq);
                     var opTitles = $.map(opFreq, function(element,index) {return index});
+                    console.log(opTitles);
                     var opValues = $.map(opFreq, function(element,index) {return element});
-                    // html tags included
-                    var opFreqHTML = data[1];
-                    var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
-                    var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
+
                     series = generateData();
+
                     function generateData() {
                         var series = [];
 
@@ -912,53 +912,53 @@
                         `);
                     } else {
                     
-                        $('#high-chart-op').highcharts({
-                            chart: {
-                                type: 'column'
-                            },
-                            title: {
-                                text: 'Optional Priority Frequencies'
-                            },
-                            xAxis: {
-                                title: {
-                                    useHTML: true,
-                                    text: 'Strategic Priorities',
-                                    margin: 20,
-                                    style: {
-                                            fontWeight: 'bold',
-                                    },
-                                },
-                                labels: {
-                                    formatter: function() {
-                                        var ret = this.value,
-                                        len = ret.length;
-                                        if( len > 14 ) {
-                                            ret = ret.slice(0,14) + '...';
-                                        }else if( len > 10 ) {
-                                            ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                                        }
-                                        return ret;
-                                    }
-                                },
-                                categories: opTitles
-                            },
-                            yAxis: {
-                                title: {
-                                    text: 'Frequency',
-                                    margin: 20,
-                                }
-                            },
-                            legend: {
-                                enabled: false
-                            },
-                            series: series
-                        });
+                        // $('#high-chart-op').highcharts({
+                        //     chart: {
+                        //         type: 'column'
+                        //     },
+                        //     title: {
+                        //         text: 'Optional Priority Frequencies'
+                        //     },
+                        //     xAxis: {
+                        //         title: {
+                        //             useHTML: true,
+                        //             text: 'Strategic Priorities',
+                        //             margin: 20,
+                        //             style: {
+                        //                     fontWeight: 'bold',
+                        //             },
+                        //         },
+                        //         labels: {
+                        //             formatter: function() {
+                        //                 var ret = this.value,
+                        //                 len = ret.length;
+                        //                 if( len > 14 ) {
+                        //                     ret = ret.slice(0,14) + '...';
+                        //                 }else if( len > 10 ) {
+                        //                     ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
+                        //                 }
+                        //                 return ret;
+                        //             }
+                        //         },
+                        //         categories: opTitles
+                        //     },
+                        //     yAxis: {
+                        //         title: {
+                        //             text: 'Frequency',
+                        //             margin: 20,
+                        //         }
+                        //     },
+                        //     legend: {
+                        //         enabled: false
+                        //     },
+                        //     series: series
+                        // });
                         // empty table before loading new data
                         $('#op-table').empty();
                         // Append to table for all optional priority frequencies
                         $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                        for (var i = 0; i < opTitlesHTML.length; i++) {
-                            $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
+                        for (var i = 0; i < opTitles.length; i++) {
+                            $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitles[i] + '</td><td>' + opValues[i] + '</td></tr>');
                         }
                     }
                     // Enables functionality of tool tips
