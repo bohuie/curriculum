@@ -398,32 +398,32 @@ class ProgramWizardController extends Controller
             $index++;
         }
         // #############################################################
-        $program = Program::where('program_id', $program_id)->first();
-        // get all the courses this program belongs to
-        $programCourses = $program->courses;
+        // $program = Program::where('program_id', $program_id)->first();
+        // // get all the courses this program belongs to
+        // $programCourses = $program->courses;
 
-        $tempOptionalPriorities = [];
-        foreach ($programCourses as $programCourse) {
-            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
-        }
-        $opFrequencies = [];
-        foreach($tempOptionalPriorities as $courseID => $op_ids) {
-            $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
-            $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
-            foreach ($op_ids as $op_id) {
-                // add to opFrequencies if not already in array
-                if (!array_key_exists($op_id, $opFrequencies)) {
-                    $opFrequencies[$op_id]['freq'] = 1;
-                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
-                    $opFrequencies[$op_id]['subcat'] = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
-                } else {
-                    // otherwise increment if key (op_id) in array already
-                    $opFrequencies[$op_id]['freq'] += 1; 
-                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
-                }
-            }
-        }
+        // $tempOptionalPriorities = [];
+        // foreach ($programCourses as $programCourse) {
+        //     $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+        // }
+        // $opFrequencies = [];
+        // foreach($tempOptionalPriorities as $courseID => $op_ids) {
+        //     $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
+        //     $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
+        //     foreach ($op_ids as $op_id) {
+        //         // add to opFrequencies if not already in array
+        //         if (!array_key_exists($op_id, $opFrequencies)) {
+        //             $opFrequencies[$op_id]['freq'] = 1;
+        //             $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+        //             $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
+        //             $opFrequencies[$op_id]['subcat'] = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
+        //         } else {
+        //             // otherwise increment if key (op_id) in array already
+        //             $opFrequencies[$op_id]['freq'] += 1; 
+        //             $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+        //         }
+        //     }
+        // }
         //dd($opFrequencies);
         // #############################################################
 
@@ -445,6 +445,11 @@ class ProgramWizardController extends Controller
             $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
         }
         $opFrequencies = [];
+
+        $opFrequencies = [];
+        // $opFrequenciesTitles = [];
+        // $opFrequenciesCourses = [];
+        // $opFrequenciesSubcat = [];
         foreach($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
@@ -455,15 +460,37 @@ class ProgramWizardController extends Controller
                     $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
                     $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
                     $opFrequencies[$op_id]['subcat'] = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
+                    //// test
+                    // $opFrequencies[$op_id] = 1;
+                    // $opFrequenciesTitles[$op_id] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
+                    // $opFrequenciesCourses[$op_id] = [$courseID => $course_code. ' ' .$course_num];
+                    // $opFrequenciesSubcat[$op_id] = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
                     $opFrequencies[$op_id]['freq'] += 1; 
                     $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+                    /// test
+                    // $opFrequencies[$op_id] += 1;
+                    // $opFrequenciesCourses[$op_id] += [$courseID => $course_code.  ' '  .$course_num]; 
                 }
             }
         }
+        arsort($opFrequencies, SORT_NUMERIC);
 
-        return response()->json([$opFrequencies], 200);
+        $output = $this->generateHTMLOptionalPriorities($opFrequencies);
+
+        // return response()->json([$opFrequencies, $opFrequenciesTitles, $opFrequenciesCourses, $opFrequenciesSubcat], 200);
+        return response()->json($output, 200);
+    }
+
+    public function generateHTMLOptionalPriorities($opFrequencies) {
+        $output = '';
+        
+        foreach($opFrequencies as $op_id => $opFrequency) {
+            $output .= '<tr><td>'. $opFrequency['title'] .'</td><td>'. $opFrequency['freq'] .'</td></tr>';
+        }
+
+        return $output;
     }
 
     // public function getOptionalPriorities($program_id) {

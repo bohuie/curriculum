@@ -880,37 +880,41 @@
                 success: function (data) {
                     $("#loading-div-op").fadeOut("fast");
                     var opFreq = data;
-                    console.log(opFreq);
-                    var opTitles = $.map(opFreq, function(element,index) {return index});
-                    console.log(opTitles);
-                    var opValues = $.map(opFreq, function(element,index) {return element});
+                    // var opFreq = data[0];
+                    // var opTitles = data[1];
+                    // var opCourses = data[2];
+                    // var opTitles = $.map(opFreq, function(element,index) {return index});
+                    // var opValues = data[2];
+                    // var opValues = $.map(opFreq, function(element,index) {return element});
 
-                    series = generateData();
+                    // console.log(opCourses);
 
-                    function generateData() {
-                        var series = [];
+                    // series = generateData();
 
-                        series.push({
-                            name: '# of Occurrences',
-                            data: opValues,
-                            colorByPoint: true,
-                        });
-                        return series;
-                    }
-                    var programCourses = <?php echo json_encode($programCourses)?>;
-                    if (programCourses.length < 1) {
-                        $('#high-chart-op').html(`
-                            <div class="alert alert-warning wizard">
-                                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                            </div>
-                        `);
-                    } else if (opFreq.length < 1) {
-                        $('#high-chart-op').html(`
-                            <div class="alert alert-warning wizard">
-                                <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                            </div>
-                        `);
-                    } else {
+                    // function generateData() {
+                    //     var series = [];
+
+                    //     series.push({
+                    //         name: '# of Occurrences',
+                    //         data: opValues,
+                    //         colorByPoint: true,
+                    //     });
+                    //     return series;
+                    // }
+                    // var programCourses = <?php echo json_encode($programCourses)?>;
+                    // if (programCourses.length < 1) {
+                    //     $('#high-chart-op').html(`
+                    //         <div class="alert alert-warning wizard">
+                    //             <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                    //         </div>
+                    //     `);
+                    // } else if (opFreq.length < 1) {
+                    //     $('#high-chart-op').html(`
+                    //         <div class="alert alert-warning wizard">
+                    //             <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
+                    //         </div>
+                    //     `);
+                    // } else {
                     
                         // $('#high-chart-op').highcharts({
                         //     chart: {
@@ -953,15 +957,21 @@
                         //     },
                         //     series: series
                         // });
-                        // empty table before loading new data
-                        $('#op-table').empty();
-                        // Append to table for all optional priority frequencies
-                        $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                        for (var i = 0; i < opTitles.length; i++) {
-                            $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitles[i] + '</td><td>' + opValues[i] + '</td></tr>');
-                        }
-                    }
+                        // // empty table before loading new data
+                        // $('#op-table').empty();
+                        // // Append to table for all optional priority frequencies
+                        // $('#op-table').append('<tr class="table-secondary"><th>Strategic Priorities</th><th>Frequency</th></tr>');
+                        // for(var i in opTitles){
+                        //     $('#op-table').append('<tr><td>' + opTitles[i] + '</td><td>' + opFreq[i] + '</td></tr>');
+                        // }
+                    // }
                     // Enables functionality of tool tips
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append('<tr class="table-secondary"><th>Strategic Priorities</th><th>Frequency</th></tr>');
+                    $('#op-table').append(opFreq);
+                
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
             });
