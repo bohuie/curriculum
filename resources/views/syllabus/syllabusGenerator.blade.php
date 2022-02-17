@@ -278,11 +278,11 @@
                         <div class="row mb-3">
                             <div class="col-3">
                                 <label for="startTime">Class Start Time</label>
-                                <input id = "startTime" name = "startTime" class ="form-control" type="text" placeholder="E.g. 1:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_start_time : ''}}">
+                                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "startTime" name = "startTime" class ="form-control" type="text" placeholder="E.g. 1:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_start_time : ''}}">
                             </div>
                             <div class="col-3">
                                 <label for="endTime">Class End Time</label>
-                                <input id = "endTime" name = "endTime" class ="form-control" type="text" placeholder="E.g. 2:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_end_time : ''}}" >
+                                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "endTime" name = "endTime" class ="form-control" type="text" placeholder="E.g. 2:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_end_time : ''}}" >
                             </div>
                         </div>
                         <!-- Class Meeting Days -->
@@ -416,8 +416,6 @@
                                     <thead>
                                         <tr class="table-primary">
                                             @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
-                                                <th>
-                                                    <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
                                                 <th maxlength="65535">
                                                     <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
                                                 </th>
