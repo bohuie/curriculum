@@ -196,7 +196,7 @@
                             </div>
                             <div class="col-2">
                                 <label for="courseNumber"><span class="requiredField">* </span>Course Number</label>
-                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="19" class ="form-control" type="text" placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
+                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="5" class ="form-control" type="text" placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
                                 <div class="invalid-tooltip">
                                     Please enter the course number.
                                 </div>
@@ -416,8 +416,8 @@
                                     <thead>
                                         <tr class="table-primary">
                                             @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
-                                                <th maxlength="65535">
-                                                    <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
+                                                <th>
+                                                    <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="5" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
                                                 </th>
                                             @endforeach
                                             <th></th>
@@ -427,7 +427,7 @@
                                         @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
                                             @if ($rowIndex != 0)
                                                 <tr>
-                                                    <td maxlength="65535" oninput="validateMaxlength()" onpaste="validateMaxlength()" class="align-middle fs-5">∴</td>
+                                                    <td class="align-middle fs-5">∴</td>
                                                     @foreach ($row as $colIndex => $data)
                                                     <td>
                                                         <textarea maxlength="65535" oninput="validateMaxlength()" onpaste="validateMaxlength()" name="courseScheduleTblRows[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Data here ...">{{$data->val}}</textarea>
@@ -646,6 +646,9 @@
                         inputCell.setAttribute('type', 'text');
                         inputCell.setAttribute('class', 'form-control');
                         inputCell.setAttribute('spellcheck', 'true');
+                        inputCell.setAttribute('maxlength', '65535');
+                        inputCell.setAttribute('onpaste', 'validateMaxlength');
+                        inputCell.setAttribute('oninput', 'validateMaxlength()');
                         // if first row, create and style <th> cells, otherwise create and style <td> cells
                         if (rowIndex === 0) {
                             // create <th> element
@@ -753,6 +756,9 @@
                         inputCell.setAttribute('type', 'text');
                         inputCell.setAttribute('class', 'form-control');
                         inputCell.setAttribute('spellcheck', 'true');
+                        inputCell.setAttribute('maxlength', '65535');
+                        inputCell.setAttribute('onpaste', 'validateMaxlength');
+                        inputCell.setAttribute('oninput', 'validateMaxlength()');
                         // set input attributes for column headers, otherwise set input attributes for data cells
                         if (rowIndex == 0) {
                             inputCell.setAttribute('placeholder', 'Column heading here ...');
@@ -820,6 +826,9 @@
                         colCheckbox.setAttribute('name', 'colIndex');
                         colCheckbox.setAttribute('class', 'form-check-input');
                         colCheckbox.setAttribute('value', colIndex.toString());
+                        colCheckbox.setAttribute('maxlength', '65535');
+                        colCheckbox.setAttribute('onpaste', 'validateMaxlength');
+                        colCheckbox.setAttribute('oninput', 'validateMaxlength()');
                         // create, style and set attributes for <label>
                         var colLabel = document.createElement('label');
                         colLabel.setAttribute('for', 'col-heading-' + (colIndex + 1).toString());
@@ -888,6 +897,9 @@
                     inputCell.setAttribute('type', 'text');
                     inputCell.setAttribute('class', 'form-control');
                     inputCell.setAttribute('spellcheck', 'true');
+                    inputCell.setAttribute('maxlength', '65535');
+                    inputCell.setAttribute('onpaste', 'validateMaxlength');
+                    inputCell.setAttribute('oninput', 'validateMaxlength()');
                     // set placeholder values for <textarea>
                     inputCell.setAttribute('placeholder', 'Data here ...');
                     // put inputCell in <td>
