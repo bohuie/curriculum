@@ -114,7 +114,10 @@ class StandardsScaleCategoryCrudController extends CrudController
         $this->crud->addField([   // repeatable
             'name'  => 'Scaletable', //NO SPACE!!!
             'label' => 'Scales',
-            'type'  => 'repeatable',
+            // used to be repeatable, however we cannot use this anymore as our open source license doesn't allow this method.
+            //'type'  => 'repeatable',
+            // this type does not display the correct information
+            'type'  => 'select_multiple',
             'entity' => 'standardScales',
             'model' => 'App\Models\StandardsScaleCategory',
             

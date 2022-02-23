@@ -202,7 +202,9 @@ class ProgramCrudController extends CrudController
         $this->crud->addField([  
             // any type of relationship
             'name'         => 'users', // name of relationship method in the model
-            'type'         => 'select2_multiple',
+            // Used to be select2_multiple but had to change due to licensing 
+            //'type' => "select2_multiple",
+            'type'         => 'select_multiple',
             'label'        => 'Program Administrators', // Table column heading
             // OPTIONAL
             'entity'       => 'users', // the method that defines the relationship in your Model
@@ -292,7 +294,9 @@ class ProgramCrudController extends CrudController
         
         $this->crud->addField([
                     'name'    => 'Courses',
-                    'type'    => 'select2_multiple',
+                    // Used to be select2_multiple but had to change due to licensing 
+                    //'type' => "select2_multiple",
+                    'type'    => 'select_multiple',
                     'label'   => 'Courses',
                     'entity'    => 'courses', // the method that defines the relationship in your Model
                     'model'     => "App\Models\Course", // foreign key model                    

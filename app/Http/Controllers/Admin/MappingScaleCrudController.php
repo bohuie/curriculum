@@ -94,7 +94,9 @@ class MappingScaleCrudController extends CrudController
         $this->crud->addField([
             'name' => 'colour',
             'label' => 'Colour',
-            'type' => 'color_picker'
+            // colour picker is not allowed due to licensing restrictions
+            // 'type' => 'color_picker'
+            'type' => 'text'
         ]);
 
         /**
@@ -140,7 +142,9 @@ class MappingScaleCrudController extends CrudController
         $this->crud->addField([
             'name' => 'colour',
             'label' => 'Colour',
-            'type' => 'color_picker'
+            // colour picker is not allowed due to licensing restrictions
+            // 'type' => 'color_picker'
+            'type' => 'text'
         ]);
     }
 

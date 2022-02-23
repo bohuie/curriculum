@@ -161,7 +161,9 @@ class CourseCrudController extends CrudController
         $this->crud->addField([
             // n-n relationship //this is necesary to accommodate the new course_program relationship
             'label'     => 'Program', // Table column heading
-            'type'      => 'select2_multiple',
+            // Used to be select2_multiple but had to change due to licensing 
+            //'type' => "select2_multiple",
+            'type'      => 'select_multiple',
             'name'      => 'programs', // the column that contains the ID of that connected entity;
             'entity'    => 'programs', // the method that defines the relationship in your Model
             'attribute' => 'program', // foreign key attribute that is shown to user
@@ -186,7 +188,9 @@ class CourseCrudController extends CrudController
         
         $this->crud->addField([   // relationship
             'label' => "Assigned Instructors",
-            'type' => "select2_multiple",
+            // Used to be select2_multiple but had to change due to licensing 
+            //'type' => "select2_multiple",
+            'type' => "select_multiple",
             'name' => 'users', // the method on your model that defines the relationship
 
             // OPTIONALS:
