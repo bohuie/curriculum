@@ -23,6 +23,7 @@ use App\Models\MappingScaleCategory;
 use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\OptionalPriorities;
+use App\Models\OptionalPrioritySubcategories;
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -397,35 +398,6 @@ class ProgramWizardController extends Controller
             $freqForMS[$index] = $freqOfMSId;
             $index++;
         }
-        // #############################################################
-        // $program = Program::where('program_id', $program_id)->first();
-        // // get all the courses this program belongs to
-        // $programCourses = $program->courses;
-
-        // $tempOptionalPriorities = [];
-        // foreach ($programCourses as $programCourse) {
-        //     $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
-        // }
-        // $opFrequencies = [];
-        // foreach($tempOptionalPriorities as $courseID => $op_ids) {
-        //     $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
-        //     $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
-        //     foreach ($op_ids as $op_id) {
-        //         // add to opFrequencies if not already in array
-        //         if (!array_key_exists($op_id, $opFrequencies)) {
-        //             $opFrequencies[$op_id]['freq'] = 1;
-        //             $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-        //             $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
-        //             $opFrequencies[$op_id]['subcat'] = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
-        //         } else {
-        //             // otherwise increment if key (op_id) in array already
-        //             $opFrequencies[$op_id]['freq'] += 1; 
-        //             $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
-        //         }
-        //     }
-        // }
-        //dd($opFrequencies);
-        // #############################################################
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
@@ -447,97 +419,54 @@ class ProgramWizardController extends Controller
         $opFrequencies = [];
 
         $opFrequencies = [];
-        // $opFrequenciesTitles = [];
-        // $opFrequenciesCourses = [];
-        // $opFrequenciesSubcat = [];
+        $opFrequenciesSubcategories = [];
         foreach($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
             foreach ($op_ids as $op_id) {
+                $subcat_id = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 // add to opFrequencies if not already in array
                 if (!array_key_exists($op_id, $opFrequencies)) {
                     $opFrequencies[$op_id]['freq'] = 1;
                     $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
                     $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
-                    $opFrequencies[$op_id]['subcat'] = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
-                    //// test
-                    // $opFrequencies[$op_id] = 1;
-                    // $opFrequenciesTitles[$op_id] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    // $opFrequenciesCourses[$op_id] = [$courseID => $course_code. ' ' .$course_num];
-                    // $opFrequenciesSubcat[$op_id] = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
+                    $opFrequencies[$op_id]['subcat_id'] = $subcat_id;
+                    $opFrequenciesSubcategories[$subcat_id] = OptionalPrioritySubcategories::where('subcat_id', $subcat_id)->pluck('subcat_name')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
                     $opFrequencies[$op_id]['freq'] += 1; 
                     $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
-                    /// test
-                    // $opFrequencies[$op_id] += 1;
-                    // $opFrequenciesCourses[$op_id] += [$courseID => $course_code.  ' '  .$course_num]; 
                 }
             }
         }
-        arsort($opFrequencies, SORT_NUMERIC);
+        ksort($opFrequencies);
+        ksort($opFrequenciesSubcategories);
 
-        $output = $this->generateHTMLOptionalPriorities($opFrequencies);
+        $output = $this->generateHTMLOptionalPriorities($opFrequencies, $opFrequenciesSubcategories);
 
-        // return response()->json([$opFrequencies, $opFrequenciesTitles, $opFrequenciesCourses, $opFrequenciesSubcat], 200);
         return response()->json($output, 200);
     }
 
-    public function generateHTMLOptionalPriorities($opFrequencies) {
+    public function generateHTMLOptionalPriorities($opFrequencies, $opFrequenciesSubcategories) {
         $output = '';
-        
-        foreach($opFrequencies as $op_id => $opFrequency) {
-            $output .= '<tr><td>'. $opFrequency['title'] .'</td><td>'. $opFrequency['freq'] .'</td></tr>';
+        $output .= '<tbody>';
+        // loop through categories and add them to the output
+        foreach($opFrequenciesSubcategories as $subcat_id => $opFrequenciesSubcategory) {
+            $output .= '<tr class="table-primary"><td colspan="2"><b>'. $opFrequenciesSubcategory .'</b></td></tr>';
+            // loop through the optional priorities and add them to the output
+            foreach($opFrequencies as $op_id => $opFrequency) {
+                if ($subcat_id == $opFrequency['subcat_id']) {
+                    $output .= '<tr><td>'. $opFrequency['title'] .'</td><td class="text-center" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                    foreach($opFrequency['courses'] as $course) {
+                        $output .= '<li>'.$course.'</li>';
+                    }
+                    $output .= '">'. $opFrequency['freq'] .'</td></tr>';
+                }
+            }
         }
-
+        $output .= '</tbody>';
         return $output;
     }
-
-    // public function getOptionalPriorities($program_id) {
-    //     $program = Program::where('program_id', $program_id)->first();
-    //     // get all the courses this program belongs to
-    //     $programCourses = $program->courses;
-
-    //     $tempOptionalPriorities = [];
-    //     foreach ($programCourses as $programCourse) {
-    //         $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
-    //     }
-    //     $optionalPriorities = [];
-    //     foreach($tempOptionalPriorities as $op_ids) {
-    //         foreach ($op_ids as $op_id) {
-    //             $optionalPriorities[] += $op_id;
-    //         }
-    //     }
-    //     $opFrequencies = [];
-    //     foreach($optionalPriorities as $op_id) {
-    //         // add to opFrequencies if not already in array
-    //         if (!array_key_exists($op_id, $opFrequencies)) {
-    //             $opFrequencies[$op_id] = 1; 
-    //         } else {
-    //             // otherwise increment if key (op_id) in array already
-    //             $opFrequencies[$op_id] += 1; 
-    //         }
-    //     }
-    //     // duplicate array for html tags
-    //     $opFrequencies_html = $opFrequencies;
-    //     // replace id's with optional priorities name
-    //     foreach($opFrequencies as $op_id => $freq) {
-    //         $op_title = strip_tags(OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first());
-    //         $op_title_html = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-    //         // striped tags (HighCharts doesn't output <a> for chart titles so this is needed)
-    //         $opFrequencies[$op_title] = $opFrequencies[$op_id];
-    //         unset($opFrequencies[$op_id]);
-    //         // html tags included for summary table
-    //         $opFrequencies_html[$op_title_html] = $opFrequencies_html[$op_id];
-    //         unset($opFrequencies_html[$op_id]);
-    //     }
-    //     // then sort by frequency descending
-    //     arsort($opFrequencies, SORT_NUMERIC);
-    //     arsort($opFrequencies_html, SORT_NUMERIC);
-    //     // remove (mor)
-
-    //     return response()->json([$opFrequencies, $opFrequencies_html], 200);
-    // }
 
     public function getOptionalPrioritiesFirstYear($program_id) {
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();

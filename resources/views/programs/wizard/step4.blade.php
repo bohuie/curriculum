@@ -386,7 +386,7 @@
                                                 <div id="high-chart-op"></div>
                                             </div>
                                             <div class="container mt-2">
-                                                <table class="table table-bordered table-sm w-auto " id="op-table" style="margin: auto;"></table>
+                                                <table class="table table-light table-bordered" id="op-table" style="margin: auto; bs-table-bg: #cfe2ff00;"></table>
                                             </div>
                                         </div>
 
