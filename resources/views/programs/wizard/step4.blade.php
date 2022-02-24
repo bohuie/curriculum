@@ -343,7 +343,7 @@
                                                 <div class="loader" style="margin: auto;"></div>
                                             </div>
 
-                                            <p>This chart shows the frequencies of the Strategic Priorities for courses belonging to this program.</p>
+                                            <p>This chart shows the frequencies of the strategic priorities for courses belonging to this program.</p>
 
                                             <!-- *** start if *** -->
                                             @if (!(count($programCourses) < 1)) 
@@ -381,12 +381,9 @@
                                                 <input class="form-check-input" type="radio" name="op_select" id="all-op" checked hidden>
                                             @endif
                                             <!-- *** end if here *** -->
-
-                                            <div class="container mt-0">
-                                                <div id="high-chart-op"></div>
-                                            </div>
                                             <div class="container mt-2">
-                                                <table class="table table-light table-bordered" id="op-table" style="margin: auto; bs-table-bg: #cfe2ff00;"></table>
+                                                <!-- <table class="table table-light table-bordered" id="op-table"></table> -->
+                                                <div id="op-table"></div>
                                             </div>
                                         </div>
 
@@ -880,98 +877,11 @@
                 success: function (data) {
                     $("#loading-div-op").fadeOut("fast");
                     var opFreq = data;
-                    // var opFreq = data[0];
-                    // var opTitles = data[1];
-                    // var opCourses = data[2];
-                    // var opTitles = $.map(opFreq, function(element,index) {return index});
-                    // var opValues = data[2];
-                    // var opValues = $.map(opFreq, function(element,index) {return element});
-
-                    // console.log(opCourses);
-
-                    // series = generateData();
-
-                    // function generateData() {
-                    //     var series = [];
-
-                    //     series.push({
-                    //         name: '# of Occurrences',
-                    //         data: opValues,
-                    //         colorByPoint: true,
-                    //     });
-                    //     return series;
-                    // }
-                    // var programCourses = <?php echo json_encode($programCourses)?>;
-                    // if (programCourses.length < 1) {
-                    //     $('#high-chart-op').html(`
-                    //         <div class="alert alert-warning wizard">
-                    //             <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                    //         </div>
-                    //     `);
-                    // } else if (opFreq.length < 1) {
-                    //     $('#high-chart-op').html(`
-                    //         <div class="alert alert-warning wizard">
-                    //             <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                    //         </div>
-                    //     `);
-                    // } else {
-                    
-                        // $('#high-chart-op').highcharts({
-                        //     chart: {
-                        //         type: 'column'
-                        //     },
-                        //     title: {
-                        //         text: 'Optional Priority Frequencies'
-                        //     },
-                        //     xAxis: {
-                        //         title: {
-                        //             useHTML: true,
-                        //             text: 'Strategic Priorities',
-                        //             margin: 20,
-                        //             style: {
-                        //                     fontWeight: 'bold',
-                        //             },
-                        //         },
-                        //         labels: {
-                        //             formatter: function() {
-                        //                 var ret = this.value,
-                        //                 len = ret.length;
-                        //                 if( len > 14 ) {
-                        //                     ret = ret.slice(0,14) + '...';
-                        //                 }else if( len > 10 ) {
-                        //                     ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                        //                 }
-                        //                 return ret;
-                        //             }
-                        //         },
-                        //         categories: opTitles
-                        //     },
-                        //     yAxis: {
-                        //         title: {
-                        //             text: 'Frequency',
-                        //             margin: 20,
-                        //         }
-                        //     },
-                        //     legend: {
-                        //         enabled: false
-                        //     },
-                        //     series: series
-                        // });
-                        // // empty table before loading new data
-                        // $('#op-table').empty();
-                        // // Append to table for all optional priority frequencies
-                        // $('#op-table').append('<tr class="table-secondary"><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                        // for(var i in opTitles){
-                        //     $('#op-table').append('<tr><td>' + opTitles[i] + '</td><td>' + opFreq[i] + '</td></tr>');
-                        // }
-                    // }
-                    // Enables functionality of tool tips
                     // empty table before loading new data
                     $('#op-table').empty();
                     // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>Strategic Priorities</th><th>Frequency</th></tr>');
                     $('#op-table').append(opFreq);
-                
+                    // Enables functionality of tool tips
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
             });
@@ -1046,182 +956,28 @@
             url: "get-op/",       
             success: function (data) {
                 $("#loading-div-op").fadeOut("fast");
-                var opFreq = data[0];
-                var opTitles = $.map(opFreq, function(element,index) {return index});
-                var opValues = $.map(opFreq, function(element,index) {return element});
-                // html tags included
-                var opFreqHTML = data[1];
-                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
-                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
-                series = generateData();
-                function generateData() {
-                    var series = [];
-                    
-                    series.push({
-                        name: '# of Occurrences',
-                        data: opValues,
-                        colorByPoint: true,
-                    });
-                    return series;
-                }
-                var programCourses = <?php echo json_encode($programCourses)?>;
-                if (programCourses.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                        </div>
-                    `);
-                } else if (opFreq.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                        </div>
-                    `);
-                } else {
-                
-                    $('#high-chart-op').highcharts({
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Optional Priority Frequencies'
-                        },
-                        xAxis: {
-                            title: {
-                                useHTML: true,
-                                text: 'Strategic Priorities',
-                                margin: 20,
-                                style: {
-                                        fontWeight: 'bold',
-                                },
-                            },
-                            labels: {
-                                formatter: function() {
-                                    var ret = this.value,
-                                    len = ret.length;
-                                    if( len > 14 ) {
-                                        ret = ret.slice(0,14) + '...';
-                                    }else if( len > 10 ) {
-                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                                    }
-                                    return ret;
-                                }
-                            },
-                            categories: opTitles
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Frequency',
-                                margin: 20,
-                            }
-                        },
-                        legend: {
-                            enabled: false
-                        },
-                        series: series
-                    });
-                    // empty table before loading new data
-                    $('#op-table').empty();
-                    // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                    for (var i = 0; i < opTitlesHTML.length; i++) {
-                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
-                    }
-                }
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
         });
     }
 
-    function firstYearOP() {
+    function firstYearOP() {     
         $.ajax({
             type: "GET",
-            url: "get-op-first-year/",       
+            url: "get-op-first-year/",      
             success: function (data) {
                 $("#loading-div-op").fadeOut("fast");
-                var opFreq = data[0];
-                var opTitles = $.map(opFreq, function(element,index) {return index});
-                var opValues = $.map(opFreq, function(element,index) {return element});
-                // html tags included
-                var opFreqHTML = data[1];
-                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
-                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
-                series = generateData();
-                function generateData() {
-                    var series = [];
-                    
-                    series.push({
-                        name: '# of Occurrences',
-                        data: opValues,
-                        colorByPoint: true,
-                    });
-                    return series;
-                }
-                var programCourses = <?php echo json_encode($programCourses)?>;
-                if (programCourses.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                        </div>
-                    `);
-                } else if (opFreq.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                        </div>
-                    `);
-                } else {
-                
-                    $('#high-chart-op').highcharts({
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Optional Priority Frequencies'
-                        },
-                        xAxis: {
-                            title: {
-                                useHTML: true,
-                                text: 'Strategic Priorities',
-                                margin: 20,
-                                style: {
-                                        fontWeight: 'bold',
-                                },
-                            },
-                            labels: {
-                                formatter: function() {
-                                    var ret = this.value,
-                                    len = ret.length;
-                                    if( len > 14 ) {
-                                        ret = ret.slice(0,14) + '...';
-                                    }else if( len > 10 ) {
-                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                                    }
-                                    return ret;
-                                }
-                            },
-                            categories: opTitles
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Frequency',
-                                margin: 20,
-                            }
-                        },
-                        legend: {
-                            enabled: false
-                        },
-                        series: series
-                    });
-                    // empty table before loading new data
-                    $('#op-table').empty();
-                    // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                    for (var i = 0; i < opTitlesHTML.length; i++) {
-                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
-                    }
-                }
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1231,91 +987,14 @@
     function secondYearOP() {
         $.ajax({
             type: "GET",
-            url: "get-op-second-year/",       
+            url: "get-op-second-year/",      
             success: function (data) {
                 $("#loading-div-op").fadeOut("fast");
-                var opFreq = data[0];
-                var opTitles = $.map(opFreq, function(element,index) {return index});
-                var opValues = $.map(opFreq, function(element,index) {return element});
-                // html tags included
-                var opFreqHTML = data[1];
-                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
-                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
-                series = generateData();
-                function generateData() {
-                    var series = [];
-                    
-                    series.push({
-                        name: '# of Occurrences',
-                        data: opValues,
-                        colorByPoint: true,
-                    });
-                    return series;
-                }
-                var programCourses = <?php echo json_encode($programCourses)?>;
-                if (programCourses.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                        </div>
-                    `);
-                } else if (opFreq.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                        </div>
-                    `);
-                } else {
-                
-                    $('#high-chart-op').highcharts({
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Optional Priority Frequencies'
-                        },
-                        xAxis: {
-                            title: {
-                                useHTML: true,
-                                text: 'Strategic Priorities',
-                                margin: 20,
-                                style: {
-                                        fontWeight: 'bold',
-                                },
-                            },
-                            labels: {
-                                formatter: function() {
-                                    var ret = this.value,
-                                    len = ret.length;
-                                    if( len > 14 ) {
-                                        ret = ret.slice(0,14) + '...';
-                                    }else if( len > 10 ) {
-                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                                    }
-                                    return ret;
-                                }
-                            },
-                            categories: opTitles
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Frequency',
-                                margin: 20,
-                            }
-                        },
-                        legend: {
-                            enabled: false
-                        },
-                        series: series
-                    });
-                    // empty table before loading new data
-                    $('#op-table').empty();
-                    // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                    for (var i = 0; i < opTitlesHTML.length; i++) {
-                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
-                    }
-                }
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1325,91 +1004,14 @@
     function thirdYearOP() {
         $.ajax({
             type: "GET",
-            url: "get-op-third-year/",       
+            url: "get-op-third-year/",      
             success: function (data) {
                 $("#loading-div-op").fadeOut("fast");
-                var opFreq = data[0];
-                var opTitles = $.map(opFreq, function(element,index) {return index});
-                var opValues = $.map(opFreq, function(element,index) {return element});
-                // html tags included
-                var opFreqHTML = data[1];
-                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
-                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
-                series = generateData();
-                function generateData() {
-                    var series = [];
-                    
-                    series.push({
-                        name: '# of Occurrences',
-                        data: opValues,
-                        colorByPoint: true,
-                    });
-                    return series;
-                }
-                var programCourses = <?php echo json_encode($programCourses)?>;
-                if (programCourses.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                        </div>
-                    `);
-                } else if (opFreq.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                        </div>
-                    `);
-                } else {
-                
-                    $('#high-chart-op').highcharts({
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Optional Priority Frequencies'
-                        },
-                        xAxis: {
-                            title: {
-                                useHTML: true,
-                                text: 'Strategic Priorities',
-                                margin: 20,
-                                style: {
-                                        fontWeight: 'bold',
-                                },
-                            },
-                            labels: {
-                                formatter: function() {
-                                    var ret = this.value,
-                                    len = ret.length;
-                                    if( len > 14 ) {
-                                        ret = ret.slice(0,14) + '...';
-                                    }else if( len > 10 ) {
-                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                                    }
-                                    return ret;
-                                }
-                            },
-                            categories: opTitles
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Frequency',
-                                margin: 20,
-                            }
-                        },
-                        legend: {
-                            enabled: false
-                        },
-                        series: series
-                    });
-                    // empty table before loading new data
-                    $('#op-table').empty();
-                    // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                    for (var i = 0; i < opTitlesHTML.length; i++) {
-                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
-                    }
-                }
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1419,91 +1021,14 @@
     function fourthYearOP() {
         $.ajax({
             type: "GET",
-            url: "get-op-fourth-year/",       
+            url: "get-op-fourth-year/",      
             success: function (data) {
                 $("#loading-div-op").fadeOut("fast");
-                var opFreq = data[0];
-                var opTitles = $.map(opFreq, function(element,index) {return index});
-                var opValues = $.map(opFreq, function(element,index) {return element});
-                // html tags included
-                var opFreqHTML = data[1];
-                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
-                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
-                series = generateData();
-                function generateData() {
-                    var series = [];
-                    
-                    series.push({
-                        name: '# of Occurrences',
-                        data: opValues,
-                        colorByPoint: true,
-                    });
-                    return series;
-                }
-                var programCourses = <?php echo json_encode($programCourses)?>;
-                if (programCourses.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                        </div>
-                    `);
-                } else if (opFreq.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                        </div>
-                    `);
-                } else {
-                
-                    $('#high-chart-op').highcharts({
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Optional Priority Frequencies'
-                        },
-                        xAxis: {
-                            title: {
-                                useHTML: true,
-                                text: 'Strategic Priorities',
-                                margin: 20,
-                                style: {
-                                        fontWeight: 'bold',
-                                },
-                            },
-                            labels: {
-                                formatter: function() {
-                                    var ret = this.value,
-                                    len = ret.length;
-                                    if( len > 14 ) {
-                                        ret = ret.slice(0,14) + '...';
-                                    }else if( len > 10 ) {
-                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                                    }
-                                    return ret;
-                                }
-                            },
-                            categories: opTitles
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Frequency',
-                                margin: 20,
-                            }
-                        },
-                        legend: {
-                            enabled: false
-                        },
-                        series: series
-                    });
-                    // empty table before loading new data
-                    $('#op-table').empty();
-                    // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                    for (var i = 0; i < opTitlesHTML.length; i++) {
-                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
-                    }
-                }
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1513,91 +1038,14 @@
     function graduateOP() {
         $.ajax({
             type: "GET",
-            url: "get-op-graduate/",       
+            url: "get-op-graduate/",      
             success: function (data) {
                 $("#loading-div-op").fadeOut("fast");
-                var opFreq = data[0];
-                var opTitles = $.map(opFreq, function(element,index) {return index});
-                var opValues = $.map(opFreq, function(element,index) {return element});
-                // html tags included
-                var opFreqHTML = data[1];
-                var opTitlesHTML = $.map(opFreqHTML, function(element,index) {return index});
-                var opValuesHTML = $.map(opFreqHTML, function(element,index) {return element});
-                series = generateData();
-                function generateData() {
-                    var series = [];
-                    
-                    series.push({
-                        name: '# of Occurrences',
-                        data: opValues,
-                        colorByPoint: true,
-                    });
-                    return series;
-                }
-                var programCourses = <?php echo json_encode($programCourses)?>;
-                if (programCourses.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-                        </div>
-                    `);
-                } else if (opFreq.length < 1) {
-                    $('#high-chart-op').html(`
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>There are no Strategic Priorities for the courses belonging to this program.
-                        </div>
-                    `);
-                } else {
-                
-                    $('#high-chart-op').highcharts({
-                        chart: {
-                            type: 'column'
-                        },
-                        title: {
-                            text: 'Optional Priority Frequencies'
-                        },
-                        xAxis: {
-                            title: {
-                                useHTML: true,
-                                text: 'Strategic Priorities',
-                                margin: 20,
-                                style: {
-                                        fontWeight: 'bold',
-                                },
-                            },
-                            labels: {
-                                formatter: function() {
-                                    var ret = this.value,
-                                    len = ret.length;
-                                    if( len > 14 ) {
-                                        ret = ret.slice(0,14) + '...';
-                                    }else if( len > 10 ) {
-                                        ret = ret.slice(0,10) + '<br/>' + ret.slice(10, len);
-                                    }
-                                    return ret;
-                                }
-                            },
-                            categories: opTitles
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Frequency',
-                                margin: 20,
-                            }
-                        },
-                        legend: {
-                            enabled: false
-                        },
-                        series: series
-                    });
-                    // empty table before loading new data
-                    $('#op-table').empty();
-                    // Append to table for all optional priority frequencies
-                    $('#op-table').append('<tr class="table-secondary"><th>#</th><th>Strategic Priorities</th><th>Frequency</th></tr>');
-                    for (var i = 0; i < opTitlesHTML.length; i++) {
-                        $('#op-table').append('<tr><td><b>' + (i+1) + '</b></td><td>' + opTitlesHTML[i] + '</td><td>' + opValuesHTML[i] + '</td></tr>');
-                    }
-                }
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
