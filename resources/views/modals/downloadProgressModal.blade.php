@@ -1,11 +1,16 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<div class="modal fade" id="downloadCourseModal" tabindex="-1" aria-labelledby="downloadCourseModalLabel" aria-hidden="true" data-bs-backdrop="static">
+<div class="modal fade" id="downloadProgressModal" tabindex="-1" aria-labelledby="downloadProgressModalLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered ">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="downloadCourseModalLabel">Downloading course summary for {{$course->course_code}} {{$course->course_num}} ...</h5>
-            </div>
+                @if (Request::is('courseWizard/*'))
+                    <h5 class="modal-title" id="downloadProgressModalLabel">Downloading course summary for {{$course->course_code}} {{$course->course_num}} ...</h5>
+                @endif
+                @if (Request::is('programWizard/*'))
+                    <h5 class="modal-title" id="downloadProgressModalLabel">Downloading program overview for {{$program->program}} ...</h5>
+                @endif
+            </div>  
             <div class="modal-body">
                 <p class="mb-2">This may take up to 5 minutes.</p>
                 <div class="progress">
@@ -28,12 +33,22 @@
             <button type="button" class="btn-close" onclick="toggleErrorToast()" aria-label="Close"></button>
         </div>
         <div class="toast-body alert-danger">
-            We were unable to generate your course summary. 
-            <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
-                <a href="mailto:laura.prada@ubc.ca?subject=UBC Curriculum MAP: Error Generating Course Summary&cc=matthew.penner@ubc.ca&body=There was an error downloading the course summary for {{$course->course_code}} {{$course->course_num}}">
-                    <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
-                </a>      
-            </div>        
+            @if (Request::is('courseWizard/*'))
+                We were unable to the download the course summary for {{$course->course_code}} {{$course->course_num}}. 
+                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
+                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Course Summary&cc=matthew.penner@ubc.ca&body=There was an error downloading the course summary for {{$course->course_code}} {{$course->course_num}}">
+                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
+                    </a>  
+                </div>        
+            @endif
+            @if (Request::is('programWizard/*'))
+                We were unable to the download the program overview for {{$program->program}}. 
+                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
+                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Program Overview&cc=matthew.penner@ubc.ca&body=There was an error downloading the program overview for {{$program->program}}">
+                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
+                    </a>      
+                </div>        
+            @endif      
         </div>
     </div>
 </div>
@@ -41,7 +56,7 @@
 <script type="application/javascript">
     $(document).ready(function () {
         var xhr;
-        $("#downloadCourseSummary").click(function (e) {
+        $("#downloadPDF").click(function (e) {
             var route = $(this).data("route");
             xhr = $.ajax({
                 type: "GET",
@@ -55,17 +70,17 @@
                     // trigger download
                     $("#save-file")[0].click();
                     // hide download modal
-                    $('#downloadCourseModal').modal('hide');
+                    $('#downloadProgressModal').modal('hide');
                 },
                 error: (jqXHR, textStatus, error) => {
                     // hide download modal
-                    $('#downloadCourseModal').modal('hide');
+                    $('#downloadProgressModal').modal('hide');
                     // show error toast 
                     toggleErrorToast()                   
                 },
                 complete: (jqXHR, textStatus) => {
                     // delete pdf summary after 10secs/10000 ms
-                    setTimeout(() => {deleteSummary(route)}, 10000);
+                    setTimeout(() => {deletePDF(route)}, 10000);
                 }
             });   
         });
@@ -75,7 +90,7 @@
                 // abort XMLHttpRequest
                 xhr.abort();
                 // hide download modal
-                $('#downloadCourseModal').modal('hide');
+                $('#downloadProgressModal').modal('hide');
             }
         })
     });
@@ -92,9 +107,8 @@
         }
     }
 
-    function deleteSummary(route) {
+    function deletePDF(route) {
         var token = $("meta[name='csrf-token']").attr("content");
-        console.log(token);
         $.ajax({
             type: "DELETE",
             url: route,

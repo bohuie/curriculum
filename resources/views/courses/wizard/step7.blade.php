@@ -7,12 +7,12 @@
             @include('courses.wizard.header')
 
             <div class="card ">
-                <!-- Include modal form for course summary modal -->
-                @include('courses.downloadCourseModal')
+                <!-- Include download progress subview for PDF -->
+                @include('modals.downloadProgressModal', ['course' => $course])
                 <h3 class="card-header wizard" >
                     <div class="row">
                         <div class="col text-left">
-                            <button id="downloadCourseSummary" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadCourseModal" data-route="{{route('courses.pdf', $course->course_id)}}">
+                            <button id="downloadPDF" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('courses.pdf', $course->course_id)}}">
                                 Download<i class="bi bi-download pl-2"></i>
                             </button>
                         </div>

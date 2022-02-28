@@ -17,8 +17,11 @@ use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\ProgramUser;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use PDF;
 use Response;
+use Throwable;
 
 class ProgramController extends Controller
 {
@@ -211,109 +214,126 @@ class ProgramController extends Controller
     }
 
     public function pdf(Request $request, $program_id) {
+        // set the max time to generate a pdf summary as 5 mins/300 seconds
+        set_time_limit(5);
 
-        $user = User::where('id',Auth::id())->first();
+        try {
+            $user = User::where('id',Auth::id())->first();
+            $program = Program::where('program_id', $program_id)->first();
 
-        //header
-        $faculties = array("Faculty of Arts and Social Sciences", "Faculty of Creative and Critical Studies", "Okanagan School of Education", "School of Engineering", "School of Health and Exercise Sciences", "Faculty of Management", "Faculty of Science", "Faculty of Medicine", "College of Graduate Studies", "School of Nursing", "School of Social Work", "Other");
-        $departments = array("Community, Culture and Global Studies", "Economics, Philosophy and Political Science", "History and Sociology", "Psychology", "Creative Studies", "Languages and World Literature", "English and Cultural Studies", "Biology", "Chemistry", "Computer Science, Mathematics, Physics and Statistics", "Earth, Environmental and Geographic Sciences", "Other" );
-        $levels = array("Undergraduate", "Graduate", "Other");
-        $user = User::where('id',Auth::id())->first();
-        $programUsers = ProgramUser::join('users','program_users.user_id',"=","users.id")
-                                ->select('users.email','program_users.user_id','program_users.program_id')
-                                ->where('program_users.program_id','=',$program_id)->get();
+            //progress bar
+            $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
+            $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
+                                        ->where('mapping_scale_programs.program_id', $program_id)->count();
+            //
+            $courseCount = CourseProgram::where('program_id', $program_id)->count();
+            //
+            $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
+                                        ->where('mapping_scale_programs.program_id', $program_id)->get();
 
-        //
-        $program = Program::where('program_id', $program_id)->first();
+            // get all the courses this program belongs to
+            $programCourses = $program->courses;
 
-        //progress bar
-        $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)->count();
-        //
-        $courseCount = CourseProgram::where('program_id', $program_id)->count();
-        //
-        $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)->get();
+            // get all of the required courses this program belongs to
+            $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
 
-        // get all the courses this program belongs to
-        $programCourses = $program->courses;
+            // get all categories for program
+            $ploCategories = PLOCategory::where('program_id', $program_id)->get();
+            // get plo categories for program
+            $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
+            // get all plo's
+            $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
+            // get plo's for the program 
+            $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
+            // get UnCategorized PLO's
+            $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
 
-        // get all of the required courses this program belongs to
-        $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
-
-        // get all categories for program
-        $ploCategories = PLOCategory::where('program_id', $program_id)->get();
-        // get plo categories for program
-        $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get all plo's
-        $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
-        // get plo's for the program 
-        $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
-        // get UnCategorized PLO's
-        $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
-
-        // returns the number of Categories that contain at least one PLO
-        $numCatUsed = 0;
-        $uniqueCategories = array();
-        foreach ($ploProgramCategories as $ploInCategory) {
-            if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
-                $uniqueCategories[] += $ploInCategory->plo_category_id;
-                $numCatUsed++;
+            // returns the number of Categories that contain at least one PLO
+            $numCatUsed = 0;
+            $uniqueCategories = array();
+            foreach ($ploProgramCategories as $ploInCategory) {
+                if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
+                    $uniqueCategories[] += $ploInCategory->plo_category_id;
+                    $numCatUsed++;
+                }
             }
-        }
+            
+            // plosPerCategory returns the number of plo's belonging to each category
+            // used for setting the colspan in the view
+            $plosPerCategory = array();
+            foreach($ploProgramCategories as $ploCategory) {
+                $plosPerCategory[$ploCategory->plo_category_id] = 0;
+            }
+            foreach($ploProgramCategories as $ploCategory) {
+                $plosPerCategory[$ploCategory->plo_category_id] += 1;
+            }
+            
+            // Used for setting colspan in view
+            $numUncategorizedPLOS = 0;
+            foreach ($allPLO as $plo) {
+                if ($plo->plo_category_id == null){
+                    $numUncategorizedPLOS ++;
+                }
+            }
+
+            // returns true if there exists a plo without a category
+            $hasUncategorized = false;
+            foreach ($plos as $plo) {
+                if ($plo->plo_category == NULL) {
+                    $hasUncategorized = true;
+                }
+            }
+
+            // All Courses Frequency Distribution
+            $coursesOutcomes = array();
+            $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
+            $arr = array();
+            $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
+            $store = array();
+            $store = $this->createCDFArray($arr, $store);
+            $store = $this->frequencyDistribution($arr, $store);
+            $store = $this->replaceIdsWithAbv($store, $arr);
+            $store = $this->assignColours($store);
+
+            // Required Courses Frequency Distribution
+            $coursesOutcomes = array();
+            $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
+            $arrRequired = array();
+            $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
+            $storeRequired = array();
+            $storeRequired = $this->createCDFArray($arrRequired, $storeRequired);
+            $storeRequired = $this->frequencyDistribution($arrRequired, $storeRequired);
+            $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
+            $storeRequired = $this->assignColours($storeRequired);
+
+            $pdf = PDF::loadView('programs.downloadSummary', compact('program','ploCount','msCount','courseCount','mappingScales','programCourses','requiredProgramCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store','requiredProgramCourses','storeRequired'));
+
+            // get the content of the pdf document
+            $content = $pdf->output();
+            // store the pdf document in storage/app/public folder
+            Storage::put('public/program-' . $program->program_id . '.pdf', $content);
+            // get the url of the document
+            $url = Storage::url('program-' . $program->program_id . '.pdf');
+            // return the location of the pdf document on the server
+            return $url;
+            
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading program overview for: ' + $program->program;
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
+            $request->session()->flash('error', $message);
+            return $exception;
         
-        // plosPerCategory returns the number of plo's belonging to each category
-        // used for setting the colspan in the view
-        $plosPerCategory = array();
-        foreach($ploProgramCategories as $ploCategory) {
-            $plosPerCategory[$ploCategory->plo_category_id] = 0;
         }
-        foreach($ploProgramCategories as $ploCategory) {
-            $plosPerCategory[$ploCategory->plo_category_id] += 1;
-        }
-        
-        // Used for setting colspan in view
-        $numUncategorizedPLOS = 0;
-        foreach ($allPLO as $plo) {
-            if ($plo->plo_category_id == null){
-                $numUncategorizedPLOS ++;
-            }
-        }
+    }
 
-        // returns true if there exists a plo without a category
-        $hasUncategorized = false;
-        foreach ($plos as $plo) {
-            if ($plo->plo_category == NULL) {
-                $hasUncategorized = true;
-            }
-        }
-
-        // All Courses Frequency Distribution
-        $coursesOutcomes = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
-        $arr = array();
-        $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
-        $store = array();
-        $store = $this->createCDFArray($arr, $store);
-        $store = $this->frequencyDistribution($arr, $store);
-        $store = $this->replaceIdsWithAbv($store, $arr);
-        $store = $this->assignColours($store);
-
-        // Required Courses Frequency Distribution
-        $coursesOutcomes = array();
-        $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
-        $arrRequired = array();
-        $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
-        $storeRequired = array();
-        $storeRequired = $this->createCDFArray($arrRequired, $storeRequired);
-        $storeRequired = $this->frequencyDistribution($arrRequired, $storeRequired);
-        $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
-        $storeRequired = $this->assignColours($storeRequired);
-
-        $pdf = PDF::loadView('programs.downloadSummary', compact('program','ploCount','msCount','courseCount','mappingScales','programCourses','requiredProgramCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store','requiredProgramCourses','storeRequired'));
-
-        return $pdf->download('summary.pdf');
+    // delete temporary PDF
+    public function deletePDF(Request $request, $program_id)
+    {  
+        Storage::delete('public/program-' . $program_id . '.pdf');
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {

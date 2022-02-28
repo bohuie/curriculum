@@ -57,6 +57,7 @@ Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 //PDF for Program summary
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
 Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
 
 
