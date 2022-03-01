@@ -192,14 +192,15 @@ class ProgramWizardController extends Controller
         // get the program
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses that belong to this program
-        $programCourses = $program->courses()->get();
+        $programCourses = $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
+
         // get ids of all the courses that belong to this program
         $programCourseIds = $programCourses->map(function ($programCourse) {
             return $programCourse->course_id;
         });
 
         // get all courses that belong to this user that don't yet belong to this program
-        $userCoursesNotInProgram = $user->courses()->whereNotIn('courses.course_id', $programCourseIds)->orderBy('courses.course_title')->get();
+        $userCoursesNotInProgram = $user->courses()->whereNotIn('courses.course_id', $programCourseIds)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
 
         $programCoursesUsers = array();
         foreach ($programCourses as $programCourse) {
@@ -291,7 +292,7 @@ class ProgramWizardController extends Controller
                                     ->where('mapping_scale_programs.program_id', $program_id)->get();
 
         // get all the courses this program belongs to
-        $programCourses = $program->courses;
+        $programCourses = $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
 
         // All Learning Outcomes for program courses
         $LearningOutcomesForProgramCourses = array();
@@ -410,7 +411,7 @@ class ProgramWizardController extends Controller
     public function getOptionalPriorities($program_id) {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
-        $programCourses = $program->courses;
+        $programCourses = $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
 
         $tempOptionalPriorities = [];
         foreach ($programCourses as $programCourse) {
@@ -447,7 +448,7 @@ class ProgramWizardController extends Controller
     }
 
     public function getOptionalPrioritiesFirstYear($program_id) {
-        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
             if ($firstYearProgramCourse->course_num[0] != '1') {           // if the first number in course_num is not 1 then remove it from the collection
@@ -458,7 +459,7 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($firstYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
         }
         
         $opFrequencies = [];
@@ -491,7 +492,7 @@ class ProgramWizardController extends Controller
     }
 
     public function getOptionalPrioritiesSecondYear($program_id) {
-        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
             if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 1 then remove it from the collection
@@ -502,7 +503,7 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($secondYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
         }
         
         $opFrequencies = [];
@@ -535,7 +536,7 @@ class ProgramWizardController extends Controller
     }
 
     public function getOptionalPrioritiesThirdYear($program_id) {
-        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
             if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
@@ -546,7 +547,7 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($thirdYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
         }
         
         $opFrequencies = [];
@@ -579,10 +580,10 @@ class ProgramWizardController extends Controller
     }
 
     public function getOptionalPrioritiesFourthYear($program_id) {
-        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
-            if ($fourthYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 1 then remove it from the collection
+            if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 1 then remove it from the collection
                 $fourthYearProgramCourses->forget($count);
             }
             $count++;
@@ -590,7 +591,7 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($fourthYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
         }
         
         $opFrequencies = [];
@@ -623,7 +624,7 @@ class ProgramWizardController extends Controller
     }
 
     public function getOptionalPrioritiesGraduate($program_id) {
-        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($graduateProgramCourses as $graduateProgramCourse) {
             if ($graduateProgramCourse->course_num[0] != '5' || $graduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 1 then remove it from the collection
@@ -634,7 +635,7 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($graduateProgramCourses as $programCourse) {
-            $tempOptionalPriorities[] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
         }
         
         $opFrequencies = [];
@@ -1396,7 +1397,7 @@ class ProgramWizardController extends Controller
         $program = Program::find($program_id);
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all the courses this program belongs to
-        $programCourses = $program->courses;
+        $programCourses = $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         // get all categories for program
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
@@ -1431,7 +1432,7 @@ class ProgramWizardController extends Controller
     public function getRequiredCourses($program_id) {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all of the required courses this program belongs to
-        $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
+        $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         // get all categories for program
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
@@ -1466,7 +1467,7 @@ class ProgramWizardController extends Controller
     public function getNonRequiredCourses($program_id) {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all of the non-required courses this program belongs to
-        $nonRequiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 0)->get();
+        $nonRequiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 0)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         // get all categories for program
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
@@ -1500,7 +1501,7 @@ class ProgramWizardController extends Controller
 
     public function getFirstCourses($program_id) {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
             if ($firstYearProgramCourse->course_num[0] != '1') {           // if the first number in course_num is not 1 then remove it from the collection
@@ -1541,7 +1542,7 @@ class ProgramWizardController extends Controller
 
     public function getSecondCourses($program_id) {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
             if ($secondYearProgramCourse->course_num[0] != '2') {           // if the first number in course_num is not 2 then remove it from the collection
@@ -1582,7 +1583,7 @@ class ProgramWizardController extends Controller
 
     public function getThirdCourses($program_id) {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
             if ($thirdYearProgramCourse->course_num[0] != '3') {           // if the first number in course_num is not 3 then remove it from the collection
@@ -1623,7 +1624,7 @@ class ProgramWizardController extends Controller
 
     public function getFourthCourses($program_id) {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
             if ($fourthYearProgramCourse->course_num[0] != '4') {           // if the first number in course_num is not 3 then remove it from the collection
@@ -1664,7 +1665,7 @@ class ProgramWizardController extends Controller
 
     public function getGraduateCourses($program_id) {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
+        $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($graduateProgramCourses as $graduateProgramCourse) {
             if ($graduateProgramCourse->course_num[0] != '5' && $graduateProgramCourse->course_num[0] != '6') {           // if the first number in course_num is not 5 or 6 then remove it from the collection

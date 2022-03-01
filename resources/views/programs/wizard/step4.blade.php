@@ -266,7 +266,7 @@
                                                 <div id="high-chart-am"></div>
                                             </div>
                                             <div class="container mt-2">
-                                                <table class="table table-bordered table-sm w-auto " id="am-table" style="margin: auto;"></table>
+                                                <table class="table table-light table-bordered" style="margin: auto;"><tbody id="am-table"></tbody></table>
                                             </div>
                                         </div>
 
@@ -324,7 +324,7 @@
                                                 <div id="high-chart-la"></div>
                                             </div>
                                             <div class="container mt-2">
-                                                <table class="table table-bordered table-sm w-auto " id="la-table" style="margin: auto;"></table>
+                                                <table class="table table-light table-bordered" style="margin: auto;"><tbody id="la-table"></tbody></table>
                                             </div>
                                         </div>
 
@@ -766,7 +766,7 @@
                         // delete all child nodes
                         $('#am-table').empty();
                         // Append to table for all assessment methods frequencies
-                        $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                        $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                         for (var i = 0; i < amTitles.length; i++) {
                             $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
                         }
@@ -1121,7 +1121,7 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
                         $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
                     }
@@ -1202,7 +1202,7 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
                         $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
                     }
@@ -1283,7 +1283,7 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
                         $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
                     }
@@ -1364,7 +1364,7 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
                         $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
                     }
@@ -1445,7 +1445,7 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
                         $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
                     }
@@ -1526,7 +1526,7 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
                         $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
                     }
