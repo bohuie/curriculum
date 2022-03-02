@@ -220,13 +220,6 @@
                                         
                                         <div class="mt-3" id="assessment-methods-chart">
 
-                                            <div id='loading-div-am'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
-                                            </div>
-
                                             <p>This chart shows the frequencies of the assessment methods for courses belonging to this program.</p>
                                             @if (!(count($programCourses) < 1)) 
                                                 <form action="">
@@ -262,6 +255,14 @@
                                                 <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-am'  -->
                                                 <input class="form-check-input" type="radio" name="am_select" id="all-am" checked hidden>
                                             @endif
+                                            
+                                            <div id='loading-div-am'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+
                                             <div class="container mt-0">
                                                 <div id="high-chart-am"></div>
                                             </div>
@@ -277,13 +278,6 @@
                                     <div class="tab-pane fade" id="nav-learning-activity" role="tabpanel" aria-labelledby="nav-learning-activity">
                                         
                                         <div class="mt-3" id="learning-activity-chart">
-
-                                            <div id='loading-div-la'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
-                                            </div>
 
                                             <p>This chart shows the frequencies of the learning activities for courses belonging to this program.</p>
                                             @if (!(count($programCourses) < 1)) 
@@ -320,6 +314,14 @@
                                                 <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-la'  -->
                                                 <input class="form-check-input" type="radio" name="la_select" id="all-la" checked hidden>
                                             @endif
+
+                                            <div id='loading-div-la'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            
                                             <div class="container mt-0">
                                                 <div id="high-chart-la"></div>
                                             </div>
@@ -336,16 +338,9 @@
     
                                         <div class="mt-3" id="optional-priority-chart">
 
-                                            <div id='loading-div-op'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
-                                            </div>
-
                                             <p>This chart shows the frequencies of the strategic priorities for courses belonging to this program.</p>
 
-                                            <!-- *** start if *** -->
+                                            <!-- *** If there are courses for this program *** -->
                                             @if (!(count($programCourses) < 1)) 
                                                 <form action="">
                                                     <div class=" mx-5 mt-2 text-center">
@@ -380,7 +375,14 @@
                                                 <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-op'  -->
                                                 <input class="form-check-input" type="radio" name="op_select" id="all-op" checked hidden>
                                             @endif
-                                            <!-- *** end if here *** -->
+                                            
+                                            <div id='loading-div-op'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+
                                             <div class="container mt-2">
                                                 <!-- <table class="table table-light table-bordered" id="op-table"></table> -->
                                                 <div id="op-table"></div>
@@ -694,7 +696,8 @@
         $("#nav-assessment-methods-tab").click(function() { 
             // This is required to set the radio button to checked
             document.getElementById("all-am").checked = true;
-
+            $("#high-chart-am").hide();
+            $("#loading-div-am").show();
             $.ajax({
                 type: "GET",
                 url: "get-am/",       
@@ -772,7 +775,7 @@
                         }
 
                     }
-
+                    $("#high-chart-am").show();
                     // Enables functionality of tool tips
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
@@ -782,6 +785,8 @@
         $("#nav-learning-activity-tab").click(function() { 
             // This is required to set the radio button to checked
             document.getElementById("all-la").checked = true;
+            $("#high-chart-la").hide();
+            $("#loading-div-la").show();
 
             $.ajax({
                 type: "GET",
@@ -850,17 +855,17 @@
                             },
                             series: series
                         });
-
                         // delete all child nodes
                         $('#la-table').empty();
                         // Append to table for all assessment methods frequencies
-                        $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                        $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                         for (var i = 0; i < laTitles.length; i++) {
                             $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
                         }
 
                     }
-    
+                    // display chart
+                    $("#high-chart-la").show();
                     // Enables functionality of tool tips
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
@@ -870,6 +875,7 @@
         $("#nav-optional-priorities-tab").click(function() {
             // This is required to set the radio button to checked
             document.getElementById("all-op").checked = true;
+            $("#loading-div-op").show();
 
             $.ajax({
                 type: "GET",
@@ -951,6 +957,7 @@
     });
 
     function allOP() {
+        $("#loading-div-op").show();
         $.ajax({
             type: "GET",
             url: "get-op/",       
@@ -968,6 +975,7 @@
     }
 
     function firstYearOP() {     
+        $("#loading-div-op").show();
         $.ajax({
             type: "GET",
             url: "get-op-first-year/",      
@@ -985,6 +993,7 @@
     }
 
     function secondYearOP() {
+        $("#loading-div-op").show();
         $.ajax({
             type: "GET",
             url: "get-op-second-year/",      
@@ -1002,6 +1011,7 @@
     }
 
     function thirdYearOP() {
+        $("#loading-div-op").show();
         $.ajax({
             type: "GET",
             url: "get-op-third-year/",      
@@ -1019,6 +1029,7 @@
     }
 
     function fourthYearOP() {
+        $("#loading-div-op").show();
         $.ajax({
             type: "GET",
             url: "get-op-fourth-year/",      
@@ -1036,6 +1047,7 @@
     }
 
     function graduateOP() {
+        $("#loading-div-op").show();
         $.ajax({
             type: "GET",
             url: "get-op-graduate/",      
@@ -1053,6 +1065,8 @@
     }
 
     function allAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am/",       
@@ -1127,13 +1141,15 @@
                     }
 
                 }
-
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
         });
     }
     function firstYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-first-year/",       
@@ -1208,6 +1224,7 @@
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1215,6 +1232,8 @@
     }
 
     function secondYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-second-year/",       
@@ -1289,6 +1308,7 @@
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1296,6 +1316,8 @@
     }
 
     function thirdYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-third-year/",       
@@ -1370,6 +1392,7 @@
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1377,6 +1400,8 @@
     }
 
     function fourthYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-fourth-year/",       
@@ -1451,6 +1476,7 @@
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1458,6 +1484,8 @@
     }
 
     function graduateAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-graduate/",       
@@ -1532,6 +1560,7 @@
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1539,6 +1568,8 @@
     }
 
     function allLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la/",       
@@ -1607,12 +1638,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
                         $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1620,6 +1652,8 @@
     }
 
     function firstYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-first-year/",       
@@ -1688,12 +1722,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
                         $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1701,6 +1736,8 @@
     }
 
     function secondYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-second-year/",       
@@ -1769,12 +1806,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
                         $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1782,6 +1820,8 @@
     }
 
     function thirdYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-third-year/",       
@@ -1850,12 +1890,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
                         $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1863,6 +1904,8 @@
     }
 
     function fourthYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-fourth-year/",       
@@ -1931,12 +1974,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
                         $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1944,6 +1988,8 @@
     }
 
     function graduateLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-graduate/",       
@@ -2012,12 +2058,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
                         $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
