@@ -141,6 +141,13 @@ Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardControll
 Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
 Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
 Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
+// optional priorities filter routes
+Route::get('/programWizard/{program}/get-op', 'ProgramWizardController@getOptionalPriorities');
+Route::get('/programWizard/{program}/get-op-first-year', 'ProgramWizardController@getOptionalPrioritiesFirstYear');
+Route::get('/programWizard/{program}/get-op-second-year', 'ProgramWizardController@getOptionalPrioritiesSecondYear');
+Route::get('/programWizard/{program}/get-op-third-year', 'ProgramWizardController@getOptionalPrioritiesThirdYear');
+Route::get('/programWizard/{program}/get-op-fourth-year', 'ProgramWizardController@getOptionalPrioritiesFourthYear');
+Route::get('/programWizard/{program}/get-op-graduate', 'ProgramWizardController@getOptionalPrioritiesGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
@@ -179,9 +186,12 @@ Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_pre
 });
 
 // account information page and update method
-Route::get('/accountInformation',[AccountInformationController::class, 'index'])->name('accountInformation');
-Route::post('/accountInformation-update',[AccountInformationController::class, 'update'])->name('accountInformation.update');
-
+// *** Routes not working local, but work on testing/staging.. ***
+// Route::get('/accountInformation',[AccountInformationController::class, 'index'])->name('accountInformation');
+// Route::post('/accountInformation-update',[AccountInformationController::class, 'update'])->name('accountInformation.update');
+// *** These Routes work locally but not on staging ***
+Route::get('/accountInformation','auth\AccountInformationController@index')->name('accountInformation');
+Route::post('/accountInformation-update','auth\AccountInformationController@update')->name('accountInformation.update');
 
 Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');
