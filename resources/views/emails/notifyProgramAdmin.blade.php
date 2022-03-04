@@ -8,7 +8,7 @@
 @endif
 
 
-@component('mail::button', ['url' => 'http://127.0.0.1:8000/login'])
+@component('mail::button', ['url' => 'http://staging.curriculum.ok.ubc.ca/login'])
 Log In and See Program
 @endcomponent
 
