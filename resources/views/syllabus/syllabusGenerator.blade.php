@@ -179,7 +179,7 @@
                         <div class="row mb-3">
                             <div class="col-10">
                                 <label for="courseTitle" class="form-label"><span class="requiredField">* </span>Course Title</label>
-                                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text" placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
+                                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text" placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
                                 <div class="invalid-tooltip">
                                     Please enter the course title.
                                 </div>
@@ -196,7 +196,7 @@
                             </div>
                             <div class="col-2">
                                 <label for="courseNumber"><span class="requiredField">* </span>Course Number</label>
-                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="5" class ="form-control" type="text" placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
+                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="text" placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
                                 <div class="invalid-tooltip">
                                     Please enter the course number.
                                 </div>
@@ -207,7 +207,7 @@
                         <div class="row mb-3">
                             <div class="col-5">
                                 <label for="courseInstructor"><span class="requiredField">* </span>Course Instructor</label>
-                                <input id = "courseInstructor" name = "courseInstructor" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required value="{{ !empty($syllabus) ? $syllabus->course_instructor : ''}}">
+                                <input id = "courseInstructor" name = "courseInstructor" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required value="{{ !empty($syllabus) ? $syllabus->course_instructor : ''}}">
                                 <div class="invalid-tooltip">
                                     Please enter the course instructor.
                                 </div>
@@ -250,7 +250,7 @@
                         <div class="row mb-3">
                             <div class="col-5">
                                 <label for="courseLocation">Course Location</label>
-                                <input id = "courseLocation" name = "courseLocation" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="190" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{ !empty($syllabus) ? $syllabus->course_location : ''}}">
+                                <input id = "courseLocation" name = "courseLocation" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="150" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{ !empty($syllabus) ? $syllabus->course_location : ''}}">
                             </div>
                             <div id="officeLocation" class="col-6"></div>
                         </div>
@@ -259,7 +259,7 @@
                             <div class="col">
                                 <label for="officeHour">Office Hours</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="2500" spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Other Course Staff -->
@@ -271,7 +271,7 @@
                                 <div id="formatStaff" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                 </div>                                            
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="E.g. Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;E.g. Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control " form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="1000" id = "otherCourseStaff" data-formatnoteid="formatStaff" placeholder="E.g. Professor, Dr. Phil, PhD Clinical Psychology, ...&#10;E.g. Instructor, Bill Nye, BS Mechanical Engineering, ..." name = "otherCourseStaff" class ="form-control " form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Class Start Time, Class End Time -->
@@ -334,7 +334,7 @@
                                 <div id="formatCLOs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                 </div>                                            
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="E.g. Define ... &#10;E.g. Classify ..." name = "learningOutcome" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_outcomes : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="17500" id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="E.g. Define ... &#10;E.g. Classify ..." name = "learningOutcome" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_outcomes : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Course Learning Assessments -->
@@ -346,7 +346,7 @@
                                 <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                                 </div>                                            
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="E.g. Presentation, 25%, Dec 1, ... &#10;E.g. Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_assessments : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="E.g. Presentation, 25%, Dec 1, ... &#10;E.g. Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_assessments : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Learning Activities -->
@@ -417,7 +417,7 @@
                                         <tr class="table-primary">
                                             @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
                                                 <th>
-                                                    <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="5" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
+                                                    <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Column heading here ...">{{$header->val}}</textarea>
                                                 </th>
                                             @endforeach
                                             <th></th>
@@ -430,7 +430,7 @@
                                                     <td class="align-middle fs-5">∴</td>
                                                     @foreach ($row as $colIndex => $data)
                                                     <td>
-                                                        <textarea maxlength="65535" oninput="validateMaxlength()" onpaste="validateMaxlength()" name="courseScheduleTblRows[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Data here ...">{{$data->val}}</textarea>
+                                                        <textarea name="courseScheduleTblRows[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Data here ...">{{$data->val}}</textarea>
                                                     </td>
                                                     @endforeach
                                                     <td style="vertical-align:center; text-align:center">
@@ -450,14 +450,14 @@
                             <div class="col ">
                                 <label for="latePolicy">Late policy</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['latePolicy']}}"></i>
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" id = "latePolicy" name = "latePolicy" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->late_policy : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "latePolicy" name = "latePolicy" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->late_policy : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Course Missing Exam -->
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="missingExam">Missed exam policy</label>
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" id = "missingExam" name = "missingExam" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_exam_policy : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "missingExam" name = "missingExam" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_exam_policy : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Course Missed Activity Policy -->
@@ -465,14 +465,14 @@
                             <div class="col">
                                 <label for="missingActivity">Missed Activity Policy</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" id = "missingActivity" name = "missingActivity" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_activity_policy : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "missingActivity" name = "missingActivity" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_activity_policy : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Course Passing Criteria -->
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="passingCriteria">Passing criteria</label>
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" id = "passingCriteria" name = "passingCriteria" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "passingCriteria" name = "passingCriteria" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Course Learning Materials -->
@@ -480,7 +480,7 @@
                             <div class="col" >
                                 <label for="learningMaterials">Learning Materials</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningMaterials']}}"></i>
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" id = "learningMaterials" name = "learningMaterials" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "learningMaterials" name = "learningMaterials" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Course Learning Resources -->
@@ -489,7 +489,7 @@
                                 <label for="learningResources">Learning Resources</label>
                                 <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
                                 <span class="requiredBySenate"></span>
-                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
+                                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000" id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
                             </div>
                         </div>
                         <!-- Course Overview -->
@@ -646,7 +646,7 @@
                         inputCell.setAttribute('type', 'text');
                         inputCell.setAttribute('class', 'form-control');
                         inputCell.setAttribute('spellcheck', 'true');
-                        inputCell.setAttribute('maxlength', '65535');
+                        inputCell.setAttribute('maxlength', '1000');
                         inputCell.setAttribute('onpaste', 'validateMaxlength');
                         inputCell.setAttribute('oninput', 'validateMaxlength()');
                         // if first row, create and style <th> cells, otherwise create and style <td> cells
@@ -756,7 +756,7 @@
                         inputCell.setAttribute('type', 'text');
                         inputCell.setAttribute('class', 'form-control');
                         inputCell.setAttribute('spellcheck', 'true');
-                        inputCell.setAttribute('maxlength', '65535');
+                        inputCell.setAttribute('maxlength', '1000');
                         inputCell.setAttribute('onpaste', 'validateMaxlength');
                         inputCell.setAttribute('oninput', 'validateMaxlength()');
                         // set input attributes for column headers, otherwise set input attributes for data cells
@@ -826,7 +826,7 @@
                         colCheckbox.setAttribute('name', 'colIndex');
                         colCheckbox.setAttribute('class', 'form-check-input');
                         colCheckbox.setAttribute('value', colIndex.toString());
-                        colCheckbox.setAttribute('maxlength', '65535');
+                        colCheckbox.setAttribute('maxlength', '1000');
                         colCheckbox.setAttribute('onpaste', 'validateMaxlength');
                         colCheckbox.setAttribute('oninput', 'validateMaxlength()');
                         // create, style and set attributes for <label>
@@ -897,7 +897,7 @@
                     inputCell.setAttribute('type', 'text');
                     inputCell.setAttribute('class', 'form-control');
                     inputCell.setAttribute('spellcheck', 'true');
-                    inputCell.setAttribute('maxlength', '65535');
+                    inputCell.setAttribute('maxlength', '1000');
                     inputCell.setAttribute('onpaste', 'validateMaxlength');
                     inputCell.setAttribute('oninput', 'validateMaxlength()');
                     // set placeholder values for <textarea>
@@ -1314,13 +1314,13 @@
         var courseFormat = `
             <div class="col mb-3">
                 <label for="courseFormat">Course Format</label>
-                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" name = "courseFormat" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_format: ''}}</textarea>
+                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="7500" name = "courseFormat" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_format: ''}}</textarea>
             </div>
             `;
         var courseOverview = `
             <div class="col mb-3">
                 <label for="courseOverview">Course Overview, Content and Objectives</label>
-                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="65535" name = "courseOverview" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_overview : ''}}</textarea>
+                <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="7500" name = "courseOverview" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_overview : ''}}</textarea>
             </div>        
             `;
 
