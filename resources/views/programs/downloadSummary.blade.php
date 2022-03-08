@@ -49,65 +49,57 @@
             .table>tfoot>tr.active>th {
             background-color: #e2e3e5;
             }
-
             .alert-warning {
                 color: #664d03;
                 background-color: #fff3cd;
                 border-color: #ffecb5;
             }
-
-
-
         </style>
     </head>
     <body>
-
-        <div style="display:inline-block;">
-            <h3>Program Project: {{$program->program}}</h3>
-            <h5 class="text-muted">{{$program->faculty}}</h5>
-            <h5 class="text-muted">{{$program->department}}</h5>
-            <h5 class="text-muted">{{$program->level}}</h5>
+        <div style="margin-bottom:16px">
+            <p class="text-right">{{date("Y-m-d")}}</p>
+            <h2>Program Overview: {{$program->program}}</h2>
+            <p><b>Faculty:</b> {{$program->faculty}}</p>
+            <p><b>Department:</b> {{$program->department}}</p>
+            <p><b>Level:</b> {{$program->level}}</p>
         </div>
-
-        <div class="card">
-            <div class="card-header wizard">
-                <div class="w-25" style="display: inline-block;"></div>
-                <h3 style="margin-bottom:10px; text-align:center;">Program Overview</h3>
-            </div>
-            <!-- Program Learning Outcomes -->
-            <div class="card-body">
-                <h5 class="card-title">
-                    Program Learning Outcomes
-                </h5>
-                @if ( count($plos) < 1)
-                    <div class="alert alert-warning wizard">
-                        <i class="bi bi-exclamation-circle-fill"></i>There are no program learning outcomes for this program.                  
+        <!-- Start of PLOs -->
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Program Learning Outcomes</h4></div>
+            @if ($program->programLearningOutcomes->count() < 1)
+                <div class="panel-body">
+                    <div class="alert alert-warning" role="alert">
+                        There are no program learning outcomes set for this course. <a class="alert-link" href="{{route('programWizard.step1', $program->program_id)}}">Add program learning outcomes</a>               
                     </div>
-                @else
-                    <p>Program-level learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
-                    <table class="table table-light table-bordered table" style="width: 95%; margin: auto; table-layout:auto;">
-                        <tr class="table-primary" style="background-color: #c6e0f5;">
-                            <th class="text-left" colspan="2">Program Learning Outcome</th>
-                        </tr>
-                        <tbody>
-                            <!--Categorized PLOs -->
-                            @foreach ($ploCategories as $catIndex => $plo)
-                                @if ($plo->plo_category != NULL)
-                                    @if ($plo->plos->count() > 0)
-                                        <tr class="table-secondary" style="background-color: #d6d8db;">
-                                            <th class="text-left" style="font-size:10px;" colspan="2">{{$plo->plo_category}} 
-                                            @if ($numCatUsed > 3)    
-                                                : (C - {{$catIndex + 1}})</th>
-                                            @endif
-                                        </tr>
-                                    @endif
+                </div>                
+            @else
+                <div class="panel-body">
+                    <div class="alert alert-info" role="alert" style="margin:0px">
+                        <p>Program learning outcomes (PLOs) are the knowledge, skills and attributes that students are expected to attain by the end of a program of study.</p>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <tr class="info" style="font-size:14px;">
+                        <th colspan="2">Program Learning Outcome</th>
+                    </tr>
+                    <tbody>
+                        <!--Categorized PLOs -->
+                        @foreach ($program->ploCategories as $catIndex => $category)
+                            @if ($category->plo_category != NULL)
+                                @if ($category->plos->count() > 0)
+                                    <tr class="active" style="font-size:12px;">
+                                        <th colspan="2">{{$category->plo_category}}</th>
+                                    </tr>
                                 @endif
-                                @foreach($ploProgramCategories as $index => $ploCat)
-                                    @if ($plo->plo_category_id == $ploCat->plo_category_id)
-                                        <tr style="background-color: #fbfcfc;">
-                                            <td class="text-center align-middle" style="width:10%; vertical-align:middle; font-size:10px;">{{$index + 1}}</td>
-                                            <td style="font-size:10px;">
-                                                <span style="font-weight: bold;">{{$ploCat->plo_shortphrase}}</span><br>
+                            @endif
+                            @foreach($ploProgramCategories as $index => $ploCat)
+                                @if ($category->plo_category_id == $ploCat->plo_category_id)
+                                        <tr style="font-size:10px">
+                                            <td class="text-center active" style="width:5%;vertical-align:middle;"><b>{{$index + 1}}</b></td>
+                                            <td>
+                                                <span><b>{{$ploCat->plo_shortphrase}}</b></span><br>
                                                 {{$ploCat->pl_outcome}}
                                             </td>
                                         </tr>
@@ -115,343 +107,498 @@
                                 @endforeach
                             @endforeach
                             <!--UnCategorized PLOs -->
-                            @if($hasUncategorized)
-                                <tr class="table-secondary" style="background-color: #d6d8db;">
-                                    <th class="text-left" style="font-size:10px;" colspan="2">Uncategorized</th>
+
+                            @if($unCategorizedPLOS->count() > 0)
+                                <tr class="active" style="font-size:10px">
+                                    <th colspan="2">Uncategorized PLOs</th>
                                 </tr>
-                            @endif
-                            @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
-                                <tr style="background-color: #fbfcfc;">
-                                    <td class="text-center align-middle" style="width:10%; vertical-align:middle; font-size:10px;">{{count($ploProgramCategories) + $unCatIndex + 1}}</td>
+                                @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
+                                <tr style="font-size:10px">
+                                    <td class="text-center active" style="width:5%;vertical-align:middle;"><b>{{count($ploProgramCategories) + $unCatIndex + 1}}</b></td>
                                     <td style="font-size:10px;">
-                                        <span style="font-weight: bold;">{{$unCatplo->plo_shortphrase}}</span><br>
+                                        <span ><b>{{$unCatplo->plo_shortphrase}}</b></span><br>
                                         {{$unCatplo->pl_outcome}}
                                     </td>
                                 </tr>
-                            @endforeach
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
-                @endif
-            </div>
-            <!-- End Program Learning Outcomes -->
+                </div>
+            @endif
+        </div>
+        <!-- End of PLOs -->
 
-            <!-- Mapping Scales -->
-            <div class="card-body">
-                <h5 class="card-title">
-                    Mapping Scale
-                </h5>
-                @if ( count($mappingScales) < 1) 
-                    <div class="alert alert-warning wizard">
-                        <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
-                    </div>
-                @else 
-                    <p>The mapping scale indicates the degree to which a program learning outcome is addressed by a course learning outcome.</p>
-                    <table class="table table-bordered table-sm" style="width: 95%; margin: auto; table-layout:auto;">
-                        <tr class="table-primary" style="background-color: #c6e0f5;">
-                            <th class="text-left" colspan="2">Mapping Scale</th>
-                        </tr>
-                        <tbody>
-                            @foreach($mappingScales as $ms)
-                                <tr style="background-color: #fbfcfc;">
-                                    <td style="font-size:10px;">
-                                        <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
-                                        {{$ms->title}}<br>
-                                        ({{$ms->abbreviation}})
-                                    </td>
-                                    <td colspan="1" style="font-size:10px;">
-                                        {{$ms->description}}
-                                    </td>
-                                </tr>
-                            @endforeach
-                                <!--Legend-->
-                                <tr class="table-primary" style="background-color: #c6e0f5;">
-                                    <th class="text-left" colspan="2">Additional Denominations</th>
-                                </tr>
-                                <tr style="background-color: #fbfcfc;">
-                                    <td style="background-color:#999; height: 30px; width: 30px;">
-                                    </td>
-                                    <td style="font-size:10px;">
-                                        Occurs when two or more CLOs map to a PLO an equal amount of times.
-                                    </td>
-                                </tr>
-                                <tr style="background-color: #fbfcfc;">
-                                    <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
-                                        &#63;
-                                    </td>
-                                    <td style="font-size:10px;">
-                                        Occurs when a course has not yet been mapped to the set of PLOs.
-                                    </td>
-                                </tr>
-                                <tr style="background-color: #fbfcfc;">
-                                    <td class="text-center align-middle" style="font-size:10px; vertical-align:middle;">
-                                        N/A
-                                    </td>
-                                    <td style="font-size:10px;">
-                                        Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.
-                                    </td>
-                                </tr>
-                                <!-- End Legend-->
-                        </tbody>
-                    </table>
-                @endif
-            </div>
-            <!--End Mapping Scales-->
+        <!-- Mapping Scales -->
 
-            <!-- Required COURSES frequency distribution table -->
-            <div class="card-body">
-                <h5 class="card-title">
-                    Curriculum Map - Required Courses
-                </h5>
-                @if( count($requiredProgramCourses) < 1 )
-                    <div class="alert alert-warning wizard">
-                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                   
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Mapping Scales</h4></div>
+            @if ( count($mappingScales) < 1) 
+                <div class="alert alert-warning">
+                    A mapping scale has not been set for this program. <a class="alert-link" href="{{route('programWizard.step2', $program->program_id)}}">Set Mapping Scale</a>                 
+                </div>
+            @else 
+                <div class="panel-body">
+                    <div class="alert alert-info" role="alert" style="margin:0px">
+                        <p>The mapping scale indicates the degree to which a program learning outcome is addressed by a course learning outcome.</p>
                     </div>
-                @elseif ($ploCount < 1) 
-                    <div class="alert alert-warning wizard">
-                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
+                </div>
+
+                <table class="table">
+                    <tr class="info" style="font-size:14px" >
+                        <th colspan="2">Mapping Scale</th>
+                    </tr>
+                    @foreach($program->mappingScaleLevels as $programMappingScale)
+                    <tr>
+                        <td>
+                            <div style="background-color:{{$programMappingScale->colour}}; height: 10px; width: 10px;"></div>
+                            {{$programMappingScale->title}}<br>
+                            ({{$programMappingScale->abbreviation}})
+                        </td>
+                        <td>
+                            {{$programMappingScale->description}}
+                        </td>
+                    </tr>
+                    @endforeach
+                    <!--Legend-->
+                    <tr class="info">
+                        <th colspan="2">Additional Denominations</th>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#999;"></td>
+                        <td style="font-size:10px;">Occurs when two or more CLOs map to a PLO an equal amount of times.</td>
+                    </tr>
+                    <tr style="background-color: #fbfcfc;">
+                        <td class="text-center" style="font-size:10px; vertical-align:middle;">&#63;</td>
+                        <td style="font-size:10px;">Occurs when a course has not yet been mapped to the set of PLOs.</td>
+                    </tr>
+                    <tr style="background-color: #fbfcfc;">
+                        <td class="text-center" style="font-size:10px; vertical-align:middle;">N/A</td>
+                        <td style="font-size:10px;">Occurs when a course instructor has listed a program learning outcome as being not applicable for a program learning outcome.</td>
+                    </tr>
+                    <!-- End Legend-->    
+                </table>
+            @endif
+        </div>
+        <!--End Mapping Scales-->
+
+        <!-- START of frequency distribution table for only REQUIRED courses -->
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Curriculum MAP: Required Courses</h4></div>
+                @if($requiredProgramCourses->count() < 1 )
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">
+                            There are no required courses assigned to this program yet. <a class="alert-link" href="{{route('programWizard.step3', $program->program_id)}}">Assign required courses</a>               
+                        </div>
+                    </div>
+                @elseif ($program->programLearningOutcomes->count() < 1) 
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">
+                            No problem learning outcomes have been added to this program yet. <a class="alert-link" href="{{route('programWizard.step1', $program->program_id)}}">Add program learning outcomes</a>                  
+                        </div>
                     </div>
                 @else
-                    <p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
-                    <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
-                        <tr class="table-primary">
-                            <th colspan='1' class="w-auto" style="background-color:#c6e0f5;">Courses</th>
-                            <th class="text-left" colspan='{{ count($plos) }}' style="background-color:#c6e0f5;">Program-level Learning Outcomes</th>
+                    <div class="panel-body">
+                        <div class="alert alert-info" role="alert" style="margin:0px">
+                            <p>This chart shows the alignment of required courses to program learning outcomes for this program.</p>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-sm table-condensed" style="width:100%;">
+                        <tr class="info" style="font-size:14px">
+                            <th colspan="1">Req. Courses</th>
+                            <th class="text-left" colspan="{{ $program->programLearningOutcomes->count() }}">Program Learning Outcomes</th>
                         </tr>
-                        <tr>
-                            <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
-                            <!-- Displays Categories -->
-                            @foreach($ploCategories as $index =>$plo)
-                                @if ($plo->plo_category != NULL)
-                                    <!-- Use short name for category if there are more than 3 -->
-                                    @if (($numCatUsed > 3) && ($plo->plos->count() > 0))
-                                        <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">C - {{$index + 1}}</th>
-                                    @elseif ($plo->plos->count() > 0)
-                                        <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
-                                    @endif
-                                @endif
-                            @endforeach
-                            <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
-                            @if($hasUncategorized)
-                                <th colspan="{{$numUncategorizedPLOS}}" style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
-                            @endif
-                        </tr>
-                        <tr>
-                            <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
-                            <!-- If there are less than 7 PLOs, use the short-phrase, else use PLO at index + 1 -->
-                            @if (count($plos) < 7) 
-                                <!-- Categorized PLOs -->
-                                @foreach($ploProgramCategories as $plo)
-                                    @if ($plo->plo_category != NULL)
-                                        <th style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
-                                    @endif
-                                @endforeach
-                                <!-- Uncategorized PLOs -->
-                                @foreach($plos as $plo)
-                                    @if ($plo->plo_category == NULL)
-                                        <th style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
-                                    @endif
-                                @endforeach
-                            @else
-                                @foreach($plos as $index => $plo)
-                                    <th style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">PLO: {{$index + 1}}</th>
-                                @endforeach
-                            @endif
-                        </tr>
-                        <!-- Show all courses associated to the program -->
-                        @foreach($requiredProgramCourses as $course)
-                            <tr>
-                                <th colspan="1" style="font-size:10px; background-color: rgba(0, 0, 0, 0.03);">
-                                {{$course->course_code}} {{$course->course_num}} {{$course->section}}
-                                <br>
-                                {{$course->semester}} {{$course->year}}
-                                </th>
-                                <!-- Frequency distribution from each course -->
-                                <!-- For Each Categorized PLO -->
-                                @foreach($ploProgramCategories as $index => $plo)
-                                    @if ($plo->plo_category != NULL)
-                                    <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-                                        @if(isset($storeRequired[$plo->pl_outcome_id][$course->course_id]))
-                                            <!-- Check if a Tie is present -->
-                                            @if(isset($storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color:#999;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeRequired[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
-                                            @else
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color: {{ $storeRequired[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeRequired[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
+                        @foreach ($program->ploCategories as $category) 
+                            <tr style="font-size:12px">
+                                <th class="active"></th>
+                                <th class="active" colspan="{{ $program->programLearningOutcomes->count() }}">{{$category->plo_category}}</th>
+                            </tr>
+                            @if ($category->plos->count() <= 0)
+                                <tr style="font-size:10px">
+                                    <td class="active"></td>
+                                    <td colspan="{{ $program->programLearningOutcomes->count() }}"><div class="alert alert-warning" style="margin:0px" role="alert"><b>Warning! </b>No program learning outcomes belong to this category.</div></td>
+                                </tr>
+                            @else 
+                                <tr style="font-size:10px">
+                                    <td class="active"></td>
+                                    @foreach ($category->plos as $index => $plo)
+                                        @if ($plo->plo_shortphrase && $category->plos->count() < 5)     
+                                            @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}"><b>{{$plo->plo_shortphrase}}</b></td>
+                                            @else 
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}"><b>{{$plo->plo_shortphrase}}</b></td>
                                             @endif
-                                        @else
-                                            <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                &#63;
-                                            </td>
+                                        @else 
+                                            @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                            @else 
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                            @endif
                                         @endif
-                                    @endif
-                                @endforeach
-                                <!-- For Each Uncategorized PLO-->
-                                @foreach($plos as $plo)
-                                    @if ($plo->plo_category == NULL)
-                                        <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-                                        @if(isset($storeRequired[$plo->pl_outcome_id][$course->course_id]))
-                                            <!-- Check if a Tie is present -->
-                                            @if(isset($storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color:#999;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeRequired[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
+                                    @endforeach
+                                </tr>
+                                @foreach($requiredProgramCourses as $course)
+                                    <tr style="font-size:10px">
+                                        <td colspan="1">
+                                            <b>
+                                                {{$course->course_code}} {{$course->course_num}} {{$course->section}}
+                                                <br>
+                                                {{$course->semester}} {{$course->year}}
+                                            </b>
+                                        </td>
+                                        @foreach ($category->plos as $index => $plo)
+                                            @if(isset($storeRequired[$plo->pl_outcome_id][$course->course_id]))
+                                                <!-- Check if a Tie is present -->
+                                                @if(isset($storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                    @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}" style="vertical-align:middle; background-color:#999;text-align:center">
+                                                            <span>
+                                                                {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @else 
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}" style="vertical-align:middle; background-color:#999;text-align:center">
+                                                            <span>
+                                                                {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @else
+                                                    @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}" style="vertical-align:middle; background-color:{{ $storeRequired[$plo->pl_outcome_id][$course->course_id]['colour'] }};text-align:center">
+                                                            <span>
+                                                                {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @else 
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}" style="vertical-align:middle; background-color:{{ $storeRequired[$plo->pl_outcome_id][$course->course_id]['colour'] }};text-align:center">
+                                                            <span>
+                                                                {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @endif
                                             @else
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color: {{ $storeRequired[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($storeRequired[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$storeRequired[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
-                                            @endif
-                                        @else
-                                            <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                &#63;
-                                            </td>
+                                                @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}" style="vertical-align:middle; background-color: white;text-align:center">
+                                                        &#63;
+                                                    </td>
+                                                @else 
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}" style="vertical-align:middle; background-color: white;text-align:center">
+                                                        &#63;
+                                                    </td>
+                                                @endif
+                                            @endif                            
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                            @endif
+                        @endforeach
+                        <tr style="font-size:12px">
+                            <th class="active"></th>
+                            <th class="active" colspan="{{ $program->programLearningOutcomes->count() }}">Non-categorized program learning outcomes</th>
+                        </tr>
+                        @if ($unCategorizedPLOS->count() <= 0)
+                            <tr style="font-size:10px">
+                                <td class="active"></td>
+                                <td colspan="{{ $program->programLearningOutcomes->count() }}"><div class="alert alert-warning" style="margin:0px" role="alert"><b>Warning! </b>No program learning outcomes belong to this category.</div></td>
+                            </tr>
+                        @else
+                            <tr style="font-size:10px">
+                                <td class="active"></td>
+                                
+                                @foreach ($unCategorizedPLOS as $index => $unCatPLO)
+                                    @if ($unCatPLO->plo_shortphrase && $unCategorizedPLOS->count() < 5)     
+                                        @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>{{$unCatPLO->plo_shortphrase}}</b></td>
+                                        @else 
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>{{$unCatPLO->plo_shortphrase}}</b></td>
+                                        @endif
+                                    @else 
+                                        @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                        @else 
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
                                         @endif
                                     @endif
                                 @endforeach
                             </tr>
-                        @endforeach
+                            @foreach($requiredProgramCourses as $course)
+                                <tr style="font-size:10px">
+                                    <td colspan="1">
+                                        <b>
+                                            {{$course->course_code}} {{$course->course_num}} {{$course->section}}
+                                            <br>
+                                            {{$course->semester}} {{$course->year}}
+                                        </b>
+                                    </td>
+                                    
+                                    @foreach ($unCategorizedPLOS as $index => $unCatPLO)
+                                        @if ($unCatPLO->plo_category == NULL)
+                                            <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+                                            @if(isset($storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]))
+                                                <!-- Check if a Tie is present -->
+                                                @if(isset($storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                    @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}" class="text-center align-middle" style="vertical-align:middle;">
+                                                            <span>
+                                                                {{$storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @else 
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}" class="text-center align-middle" style="vertical-align:middle;">
+                                                            <span>
+                                                                {{$storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @else
+                                                    @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}" class="text-center align-middle" style="vertical-align:middle; background-color: {{ $storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]['colour'] }};">
+                                                            <span>
+                                                                {{$storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+
+                                                    @else
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}" class="text-center align-middle" style="vertical-align:middle; background-color: {{ $storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]['colour'] }};" >
+                                                            <span>
+                                                                {{$storeRequired[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @endif
+                                            @else
+                                                @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}" class="text-center align-middle" style="vertical-align:middle; background-color: white;">
+                                                        &#63;
+                                                    </td>    
+                                                @else
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}" class="text-center align-middle" style="vertical-align:middle; background-color: white;">
+                                                        &#63;
+                                                    </td>    
+                                                @endif
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                        @endif
                     </table>
                 @endif
             </div>  
-            <!-- end Courses to PLOs frequency Distribution card -->
+        </div>
+        <!-- END of frequency distribution table for only REQUIRED courses -->
 
-            <!-- ALL COURSES frequency distribution table -->
-            <div class="card-body">
-                <h5 class="card-title">
-                    Curriculum Map - All Courses
-                </h5>
-                @if( count($programCourses) < 1 )
-                    <div class="alert alert-warning wizard">
-                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                   
+        <!-- START of frequency distribution table for all courses -->
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Curriculum MAP: All Courses</h4></div>
+                @if($program->courses->count() < 1 )
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">
+                            There are no courses assigned to this program yet. <a class="alert-link" href="{{route('programWizard.step3', $program->program_id)}}">Add courses</a>               
+                        </div>
                     </div>
-                @elseif ($ploCount < 1) 
-                    <div class="alert alert-warning wizard">
-                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
+                @elseif ($program->programLearningOutcomes->count() < 1) 
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">
+                            No problem learning outcomes have been added to this program yet. <a class="alert-link" href="{{route('programWizard.step1', $program->program_id)}}">Add program learning outcomes</a>                  
+                        </div>
                     </div>
                 @else
-                    <p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
-                    <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
-                        <tr class="table-primary">
-                            <th colspan='1' class="w-auto" style="background-color:#c6e0f5;">Courses</th>
-                            <th class="text-left" colspan='{{ count($plos) }}' style="background-color:#c6e0f5;">Program-level Learning Outcomes</th>
+                    <div class="panel-body">
+                        <div class="alert alert-info" role="alert" style="margin:0px">
+                            <p>This chart shows the alignment of all courses to program learning outcomes for this program.</p>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-sm table-condensed" style="width:100%;">
+                        <tr class="info" style="font-size:14px">
+                            <th colspan="1">Courses</th>
+                            <th class="text-left" colspan="{{ $program->programLearningOutcomes->count() }}">Program Learning Outcomes</th>
                         </tr>
-                        <tr>
-                            <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
-                            <!-- Displays Categories -->
-                            @foreach($ploCategories as $index =>$plo)
-                                @if ($plo->plo_category != NULL)
-                                    <!-- Use short name for category if there are more than 3 -->
-                                    @if (($numCatUsed > 3) && ($plo->plos->count() > 0))
-                                        <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">C - {{$index + 1}}</th>
-                                    @elseif ($plo->plos->count() > 0)
-                                        <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
-                                    @endif
-                                @endif
-                            @endforeach
-                            <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
-                            @if($hasUncategorized)
-                                <th colspan="{{$numUncategorizedPLOS}}" style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
-                            @endif
-                        </tr>
-                        <tr>
-                            <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
-                            <!-- If there are less than 7 PLOs, use the short-phrase, else use PLO at index + 1 -->
-                            @if (count($plos) < 7) 
-                                <!-- Categorized PLOs -->
-                                @foreach($ploProgramCategories as $plo)
-                                    @if ($plo->plo_category != NULL)
-                                        <th style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
-                                    @endif
-                                @endforeach
-                                <!-- Uncategorized PLOs -->
-                                @foreach($plos as $plo)
-                                    @if ($plo->plo_category == NULL)
-                                        <th style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
-                                    @endif
-                                @endforeach
-                            @else
-                                @foreach($plos as $index => $plo)
-                                    <th style="font-size:10px; text-align:center; background-color: rgba(0, 0, 0, 0.03);">PLO: {{$index + 1}}</th>
-                                @endforeach
-                            @endif
-                        </tr>
-                        <!-- Show all courses associated to the program -->
-                        @foreach($programCourses as $course)
-                            <tr>
-                                <th colspan="1" style="font-size:10px; background-color: rgba(0, 0, 0, 0.03);">
-                                {{$course->course_code}} {{$course->course_num}} {{$course->section}}
-                                <br>
-                                {{$course->semester}} {{$course->year}}
-                                </th>
-                                <!-- Frequency distribution from each course -->
-                                <!-- For Each Categorized PLO -->
-                                @foreach($ploProgramCategories as $index => $plo)
-                                    @if ($plo->plo_category != NULL)
-                                    <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-                                        @if(isset($store[$plo->pl_outcome_id][$course->course_id]))
-                                            <!-- Check if a Tie is present -->
-                                            @if(isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color:#999;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
-                                            @else
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color: {{ $store[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
+                        @foreach ($program->ploCategories as $category) 
+                            <tr style="font-size:12px">
+                                <th class="active"></th>
+                                <th class="active" colspan="{{ $program->programLearningOutcomes->count() }}">{{$category->plo_category}}</th>
+                            </tr>
+                            @if ($category->plos->count() <= 0)
+                                <tr style="font-size:10px">
+                                    <td class="active"></td>
+                                    <td colspan="{{ $program->programLearningOutcomes->count() }}"><div class="alert alert-warning" style="margin:0px" role="alert"><b>Warning! </b>No program learning outcomes belong to this category.</div></td>
+                                </tr>
+                            @else 
+                                <tr style="font-size:10px">
+                                    <td class="active"></td>
+                                    @foreach ($category->plos as $index => $plo)
+                                        @if ($plo->plo_shortphrase && $category->plos->count() < 5)     
+                                            @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}"><b>{{$plo->plo_shortphrase}}</b></td>
+                                            @else 
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}"><b>{{$plo->plo_shortphrase}}</b></td>
                                             @endif
-                                        @else
-                                            <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                &#63;
-                                            </td>
+                                        @else 
+                                            @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                            @else 
+                                                <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                            @endif
                                         @endif
-                                    @endif
-                                @endforeach
-                                <!-- For Each Uncategorized PLO-->
-                                @foreach($plos as $plo)
-                                    @if ($plo->plo_category == NULL)
-                                        <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-                                        @if(isset($store[$plo->pl_outcome_id][$course->course_id]))
-                                            <!-- Check if a Tie is present -->
-                                            @if(isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color:#999;" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
+                                    @endforeach
+                                </tr>
+                                @foreach($program->courses as $course)
+                                    <tr style="font-size:10px">
+                                        <td colspan="1">
+                                            <b>
+                                                {{$course->course_code}} {{$course->course_num}} {{$course->section}}
+                                                <br>
+                                                {{$course->semester}} {{$course->year}}
+                                            </b>
+                                        </td>
+                                        @foreach ($category->plos as $index => $plo)
+                                            @if(isset($store[$plo->pl_outcome_id][$course->course_id]))
+                                                <!-- Check if a Tie is present -->
+                                                @if(isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                    @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}" style="vertical-align:middle; background-color:#999;text-align:center">
+                                                            <span>
+                                                                {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @else 
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}" style="vertical-align:middle; background-color:#999;text-align:center">
+                                                            <span>
+                                                                {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @else
+                                                    @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}" style="vertical-align:middle; background-color:{{ $store[$plo->pl_outcome_id][$course->course_id]['colour'] }};text-align:center">
+                                                            <span>
+                                                                {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @else 
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}" style="vertical-align:middle; background-color:{{ $store[$plo->pl_outcome_id][$course->course_id]['colour'] }};text-align:center">
+                                                            <span>
+                                                                {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @endif
                                             @else
-                                                <td class="text-center align-middle" style="vertical-align:middle; background-color: {{ $store[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-                                                    <span style="font-size:10px; color: black;">
-                                                        {{$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-                                                    </span>
-                                                </td>
-                                            @endif
-                                        @else
-                                            <td class="text-center align-middle" style="font-size:10px; vertical-align:middle; background-color: white;">
-                                                &#63;
-                                            </td>
+                                                @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}" style="vertical-align:middle; background-color: white;text-align:center">
+                                                        &#63;
+                                                    </td>
+                                                @else 
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}" style="vertical-align:middle; background-color: white;text-align:center">
+                                                        &#63;
+                                                    </td>
+                                                @endif
+                                            @endif                            
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                            @endif
+                        @endforeach
+                        <tr style="font-size:12px">
+                            <th class="active"></th>
+                            <th class="active" colspan="{{ $program->programLearningOutcomes->count() }}">Non-categorized program learning outcomes</th>
+                        </tr>
+                        @if ($unCategorizedPLOS->count() <= 0)
+                            <tr style="font-size:10px">
+                                <td class="active"></td>
+                                <td colspan="{{ $program->programLearningOutcomes->count() }}"><div class="alert alert-warning" style="margin:0px" role="alert"><b>Warning! </b>No program learning outcomes belong to this category.</div></td>
+                            </tr>
+                        @else
+                            <tr style="font-size:10px">
+                                <td class="active"></td>
+                                
+                                @foreach ($unCategorizedPLOS as $index => $unCatPLO)
+                                    @if ($unCatPLO->plo_shortphrase && $unCategorizedPLOS->count() < 5)     
+                                        @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>{{$unCatPLO->plo_shortphrase}}</b></td>
+                                        @else 
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>{{$unCatPLO->plo_shortphrase}}</b></td>
+                                        @endif
+                                    @else 
+                                        @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                        @else 
+                                            <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
                                         @endif
                                     @endif
                                 @endforeach
                             </tr>
-                        @endforeach
+                            @foreach($program->courses as $course)
+                                <tr style="font-size:10px">
+                                    <td colspan="1">
+                                        <b>
+                                            {{$course->course_code}} {{$course->course_num}} {{$course->section}}
+                                            <br>
+                                            {{$course->semester}} {{$course->year}}
+                                        </b>
+                                    </td>
+                                    
+                                    @foreach ($unCategorizedPLOS as $index => $unCatPLO)
+                                        @if ($unCatPLO->plo_category == NULL)
+                                            <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+                                            @if(isset($store[$unCatPLO->pl_outcome_id][$course->course_id]))
+                                                <!-- Check if a Tie is present -->
+                                                @if(isset($store[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+                                                    @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}" class="text-center align-middle" style="vertical-align:middle;">
+                                                            <span>
+                                                                {{$store[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @else 
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}" class="text-center align-middle" style="vertical-align:middle;">
+                                                            <span>
+                                                                {{$store[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @else
+                                                    @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}" class="text-center align-middle" style="vertical-align:middle; background-color: {{ $store[$unCatPLO->pl_outcome_id][$course->course_id]['colour'] }};">
+                                                            <span>
+                                                                {{$store[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+
+                                                    @else
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}" class="text-center align-middle" style="vertical-align:middle; background-color: {{ $store[$unCatPLO->pl_outcome_id][$course->course_id]['colour'] }};" >
+                                                            <span>
+                                                                {{$store[$unCatPLO->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+                                                            </span>
+                                                        </td>
+                                                    @endif
+                                                @endif
+                                            @else
+                                                @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}" class="text-center align-middle" style="vertical-align:middle; background-color: white;">
+                                                        &#63;
+                                                    </td>    
+                                                @else
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}" class="text-center align-middle" style="vertical-align:middle; background-color: white;">
+                                                        &#63;
+                                                    </td>    
+                                                @endif
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                        @endif
                     </table>
                 @endif
             </div>  
-        <!-- end Courses to PLOs frequency Distribution card -->
+        </div>
+        <!-- END of frequency distribution table for all courses -->
 
     </body>
 </html>

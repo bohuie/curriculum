@@ -215,12 +215,10 @@ class ProgramController extends Controller
 
     public function pdf(Request $request, $program_id) {
         // set the max time to generate a pdf summary as 5 mins/300 seconds
-        set_time_limit(5);
-
+        set_time_limit(300);
         try {
             $user = User::where('id',Auth::id())->first();
             $program = Program::where('program_id', $program_id)->first();
-
             //progress bar
             $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
             $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
@@ -230,13 +228,15 @@ class ProgramController extends Controller
             //
             $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
                                         ->where('mapping_scale_programs.program_id', $program_id)->get();
-
+            // ploIndexArray[$plo->pl_outcome_id] = $index
+            $ploIndexArray = array();
+            foreach ($program->programLearningOutcomes as $index => $plo) {
+                $ploIndexArray[$plo->pl_outcome_id] =  $index + 1;  
+            } 
             // get all the courses this program belongs to
             $programCourses = $program->courses;
-
             // get all of the required courses this program belongs to
             $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->get();
-
             // get all categories for program
             $ploCategories = PLOCategory::where('program_id', $program_id)->get();
             // get plo categories for program
@@ -306,8 +306,7 @@ class ProgramController extends Controller
             $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
             $storeRequired = $this->assignColours($storeRequired);
 
-            $pdf = PDF::loadView('programs.downloadSummary', compact('program','ploCount','msCount','courseCount','mappingScales','programCourses','requiredProgramCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store','requiredProgramCourses','storeRequired'));
-
+            $pdf = PDF::loadView('programs.downloadSummary', compact('ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','requiredProgramCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store','requiredProgramCourses','storeRequired'));
             // get the content of the pdf document
             $content = $pdf->output();
             // store the pdf document in storage/app/public folder
@@ -318,15 +317,13 @@ class ProgramController extends Controller
             return $url;
             
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading program overview for: ' + $program->program;
+            $message = 'There was an error downloading program overview for: ' . $program->program;
             Log::error($message . ' ...\n');
             Log::error('Code - ' . $exception->getCode());
             Log::error('File - ' . $exception->getFile());
             Log::error('Line - ' . $exception->getLine());
             Log::error($exception->getMessage());
-            $request->session()->flash('error', $message);
             return $exception;
-        
         }
     }
 

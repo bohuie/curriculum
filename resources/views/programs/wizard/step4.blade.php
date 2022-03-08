@@ -30,6 +30,11 @@
                 <h3 class="card-header wizard">
                     <div class="row">
                         <div class="col text-left">
+                        <a class="w-25" href="{{route('programs.pdf', $program->program_id)}}">
+                                <button class="btn btn-primary" onclick="{{route('programs.pdf', $program->program_id)}}">
+                                    Download PDF <i class="bi bi-download"></i>
+                                </button>
+                            </a>
                             <button id="downloadPDF" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('programs.pdf', $program->program_id)}}">
                                 Download<i class="bi bi-download pl-2"></i>
                             </button>

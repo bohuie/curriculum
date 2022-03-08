@@ -489,7 +489,6 @@ class CourseController extends Controller
             Log::error('File - ' . $exception->getFile());
             Log::error('Line - ' . $exception->getLine());
             Log::error($exception->getMessage());
-            $request->session()->flash('error', $message);
             return $exception;
         
         }
