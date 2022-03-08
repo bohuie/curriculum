@@ -108,6 +108,8 @@ class CourseController extends Controller
         $course->semester = $request->input('course_semester');
         $course->section = $request->input('course_section');
         $course->standard_category_id = $request->input('standard_category_id');
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
 
         // course creation triggered by add new course for program
         if($request->input('type') == 'assigned'){
