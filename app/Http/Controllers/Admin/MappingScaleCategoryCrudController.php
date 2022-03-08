@@ -99,7 +99,8 @@ class MappingScaleCategoryCrudController extends CrudController
         $this->crud->addField([   // repeatable
             'name'  => 'Mappingtable',
             'label' => 'Scales',
-            'type'  => 'repeatable',
+            // 'type'  => 'repeatable',
+            'type'      => 'select_multiple',
             'entity' => 'MappingScales',
             
             'fields' => [
