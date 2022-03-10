@@ -702,7 +702,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningActivities',0);
                 }
                 // tell template processor to include other course staff if user completed the field(s)
-                if($otherCourseStaff = $syllabus->other_course_staff){
+                if($otherCourseStaff = $syllabus->other_instructional_staff){
                     $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
                     // split other course staff string on newline char
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
