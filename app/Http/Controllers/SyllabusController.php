@@ -730,7 +730,7 @@ class SyllabusController extends Controller
                 // tell template processor to include class hours if user completed the field(s)
                 if ($classStartTime = $syllabus->class_start_time && $classEndTime = $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
-                    $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
+                    $templateProcessor->setValues(array('classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time));
                 } else {
                     $templateProcessor->cloneBlock('NoClassHours',0);
                 }
@@ -987,7 +987,7 @@ class SyllabusController extends Controller
                 // tell template processor to include class hours if user completed the field(s)
                 if ($classStartTime =  $syllabus->class_start_time && $classEndTime =  $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
-                    $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
+                    $templateProcessor->setValues(array('classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time));
                 } else {
                     $templateProcessor->cloneBlock('NoClassHours',0);
                 }
