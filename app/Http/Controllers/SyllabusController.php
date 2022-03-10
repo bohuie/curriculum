@@ -735,7 +735,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoClassHours',0);
                 }
                 // tell template processor to include course schedule if user completed the field(s)
-                if ($schedule = $okanaganSyllabus->course_) {
+                if ($schedule = $syllabus->class_meeting_days) {
                     $templateProcessor->cloneBlock('NoCourseDays');
                     $templateProcessor->setValue('schedule', $schedule);
                 } else {
