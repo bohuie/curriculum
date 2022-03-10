@@ -213,12 +213,56 @@ class ProgramController extends Controller
         return redirect()->route('home');
     }
 
+    /**
+     * Get 2D array of courses indexed by their level for the program with $programId.
+     * @param  int  $prorgamId
+     * @return Array
+     */    
+    function getCoursesByLevel($programId) {
+        $program = Program::find($programId);
+        $coursesByLevels["100 Level"] = collect();
+        $coursesByLevels["200 Level"] = collect();
+        $coursesByLevels["300 Level"] = collect();
+        $coursesByLevels["400 Level"] = collect();
+        $coursesByLevels["500 Level"] = collect();
+        $coursesByLevels["600 Level"] = collect();
+        $coursesByLevels["Other"] = collect();
+
+        foreach ($program->courses as $course) {
+            switch ($course->course_num[0]) {
+                case 1:
+                    $coursesByLevels["100 Level"]->push($course);
+                    break;
+                case 2: 
+                    $coursesByLevels["200 Level"]->push($course);
+                    break;
+                case 3:
+                    $coursesByLevels["300 Level"]->push($course);
+                    break;
+                case 4:
+                    $coursesByLevels["400 Level"]->push($course);
+                    break;
+                case 5: 
+                    $coursesByLevels["500 Level"]->push($course);
+                    break;
+                case 6:
+                    $coursesByLevels["600 Level"]->push($course);
+                    break;
+                default:
+                $coursesByLevels["Other"]->push($course);
+            }
+        }
+        return $coursesByLevels;
+    }
+
     public function pdf(Request $request, $program_id) {
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
             $user = User::where('id',Auth::id())->first();
             $program = Program::where('program_id', $program_id)->first();
+
+            $coursesByLevels = $this->getCoursesByLevel($program_id);
             //progress bar
             $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
             $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
@@ -276,6 +320,7 @@ class ProgramController extends Controller
                 }
             }
 
+
             // returns true if there exists a plo without a category
             $hasUncategorized = false;
             foreach ($plos as $plo) {
@@ -294,19 +339,8 @@ class ProgramController extends Controller
             $store = $this->frequencyDistribution($arr, $store);
             $store = $this->replaceIdsWithAbv($store, $arr);
             $store = $this->assignColours($store);
-
-            // Required Courses Frequency Distribution
-            $coursesOutcomes = array();
-            $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
-            $arrRequired = array();
-            $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
-            $storeRequired = array();
-            $storeRequired = $this->createCDFArray($arrRequired, $storeRequired);
-            $storeRequired = $this->frequencyDistribution($arrRequired, $storeRequired);
-            $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
-            $storeRequired = $this->assignColours($storeRequired);
-
-            $pdf = PDF::loadView('programs.downloadSummary', compact('ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','requiredProgramCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store','requiredProgramCourses','storeRequired'));
+            
+            $pdf = PDF::loadView('programs.downloadSummary', compact('coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store',));
             // get the content of the pdf document
             $content = $pdf->output();
             // store the pdf document in storage/app/public folder

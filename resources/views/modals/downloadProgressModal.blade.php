@@ -12,7 +12,7 @@
                 @endif
             </div>  
             <div class="modal-body">
-                <p class="mb-2">This may take up to 5 minutes. Please stay on this page while we prepare your summary.</p>
+                <p class="mb-2">This may take up to 5 minutes.</p>
                 <p class="mb-2">Please stay on this page while we prepare your summary.</p>
                 <div class="progress">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
@@ -72,14 +72,16 @@
                     $("#save-file")[0].click();
                     // hide download modal
                     $('#downloadProgressModal').modal('hide');
-                    // delete pdf summary after 15 sec/15,000 ms
-                    setTimeout(() => {deletePDF(route)}, 15000);
+                    // delete pdf summary after 1 min/60,000 ms
+                    setTimeout(() => {deletePDF(route)}, 60000);
                 },
                 error: (jqXHR, textStatus, error) => {
                     // hide download modal
                     $('#downloadProgressModal').modal('hide');
-                    // show error toast 
-                    toggleErrorToast()                   
+                    if (textStatus != abort) {
+                        // show error toast 
+                        toggleErrorToast()                   
+                    }
                 },
             });   
         });
