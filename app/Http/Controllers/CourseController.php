@@ -18,15 +18,15 @@ use App\Models\OutcomeActivity;
 use App\Models\MappingScale;
 use App\Models\PLOCategory;
 use App\Models\CourseProgram;
-use PDF;
-use Illuminate\Support\Facades\DB;
-use App\Models\Optional_priorities;
 use App\Models\OutcomeMap;
 use App\Models\Standard;
-use App\Models\StandardCategory;
 use App\Models\StandardsOutcomeMap;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use PDF;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class CourseController extends Controller
 {
@@ -412,94 +412,92 @@ class CourseController extends Controller
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
 
-    public function pdf($course_id)
-    {
-        $user = User::where('id',Auth::id())->first();
-        $course =  Course::find($course_id);
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
-
-        //for progress bar
-        $lo_count = LearningOutcome::where('course_id', $course_id)->count();
-        $am_count = AssessmentMethod::where('course_id', $course_id)->count();
-        $la_count = LearningActivity::where('course_id', $course_id)->count();
-        $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
-                                ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_activities.course_id','=',$course_id)->count();
-        $oAss = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
-                                ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('assessment_methods.course_id','=',$course_id)->count();
-        $outcomeMapsCount = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
-                                ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
-
-        //
-
-        // get all the programs this course belongs to
-        $coursePrograms = Course::find($course_id)->programs;
-
-        // get the PLOs for each program
-        $programsLearningOutcomes = array();
-        foreach ($coursePrograms as $courseProgram) {
-            $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
-        }
-
-        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
-        $courseProgramsOutcomeMaps = array();
-        foreach ($programsLearningOutcomes as $programId => $programLearningOutcomes) {
-            foreach ($programLearningOutcomes as $programLearningOutcome) {
-                $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $course_id);
-                foreach($outcomeMaps as $outcomeMap){
-                    $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
-                } 
+    public function pdf(Request $request, $course_id)
+    {  
+        // set the max time to generate a pdf summary as 5 mins/300 seconds
+        set_time_limit(300);
+        try {
+            // get the course
+            $course =  Course::find($course_id);
+            // get all the programs this course belongs to
+            $coursePrograms = Course::find($course_id)->programs;
+            // get the PLOs for each program
+            $programsLearningOutcomes = array();
+            foreach ($coursePrograms as $courseProgram) {
+                $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
             }
-        }
-
-        $coursePrograms->map(function($courseProgram, $key) {
-            $courseProgram->push(0, 'num_plos_categorized');
-            $courseProgram->programLearningOutcomes->each(function($plo, $key) use ($courseProgram) {
-                if (isset($plo->category)) {
-                    $courseProgram->num_plos_categorized++;
+            // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
+            $courseProgramsOutcomeMaps = array();
+            foreach ($programsLearningOutcomes as $programId => $programLearningOutcomes) {
+                foreach ($programLearningOutcomes as $programLearningOutcome) {
+                    $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $course_id);
+                    foreach($outcomeMaps as $outcomeMap){
+                        $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+                    } 
                 }
-            });            
-        });
+            }
+            // 
+            $coursePrograms->map(function($courseProgram, $key) {
+                $courseProgram->push(0, 'num_plos_categorized');
+                $courseProgram->programLearningOutcomes->each(function($plo, $key) use ($courseProgram) {
+                    if (isset($plo->category)) {
+                        $courseProgram->num_plos_categorized++;
+                    }
+                });            
+            });
+            // 
+            $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
+                                    ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                    ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
+                                    ->where('learning_activities.course_id','=',$course_id)->get();
+            // 
+            $outcomeAssessments = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
+                                    ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                    ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
+                                    ->where('assessment_methods.course_id','=',$course_id)->get();
+            // 
+            $standardOutcomeMaps = Standard::join('standards_outcome_maps','standards.standard_id','=','standards_outcome_maps.standard_id')
+                                    ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                    ->join('standard_scales', 'standard_scales.standard_scale_id', '=', 'standards_outcome_maps.standard_scale_id')
+                                    ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.standard_id','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
+                                    ->where('learning_outcomes.course_id','=',$course_id)->get();
+            // 
+            $assessmentMethodsTotal = 0;
+            foreach ($course->assessmentMethods as $a_method) {
+                $assessmentMethodsTotal += $a_method->weight;
+            }
+            // get subcategories for optional priorities
+            $optionalPriorities = $course->optionalPriorities;
+            $optionalSubcategories = array();
+            foreach ($optionalPriorities as $optionalPriority) {
+                $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
+            }
+            // build pdf objcet
+            $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
+            // get the content of the pdf document
+            $content = $pdf->output();
+            // store the pdf document in storage/app/public folder
+            Storage::put('public/course-' . $course->course_id . '.pdf', $content);
+            // get the url of the document
+            $url = Storage::url('course-' . $course->course_id . '.pdf');
+            // return the location of the pdf document on the server
+            return $url;
+
+        }  catch (Throwable $exception) {
+            $message = 'There was an error downloading your course summary report';
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
+            return $exception;
         
-        $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
-                                ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_activities.course_id','=',$course_id)->get();
-
-        $outcomeAssessments = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
-                                ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('assessment_methods.course_id','=',$course_id)->get();
-
-        $standardOutcomeMaps = Standard::join('standards_outcome_maps','standards.standard_id','=','standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standard_scales.standard_scale_id', '=', 'standards_outcome_maps.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.standard_id','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->get();
-            
-        $assessmentMethodsTotal = 0;
-        foreach ($course->assessmentMethods as $a_method) {
-            $assessmentMethodsTotal += $a_method->weight;
         }
+    }
 
-        // get subcategories for optional priorities
-        $optionalPriorities = $course->optionalPriorities;
-        $optionalSubcategories = array();
-        foreach ($optionalPriorities as $optionalPriority) {
-            $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
-        }
-        
-        $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
-
-        return $pdf->download('summary.pdf');
+    public function deletePDF(Request $request, $course_id)
+    {  
+        Storage::delete('public/course-' . $course_id . '.pdf');
     }
 
     // Removes the program id for a given course (Used In program wizard step 3).
