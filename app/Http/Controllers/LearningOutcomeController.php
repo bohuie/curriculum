@@ -53,8 +53,11 @@ class LearningOutcomeController extends Controller
             $courseId = $request->input('course_id');
             $currentCLOs = $request->input('current_l_outcome');
             $currentShortPhrases = $request->input('current_l_outcome_short_phrase');
+            // $newCLOs = array_reverse($request->input('new_l_outcomes'));
+            // $newShortPhrases = array_reverse($request->input('new_short_phrases'));
             $newCLOs = $request->input('new_l_outcomes');
             $newShortPhrases = $request->input('new_short_phrases');
+
             // case: delete all course learning outcomes
             if (!$currentCLOs && !$newCLOs) {
                 Course::find($courseId)->learningOutcomes()->delete();
@@ -63,6 +66,14 @@ class LearningOutcomeController extends Controller
             $course = Course::find($courseId);
             // get the saved CLOs for this course
             $clos = $course->learningOutcomes;
+            // check if clos have been reordered
+            $hasBeenReordered = false;
+            foreach ($clos as $clo) {
+                if ($clo->pos_in_alignment != 0) {
+                    $hasBeenReordered = true;
+                    break;
+                }
+            }
             // update current clos
             foreach ($clos as $clo) {
                 if (array_key_exists($clo->l_outcome_id, $currentCLOs)) {
@@ -75,13 +86,16 @@ class LearningOutcomeController extends Controller
                     $clo->delete();
                 }
             }
-            // add new clos
             if ($newCLOs) {
                 foreach ($newCLOs as $index => $newCLO) {
                     $newLearningOutcome = new LearningOutcome;
                     $newLearningOutcome->l_outcome = $newCLO;
                     $newLearningOutcome->clo_shortphrase = $newShortPhrases[$index];
                     $newLearningOutcome->course_id = $courseId;
+                    // update pos_in_alignment if the other clos for the course have non zero values for pos_in_alignment
+                    if ($hasBeenReordered) {
+                        $newLearningOutcome->pos_in_alignment = $clos->count() + $index + 1;
+                    }
                     $newLearningOutcome->save();
                 }
             }
