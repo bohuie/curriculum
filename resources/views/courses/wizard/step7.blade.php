@@ -46,7 +46,7 @@
                             Course Learning Outcomes
                         </h5>
                         <div class="body m-4 mb-2">
-                            @if(count($course->learningOutcomes)<1)
+                            @if(count($l_outcomes)<1)
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
                                 </div>
@@ -57,7 +57,7 @@
                                         <th>Course Learning Outcome</th>
                                     </tr>
 
-                                    @foreach($course->learningOutcomes as $index => $l_outcome)
+                                    @foreach($l_outcomes as $index => $l_outcome)
                                     <tr>
                                         <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>
                                         <td>
@@ -153,7 +153,7 @@
                         </h5>
                         <div class="body m-4 mb-2">
 
-                            @if(count($course->learningOutcomes)<1)
+                            @if(count($l_outcomes)<1)
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
                                 </div>
@@ -172,7 +172,7 @@
                                             <th>Teaching and Learning Activity</th>
                                         </tr>
                                     
-                                        @foreach($course->learningOutcomes->sortBy('pos_in_alignment')->values() as $index => $l_outcome)
+                                        @foreach($l_outcomes as $index => $l_outcome)
                                         <tr>
                                             <td style="width:5%" >{{$index+1}}</td>
                                             <td>{{$l_outcome->l_outcome}}</td>
@@ -368,7 +368,7 @@
                                                         @endif
                                                     </tr>
 
-                                                    @foreach($course->learningOutcomes as $clo_index => $l_outcome)
+                                                    @foreach($l_outcomes as $clo_index => $l_outcome)
                                                     <tr>
                                                         <td class="w-25" style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
                                                             @if(isset($l_outcome->clo_shortphrase))
@@ -519,12 +519,12 @@
                                         @endfor
                                     </tr>
 
-                                    @for($i = 0; $i < count($course->learningOutcomes); $i++)
+                                    @for($i = 0; $i < count($l_outcomes); $i++)
 
                                         <tr>
                                             <td style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
-                                                @if(isset($course->learningOutcomes[$i]->clo_shortphrase))
-                                                    {{$i+1}}. {{$course->learningOutcomes[$i]->clo_shortphrase}}
+                                                @if(isset($l_outcomes[$i]->clo_shortphrase))
+                                                    {{$i+1}}. {{$l_outcomes[$i]->clo_shortphrase}}
                                                 @else
                                                     CLO {{$i+1}}
                                                 @endif
@@ -532,7 +532,7 @@
 
                                             @for($j = 0; $j < $course->standardOutcomes->count(); $j++)
                                                 @foreach ($standardsOutcomeMap as $om)
-                                                    @if( $om->standard_id == $course->standardOutcomes[$j]->standard_id && $om->l_outcome_id == $course->learningOutcomes[$i]->l_outcome_id )
+                                                    @if( $om->standard_id == $course->standardOutcomes[$j]->standard_id && $om->l_outcome_id == $l_outcomes[$i]->l_outcome_id )
                                                         <td @foreach($course->standardScalesCategory->standardScales as $ms) @if($ms->standard_scale_id == $om->standard_scale_id) style="background-color:{{$ms->colour}}" @endif @endforeach class="text-center align-middle" >
                                                             <span @if($om->abbreviation == 'A') style="color:white" @endif>
                                                                 {{$om->abbreviation}}
