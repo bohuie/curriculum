@@ -50,7 +50,7 @@
                                         <table class="table table-light reorder-tbl-rows align-table">
                                             <thead>
                                                 <tr class="table-primary"> 
-                                                    <th class="w-auto">#</th>
+                                                    <th class="w-auto"></th>
                                                     <th class="w-50">Course Learning Outcomes or Competencies</th>
                                                     <th class="w-25">Student Assessment Methods</th>
                                                     <th class="w-25">Teaching and Learning Activities</th>
@@ -59,7 +59,7 @@
                                             <tbody>
                                                 @for($i = 0; $i < count($l_outcomes); $i++)
                                                     <tr>
-                                                        <td class="fw-bold">{{$i+1}}</td>
+                                                        <td class="fw-bold align-middle fs-5">∴</td>
                                                         <td scope="row">{{$l_outcomes[$i]->l_outcome}}</td>
                                                         <td>
                                                             @foreach ($a_methods as $a_method)
