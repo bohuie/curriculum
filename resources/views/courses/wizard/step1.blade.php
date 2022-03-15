@@ -433,8 +433,7 @@
     }
 
     function addCLO() {
-        // prepend assessment method to the table
-        $('#addCLOTbl tbody').prepend(`
+        $('#addCLOTbl tbody').append(`
             <tr>
                 <td>
                     <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
