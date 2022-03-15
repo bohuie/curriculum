@@ -175,7 +175,10 @@
                                         @foreach($l_outcomes as $index => $l_outcome)
                                         <tr>
                                             <td style="width:5%" >{{$index+1}}</td>
-                                            <td>{{$l_outcome->l_outcome}}</td>
+                                            <td>
+                                                <b>{{$l_outcome->clo_shortphrase}}</b><br>
+                                                {{$l_outcome->l_outcome}}
+                                            </td>
                                             <td>
                                                 @foreach($outcomeAssessments as $oa)
                                                     @if($oa->l_outcome_id == $l_outcome->l_outcome_id )

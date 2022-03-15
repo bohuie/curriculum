@@ -60,7 +60,10 @@
                                                 @for($i = 0; $i < count($l_outcomes); $i++)
                                                     <tr>
                                                         <td class="fw-bold align-middle fs-5">∴</td>
-                                                        <td scope="row">{{$l_outcomes[$i]->l_outcome}}</td>
+                                                        <td scope="row">
+                                                            <b>{{$l_outcomes[$i]->clo_shortphrase}}</b><br>
+                                                            {{$l_outcomes[$i]->l_outcome}}
+                                                        </td>
                                                         <td>
                                                             @foreach ($a_methods as $a_method)
                                                                 <div class="form-check form-check-inline">
