@@ -374,22 +374,9 @@
                                                                 @endif
                                                             </tr>
 
-                                                            @foreach($course->learningOutcomes as $clo_index => $l_outcome)
-                                                            <tr>
-                                                                <td class="w-auto">
-                                                                    @if(isset($l_outcome->clo_shortphrase))
-                                                                        {{$clo_index+1}}. {{$l_outcome->clo_shortphrase}}
-                                                                    @else
-                                                                        CLO {{$clo_index+1}}
-                                                                    @endif
-                                                                </td>
-                                                            @endforeach
-                                                        @endif
-                                                    </tr>
-
                                                     @foreach($l_outcomes as $clo_index => $l_outcome)
                                                     <tr>
-                                                        <td class="w-25" style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
+                                                        <td class="w-auto">
                                                             @if(isset($l_outcome->clo_shortphrase))
                                                                 {{$clo_index+1}}. {{$l_outcome->clo_shortphrase}}
                                                             @else
@@ -541,12 +528,12 @@
                                             @endfor
                                         </tr>
     
-                                        @for($i = 0; $i < count($course->learningOutcomes); $i++)
+                                        @for($i = 0; $i < count($l_outcomes); $i++)
     
                                             <tr>
                                                 <td style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
-                                                    @if(isset($course->learningOutcomes[$i]->clo_shortphrase))
-                                                        {{$i+1}}. {{$course->learningOutcomes[$i]->clo_shortphrase}}
+                                                    @if(isset($l_outcomes[$i]->clo_shortphrase))
+                                                        {{$i+1}}. {{$l_outcomes[$i]->clo_shortphrase}}
                                                     @else
                                                         CLO {{$i+1}}
                                                     @endif
@@ -554,7 +541,7 @@
     
                                                 @for($j = 0; $j < $course->standardOutcomes->count(); $j++)
                                                     @foreach ($standardsOutcomeMap as $om)
-                                                        @if( $om->standard_id == $course->standardOutcomes[$j]->standard_id && $om->l_outcome_id == $course->learningOutcomes[$i]->l_outcome_id )
+                                                        @if( $om->standard_id == $course->standardOutcomes[$j]->standard_id && $om->l_outcome_id == $l_outcomes[$i]->l_outcome_id )
                                                             <td @foreach($course->standardScalesCategory->standardScales as $ms) @if($ms->standard_scale_id == $om->standard_scale_id) style="background-color:{{$ms->colour}}" @endif @endforeach class="text-center align-middle" >
                                                                 <span @if($om->abbreviation == 'A') style="color:white" @endif>
                                                                     {{$om->abbreviation}}
