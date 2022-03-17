@@ -55,9 +55,13 @@ Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->
 
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
-//PDF for Program summary
+// Program Summary PDF routes
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
 Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
+// Program Summary Spreadsheet routes
+Route::get('/programs/{program}/spreadsheet','ProgramController@spreadsheet')->name('programs.spreadsheet');
+Route::delete('/programs/{program}/spreadsheet', 'ProgramController@delSpreadsheet')->name('programs.delete.spreadsheet');
+
 Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
 
 

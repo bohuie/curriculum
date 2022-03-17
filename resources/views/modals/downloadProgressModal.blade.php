@@ -20,7 +20,7 @@
                 <a id="save-file" hidden></a>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary abort" aria-label="Close">Cancel</button>
+                <button id="cancelDownloadBtn" type="button" class="btn btn-secondary" aria-label="Close">Cancel</button>
             </div>
         </div>
     </div>
@@ -57,44 +57,58 @@
 <script type="application/javascript">
     $(document).ready(function () {
         var xhr;
-        $("#downloadPDF").click(function (e) {
-            var route = $(this).data("route");
-            xhr = $.ajax({
-                type: "GET",
-                url: route,
-                dataType: "text",
-                success: (data, textStatus, jqXHR) => {
-                    // Set href as a local object URL
-                    $('#save-file').attr('href', data);
-                    // Set name of download
-                    $('#save-file').attr('download', 'summary.pdf');
-                    // trigger download
-                    $("#save-file")[0].click();
-                    // hide download modal
-                    $('#downloadProgressModal').modal('hide');
-                    // delete pdf summary after 1 min/60,000 ms
-                    setTimeout(() => {deletePDF(route)}, 60000);
-                },
-                error: (jqXHR, textStatus, error) => {
-                    // hide download modal
-                    $('#downloadProgressModal').modal('hide');
-                    if (textStatus != abort) {
-                        // show error toast 
-                        toggleErrorToast()                   
-                    }
-                },
-            });   
-        });
 
-        $(".abort").click((e) => {
-            if (xhr) {
-                // abort XMLHttpRequest
-                xhr.abort();
+        $("#downloadPDFBtn").click((e) =>
+            download(e.currentTarget)
+        );
+        $("#downloadExcelBtn").click((e) =>
+            download(e.currentTarget)
+        );
+        $("#cancelDownloadBtn").click((e) =>
+            abort(e.currentTarget)
+        )
+    });
+
+    function download(trigger) {
+        var route = $(trigger).data("route");
+        console.log(trigger);
+        xhr = $.ajax({
+            type: "GET",
+            url: route,
+            dataType: "text",
+            beforeSend: (jqXHR, settings) => {
+                // show download modal
+                $('#downloadProgressModal').modal('show');
+            },  
+            success: (data, textStatus, jqXHR) => {
+                // Set href as a local object URL
+                $('#save-file').attr('href', data);
+                // trigger download
+                $("#save-file")[0].click();
                 // hide download modal
                 $('#downloadProgressModal').modal('hide');
-            }
-        })
-    });
+                // delete pdf summary after 15 sec/15,000 ms
+                setTimeout(() => {deletePDF(route)}, 15000);
+            },
+            error: (jqXHR, textStatus, error) => {
+                // hide download modal
+                $('#downloadProgressModal').modal('hide');
+                if (textStatus != abort) {
+                    // show error toast 
+                    toggleErrorToast()                   
+                }
+            },
+        });     
+    }
+
+    function abort(event) {
+        if (xhr) {
+            // abort XMLHttpRequest
+            xhr.abort();
+            // hide download modal
+            $('#downloadProgressModal').modal('hide');
+        }
+    }
 
     // toggle the show/hide class of the error toast
     function toggleErrorToast() {

@@ -30,9 +30,20 @@
                 <h3 class="card-header wizard">
                     <div class="row">
                         <div class="col text-left">
-                            <button id="downloadPDF" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('programs.pdf', $program->program_id)}}">
-                                Download<i class="bi bi-download pl-2"></i>
-                            </button>
+                            <div class="btn-group">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                                    Download <i class="bi bi-download"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="downloadBtn">
+                                    <li><a id="downloadPDFBtn" class="dropdown-item" data-route="{{route('programs.pdf', $program->program_id)}}"><i class="bi bi-file-pdf-fill text-danger"></i> PDF</a></li>
+                                    <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel</a></li>
+                                </ul>
+                            </div>
+                            <!-- <a class="w-25" href="{{route('programs.spreadsheet', $program->program_id)}}">
+                                <button class="btn btn-primary">
+                                    Download Excel <i class="bi bi-download"></i>
+                                </button>
+                            </a>                         -->
                         </div>
 
                         <div class="col">

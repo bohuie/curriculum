@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Storage;
 use PDF;
 use Response;
 use Throwable;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProgramController extends Controller
 {
@@ -215,6 +217,7 @@ class ProgramController extends Controller
 
     /**
      * Get 2D array of courses indexed by their level for the program with $programId.
+     * @param Request HTTP request
      * @param  int  $prorgamId
      * @return Array
      */    
@@ -344,9 +347,9 @@ class ProgramController extends Controller
             // get the content of the pdf document
             $content = $pdf->output();
             // store the pdf document in storage/app/public folder
-            Storage::put('public/program-' . $program->program_id . '.pdf', $content);
+            Storage::put('public/pdfs/program-' . $program->program_id . '.pdf', $content);
             // get the url of the document
-            $url = Storage::url('program-' . $program->program_id . '.pdf');
+            $url = Storage::url('pdfs/program-' . $program->program_id . '.pdf');
             // return the location of the pdf document on the server
             return $url;
             
@@ -361,10 +364,72 @@ class ProgramController extends Controller
         }
     }
 
-    // delete temporary PDF
+    /**
+     * Delete the saved spreadsheet file for this program if it exists.
+     * @param Request HTTP request
+     * @param  int  $programId
+     * @return String $url of spreadsheet file 
+     */ 
     public function deletePDF(Request $request, $program_id)
     {  
         Storage::delete('public/program-' . $program_id . '.pdf');
+    }
+
+    /**
+     * Build a spreadsheet file of this programs summary.
+     * @param Request HTTP request
+     * @param  int  $programId
+     * @return String $url of spreadsheet file 
+     */  
+    public function spreadsheet(Request $request, $programId) {
+        try {
+            $program = Program::find($programId);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setCellValue('A1', 'Hello World !');
+            
+            $writer = new Xlsx($spreadsheet);
+            $spreadsheetName = "hello world.xlsx";
+            $writer->save('hello world.xlsx');
+
+            // get the content of the xlsx spreadsheet
+            $content = file_get_contents($spreadsheetName);
+            // store the xlsx spreadsheet in storage/app/public folder
+            Storage::put('public/spreadsheets/program-' . $program->program_id . '.xlsx', $content);
+            // get the url of the document
+            $url = Storage::url('spreadsheets/program-' . $program->program_id . '.xlsx');
+            // return the location of the pdf document on the server
+            return $url;
+    
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
+            return $exception;
+        }
+    }
+
+    /**
+     * Delete the saved spreadsheet file for this program if it exists.
+     * @param Request HTTP request
+     * @param  int  $programId
+     */ 
+    public function delSpreadsheet(Request $request, $programId)
+    {  
+        try {
+            $program = Program::find($programId);
+            Storage::delete('public/program-' . $program->program_id . '.xlsx');
+        } catch (Throwable $exception) {
+            $message = 'There was an error deleting the saved spreadsheet overview for: ' . $program->program;
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
+        }
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
