@@ -27,6 +27,7 @@ class MappingScaleController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**

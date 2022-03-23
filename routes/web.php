@@ -78,7 +78,8 @@ Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->nam
 Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
 Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
 
-Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
+// Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
+Route::resource('/lo','LearningOutcomeController');
 Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
@@ -101,10 +102,10 @@ Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDe
 
 Route::resource('/ploCategory','PLOCategoryController');
 
-Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
+Route::resource('/programUser','ProgramUserController');
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
-Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
-Route::get('/programUser','ProgramUserController@leave')->name('programUser.leave');
+Route::delete('/programUser/delete','ProgramUserController@delete')->name('programUser.destroy');
+Route::get('/programUser/leave','ProgramUserController@leave')->name('programUser.leave');
 Route::get('/programUserTransfer','ProgramUserController@transferOwnership')->name('programUser.transferOwnership');
 
 // Program wizard controller used to sent info from database to the blade page

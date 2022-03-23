@@ -92,19 +92,6 @@
                                                 </tbody>
                                             </table>
                                         </div>
-
-                                        <!-- <div>
-                                            <button id="showbtn" class="btn btn-primary bg-primary" onclick="tips()">Show Tips For Writing CLOs</button>
-                                        </div>
-                                        <div id="blooms" style="display: none;">
-                                            <p style="margin-top: 25px;margin-left:4px;margin-right:4px;">A well-written learning outcome states what students are expected to <span style="font-style: italic;">know, be able to do, or care about</span>, after successfully completing the course/program. Such statements begin with one measurable verb.</p>
-                                            <p>The below are examples of verbs associated with different levels of Bloom’s Taxonomy of Learning.</p>
-                                            <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
-                                            <small>
-                                                Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
-                                            </small>
-                                        </div> -->
-
                                     </div>
 
                                     <form method="POST" id="saveCLOChanges" action="{{ action('LearningOutcomeController@store') }}">
@@ -415,17 +402,6 @@
             `);
         });
     });
-
-    function tips() {
-        var x = document.getElementById('blooms');
-        if (x.style.display === "none") {
-            x.style.display = "block";
-            document.querySelector("#showbtn").innerHTML = "Hide Tips For Writing CLOs";
-        } else {
-            x.style.display = "none";
-            document.querySelector("#showbtn").innerHTML = "Show Tips For Writing CLOs";
-        }
-    }
 
     function deleteCLO(submitter) {
             console.log(submitter);
