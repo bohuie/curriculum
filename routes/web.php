@@ -70,7 +70,6 @@ Route::get('/courseUser','CourseUserController@leave')->name('courseUser.leave')
 Route::get('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
 
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
-Route::get('/courses/{course}/summary','CourseController@show')->name('courses.summary');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::delete('/courses/{course}/pdf', 'CourseController@deletePDF')->name('courses.delete.pdf');
