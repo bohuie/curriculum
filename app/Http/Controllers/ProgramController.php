@@ -386,11 +386,21 @@ class ProgramController extends Controller
             $program = Program::find($programId);
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-            $sheet->setCellValue('A1', 'Hello World !');
+
+            $sheet->setCellValue('A1', $program->ploCategories[0]->plo_category);
+            $sheet->mergeCells('A1:C1');
+            $sheet->getColumnDimension('A')->setAutoSize(true);
+            $sheet->getColumnDimension('B')->setAutoSize(true);
+            $sheet->getColumnDimension('C')->setAutoSize(true);
+
+            $sheet->fromArray(['#', 'Short Phrase', 'Learning Outcome'], NULL, 'A2');
+            $sheet->fromArray(array_chunk(['1', '2', '3', '4'], 1), NULL, 'A3');
+            $sheet->fromArray(array_chunk(['Short phrase 1', 'Short phrase 2', 'Short Phrase 3', 'Short phrase 4'], 1), NULL, 'B3');
+            $sheet->fromArray(array_chunk(['PLO 1', 'PLO 2', 'PLO 3', 'PLO 4'], 1), NULL, 'C3');
             
             $writer = new Xlsx($spreadsheet);
-            $spreadsheetName = "hello world.xlsx";
-            $writer->save('hello world.xlsx');
+            $spreadsheetName = 'summary-' . $program->program_id . '.xlsx';
+            $writer->save($spreadsheetName);
 
             // get the content of the xlsx spreadsheet
             $content = file_get_contents($spreadsheetName);
