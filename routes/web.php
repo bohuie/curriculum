@@ -53,12 +53,21 @@ Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->n
 Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
 Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
-Route::resource('/programs','ProgramController');
-Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
-//PDF for Program summary
-Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
-Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
-Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
+Route::group(['middleware' => ['XSS']], function () {
+    Route::resource('/programs','ProgramController');
+    Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
+    //PDF for Program summary
+    Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+    Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
+    Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
+});
+
+// Route::resource('/programs','ProgramController');
+// Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
+// //PDF for Program summary
+// Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+// Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
+// Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
 
 
 Route::resource('/courses','CourseController');

@@ -7,7 +7,7 @@
             <div class="container">
                     <h1>Terms of Use</h1>                                                  
                     <p class="lead">
-                    The information gathered on the UBC Curriculum MAP website is collected under the authority of section 26(e) of the British Columbia <a href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96165_02" target="_blank" title="FIPPA">Freedom of Information and Protection of Privacy Act</a>.
+                    The information gathered on the UBC Curriculum MAP website is collected under the authority of section 26(e) of the British Columbia <a href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96165_02" target="_blank" rel="noopener noreferrer" title="FIPPA">Freedom of Information and Protection of Privacy Act</a>.
                     <br><br>
                     Information entered by website users will only be used for the intended purposes of allowing instructors and departments to make informed decisions about course/program design and enhance the overall student learning experience. 
                     Website users retain authorship of information entered, and as such have ownership and responsibility for content. 
@@ -17,7 +17,7 @@
                     UBC reserves the right to amend the website’s terms of use at any time and will notify registered users of changes. 
                     Use of this website is subject to UBC’s Information Systems Policy
                     <br><br>
-                    Questions about the collection of data may be directed to <a href="mailto:laura.prada@ubc.ca" target="_blank">laura.prada@ubc.ca</a>.</p>
+                    Questions about the collection of data may be directed to <a href="mailto:laura.prada@ubc.ca" target="_blank" rel="noopener noreferrer">laura.prada@ubc.ca</a>.</p>
             </div>
         </div>
     </div>

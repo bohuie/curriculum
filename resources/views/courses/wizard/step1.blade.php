@@ -37,7 +37,7 @@
                                                     <label for="l_outcome" class="form-label fs-6">
                                                         <span class="requiredField">* </span>
                                                         <b>Course Learning Outcome (CLO)</b>
-                                                        <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
+                                                        <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank" rel="noopener noreferrer"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
                                                     </label>
                 
                                                     <textarea id="l_outcome" class="form-control" name="l_outcome" required autofocus placeholder="E.g. Develop..." style="resize:none"></textarea>
@@ -114,7 +114,7 @@
                     <div class="row">
                         <div class="col">
                             <h6 class="card-subtitle mb-2 lh-lg">
-                                Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
+                                Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
                             </h6>
                         </div>
                     </div>

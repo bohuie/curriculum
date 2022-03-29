@@ -45,6 +45,8 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+        
+        'XSS' => [\App\Http\Middleware\XSS::class,],
     ];
 
     /**
