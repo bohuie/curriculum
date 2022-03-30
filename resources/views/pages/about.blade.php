@@ -138,6 +138,16 @@
                         </figcaption>
                     </div>
                 </div>
+                <div class="row mb-3">
+                    <div class="col-sm"> 
+                        <img class="team-img" src=" {{ asset('img/team/Carrie-200x200.png') }}"/>
+                        <figcaption style="text-align:center;">
+                            <p class="lead" style="margin-bottom:0px;"><strong>Carrie Hunter</strong></p>
+                            <p class="lead" style="margin-bottom:0px;">Centre for Teaching, Learning and Technology</p>
+                            <p class="lead"><i>Curriculum Consultant</i></p>
+                        </figcaption>
+                    </div>
+                </div>
                 <br>
                 <div class="row">
                 <p class="lead">Funded by the UBC Okanagan Office of the Provost and Vice President Academic.</p>

@@ -38,7 +38,7 @@
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for this course to map to.                     
                                 </div>
-                            @elseif ($course->learningOutcomes->count() < 1)
+                            @elseif ($l_outcomes->count() < 1)
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
                                 </div>
@@ -97,7 +97,7 @@
                                             <form action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
                                             @csrf
                                             <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                                            @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
+                                            @foreach($l_outcomes as $index => $courseLearningOutcome)
                                                 <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                     <div class="accordion-item mb-2">
                                                         <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">

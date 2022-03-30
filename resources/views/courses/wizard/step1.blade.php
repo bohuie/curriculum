@@ -82,7 +82,7 @@
                                                             </td>
                                                             <td>
                                                                 <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
+                                                                class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges">{{$l_outcome->clo_shortphrase}}</textarea>
                                                             </td>
                                                             <td class="text-center">
                                                                 <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -124,18 +124,30 @@
                 </div>
 
                 <div class="card-body">
-                    
                     <div class="row">
                         <div class="col">
-                            <h6 class="card-subtitle mb-4 lh-lg">
+                            <h6 class="card-subtitle mb-2 lh-lg">
                                 Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
                             </h6>
                         </div>
                     </div>
-                    <div class="row mb-1">
-                        <div class="col">
-                            <button type="button" class="btn btn-primary col-2 float-right bg-primary text-white fs-5"  data-toggle="modal" data-target="#addLearningOutcomeModal">
-                                <i class="bi bi-plus mr-2 "></i>CLO
+                    <div class="row mb-2 align-items-end">
+                        <form method="POST" class="col-6" action="{{ action('LearningOutcomeController@import') }}" enctype="multipart/form-data">
+                            <p>
+                                <a href="{{asset('import_samples/import-clos-template.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-clos-template.xlsx</a>
+                                or
+                                <a href="{{asset('import_samples/import-clos-template.csv')}}" download><i class="bi bi-download mb-1"></i> import-clos-template.csv</a>
+                            </p>
+                            @csrf
+                            <div class="input-group">
+                                <input type="hidden" name="course_id" value="{{$course->course_id}}">
+                                <input type="file" name="upload" class="form-control" aria-label="Upload" required accept=".xlsx, .csv">
+                                <button class="btn bg-primary text-white" type="submit" ><b>Import CLOs</b><i class="bi bi-box-arrow-in-down-left pl-2"></i></button>
+                            </div>
+                        </form>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-primary btn-lg col-4 fs-5 bg-primary text-white"  data-toggle="modal" data-target="#addLearningOutcomeModal">
+                                <b ><i class="bi bi-plus mr-2"></i>CLO</b>
                             </button>
                         </div>
                     </div>
@@ -393,7 +405,7 @@
                         </td>
                         <td>
                             <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
-                            class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
+                            class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges">{{$l_outcome->clo_shortphrase}}</textarea>
                         </td>
                         <td class="text-center">
                             <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
@@ -421,14 +433,13 @@
     }
 
     function addCLO() {
-        // prepend assessment method to the table
-        $('#addCLOTbl tbody').prepend(`
+        $('#addCLOTbl tbody').append(`
             <tr>
                 <td>
                     <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
                 </td>
                 <td>
-                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>${$('#title').val()}</textarea>
+                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges">${$('#title').val()}</textarea>
                 </td>
                 <td class="text-center">
                     <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>

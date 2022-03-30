@@ -65,7 +65,7 @@
                                                         <b>{{$index + 1}}</b>. {{$courseProgram->program}}
                                                         @if ($outcomeMapsCountPerProgram[$courseProgram->program_id] == 0)
                                                             &emsp;-&emsp;<b class="text-danger">Not Mapped</b>
-                                                        @elseif ($outcomeMapsCountPerProgram[$courseProgram->program_id] < ($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count()))
+                                                        @elseif ($outcomeMapsCountPerProgram[$courseProgram->program_id] < ($l_outcomes->count() * $courseProgram->programLearningOutcomes()->count()))
                                                             &emsp;-&emsp;<b class="text-warning">Partially Mapped</b>
                                                         @else
                                                             &emsp;-&emsp;<b class="text-success">Completed</b>
@@ -111,7 +111,7 @@
 
                                                             <!-- list of course learning outcome accordions with mapping form -->
                                                             <div class="cloAccordions mb-4">
-                                                                @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
+                                                                @foreach($l_outcomes as $index => $courseLearningOutcome)
                                                                     <div class="accordion" id="accordionGroup{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                         <div class="accordion-item mb-2">
                                                                             <!-- CLO accordion header -->

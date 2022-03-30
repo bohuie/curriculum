@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const reorderRowsTables = document.getElementsByClassName('reorder-rows-tbl');
-    console.log(reorderRowsTables);
+    const reorderRowsTables = document.getElementsByClassName('reorder-tbl-rows');
 
     if (reorderRowsTables.length > 0) {
         Array.from(reorderRowsTables).forEach((reorderRowsTable, index) => {
@@ -31,15 +30,13 @@ let y = 0;
 
 
 const mouseDownHandler = function (e) {
-    const table = document.getElementById('courseScheduleTbl');
+    const table = document.getElementsByClassName('reorder-tbl-rows')[0];
     // Get the original row
     const originalRow = e.target.parentNode;
     draggingRowIndex = [].slice.call(table.querySelectorAll('tr')).indexOf(originalRow);
-    console.log(String(x) + ', ' + String(y));
     // Determine the mouse position
     x = e.clientX;
     y = e.clientY;
-    console.log(String(x) + ', ' + String(y));
 
 
     // Attach the listeners to `document`
@@ -106,7 +103,7 @@ const mouseMoveHandler = function (e) {
 };
 
 const mouseUpHandler = function () {
-    const table = document.getElementById('courseScheduleTbl');
+    const table = document.getElementsByClassName('reorder-tbl-rows')[0];
     // Remove the placeholder
     placeholder && placeholder.parentNode.removeChild(placeholder);
 
@@ -141,7 +138,7 @@ const mouseUpHandler = function () {
 };
 
 const cloneTable = function () {
-    const table = document.getElementById('courseScheduleTbl');
+    const table = document.getElementsByClassName('reorder-tbl-rows')[0];
     const rect = table.getBoundingClientRect();
     const width = parseInt(window.getComputedStyle(table).width);
 
@@ -160,7 +157,7 @@ const cloneTable = function () {
         item.classList.add('draggable');
 
         const newTable = document.createElement('table');
-        newTable.setAttribute('class', 'clone-table');
+        newTable.setAttribute('class', 'clone-table table-light');
         newTable.style.width = `${width}px`;
 
         const newRow = document.createElement('tr');

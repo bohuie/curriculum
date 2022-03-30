@@ -57,6 +57,7 @@ Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 //PDF for Program summary
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
 Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
 
 
@@ -72,13 +73,17 @@ Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.
 Route::get('/courses/{course}/summary','CourseController@show')->name('courses.summary');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
+Route::delete('/courses/{course}/pdf', 'CourseController@deletePDF')->name('courses.delete.pdf');
 Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
 Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
 
 Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
+Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
+Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
+
 
 Route::resource('/la','LearningActivityController');
 
@@ -138,6 +143,13 @@ Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardControll
 Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
 Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
 Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
+// optional priorities filter routes
+Route::get('/programWizard/{program}/get-op', 'ProgramWizardController@getOptionalPriorities');
+Route::get('/programWizard/{program}/get-op-first-year', 'ProgramWizardController@getOptionalPrioritiesFirstYear');
+Route::get('/programWizard/{program}/get-op-second-year', 'ProgramWizardController@getOptionalPrioritiesSecondYear');
+Route::get('/programWizard/{program}/get-op-third-year', 'ProgramWizardController@getOptionalPrioritiesThirdYear');
+Route::get('/programWizard/{program}/get-op-fourth-year', 'ProgramWizardController@getOptionalPrioritiesFourthYear');
+Route::get('/programWizard/{program}/get-op-graduate', 'ProgramWizardController@getOptionalPrioritiesGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
@@ -174,6 +186,14 @@ Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_pre
     Route::auth();
     Route::get('logout', 'Auth\LoginController@logout');
 });
+
+// account information page and update method
+// *** Routes not working local, but work on testing/staging.. ***
+// Route::get('/accountInformation',[AccountInformationController::class, 'index'])->name('accountInformation');
+// Route::post('/accountInformation-update',[AccountInformationController::class, 'update'])->name('accountInformation.update');
+// *** These Routes work locally but not on staging ***
+Route::get('/accountInformation','auth\AccountInformationController@index')->name('accountInformation');
+Route::post('/accountInformation-update','auth\AccountInformationController@update')->name('accountInformation.update');
 
 Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');
