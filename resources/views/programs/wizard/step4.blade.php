@@ -38,12 +38,8 @@
                                     <li><a id="downloadPDFBtn" class="dropdown-item" data-route="{{route('programs.pdf', $program->program_id)}}"><i class="bi bi-file-pdf-fill text-danger"></i> PDF</a></li>
                                     <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel</a></li>
                                 </ul>
+                                
                             </div>
-                            <!-- <a class="w-25" href="{{route('programs.spreadsheet', $program->program_id)}}">
-                                <button class="btn btn-primary">
-                                    Download Excel <i class="bi bi-download"></i>
-                                </button>
-                            </a>                         -->
                         </div>
 
                         <div class="col">
