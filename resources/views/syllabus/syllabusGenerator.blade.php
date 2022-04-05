@@ -304,6 +304,9 @@
 
                                     <input id="friday" type="checkbox" name="schedule[]" value="Fri">
                                     <label for="friday" class="mr-2">Friday</label>
+									
+									<input id="saturday" type="checkbox" name="schedule[]" value="Sat">
+                                    <label for="saturday" class="mr-2">Saturday</label>
                                 </div>
                             </div>
                         </div>
@@ -1011,6 +1014,9 @@
             }
             if (classMeetingDays.includes('Fri')) {
                 $('#friday').attr('checked', 'true');
+            }
+			if (classMeetingDays.includes('Sat')) {
+                $('#saturday').attr('checked', 'true');
             }
         }
         // use event delegation to show format note on focus in
