@@ -129,7 +129,6 @@
                     </div>
                 </div>
             </div> 
-
             <div class="accordion" id="FAQAccordion6">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
