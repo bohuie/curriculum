@@ -47,15 +47,7 @@ class ProgramController extends Controller
 
     public function index()
     {
-        //
-        $programs = User::join('program_users', 'users.id', '=', 'program_users.user_id')
-                ->join('programs', 'program_users.program_id', "=", 'programs.program_id')
-                ->select('programs.program_id','programs.program', 'programs.faculty', 'programs.level', 'programs.department', 'programs.status')
-                ->where('program_users.user_id','=',Auth::id())
-                ->get();
-
-        $user = User::where('id', Auth::id())->first();
-        return view('programs.index')->with('user', $user)->with('programs', $programs);
+        //return redirect()->back();
     }
 
     /**

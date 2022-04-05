@@ -4,7 +4,7 @@
 
 {{$user_name}} is now a collaborator on the course: {{$course_code}} {{$course_num}} - {{$course_title}}.
 
-@component('mail::button', ['url' => 'http://127.0.0.1:8000/login'])
+@component('mail::button', ['url' => env('LOGIN_URL')])
 Log In and See Course
 @endcomponent
 <br>

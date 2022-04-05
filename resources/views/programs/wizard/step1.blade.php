@@ -84,7 +84,7 @@
                             <label for="pl_outcome" class="form-label fs-6">
                                 <span class="requiredField">* </span>
                                 <b>Program Learning Outcome (PLO)</b>
-                                <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective PLOs.</small></div>
+                                <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank" rel="noopener noreferrer"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective PLOs.</small></div>
                             </label>
                 
                             <textarea id="pl_outcome" rows="3" class="form-control" name="pl_outcome" required autofocus placeholder="E.g. Develop..." style="resize:none"></textarea>

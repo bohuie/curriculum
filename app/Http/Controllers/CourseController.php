@@ -42,30 +42,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
-        // $courseUsers = CourseUser::select('course_code', 'program_id')->where('user_id',Auth::id())->get();
-        // $courses = Course::all();
-        // $programs = Program::all();
-        $user = User::where('id', Auth::id())->first();
-
-        $activeCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-                ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-                ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-                ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-                'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-                ->where('course_users.user_id','=',Auth::id())->where('courses.status','=', -1)
-                ->get();
-
-        $archivedCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-                ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-                ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-                ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-                'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-                ->where('course_users.user_id','=',Auth::id())->where('courses.status','=', 1)
-                ->get();
-
-        return view('courses.index')->with('user', $user)->with('activeCourses', $activeCourses)->with('archivedCourses', $archivedCourses);
-
+        return redirect()->back();
     }
 
     /**

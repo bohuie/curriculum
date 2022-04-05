@@ -27,6 +27,7 @@ class OutcomeMapController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**

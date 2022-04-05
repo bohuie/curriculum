@@ -37,7 +37,7 @@
                                                     <label for="l_outcome" class="form-label fs-6">
                                                         <span class="requiredField">* </span>
                                                         <b>Course Learning Outcome (CLO)</b>
-                                                        <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
+                                                        <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank" rel="noopener noreferrer"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
                                                     </label>
                 
                                                     <textarea id="l_outcome" class="form-control" name="l_outcome" required autofocus placeholder="E.g. Develop..." style="resize:none"></textarea>
@@ -92,19 +92,6 @@
                                                 </tbody>
                                             </table>
                                         </div>
-
-                                        <!-- <div>
-                                            <button id="showbtn" class="btn btn-primary bg-primary" onclick="tips()">Show Tips For Writing CLOs</button>
-                                        </div>
-                                        <div id="blooms" style="display: none;">
-                                            <p style="margin-top: 25px;margin-left:4px;margin-right:4px;">A well-written learning outcome states what students are expected to <span style="font-style: italic;">know, be able to do, or care about</span>, after successfully completing the course/program. Such statements begin with one measurable verb.</p>
-                                            <p>The below are examples of verbs associated with different levels of Bloom’s Taxonomy of Learning.</p>
-                                            <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
-                                            <small>
-                                                Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
-                                            </small>
-                                        </div> -->
-
                                     </div>
 
                                     <form method="POST" id="saveCLOChanges" action="{{ action('LearningOutcomeController@store') }}">
@@ -127,7 +114,7 @@
                     <div class="row">
                         <div class="col">
                             <h6 class="card-subtitle mb-2 lh-lg">
-                                Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
+                                Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
                             </h6>
                         </div>
                     </div>
@@ -415,17 +402,6 @@
             `);
         });
     });
-
-    function tips() {
-        var x = document.getElementById('blooms');
-        if (x.style.display === "none") {
-            x.style.display = "block";
-            document.querySelector("#showbtn").innerHTML = "Hide Tips For Writing CLOs";
-        } else {
-            x.style.display = "none";
-            document.querySelector("#showbtn").innerHTML = "Show Tips For Writing CLOs";
-        }
-    }
 
     function deleteCLO(submitter) {
             console.log(submitter);

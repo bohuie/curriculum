@@ -28,6 +28,7 @@ class LearningOutcomeController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**

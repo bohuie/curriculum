@@ -228,7 +228,7 @@
                         <p>The academic enterprise is founded on honesty, civility, and integrity.  As members of this enterprise, all students are expected to know, understand, and follow the codes of conduct regarding academic integrity.  At the most basic level, this means submitting only original work done by you and acknowledging all sources of information or ideas and attributing them to others as required.  This also means you should not cheat, copy, or mislead others about what is your work.  Violations of academic integrity (i.e., misconduct) lead to the breakdown of the academic enterprise, and therefore serious consequences arise and harsh sanctions are imposed.  For example, incidences of plagiarism or cheating usually result in a failing grade or mark of zero on the assignment or in the course.  Careful records are kept to monitor and prevent recidivism.
                         <br>
                         <br>    
-                        A more detailed description of academic integrity, including the University’s policies and procedures, may be found in the <a href="http://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,54,111,0" target="_blank">Academic Calendar</a></p>
+                        A more detailed description of academic integrity, including the University’s policies and procedures, may be found in the <a href="http://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,54,111,0" target="_blank" rel="noopener noreferrer">Academic Calendar</a></p>
                         @break
 
                         @case('finals')

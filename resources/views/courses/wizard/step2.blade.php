@@ -152,7 +152,7 @@
                     <div class="row">
                         <div class="col">
                             <h6 class="card-subtitle mb-4 lh-lg">
-                                Input all <a href="https://ctlt.ubc.ca/resources/webliography/assessmentevaluation/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> assessment methods</a> of the course individually. You may also choose to use the <a href="https://ubcoapps.elearning.ubc.ca/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> UBCO's Workload Calculator</a> to estimate the student time commitment in this course based on the chosen assignments.              
+                                Input all <a href="https://ctlt.ubc.ca/resources/webliography/assessmentevaluation/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> assessment methods</a> of the course individually. You may also choose to use the <a href="https://ubcoapps.elearning.ubc.ca/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> UBCO's Workload Calculator</a> to estimate the student time commitment in this course based on the chosen assignments.              
                             </h6>
                         </div>
                     </div>
