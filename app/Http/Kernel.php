@@ -46,7 +46,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
         
-        'XSS' => [\App\Http\Middleware\XSS::class,],
+        // 'XSS' => [\App\Http\Middleware\XSS::class,],
     ];
 
     /**
