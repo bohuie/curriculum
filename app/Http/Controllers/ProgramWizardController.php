@@ -671,10 +671,10 @@ class ProgramWizardController extends Controller
         $output = '';
 
         if (!count($opFrequencies) < 1) {
-            $output .= '<table class="table table-light table-bordered"><tbody><tr class="table-secondary"><th>Strategic Priorities</th><th>Courses</th></tr>';
+            $output .= '<table class="table table-light table-bordered"><tbody><tr class="table-primary"><th>Strategic Priorities</th><th>Courses</th></tr>';
             // loop through categories and add them to the output
             foreach($opFrequenciesSubcategories as $subcat_id => $opFrequenciesSubcategory) {
-                $output .= '<tr class="table-primary"><td colspan="2"><b>'. $opFrequenciesSubcategory .'</b></td></tr>';
+                $output .= '<tr class="table-secondary"><td colspan="2"><b>'. $opFrequenciesSubcategory .'</b></td></tr>';
                 // loop through the optional priorities and add them to the output
                 foreach($opFrequencies as $op_id => $opFrequency) {
                     if ($subcat_id == $opFrequency['subcat_id']) {
