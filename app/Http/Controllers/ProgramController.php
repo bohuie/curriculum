@@ -47,7 +47,7 @@ class ProgramController extends Controller
 
     public function index()
     {
-        //return redirect()->back();
+        return redirect()->back();
     }
 
     /**
