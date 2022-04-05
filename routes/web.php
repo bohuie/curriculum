@@ -205,8 +205,8 @@ Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_pre
 // Route::get('/accountInformation',[AccountInformationController::class, 'index'])->name('accountInformation');
 // Route::post('/accountInformation-update',[AccountInformationController::class, 'update'])->name('accountInformation.update');
 // *** These Routes work locally but not on staging ***
-Route::get('/accountInformation','auth\AccountInformationController@index')->name('accountInformation');
-Route::post('/accountInformation-update','auth\AccountInformationController@update')->name('accountInformation.update');
+Route::get('/accountInformation','Auth\AccountInformationController@index')->name('accountInformation');
+Route::post('/accountInformation-update','Auth\AccountInformationController@update')->name('accountInformation.update');
 
 Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');
