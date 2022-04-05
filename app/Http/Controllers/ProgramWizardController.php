@@ -710,7 +710,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -752,7 +752,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -794,7 +794,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -836,7 +836,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -878,7 +878,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -920,7 +920,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -956,7 +956,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -990,7 +990,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1024,7 +1024,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1058,7 +1058,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1092,7 +1092,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1126,7 +1126,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
