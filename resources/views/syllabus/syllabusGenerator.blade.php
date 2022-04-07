@@ -120,8 +120,10 @@
                                                 Winter {{$course->year}} Term 2
                                                 @elseif ($course->semester == "S1")
                                                 Summer {{$course->year}} Term 1
-                                                @else
+                                                @elseif ($course->semester == "S2")
                                                 Summer {{$course->year}} Term 2
+                                                @else
+                                                Other {{$course->year}}
                                                 @endif
                                             </td>
                                         </tr>
