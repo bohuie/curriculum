@@ -23,10 +23,12 @@
 
 
                     <div class="card-body">
-
-                        <h6 class="card-subtitle mb-2 lh-lg">
-                            This step, requires instructors to intentionally evaluate all course elements to achieve <a target="_blank" href="https://umanitoba.ca/centre-advancement-teaching-learning/support/course-alignment"><i class="bi bi-box-arrow-up-right"></i> course alignment.</a> This means, ensuring that the targeted learning outcomes are in alignment with the assessment methods and teaching/instructional practices. This can be an iterative process and may take a long time. Intentional evaluation and re-thinking of some course elements is encouraged to achieve better alignment. <b>Review CLOs/competencies you have identified, and map assessment methods to teaching and learning activities to initiate curriculum alignment.</b>      
-                        </h6>
+                        <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                            <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                            <div>
+                                This step, requires instructors to intentionally evaluate all course elements to achieve <a class="alert-link"target="_blank" rel="noopener noreferrer" href="https://umanitoba.ca/centre-advancement-teaching-learning/support/course-alignment"><i class="bi bi-box-arrow-up-right"></i> course alignment.</a> This means, ensuring that the targeted learning outcomes are in alignment with the assessment methods and teaching/instructional practices. This can be an iterative process and may take a long time. Intentional evaluation and re-thinking of some course elements is encouraged to achieve better alignment. <b>Review CLOs/competencies you have identified, and map assessment methods to teaching and learning activities to initiate curriculum alignment.</b>      
+                            </div>
+                        </div>
 
                         @if(count($l_outcomes)<1)
                             <div class="alert alert-warning wizard">
@@ -40,7 +42,7 @@
                             @else
                                 <div>
                                     <div class="container mb-3">
-                                        <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
+                                        <h6 class="card-subtitle wizard mb-4 text-primary fw-bold ml-0 mt-2">
                                             Note: Remember to click save once you are done.
                                         </h6>
                                     </div>
