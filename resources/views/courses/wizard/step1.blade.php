@@ -111,13 +111,21 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <h6 class="card-subtitle mb-2 lh-lg">
-                                Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
-                            </h6>
+                    <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div>
+                            <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank" rel="noopener noreferrer" class="alert-link">
+                                <i class="bi bi-box-arrow-up-right"></i> Course Learning Outcomes (CLOs)
+                            </a> 
+                            or 
+                            <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank" rel="noopener noreferrer" class="alert-link">
+                                <i class="bi bi-box-arrow-up-right"></i> Competencies
+                            </a> 
+                            are the knowledge, skills and attributes that students are expected to attain by the end of a course. Add, edit and delete CLOs below. 
+                            You may use an excel spreadsheet to import multiple CLOs. Follow the template provided below to save them on your computer first, and then upload them to this page.
                         </div>
                     </div>
+
                     <div class="row mb-2 align-items-end">
                         <form method="POST" class="col-6" action="{{ action('LearningOutcomeController@import') }}" enctype="multipart/form-data">
                             <p>
