@@ -24,14 +24,17 @@
                 </h3>
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        The mapping scale is the scale that will be used to indicate the degree to which a program-level learning outcome is addressed by a course outcome, or the degree of alignment between the course outcome and program-level learning outcome.
-                    </h6>
+                    <div class="alert alert-primary d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div>
+                            The mapping scale is the scale that will be used to indicate the degree to which a program learning outcome is addressed by a course learning outcome, or the degree of alignment between the course learning outcome and program learning outcome.
+                        </div>
+                    </div>
 
-                    <div class="d-flex justify-content-end">
+                    <div class="d-flex justify-content-end mr-3">
                                 <!-- Show default mapping scale button  -->
-                                <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target=".mapping-scales" style="background-color:#002145; color:white;">Show Default Mapping Scales</button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm m-1" data-toggle="modal" data-target="#addMSModal">
+                                <button type="button" class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target=".mapping-scales" style="background-color:#002145; color:white;">Show Default Mapping Scales</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm ml-2" data-toggle="modal" data-target="#addMSModal">
                                     <i class="bi bi-plus pr-2"></i>My Own Mapping Scale Level
                                 </button>
                             </div>
@@ -120,48 +123,51 @@
                                 </div>
                             @elseif (!$hasImportedMS)
                             <!--Display Nothing when there are no imported Mapping scales-->
-                            @else 
-                                <table class="table table-light table-bordered" >
-                                    <tr class="table-primary">
-                                        <th class="w-25">Mapping Scale Level</th>
-                                        <th>Description</th>
-                                        <th class="text-center">Actions</th>
-                                    </tr>
+                            @else
+                                <div class="ml-3 mr-3"> 
+                                    <table class="table table-light table-bordered">
+                                        <tr class="table-primary">
+                                            <th class="w-25">Mapping Scale Level</th>
+                                            <th>Description</th>
+                                            <th class="text-center">Actions</th>
+                                        </tr>
 
-                                    @foreach($mappingScales as $ms)
-                                        @if($ms->mapping_scale_categories_id != NULL)
-                                            <tr>
-                                                <td>
-                                                    <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
-                                                    {{$ms->title}}<br>
-                                                    ({{$ms->abbreviation}})
-                                                </td>
-                                                <td>
-                                                    {{$ms->description}}
-                                                </td>
+                                        @foreach($mappingScales as $ms)
+                                            @if($ms->mapping_scale_categories_id != NULL)
+                                                <tr>
+                                                    <td>
+                                                        <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
+                                                        {{$ms->title}}<br>
+                                                        ({{$ms->abbreviation}})
+                                                    </td>
+                                                    <td>
+                                                        {{$ms->description}}
+                                                    </td>
 
-                                                <td class="text-center align-middle">
-                                                    <form action="{{route('mappingScale.destroy', $ms->map_scale_id)}}" method="POST">
-                                                        @csrf
-                                                        {{method_field('DELETE')}}
-                                                        <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
-                                                        <button type="submit" style="width:60px" class="btn btn-danger btn-sm m-1">Delete</button>
-                                                        
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            @endif
-                                    @endforeach
-                                </table>
+                                                    <td class="text-center align-middle">
+                                                        <form action="{{route('mappingScale.destroy', $ms->map_scale_id)}}" method="POST">
+                                                            @csrf
+                                                            {{method_field('DELETE')}}
+                                                            <input type="hidden" class="form-check-input" name="program_id" value="{{$program->program_id}}">
+                                                            <button type="submit" style="width:60px" class="btn btn-danger btn-sm m-1">Delete</button>
+                                                            
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                @endif
+                                        @endforeach
+                                    </table>
+                                </div>
                             @endif
                             <!--Table for Custom Mapping Scales-->
                             @if ($hasCustomMS) 
-                            <table class="table table-light table-bordered w-100">
-                                <tr class="table-primary">
-                                    <th class="w-25"> Custom Mapping Scale Level</th>
-                                    <th>Description</th>
-                                    <th class="text-center w-25">Actions</th>
-                                </tr>
+                                <div class="ml-3 mr-3"
+                                    <table class="table table-light table-bordered w-100">
+                                        <tr class="table-primary">
+                                            <th class="w-25"> Custom Mapping Scale Level</th>
+                                            <th>Description</th>
+                                            <th class="text-center w-25">Actions</th>
+                                        </tr>
                             @endif
                                 @foreach($mappingScales as $ms)
                                     @if($ms->mapping_scale_categories_id == NULL)
@@ -293,6 +299,7 @@
                                     @endif
                                 @endforeach
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>
