@@ -22,24 +22,20 @@
                 </h3>
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 lh-lg">
-                        <ol>
-                            <li>
-                                Add required and non-required courses to this program.
-                            </li>
-                            <li>
-                                After adding the courses, each course should be mapped to the Program Learning Outcomes (PLOs) of this Program.
-                            </li>
-                            <li>
-                                Once all courses have been individually mapped to this program, visit the “Program Summary/Step 4” to see the learning outcomes map of the program.
-                            </li>
-                        </ol>
-
-                    </h6>
-                    <h6 class="card-subtitle wizard text-primary fw-bold">
+                    <div class="alert alert-primary d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div class="ml-2">
+                            <div class="mt-2 mb-2">
+                                <li class="m-0 p-0">Add required and non-required courses to the program.</li>
+                                <li class="m-0 p-0">After adding courses to the program, map or request to map each course to the program learning outcomes (PLOs) of this program.</li>
+                                <li class="m-0 p-0">Once all courses have been mapped to this program, go to <a class="alert-link" href="{{route('programWizard.step4', $program->program_id)}}">step 4, Program Overview</a>, to see your completed program and its curriculum MAP.</li>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="card-subtitle wizard text-primary fw-bold float-right mr-3">
                         Note: Only course owners or editors can map the course to this program.
                     </h6>
-                    <ul>
+                    <ul class="mr-2">
                         <li class="my-2"><b>Button - Map Course:</b> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
                         <li class="my-2"><b>Button - Ask to map course:</b> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
                     </ul>
