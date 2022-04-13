@@ -26,33 +26,7 @@
     </div>
 </div>
 
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div id="errorToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header " style="padding:1em;color:#842029;background-color:#f8d7da;border-color:#f5c2c7">
-            <i class="bi bi-exclamation-circle-fill pr-2 text-danger"></i>            
-            <strong class="me-auto">Error</strong>
-            <button type="button" class="btn-close" onclick="toggleErrorToast()" aria-label="Close"></button>
-        </div>
-        <div class="toast-body alert-danger">
-            @if (Request::is('courseWizard/*'))
-                We were unable to the download the course summary for {{$course->course_code}} {{$course->course_num}}. 
-                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
-                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Course Summary&cc=matthew.penner@ubc.ca&body=There was an error downloading the course summary for {{$course->course_code}} {{$course->course_num}}">
-                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
-                    </a>  
-                </div>        
-            @endif
-            @if (Request::is('programWizard/*'))
-                We were unable to the download the program overview for {{$program->program}}. 
-                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
-                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Program Overview&cc=matthew.penner@ubc.ca&body=There was an error downloading the program overview for {{$program->program}}">
-                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
-                    </a>      
-                </div>        
-            @endif      
-        </div>
-    </div>
-</div>
+
 
 <script type="application/javascript">
     $(document).ready(function () {
