@@ -345,10 +345,12 @@ class ProgramController extends Controller
             $pdf = PDF::loadView('programs.downloadSummary', compact('coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store',));
             // get the content of the pdf document
             $content = $pdf->output();
+            // set name of pdf
+            $pdfName = 'summary-' . $program->program_id . 'pdf';
             // store the pdf document in storage/app/public folder
-            Storage::put('public/pdfs/program-' . $program->program_id . '.pdf', $content);
+            Storage::put('public' . DIRECTORY_SEPARATOR . 'pdfs' . DIRECTORY_SEPARATOR . $pdfName, $content);
             // get the url of the document
-            $url = Storage::url('pdfs/program-' . $program->program_id . '.pdf');
+            $url = Storage::url('pdfs' . DIRECTORY_SEPARATOR . $pdfName);
             // return the location of the pdf document on the server
             return $url;
             
@@ -359,7 +361,7 @@ class ProgramController extends Controller
             Log::error('File - ' . $exception->getFile());
             Log::error('Line - ' . $exception->getLine());
             Log::error($exception->getMessage());
-            return $exception;
+            return -1;
         }
     }
 
@@ -415,15 +417,19 @@ class ProgramController extends Controller
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
             });
-            
+
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
             // set the spreadsheets name
             $spreadsheetName = 'summary-' . $program->program_id . '.xlsx';
-            // save the spreadsheet
-            $writer->save($spreadsheetName);
-            // return the location of the pdf document on the server
-            return url('/') . DIRECTORY_SEPARATOR . $spreadsheetName;
+            // create absolute filename
+            $storagePath = storage_path('app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'spreadsheets' . DIRECTORY_SEPARATOR . $spreadsheetName);
+            // save the spreadsheet document 
+            $writer->save($storagePath);
+            // get the url of the document
+            $url = Storage::url('spreadsheets' . DIRECTORY_SEPARATOR . $spreadsheetName);
+            // return the location of the spreadsheet document on the server
+            return $url;
     
         } catch (Throwable $exception) {
             $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
@@ -432,7 +438,7 @@ class ProgramController extends Controller
             Log::error('File - ' . $exception->getFile());
             Log::error('Line - ' . $exception->getLine());
             Log::error($exception->getMessage());
-            return $exception;
+            return -1;
         }
     }
 
@@ -594,7 +600,8 @@ class ProgramController extends Controller
                 // keeps track of which column to put each category in the program outcome map sheet. $alphabetUpper[1] = 'B'
                 $categoryColInMapSheet = 1;
                 foreach ($program->ploCategories as $category) {
-                    if ($plosInCategory = $category->plos()->get()) {
+                    if ($category->plos->count() > 0) {
+                        $plosInCategory = $category->plos()->get();
                         // add category to outcome map sheet with secondary header style and span it over the number of plos in the category
                         $sheet->setCellValue($columns[$categoryColInMapSheet] . '2', $category->plo_category);
                         $sheet->getStyle($columns[$categoryColInMapSheet] . '2')->applyFromArray($styles["secondaryHeading"]);
