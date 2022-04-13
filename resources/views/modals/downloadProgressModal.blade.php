@@ -81,14 +81,19 @@
                 $('#downloadProgressModal').modal('show');
             },  
             success: (data, textStatus, jqXHR) => {
-                // Set href as a local object URL
-                $('#save-file').attr('href', data);
-                // trigger download
-                $("#save-file")[0].click();
                 // hide download modal
                 $('#downloadProgressModal').modal('hide');
-                // delete pdf summary after 15 sec/15,000 ms
-                setTimeout(() => {deletePDF(route)}, 15000);
+                // check if controller handled an error
+                if (data == -1) 
+                    toggleErrorToast()
+                else {
+                    // Set href as a local object URL
+                    $('#save-file').attr('href', data);
+                    // trigger download
+                    $("#save-file")[0].click();
+                    // delete pdf summary after 15 sec/15,000 ms
+                    setTimeout(() => {deletePDF(route)}, 15000);
+                }
             },
             error: (jqXHR, textStatus, error) => {
                 // hide download modal
