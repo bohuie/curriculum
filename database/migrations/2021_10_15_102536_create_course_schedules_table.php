@@ -16,7 +16,7 @@ class CreateCourseSchedulesTable extends Migration
         Schema::create('course_schedules', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('syllabus_id');
-            $table->foreign('syllabus_id')->references('id')->on('syllabi');
+            $table->foreign('syllabus_id')->references('id')->on('syllabi')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('row');
             $table->integer('col');
             $table->text('val')->nullable();

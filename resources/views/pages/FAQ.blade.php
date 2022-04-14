@@ -98,10 +98,10 @@
                     <!-- FAQ Accordion body -->
                     <div id="collapseFAQAccordion5" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader5" data-bs-parent="FAQAccordion5">
                         <div class="accordion-body lh-lg">
-                            <p>The <a href="{{ url('/') }}" target="_BLANK">UBC Curriculum MAP</a> Syllabus Generator aims to assist faculty in preparing their syllabi. The generator follows the policies, guidelines and templates provided by the <a href="https://senate.ubc.ca/okanagan/curriculum/forms" target="_BLANK">UBC Okanagan</a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK">UBC Vancouver senates</a>.</p>
+                            <p>The <a href="{{ url('/') }}" target="_BLANK" rel="noopener noreferrer">UBC Curriculum MAP</a> Syllabus Generator aims to assist faculty in preparing their syllabi. The generator follows the policies, guidelines and templates provided by the <a href="https://senate.ubc.ca/okanagan/curriculum/forms" target="_BLANK" rel="noopener noreferrer">UBC Okanagan</a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">UBC Vancouver senates</a>.</p>
                             <p class="fw-bold">How do I use the Curriculum MAP Syllabus Generator?</p>
                             <ol>
-                                <li>Create a Curriculum MAP account by <a href="{{ route('register') }}" target="_BLANK">registering</a> with the site. After you register or if you already have an account, sign in to your Curriculum MAP account using the <a href="{{ route('login') }}" target="_BLANK">login</a> page.</li>
+                                <li>Create a Curriculum MAP account by <a href="{{ route('register') }}" target="_BLANK" rel="noopener noreferrer">registering</a> with the site. After you register or if you already have an account, sign in to your Curriculum MAP account using the <a href="{{ route('login') }}" target="_BLANK" rel="noopener noreferrer">login</a> page.</li>
                                 <li>Navigate to the syllabus generator by clicking on the `Syllabus Generator` tab on the navigation bar in the top right.</li>
                                 <br>
                                 <p style="font-size:small" ><b>Note</b>: The “import an existing course” button on the top of the syllabus generator allows users to import course information that has been inputted in the site already, for curriculum mapping purposes. These courses appear in the “my courses” section of the dashboard. Select the course you would like to import. </p>
@@ -109,13 +109,13 @@
                                 <li>Fill in the required course information marked with a <span class="requiredField">*</span>.</li>
                                 <li>Fill in all the other fields that are relevant to your course.
                                     <ol type="a">
-                                        <li>For Vancouver syllabi, some fields are required by <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK">Vancouver Senate policy V-130</a>. These fields are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
+                                        <li>For Vancouver syllabi, some fields are required by <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">Vancouver Senate policy V-130</a>. These fields are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
                             </ol>
                                 </li>
                                 <li>At the bottom of the page, select optional but recommended campus-specific resources you wish to include in your syllabus.</li>
                                 <li>To download your syllabus as a Word document, click the `Save and Download` button at the bottom of the page. Otherwise, click the `Save` button to save your progress/changes. This will not generate a Word document.</li>
                                 <li>Review the design and content of your generated syllabus Word document and update it accordingly.</li>
-                                <li>You can find your saved syllabi on your <a href="{{ route('home')}}" target="_BLANK">Curriculum MAP Dashboard</a> (Upon log in).  </li>
+                                <li>You can find your saved syllabi on your <a href="{{ route('home')}}" target="_BLANK" rel="noopener noreferrer">Curriculum MAP Dashboard</a> (Upon log in).  </li>
                                 <li>From your dashboard you can also share your syllabus with other users. To share your syllabus with others:
                                     <ol type="a">
                                         <li>Click the <i class="bi bi-person-plus-fill pr-1 pl-1"></i> button for your syllabus in the syllabus section of your dashboard.</li>
@@ -123,14 +123,12 @@
                                         <li>Click '<i class="bi bi-plus"></i> Collaborator' and 'Save Changes'</li>
                                         <br>
                                     </ol>
-                                    <p style="font-size:small"><b>Note</b>: Your collaborator must have registered on this site before you can add them</p>
                                 </li>
                             </ol>
                         </div>
                     </div>
                 </div>
             </div> 
-
             <div class="accordion" id="FAQAccordion6">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
@@ -210,7 +208,7 @@
                     <div id="collapseFAQAccordion8" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader8" data-bs-parent="FAQAccordion8">
                         <div class="accordion-body lh-lg">
                             <p>The collaborators feature allows an owner of a course, program or syllabus to share their work with other users. The owner can select from two types of collaborators, viewers and editors. A Viewer is restricted to only being able to view the summary information, whereas an editor can make changes and create new elements, but cannot add collaborators or delete the Course, Program, or Syllabus. An example of the collaborators feature would be to add a teaching assistant to your course or syllabus as a viewer, so they can access course information.</p>
-                            <p style="font-size:small" ><b>Notes</b>: <ol><li>You must own the course, program, or syllabus in order to add collaborators.</li><li>    Your collaborator must have registered on this site before you can add them. If the user you are trying to invite does not already have an account, then you can send them a registration invitation by following this <a target="_blank" href="{{ url('/invite') }}">link</a>.</li></ol> </p>
+                            <p style="font-size:small" ><b>Note</b>: You must own the course, program, or syllabus in order to add collaborators.</p>
                             <p class="fw-bold">From the dashboard</p>
                             <ol>
                                 <li>Click on the <div class="collabIcon btn bg-transparent position-relative pr-2 pl-2" data-bs-placement="right" style="cursor: default;"><div><i class="bi bi-person-plus-fill"></i><span class="position-absolute top-0 start-85 translate-middle badge rounded-pill badge badge-dark">?</span></div></div> button under actions.</li>

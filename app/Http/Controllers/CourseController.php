@@ -42,30 +42,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
-        // $courseUsers = CourseUser::select('course_code', 'program_id')->where('user_id',Auth::id())->get();
-        // $courses = Course::all();
-        // $programs = Program::all();
-        $user = User::where('id', Auth::id())->first();
-
-        $activeCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-                ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-                ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-                ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-                'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-                ->where('course_users.user_id','=',Auth::id())->where('courses.status','=', -1)
-                ->get();
-
-        $archivedCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-                ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-                ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-                ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-                'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-                ->where('course_users.user_id','=',Auth::id())->where('courses.status','=', 1)
-                ->get();
-
-        return view('courses.index')->with('user', $user)->with('activeCourses', $activeCourses)->with('archivedCourses', $archivedCourses);
-
+        return redirect()->back();
     }
 
     /**
@@ -89,7 +66,6 @@ class CourseController extends Controller
         //
         $this->validate($request, [
             'course_code' => 'required',
-            'course_num' => 'required',
             'course_title'=> 'required',
 
             ]);
@@ -109,6 +85,8 @@ class CourseController extends Controller
         $course->semester = $request->input('course_semester');
         $course->section = $request->input('course_section');
         $course->standard_category_id = $request->input('standard_category_id');
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
 
         // course creation triggered by add new course for program
         if($request->input('type') == 'assigned'){

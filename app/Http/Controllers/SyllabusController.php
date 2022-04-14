@@ -707,7 +707,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningActivities',0);
                 }
                 // tell template processor to include other course staff if user completed the field(s)
-                if($otherCourseStaff = $syllabus->other_course_staff){
+                if($otherCourseStaff = $syllabus->other_instructional_staff){
                     $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
                     // split other course staff string on newline char
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
@@ -735,12 +735,12 @@ class SyllabusController extends Controller
                 // tell template processor to include class hours if user completed the field(s)
                 if ($classStartTime = $syllabus->class_start_time && $classEndTime = $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
-                    $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
+                    $templateProcessor->setValues(array('classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time));
                 } else {
                     $templateProcessor->cloneBlock('NoClassHours',0);
                 }
                 // tell template processor to include course schedule if user completed the field(s)
-                if ($schedule = $okanaganSyllabus->course_) {
+                if ($schedule = $syllabus->class_meeting_days) {
                     $templateProcessor->cloneBlock('NoCourseDays');
                     $templateProcessor->setValue('schedule', $schedule);
                 } else {
@@ -770,6 +770,10 @@ class SyllabusController extends Controller
                     case("S2"):
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
+                    break;
+                    case("O"):
+                        $templateProcessor->setValue('season',"Other");
+                        $templateProcessor->setValue('term',"To Be Determined");
                     break;
                 }
 
@@ -992,7 +996,7 @@ class SyllabusController extends Controller
                 // tell template processor to include class hours if user completed the field(s)
                 if ($classStartTime =  $syllabus->class_start_time && $classEndTime =  $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
-                    $templateProcessor->setValues(array('classStartTime' => $classStartTime, 'classEndTime' => $classEndTime));
+                    $templateProcessor->setValues(array('classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time));
                 } else {
                     $templateProcessor->cloneBlock('NoClassHours',0);
                 }
@@ -1029,6 +1033,10 @@ class SyllabusController extends Controller
                     case("S2"):
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
+                    break;
+                    case("O"):
+                        $templateProcessor->setValue('season',"Other");
+                        $templateProcessor->setValue('term',"To Be Determined");
                     break;
                 }
 

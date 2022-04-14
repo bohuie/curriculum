@@ -53,11 +53,24 @@ Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->n
 Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
 Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
+// Route::group(['middleware' => ['XSS']], function () {
+//     Route::resource('/programs','ProgramController');
+//     Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
+//     //PDF for Program summary
+//     Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+//     Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
+//     Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
+// });
+
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
-//PDF for Program summary
+// Program Summary PDF routes
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
 Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
+// Program Summary Spreadsheet routes
+Route::get('/programs/{program}/spreadsheet','ProgramController@spreadsheet')->name('programs.spreadsheet');
+Route::delete('/programs/{program}/spreadsheet', 'ProgramController@delSpreadsheet')->name('programs.delete.spreadsheet');
+
 Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
 
 
@@ -70,7 +83,6 @@ Route::get('/courseUser','CourseUserController@leave')->name('courseUser.leave')
 Route::get('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
 
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
-Route::get('/courses/{course}/summary','CourseController@show')->name('courses.summary');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::delete('/courses/{course}/pdf', 'CourseController@deletePDF')->name('courses.delete.pdf');
@@ -78,7 +90,8 @@ Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->nam
 Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
 Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
 
-Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
+// Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
+Route::resource('/lo','LearningOutcomeController');
 Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
@@ -101,10 +114,10 @@ Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDe
 
 Route::resource('/ploCategory','PLOCategoryController');
 
-Route::resource('/programUser','ProgramUserController', ['except'=>'destroy']);
+Route::resource('/programUser','ProgramUserController');
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
-Route::delete('/programUser','ProgramUserController@delete')->name('programUser.destroy');
-Route::get('/programUser','ProgramUserController@leave')->name('programUser.leave');
+Route::delete('/programUser/delete','ProgramUserController@delete')->name('programUser.destroy');
+Route::get('/programUser/leave','ProgramUserController@leave')->name('programUser.leave');
 Route::get('/programUserTransfer','ProgramUserController@transferOwnership')->name('programUser.transferOwnership');
 
 // Program wizard controller used to sent info from database to the blade page
@@ -143,6 +156,13 @@ Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardControll
 Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
 Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
 Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
+// optional priorities filter routes
+Route::get('/programWizard/{program}/get-op', 'ProgramWizardController@getOptionalPriorities');
+Route::get('/programWizard/{program}/get-op-first-year', 'ProgramWizardController@getOptionalPrioritiesFirstYear');
+Route::get('/programWizard/{program}/get-op-second-year', 'ProgramWizardController@getOptionalPrioritiesSecondYear');
+Route::get('/programWizard/{program}/get-op-third-year', 'ProgramWizardController@getOptionalPrioritiesThirdYear');
+Route::get('/programWizard/{program}/get-op-fourth-year', 'ProgramWizardController@getOptionalPrioritiesFourthYear');
+Route::get('/programWizard/{program}/get-op-graduate', 'ProgramWizardController@getOptionalPrioritiesGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
 Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
@@ -181,9 +201,12 @@ Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_pre
 });
 
 // account information page and update method
-Route::get('/accountInformation','auth\AccountInformationController@index')->name('accountInformation');
-Route::post('/accountInformation-update','auth\AccountInformationController@update')->name('accountInformation.update');
-
+// *** Routes not working local, but work on testing/staging.. ***
+// Route::get('/accountInformation',[AccountInformationController::class, 'index'])->name('accountInformation');
+// Route::post('/accountInformation-update',[AccountInformationController::class, 'update'])->name('accountInformation.update');
+// *** These Routes work locally but not on staging ***
+Route::get('/accountInformation','Auth\AccountInformationController@index')->name('accountInformation');
+Route::post('/accountInformation-update','Auth\AccountInformationController@update')->name('accountInformation.update');
 
 Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');

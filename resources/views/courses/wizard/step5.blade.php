@@ -32,10 +32,12 @@
                         </div>
 
                     @else
-
-                        <h6 class="card-subtitle mb-4 lh-lg">
-                            Now that you have inputted your course information, you are ready to map it to program learning outcomes (PLOs). Using the mapping scale provided by each program, identify the alignment between each of your course learning outcomes (CLOs) and PLOs.                        
-                        </h6>
+                        <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                            <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                            <div>
+                                Now that you have inputted your course information, you are ready to map it to program learning outcomes (PLOs). Using the mapping scale provided by each program, identify the alignment between each of your course learning outcomes (CLOs) and PLOs.                        
+                            </div>
+                        </div>
                         
                         <!-- list of programs this course belongs to -->
                         <div class="jumbotron">
@@ -65,7 +67,7 @@
                                                         <b>{{$index + 1}}</b>. {{$courseProgram->program}}
                                                         @if ($outcomeMapsCountPerProgram[$courseProgram->program_id] == 0)
                                                             &emsp;-&emsp;<b class="text-danger">Not Mapped</b>
-                                                        @elseif ($outcomeMapsCountPerProgram[$courseProgram->program_id] < ($course->learningOutcomes()->count() * $courseProgram->programLearningOutcomes()->count()))
+                                                        @elseif ($outcomeMapsCountPerProgram[$courseProgram->program_id] < ($l_outcomes->count() * $courseProgram->programLearningOutcomes()->count()))
                                                             &emsp;-&emsp;<b class="text-warning">Partially Mapped</b>
                                                         @else
                                                             &emsp;-&emsp;<b class="text-success">Completed</b>
@@ -111,7 +113,7 @@
 
                                                             <!-- list of course learning outcome accordions with mapping form -->
                                                             <div class="cloAccordions mb-4">
-                                                                @foreach($course->learningOutcomes as $index => $courseLearningOutcome)
+                                                                @foreach($l_outcomes as $index => $courseLearningOutcome)
                                                                     <div class="accordion" id="accordionGroup{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                                         <div class="accordion-item mb-2">
                                                                             <!-- CLO accordion header -->

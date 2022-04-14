@@ -127,13 +127,6 @@
                                                     <label for="department" class="col-md-2 col-form-label text-md-right">Department</label>
                                                     <div class="col-md-8">
                                                         <select id='department' class="custom-select" name="department">
-                                                            <!-- @for($i =0; $i<count($departments) ; $i++)
-                                                                @if($departments[$i]==$program->department)
-                                                                    <option value="{{$program->department}}" selected>{{$program->department}}</option>
-                                                                @else
-                                                                    <option value="{{$departments[$i]}}">{{$departments[$i]}}</option>
-                                                                @endif
-                                                            @endfor -->
                                                         </select>
                                                         <input id='department-text' class="form-control" name="department" type="text" placeholder="(Optional) Enter the department" disabled hidden></input>
                                                         @error('department')

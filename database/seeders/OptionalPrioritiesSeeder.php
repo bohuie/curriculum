@@ -473,28 +473,28 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp = new OptionalPriorities();
         $opp->op_id = 57;
         $opp->subcat_id = 1;
-        $opp->optional_priority = `Incorporation of the Declaration on the Rights of Indigenous Peoples Act and Calls to Action of the Truth and Reconciliation Commission <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>`;
+        $opp->optional_priority = `Incorporation of the Declaration on the Rights of Indigenous Peoples Act and Calls to Action of the Truth and Reconciliation Commission <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank" rel="noopener noreferrer">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>`;
         $opp->year = 2021;
 
         $opp = new OptionalPriorities();
         $opp->op_id = 58;
         $opp->subcat_id = 1;
         $opp->optional_priority = `Align with CleanBC's plan to a protect our communities towards a more sustainable future
-        <a href="https://cleanbc.gov.bc.ca/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> 
+        <a href="https://cleanbc.gov.bc.ca/" target="_blank" rel="noopener noreferrer">( <i class="bi bi-box-arrow-up-right"></i> 
         More Information can be found here)</a>`;
         $opp->year = 2021;
 
         $opp = new OptionalPriorities();
         $opp->op_id = 59;
         $opp->subcat_id = 1;
-        $opp->optional_priority = `Work with communities, employers and industry to implement skills training towards career opportunities in BC <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More 
+        $opp->optional_priority = `Work with communities, employers and industry to implement skills training towards career opportunities in BC <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank" rel="noopener noreferrer">( <i class="bi bi-box-arrow-up-right"></i> More 
         Information can be found here)</a>`;
         $opp->year = 2021;
 
         $opp = new OptionalPriorities();
         $opp->op_id = 60;
         $opp->subcat_id = 1;
-        $opp->optional_priority = `Offer programming aligned with <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> high opportunity and priority occupations</a> (such as trades, technology, early childhood educators and health)`
+        $opp->optional_priority = `Offer programming aligned with <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> high opportunity and priority occupations</a> (such as trades, technology, early childhood educators and health)`
         ;
         $opp->year = 2021;
 

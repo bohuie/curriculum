@@ -32,6 +32,7 @@ class ProgramLearningOutcomeController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**
@@ -220,7 +221,7 @@ class ProgramLearningOutcomeController extends Controller
         $path = $file->storeAs(
             'temporary', $clientFileName
         );
-        $absolutePath = storage_path('app\\temporary\\' . $clientFileName);
+        $absolutePath = storage_path('app' . DIRECTORY_SEPARATOR . 'temporary' . DIRECTORY_SEPARATOR . $clientFileName);
 
         /**  Create a new reader of the type defined by $clientFileName extension  **/
         $reader = IOFactory::createReaderForFile($absolutePath);

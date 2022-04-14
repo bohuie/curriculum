@@ -2,20 +2,49 @@
 
 @section('content')
 <!-- Notification -->
-@if ($hasUnMappedCourses)
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
-        <div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-            <div class="toast-header bg-warning">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                <strong class="me-auto pl-2">Alert</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:11">
+        <div id="errorToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header " style="padding:1em;color:#842029;background-color:#f8d7da;border-color:#f5c2c7">
+                <i class="bi bi-exclamation-circle-fill pr-2 text-danger"></i>            
+                <strong class="me-auto">Error</strong>
+                <button type="button" class="btn-close" onclick="toggleErrorToast()" aria-label="Close"></button>
             </div>
-            <div class="toast-body">
-                There are courses that haven't been fully mapped to this program. To see which courses have not been fully mapped go to the <a href="{{route('programWizard.step3', $program->program_id)}}">previous step</a>.
+            <div class="toast-body alert-danger">
+            @if (Request::is('courseWizard/*'))
+                We were unable to the download the course summary for {{$course->course_code}} {{$course->course_num}}. 
+                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
+                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Course Summary&cc=matthew.penner@ubc.ca&body=There was an error downloading the course summary for {{$course->course_code}} {{$course->course_num}}">
+                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
+                    </a>  
+                </div>        
+            @endif
+            @if (Request::is('programWizard/*'))
+                We were unable to the download the program overview for {{$program->program}}. 
+                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
+                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Program Overview&cc=matthew.penner@ubc.ca&body=There was an error downloading the program overview for {{$program->program}}">
+                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
+                    </a>      
+                </div>        
+            @endif      
             </div>
         </div>
+
+        @if ($hasUnMappedCourses)
+            <div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                <div class="toast-header bg-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong class="me-auto pl-2">Alert</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    There are courses that haven't been fully mapped to this program. To see which courses have not been fully mapped go to the <a href="{{route('programWizard.step3', $program->program_id)}}">previous step</a>.
+                </div>
+            </div>
+        @endif
     </div>
-@endif
+</div>
+
 
 <div>
     <div class="row justify-content-center">
@@ -30,9 +59,16 @@
                 <h3 class="card-header wizard">
                     <div class="row">
                         <div class="col text-left">
-                            <button id="downloadPDF" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('programs.pdf', $program->program_id)}}">
-                                Download<i class="bi bi-download pl-2"></i>
-                            </button>
+                            <div class="btn-group">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                                    Download <i class="bi bi-download"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="downloadBtn">
+                                    <li><a id="downloadPDFBtn" class="dropdown-item" data-route="{{route('programs.pdf', $program->program_id)}}"><i class="bi bi-file-pdf-fill text-danger"></i> PDF</a></li>
+                                    <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel</a></li>
+                                </ul>
+                                
+                            </div>
                         </div>
 
                         <div class="col">
@@ -54,17 +90,17 @@
                     <div class="card-body">
                         <nav class="mt-2">
                             <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
-                                <button class="nav-link active w-25" id="nav-plo-tab" data-bs-toggle="tab" data-bs-target="#nav-plo" type="button" role="tab" aria-controls="nav-plo" aria-selected="true">Program Learning Outcomes</button>
-                                <button class="nav-link w-25" id="nav-mapping-scale-tab" data-bs-toggle="tab" data-bs-target="#nav-mapping-scale" type="button" role="tab" aria-controls="nav-mapping-scale" aria-selected="false">Mapping Scale</button>
-                                <button class="nav-link w-25" id="nav-bar-charts-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-bar-charts" type="button" role="tab" aria-controls="nav-bar-charts" aria-selected="false">Bar Charts</button>
+                                <button class="nav-link active w-25" id="nav-bar-charts-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-bar-charts" type="button" role="tab" aria-controls="nav-bar-charts" aria-selected="false">Bar Charts</button>
                                 <button class="nav-link w-25" id="getData" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-charts" type="button" role="tab" aria-controls="nav-charts" aria-selected="false">Frequency Distribution Tables</button>
+                                <button class="nav-link w-25" id="nav-plo-tab" data-bs-toggle="tab" data-bs-target="#nav-plo" type="button" role="tab" aria-controls="nav-plo" aria-selected="true">Program Learning Outcomes</button>
+                                <button class="nav-link w-25" id="nav-mapping-scale-tab" data-bs-toggle="tab" data-bs-target="#nav-mapping-scale" type="button" role="tab" aria-controls="nav-mapping-scale" aria-selected="false">Mapping Scale</button>
                             </div>
                         </nav>
                         
                         <div class="tab-content" id="nav-tabContent">
                             
                             <!-- Program Learning Outcome Tab -->
-                            <div class="tab-pane fade show active" id="nav-plo" role="tabpanel" aria-labelledby="nav-plo-tab">
+                            <div class="tab-pane fade" id="nav-plo" role="tabpanel" aria-labelledby="nav-plo-tab">
                                 <div class="card-body">
                                     <!-- <h5 class="card-title">
                                         Program Learning Outcomes
@@ -177,7 +213,7 @@
                             <!-- End Mapping Scale Tab -->
 
                             <!-- Bar Charts Tab -->
-                            <div class="tab-pane fade" id="nav-bar-charts" role="tabpanel" aria-labelledby="nav-bar-charts">
+                            <div class="tab-pane fade show active" id="nav-bar-charts" role="tabpanel" aria-labelledby="nav-bar-charts">
                                 <div class="card-body">
                                     <!-- Charts Inner Tabs -->
                                     <nav class="mt-2">
@@ -186,6 +222,7 @@
                                             <button class="inner-nav-link nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
+                                            <button class="inner-nav-link nav-link w-15" id="nav-optional-priorities-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-optional-priorities" type="button" role="tab" aria-controls="nav-optional-priorities" aria-selected="false">Strategic Priorities</button>
                                         </div>
                                     </nav>
 
@@ -220,14 +257,7 @@
                                         
                                         <div class="mt-3" id="assessment-methods-chart">
 
-                                            <div id='loading-div-am'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
-                                            </div>
-
-                                            <p>This chart shows the frequencies of the assessment methods for all courses belonging to this program.</p>
+                                            <p>This chart shows the frequencies of the assessment methods for courses belonging to this program.</p>
                                             @if (!(count($programCourses) < 1)) 
                                                 <form action="">
                                                     <div class=" mx-5 mt-2 text-center">
@@ -262,11 +292,19 @@
                                                 <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-am'  -->
                                                 <input class="form-check-input" type="radio" name="am_select" id="all-am" checked hidden>
                                             @endif
+                                            
+                                            <div id='loading-div-am'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+
                                             <div class="container mt-0">
                                                 <div id="high-chart-am"></div>
                                             </div>
                                             <div class="container mt-2">
-                                                <table class="table table-bordered table-sm w-auto " id="am-table" style="margin: auto;"></table>
+                                                <table class="table table-light table-bordered" style="margin: auto;"><tbody id="am-table"></tbody></table>
                                             </div>
                                         </div>
 
@@ -278,14 +316,7 @@
                                         
                                         <div class="mt-3" id="learning-activity-chart">
 
-                                            <div id='loading-div-la'>
-                                                <h3 class="text-center">
-                                                    Loading ...
-                                                </h3>
-                                                <div class="loader" style="margin: auto;"></div>
-                                            </div>
-
-                                            <p>This chart shows the frequencies of the learning activities for all courses belonging to this program.</p>
+                                            <p>This chart shows the frequencies of the learning activities for courses belonging to this program.</p>
                                             @if (!(count($programCourses) < 1)) 
                                                 <form action="">
                                                     <div class=" mx-5 mt-2 text-center">
@@ -320,16 +351,84 @@
                                                 <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-la'  -->
                                                 <input class="form-check-input" type="radio" name="la_select" id="all-la" checked hidden>
                                             @endif
+
+                                            <div id='loading-div-la'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            
                                             <div class="container mt-0">
                                                 <div id="high-chart-la"></div>
                                             </div>
                                             <div class="container mt-2">
-                                                <table class="table table-bordered table-sm w-auto " id="la-table" style="margin: auto;"></table>
+                                                <table class="table table-light table-bordered" style="margin: auto;"><tbody id="la-table"></tbody></table>
                                             </div>
                                         </div>
 
                                     </div>
                                     <!-- End Learning Activities Tab -->
+
+                                    <!-- Optional Priorities Tab -->
+                                    <div class="tab-pane fade" id="nav-optional-priorities" role="tabpanel" aria-labelledby="nav-optional-priorities">
+    
+                                        <div class="mt-3" id="optional-priority-chart">
+
+                                            <p>This chart shows the frequencies of the strategic priorities for courses belonging to this program.</p>
+
+                                            <!-- *** If there are courses for this program *** -->
+                                            @if (!(count($programCourses) < 1)) 
+                                                <form action="">
+                                                    <div class=" mx-5 mt-2 text-center">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="all-op" checked>
+                                                            <label class="form-check-label" for="all-op"><b>All Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="first-year-op">
+                                                            <label class="form-check-label" for="first-year-op"><b>100 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="second-year-op">
+                                                            <label class="form-check-label" for="second-year-op"><b>200 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="third-year-op">
+                                                            <label class="form-check-label" for="third-year-op"><b>300 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="fourth-year-op">
+                                                            <label class="form-check-label" for="fourth-year-op"><b>400 Level Optional Priority</b></label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="op_select" id="graduate-op">
+                                                            <label class="form-check-label" for="graduate-op"><b>500/600 Level Optional Priority</b></label>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            @else  
+                                                <!-- THIS IS REQUIRED FOR JQUERY statement document.getElementById("all-op").checked = true; -->
+                                                <!-- Without the hidden input the error message will not show because the above statement cannot find the input with id = 'all-op'  -->
+                                                <input class="form-check-input" type="radio" name="op_select" id="all-op" checked hidden>
+                                            @endif
+                                            
+                                            <div id='loading-div-op'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+
+                                            <div class="container mt-2">
+                                                <!-- <table class="table table-light table-bordered" id="op-table"></table> -->
+                                                <div id="op-table"></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- End Optional Priorities Tab -->
+
                                 </div>
                             </div>
                             <!-- End Bar Charts Tab -->
@@ -503,6 +602,15 @@
                         </div>
                         
                     </div>
+                    <div class="card-footer">
+                        <div class="card-body mb-4">
+                            @if (! $isViewer)
+                                <a href="{{route('programWizard.step3', $program->program_id)}}">
+                                    <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 <!-- End New Content -->
             </div>
             <!-- TEST CARD FOR NEW LAYOUT -->
@@ -510,15 +618,6 @@
     </div>
 </div>
 <!--End card-body-->
-<div class="card-footer">
-    <div class="card-body mb-4">
-        @if (! $isViewer)
-            <a href="{{route('programWizard.step3', $program->program_id)}}">
-                <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Courses</button>
-            </a>
-        @endif
-    </div>
-</div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -634,7 +733,8 @@
         $("#nav-assessment-methods-tab").click(function() { 
             // This is required to set the radio button to checked
             document.getElementById("all-am").checked = true;
-
+            $("#high-chart-am").hide();
+            $("#loading-div-am").show();
             $.ajax({
                 type: "GET",
                 url: "get-am/",       
@@ -706,13 +806,13 @@
                         // delete all child nodes
                         $('#am-table').empty();
                         // Append to table for all assessment methods frequencies
-                        $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                        $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                         for (var i = 0; i < amTitles.length; i++) {
-                            $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                            $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                         }
 
                     }
-
+                    $("#high-chart-am").show();
                     // Enables functionality of tool tips
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
@@ -722,6 +822,8 @@
         $("#nav-learning-activity-tab").click(function() { 
             // This is required to set the radio button to checked
             document.getElementById("all-la").checked = true;
+            $("#high-chart-la").hide();
+            $("#loading-div-la").show();
 
             $.ajax({
                 type: "GET",
@@ -790,17 +892,38 @@
                             },
                             series: series
                         });
-
                         // delete all child nodes
                         $('#la-table').empty();
                         // Append to table for all assessment methods frequencies
-                        $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                        $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                         for (var i = 0; i < laTitles.length; i++) {
-                            $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                            $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                         }
 
                     }
-    
+                    // display chart
+                    $("#high-chart-la").show();
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#nav-optional-priorities-tab").click(function() {
+            // This is required to set the radio button to checked
+            document.getElementById("all-op").checked = true;
+            $("#loading-div-op").show();
+
+            $.ajax({
+                type: "GET",
+                url: "get-op/",       
+                success: function (data) {
+                    $("#loading-div-op").fadeOut("fast");
+                    var opFreq = data;
+                    // empty table before loading new data
+                    $('#op-table').empty();
+                    // Append to table for all optional priority frequencies
+                    $('#op-table').append(opFreq);
                     // Enables functionality of tool tips
                     $('[data-toggle="tooltip"]').tooltip({html:true});
                 }
@@ -811,14 +934,19 @@
             // hide other charts and remove classes/set attributes
             $("#assessment-methods-chart").hide();
             $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
             $('#nav-assessment-methods-tab').removeClass('active');
             $('#nav-learning-activity-tab').removeClass('active');
+            $('#nav-optional-priorities-tab').removeClass('active');
             $('#nav-assessment-methods-tab').attr('aria-selected', false);
             $('#nav-learning-activity-tab').attr('aria-selected', false);
+            $('#nav-optional-priorities-tab').attr('aria-selected', false);
             $('#nav-assessment-methods').removeClass('show');
             $('#nav-learning-activity').removeClass('show');
+            $('#nav-optional-priorities').removeClass('show');
             $('#nav-assessment-methods').removeClass('active');
             $('#nav-learning-activity').removeClass('active');
+            $('#nav-optional-priorities').removeClass('active');
 
             // show plo-clo chart and add classes/set attributes
             $('#nav-plo-clo-tab').addClass('active');
@@ -832,6 +960,7 @@
             // hide other charts 
             $("#assessment-methods-chart").hide();
             $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
             // show plo-clo chart
             $("#plo-clo-chart").show();
         });
@@ -840,6 +969,7 @@
             // hide other charts
             $("#plo-clo-chart").hide();
             $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
             //show plo-clo charts
             $("#assessment-methods-chart").show();
         });
@@ -848,12 +978,132 @@
             // hide other charts
             $("#plo-clo-chart").hide();
             $("#assessment-methods-chart").hide();
+            $("#optional-priority-chart").hide();
             //show plo-clo charts
             $("#learning-activity-chart").show();
         });
+
+        $("#nav-optional-priorities-tab").click(function() {
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
+            // show optional priorities charts
+            $("#optional-priority-chart").show();
+        });
     });
 
+    function allOP() {
+        $("#loading-div-op").show();
+        $.ajax({
+            type: "GET",
+            url: "get-op/",       
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function firstYearOP() {     
+        $("#loading-div-op").show();
+        $.ajax({
+            type: "GET",
+            url: "get-op-first-year/",      
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function secondYearOP() {
+        $("#loading-div-op").show();
+        $.ajax({
+            type: "GET",
+            url: "get-op-second-year/",      
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function thirdYearOP() {
+        $("#loading-div-op").show();
+        $.ajax({
+            type: "GET",
+            url: "get-op-third-year/",      
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function fourthYearOP() {
+        $("#loading-div-op").show();
+        $.ajax({
+            type: "GET",
+            url: "get-op-fourth-year/",      
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
+    function graduateOP() {
+        $("#loading-div-op").show();
+        $.ajax({
+            type: "GET",
+            url: "get-op-graduate/",      
+            success: function (data) {
+                $("#loading-div-op").fadeOut("fast");
+                var opFreq = data;
+                // empty table before loading new data
+                $('#op-table').empty();
+                // Append to table for all optional priority frequencies
+                $('#op-table').append(opFreq);
+                // Enables functionality of tool tips
+                $('[data-toggle="tooltip"]').tooltip({html:true});
+            }
+        });
+    }
+
     function allAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am/",       
@@ -922,19 +1172,21 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
-
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
         });
     }
     function firstYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-first-year/",       
@@ -1003,12 +1255,13 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1016,6 +1269,8 @@
     }
 
     function secondYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-second-year/",       
@@ -1084,12 +1339,13 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1097,6 +1353,8 @@
     }
 
     function thirdYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-third-year/",       
@@ -1165,12 +1423,13 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1178,6 +1437,8 @@
     }
 
     function fourthYearAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-fourth-year/",       
@@ -1246,12 +1507,13 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1259,6 +1521,8 @@
     }
 
     function graduateAM() {
+        $("#high-chart-am").hide();
+        $("#loading-div-am").show();
         $.ajax({
             type: "GET",
             url: "get-am-graduate/",       
@@ -1327,12 +1591,13 @@
                     });
                 
                     // Append to table for all assessment methods frequencies
-                    $('#am-table').append('<tr class="table-secondary"><th>Assessment Method</th><th>Frequency</th></tr>');
+                    $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
+                $("#high-chart-am").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1340,6 +1605,8 @@
     }
 
     function allLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la/",       
@@ -1408,12 +1675,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1421,6 +1689,8 @@
     }
 
     function firstYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-first-year/",       
@@ -1489,12 +1759,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1502,6 +1773,8 @@
     }
 
     function secondYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-second-year/",       
@@ -1570,12 +1843,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1583,6 +1857,8 @@
     }
 
     function thirdYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-third-year/",       
@@ -1651,12 +1927,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1664,6 +1941,8 @@
     }
 
     function fourthYearLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-fourth-year/",       
@@ -1732,12 +2011,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1745,6 +2025,8 @@
     }
 
     function graduateLA() {
+        $("#high-chart-la").hide();
+        $("#loading-div-la").show();
         $.ajax({
             type: "GET",
             url: "get-la-graduate/",       
@@ -1813,12 +2095,13 @@
                     // delete all child nodes
                     $('#la-table').empty();
                     // Append to table for all assessment methods frequencies
-                    $('#la-table').append('<tr class="table-secondary"><th>Learning Activity</th><th>Frequency</th></tr>');
+                    $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
-
+                // display chart
+                $("#high-chart-la").show();
                 // Enables functionality of tool tips
                 $('[data-toggle="tooltip"]').tooltip({html:true});
             }
@@ -1862,6 +2145,25 @@
             graduateLA();
         }
     });
+
+    $('input[type=radio][name=op_select]').change(function() {
+        // delete all child nodes
+        $('#op-table').empty();
+        // change filter
+        if (this.id == 'all-op'){
+            allOP();
+        } else if (this.id == 'first-year-op') {
+            firstYearOP();
+        } else if (this.id == 'second-year-op') {
+            secondYearOP();
+        } else if (this.id == 'third-year-op') {
+            thirdYearOP();
+        } else if (this.id == 'fourth-year-op') {
+            fourthYearOP();
+        } else if (this.id == 'graduate-op') {
+            graduateOP();
+        }
+    });
 </script>
 
 <script type="text/javascript">
@@ -1880,6 +2182,12 @@
 </script>
 
 <script type="text/javascript">
+
+    $(window).on('load', function(){
+        $("#assessment-methods-chart").hide();
+        $("#learning-activity-chart").hide();
+        $("#optional-priority-chart").hide();
+    });
     // high chart for PLOs to CLOs 
     // This is required to set the radio button to checked, this is a known firefox bug.
     window.onload=check;
@@ -2025,6 +2333,19 @@
             StackedColumn();
         }
     });
+
+    /**
+    * Sanitize and encode all HTML in a user-submitted string
+    * https://portswigger.net/web-security/cross-site-scripting/preventing
+    * @param  {String} str  The user-submitted string
+    * @return {String} str  The sanitized string
+    * Referenced from: https://gomakethings.com/how-to-sanitize-third-party-content-with-vanilla-js-to-prevent-cross-site-scripting-xss-attacks/
+    */
+    var sanitizeHTML = function (str) {
+        return str.replace(/[^\w. ]/gi, function (c) {
+            return '&#' + c.charCodeAt(0) + ';';
+        });
+    };
 
 </script>
 <style>

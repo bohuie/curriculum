@@ -23,10 +23,12 @@
 
 
                     <div class="card-body">
-
-                        <h6 class="card-subtitle mb-2 lh-lg">
-                            This step, requires instructors to intentionally evaluate all course elements to achieve <a target="_blank" href="https://umanitoba.ca/centre-advancement-teaching-learning/support/course-alignment"><i class="bi bi-box-arrow-up-right"></i> course alignment.</a> This means, ensuring that the targeted learning outcomes are in alignment with the assessment methods and teaching/instructional practices. This can be an iterative process and may take a long time. Intentional evaluation and re-thinking of some course elements is encouraged to achieve better alignment. <b>Review CLOs/competencies you have identified, and map assessment methods to teaching and learning activities to initiate curriculum alignment.</b>      
-                        </h6>
+                        <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                            <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                            <div>
+                                This step, requires instructors to intentionally evaluate all course elements to achieve <a class="alert-link"target="_blank" rel="noopener noreferrer" href="https://umanitoba.ca/centre-advancement-teaching-learning/support/course-alignment"><i class="bi bi-box-arrow-up-right"></i> course alignment.</a> This means, ensuring that the targeted learning outcomes are in alignment with the assessment methods and teaching/instructional practices. This can be an iterative process and may take a long time. Intentional evaluation and re-thinking of some course elements is encouraged to achieve better alignment. <b>Review CLOs/competencies you have identified, and map assessment methods to teaching and learning activities to initiate curriculum alignment.</b>      
+                            </div>
+                        </div>
 
                         @if(count($l_outcomes)<1)
                             <div class="alert alert-warning wizard">
@@ -40,7 +42,7 @@
                             @else
                                 <div>
                                     <div class="container mb-3">
-                                        <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
+                                        <h6 class="card-subtitle wizard mb-4 text-primary fw-bold ml-0 mt-2">
                                             Note: Remember to click save once you are done.
                                         </h6>
                                     </div>
@@ -50,7 +52,7 @@
                                         <table class="table table-light reorder-tbl-rows align-table">
                                             <thead>
                                                 <tr class="table-primary"> 
-                                                    <th class="w-auto">#</th>
+                                                    <th class="w-auto"></th>
                                                     <th class="w-50">Course Learning Outcomes or Competencies</th>
                                                     <th class="w-25">Student Assessment Methods</th>
                                                     <th class="w-25">Teaching and Learning Activities</th>
@@ -59,8 +61,11 @@
                                             <tbody>
                                                 @for($i = 0; $i < count($l_outcomes); $i++)
                                                     <tr>
-                                                        <td class="fw-bold">{{$i+1}}</td>
-                                                        <td scope="row">{{$l_outcomes[$i]->l_outcome}}</td>
+                                                        <td class="fw-bold align-middle fs-5">∴</td>
+                                                        <td scope="row">
+                                                            <b>{{$l_outcomes[$i]->clo_shortphrase}}</b><br>
+                                                            {{$l_outcomes[$i]->l_outcome}}
+                                                        </td>
                                                         <td>
                                                             @foreach ($a_methods as $a_method)
                                                                 <div class="form-check form-check-inline">

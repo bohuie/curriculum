@@ -37,7 +37,7 @@
                                                     <label for="l_outcome" class="form-label fs-6">
                                                         <span class="requiredField">* </span>
                                                         <b>Course Learning Outcome (CLO)</b>
-                                                        <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
+                                                        <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank" rel="noopener noreferrer"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
                                                     </label>
                 
                                                     <textarea id="l_outcome" class="form-control" name="l_outcome" required autofocus placeholder="E.g. Develop..." style="resize:none"></textarea>
@@ -92,19 +92,6 @@
                                                 </tbody>
                                             </table>
                                         </div>
-
-                                        <!-- <div>
-                                            <button id="showbtn" class="btn btn-primary bg-primary" onclick="tips()">Show Tips For Writing CLOs</button>
-                                        </div>
-                                        <div id="blooms" style="display: none;">
-                                            <p style="margin-top: 25px;margin-left:4px;margin-right:4px;">A well-written learning outcome states what students are expected to <span style="font-style: italic;">know, be able to do, or care about</span>, after successfully completing the course/program. Such statements begin with one measurable verb.</p>
-                                            <p>The below are examples of verbs associated with different levels of Bloom’s Taxonomy of Learning.</p>
-                                            <img class="img-fluid" src=" {{ asset('img/blooms-taxonomy-diagram.png') }}"/>
-                                            <small>
-                                                Source: Anderson, L. W., Krathwohl, D. R., & Bloom, B. S. (2001). A taxonomy for learning, teaching, and assessing: A revision of bloom's taxonomy of educational objectives (Abridged ed.). New York: Longman.
-                                            </small>
-                                        </div> -->
-
                                     </div>
 
                                     <form method="POST" id="saveCLOChanges" action="{{ action('LearningOutcomeController@store') }}">
@@ -124,13 +111,21 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <h6 class="card-subtitle mb-2 lh-lg">
-                                Input the <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> course learning outcomes (CLOs)</a> or <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank"><i class="bi bi-box-arrow-up-right"></i> competencies</a> of the course individually.                    
-                            </h6>
+                    <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div>
+                            <a href="https://ctl.ok.ubc.ca/teaching-development/classroom-practices/learning-outcomes/" target="_blank" rel="noopener noreferrer" class="alert-link">
+                                <i class="bi bi-box-arrow-up-right"></i> Course Learning Outcomes (CLOs)
+                            </a> 
+                            or 
+                            <a href="https://sph.uth.edu/content/uploads/2012/01/Competencies-and-Learning-Objectives.pdf" target="_blank" rel="noopener noreferrer" class="alert-link">
+                                <i class="bi bi-box-arrow-up-right"></i> Competencies
+                            </a> 
+                            are the knowledge, skills and attributes that students are expected to attain by the end of a course. Add, edit and delete CLOs below. 
+                            You may use an excel spreadsheet to import multiple CLOs. Follow the template provided below to save them on your computer first, and then upload them to this page.
                         </div>
                     </div>
+
                     <div class="row mb-2 align-items-end">
                         <form method="POST" class="col-6" action="{{ action('LearningOutcomeController@import') }}" enctype="multipart/form-data">
                             <p>
@@ -416,25 +411,13 @@
         });
     });
 
-    function tips() {
-        var x = document.getElementById('blooms');
-        if (x.style.display === "none") {
-            x.style.display = "block";
-            document.querySelector("#showbtn").innerHTML = "Hide Tips For Writing CLOs";
-        } else {
-            x.style.display = "none";
-            document.querySelector("#showbtn").innerHTML = "Show Tips For Writing CLOs";
-        }
-    }
-
     function deleteCLO(submitter) {
             console.log(submitter);
             $(submitter).parents('tr').remove();
     }
 
     function addCLO() {
-        // prepend assessment method to the table
-        $('#addCLOTbl tbody').prepend(`
+        $('#addCLOTbl tbody').append(`
             <tr>
                 <td>
                     <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
