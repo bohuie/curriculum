@@ -500,7 +500,7 @@
                                                 <input id="email" name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Enter email of the owner..." autocomplete="email">
 
                                                 <small id="helpBlock" class="form-text text-muted">
-                                                    This is used to give ownership of this course to another person.
+                                                    (<b>Optional</b>) This is used to give ownership of this course to another person.
                                                 </small>
 
                                                 @error('email')
