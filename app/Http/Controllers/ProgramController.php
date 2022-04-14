@@ -569,7 +569,7 @@ class ProgramController extends Controller
         try {
             $program = Program::find($programId);
             $sheet = $spreadsheet->createSheet();
-            $sheet->setTitle('Outcome Maps');
+            $sheet->setTitle('Program MAP');
             $programLearningOutcomes = $program->programLearningOutcomes;
             $mappingScaleLevels = $program->mappingScaleLevels;
             $courses = $program->courses;
