@@ -771,6 +771,10 @@ class SyllabusController extends Controller
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
                     break;
+                    case("O"):
+                        $templateProcessor->setValue('season',"Other");
+                        $templateProcessor->setValue('term',"To Be Determined");
+                    break;
                 }
 
                 if($learningOutcome = $syllabus->learning_outcomes){
@@ -1029,6 +1033,10 @@ class SyllabusController extends Controller
                     case("S2"):
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
+                    break;
+                    case("O"):
+                        $templateProcessor->setValue('season',"Other");
+                        $templateProcessor->setValue('term',"To Be Determined");
                     break;
                 }
 

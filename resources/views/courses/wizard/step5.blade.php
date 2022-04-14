@@ -32,10 +32,12 @@
                         </div>
 
                     @else
-
-                        <h6 class="card-subtitle mb-4 lh-lg">
-                            Now that you have inputted your course information, you are ready to map it to program learning outcomes (PLOs). Using the mapping scale provided by each program, identify the alignment between each of your course learning outcomes (CLOs) and PLOs.                        
-                        </h6>
+                        <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                            <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                            <div>
+                                Now that you have inputted your course information, you are ready to map it to program learning outcomes (PLOs). Using the mapping scale provided by each program, identify the alignment between each of your course learning outcomes (CLOs) and PLOs.                        
+                            </div>
+                        </div>
                         
                         <!-- list of programs this course belongs to -->
                         <div class="jumbotron">

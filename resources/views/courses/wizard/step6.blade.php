@@ -43,11 +43,13 @@
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
                                 </div>
                             @else
-                        
-                                <h6 class="card-subtitle wizard mb-3 mt-3 lh-lg text-center">
-                                    In lieu of specific PLOs, the below are the <a href="https://www2.gov.bc.ca/assets/gov/education/post-secondary-education/institution-resources-administration/degree-authorization/degree-program-criteria.pdf#page=19" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> standards provided by the Ministry of Advanced Education in BC</a>. Using the mapping scale provided, identify the alignment between each of the CLOs against the standards.                        
-                                </h6>
-                            
+
+                                <div class="alert alert-primary d-flex align-items-center mt-3" role="alert" style="text-align:justify">
+                                    <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                                    <div>
+                                        In lieu of specific PLOs, the below are the <a class="alert-link" href="https://www2.gov.bc.ca/assets/gov/education/post-secondary-education/institution-resources-administration/degree-authorization/degree-program-criteria.pdf#page=19" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> standards provided by the Ministry of Advanced Education in BC</a>. Using the mapping scale provided, identify the alignment between each of the CLOs against the standards.                        
+                                    </div>
+                                </div>                            
 
                                     <!-- Ministry Standards mapping scale -->
                                     <div class="container row">
@@ -181,10 +183,12 @@
                         <div class="tab-pane fade" id="nav-priorities" role="tabpanel" aria-labelledby="nav-priorities-tab">
                             <!--Optional Priorities -->
                             <div class="card-body">
-                                
-                                <h6 class="card-subtitle wizard mb-3 mt-3 lh-lg text-center">
-                                    Select, from the below UBC and/or Ministry priorities and strategies, the items that align strongly with your course. This is <b>optional</b>.                                   
-                                </h6>
+                                <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                                    <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                                    <div>
+                                        Select, from the below UBC and/or Ministry priorities and strategies, the items that align strongly with your course. This is <b>optional</b>.                                   
+                                    </div>
+                                </div>                            
 
                                 <div class="jumbotron pt-4">
                                     <h4 class="mb-4">Alignment with UBC/Ministry Priorities</h4>

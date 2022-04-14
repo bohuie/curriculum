@@ -118,23 +118,21 @@
                 <!-- End of add student assessment methods modal -->
 
                 <div class="card-body">
-
-                <div class="row">
-                    <div class="col">
-                        <h6 class="card-subtitle mb-4 lh-lg">
-                            Input all teaching and learning activities or <a target="_blank" rel="noopener noreferrer" href="https://teaching.cornell.edu/teaching-resources/teaching-cornell-guide/instructional-strategies"><i class="bi bi-box-arrow-up-right"></i> instructional strategies</a> of the course individually. For increased accessibility and enhanced student participation, while still offering challenging learning opportunities,
-                            use there <a target="_blank" rel="noopener noreferrer" href="https://udlguidelines.cast.org/binaries/content/assets/udlguidelines/udlg-v2-2/udlg_graphicorganizer_v2-2_numbers-no.pdf"><i class="bi bi-box-arrow-up-right"></i> Universal Design for Learning Guildlines</a>
-                            (Offered by CAST) to design your course. You may also use <a target="_blank" rel="noopener noreferrer" href="https://udlguidelines.cast.org/binaries/content/assets/common/publications/articles/cast-udl-planningq-a11y.pdf"><i class="bi bi-box-arrow-up-right"></i> these key questions to guide</a> you.               
-                        </h6>
+                    <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div>
+                            Input all teaching and learning activities or <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://teaching.cornell.edu/teaching-resources/teaching-cornell-guide/instructional-strategies"><i class="bi bi-box-arrow-up-right"></i> instructional strategies</a> of the course individually. For increased accessibility and enhanced student participation, while still offering challenging learning opportunities,
+                            use there <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://udlguidelines.cast.org/binaries/content/assets/udlguidelines/udlg-v2-2/udlg_graphicorganizer_v2-2_numbers-no.pdf"><i class="bi bi-box-arrow-up-right"></i> Universal Design for Learning Guildlines</a>
+                            (Offered by CAST) to design your course. You may also use <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://udlguidelines.cast.org/binaries/content/assets/common/publications/articles/cast-udl-planningq-a11y.pdf"><i class="bi bi-box-arrow-up-right"></i> these key questions to guide</a> you.               
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col mb-1">
-                        <button type="button" class="btn btn-primary col-3 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
-                            <i class="bi bi-plus mr-2"></i>Learning Activities
-                        </button>
+                    <div class="row">
+                        <div class="col mb-1">
+                            <button type="button" class="btn btn-primary col-3 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
+                                <i class="bi bi-plus mr-2"></i>Learning Activities
+                            </button>
+                        </div>
                     </div>
-                </div>
 
                     <div id="admins">
                         <div class="row">

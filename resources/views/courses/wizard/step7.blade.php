@@ -32,14 +32,12 @@
                 </h3>
 
                 <div class="card-body m-2">
-                    <div class="row justify-content-between">
+                    <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
                         <div>
-                            <h6 class="card-subtitle wizard mb-2 lh-lg text-center">
-                                You can review	and	download the mapped course here. To edit information, select from the numbered tabs above. Click finish only when you have completed the mapping process.                    
-                            </h6>
+                            You can review	and	download the mapped course here. To edit information, select from the numbered tabs above. Click finish only when you have completed the mapping process.                    
                         </div>
-
-                    </div>
+                    </div>                            
 
                     <div class="card mt-4 mb-4">
                         <h5 class="card-header">
