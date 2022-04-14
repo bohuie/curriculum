@@ -384,6 +384,8 @@ class ProgramController extends Controller
      * @return String $url of spreadsheet file 
      */  
     public function spreadsheet(Request $request, $programId) {
+        // set the max time to generate a pdf summary as 5 mins/300 seconds
+        set_time_limit(300);
         try {
             $program = Program::find($programId);
             // create the spreadsheet
