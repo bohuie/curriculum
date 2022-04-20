@@ -90,6 +90,14 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->subcat_postamble = "";
         $osc->save();
         
+		$osc = new OptionalPrioritySubcategories;
+        $osc->subcat_id = 7;
+        $osc->cat_id = 2;
+        $osc->subcat_name = "<a href=\"https://equity.ubc.ca/about/inclusion-action-plan\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
+                                        UBC’s Inclusion Action Plan</a>";
+        $osc->subcat_desc = "The strategic plan defines inclusion as “a commitment to access, success, and representation of historically underserved, marginalized, or excluded populations”. To operationalize the inclusion theme of the strategic plan, UBC has developed an Inclusion Action Plan (IAP).";
+        $osc->subcat_postamble = "";
+        $osc->save();
         
         // priorities themselves
         
@@ -395,6 +403,31 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->subcat_id = 6;
         $opp->optional_priority = "Applied learning opportunities grounded in the personal, local and regional community (e.g. flood and wildfire impacted communities in BC)";
         $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 47;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = "Degree Requirements: Incorporate equity, diversity, and inclusion skills and competencies info degree requirements.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 48;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = "Dialogue for Engagement: Facilitate and provide opportunities for dialogue and conversation around sensitive topics at UBC and beyond. Build conflict engagement skills and practices among all members of UBC’s community to equip people for working across differences.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 49;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = "EDI Curriculum and Program Requirements: Embed equity and inclusion education into curriculum and program requirements for all students that incorporates intercultural understanding, empathy and mutual respect.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 50;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = "Student Learning: Review and improve mechanisms to ensure that student perspectives on the inclusiveness of their learning experiences are integrated into the improvement of teaching.";
+        $opp->save();
+		
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
 
