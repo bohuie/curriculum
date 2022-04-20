@@ -91,7 +91,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->save();
         
 		$osc = new OptionalPrioritySubcategories;
-        $osc->subcat_id = 7;
+        $osc->subcat_id = 10;
         $osc->cat_id = 2;
         $osc->subcat_name = "<a href=\"https://equity.ubc.ca/about/inclusion-action-plan\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
                                         UBC’s Inclusion Action Plan</a>";
@@ -100,7 +100,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->save();
         
 		$osc = new OptionalPrioritySubcategories;
-        $osc->subcat_id = 8;
+        $osc->subcat_id = 11;
         $osc->cat_id = 2;
         $osc->subcat_name = "<a href=\"https://wellbeing.ubc.ca/framework\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
                                         Wellbeing Strategic Framework</a>";
@@ -414,44 +414,44 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 61;
-        $opp->subcat_id = 7;
+        $opp->op_id = 70;
+        $opp->subcat_id = 10;
         $opp->optional_priority = "Degree Requirements: Incorporate equity, diversity, and inclusion skills and competencies info degree requirements.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 62;
-        $opp->subcat_id = 7;
+        $opp->op_id = 71;
+        $opp->subcat_id = 10;
         $opp->optional_priority = "Dialogue for Engagement: Facilitate and provide opportunities for dialogue and conversation around sensitive topics at UBC and beyond. Build conflict engagement skills and practices among all members of UBC’s community to equip people for working across differences.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 63;
-        $opp->subcat_id = 7;
+        $opp->op_id = 72;
+        $opp->subcat_id = 10;
         $opp->optional_priority = "EDI Curriculum and Program Requirements: Embed equity and inclusion education into curriculum and program requirements for all students that incorporates intercultural understanding, empathy and mutual respect.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 64;
-        $opp->subcat_id = 7;
+        $opp->op_id = 73;
+        $opp->subcat_id = 10;
         $opp->optional_priority = "Student Learning: Review and improve mechanisms to ensure that student perspectives on the inclusiveness of their learning experiences are integrated into the improvement of teaching.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 65;
-        $opp->subcat_id = 8;
+        $opp->op_id = 74;
+        $opp->subcat_id = 11;
         $opp->optional_priority = "Mental Health & Resilience: Enhance mental health literacy to create a supportive campus culture and equipping our community with the skills needed to live well and improve their health, by creating environments that support them.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 66;
-        $opp->subcat_id = 8;
+        $opp->op_id = 75;
+        $opp->subcat_id = 11;
         $opp->optional_priority = "Social Connection: Encourage everyone to work, learn, collaborate, and build connections in ways that are meaningful to them. Strong and lasting social and friendship connections are critical to our wellbeing.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 67;
-        $opp->subcat_id = 8;
+        $opp->op_id = 76;
+        $opp->subcat_id = 11;
         $opp->optional_priority = "Physical Activity: Produce accessible programs, policies, and facilities that support physical activity for all ages and abilities.";
         $opp->save();
 		
