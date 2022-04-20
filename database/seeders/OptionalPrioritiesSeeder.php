@@ -99,6 +99,15 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->subcat_postamble = "";
         $osc->save();
         
+		$osc = new OptionalPrioritySubcategories;
+        $osc->subcat_id = 8;
+        $osc->cat_id = 2;
+        $osc->subcat_name = "<a href=\"https://wellbeing.ubc.ca/framework" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
+                                        Wellbeing Strategic Framework</a>";
+        $osc->subcat_desc = "";
+        $osc->subcat_postamble = "";
+        $osc->save();
+		
         // priorities themselves
         
         // UBC Mandate 2020 
@@ -426,6 +435,24 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->op_id = 50;
         $opp->subcat_id = 7;
         $opp->optional_priority = "Student Learning: Review and improve mechanisms to ensure that student perspectives on the inclusiveness of their learning experiences are integrated into the improvement of teaching.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 51;
+        $opp->subcat_id = 8;
+        $opp->optional_priority = "Mental Health & Resilience: Enhance mental health literacy to create a supportive campus culture and equipping our community with the skills needed to live well and improve their health, by creating environments that support them.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 52;
+        $opp->subcat_id = 8;
+        $opp->optional_priority = "Social Connection: Encourage everyone to work, learn, collaborate, and build connections in ways that are meaningful to them. Strong and lasting social and friendship connections are critical to our wellbeing.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 53;
+        $opp->subcat_id = 8;
+        $opp->optional_priority = "Physical Activity: Produce accessible programs, policies, and facilities that support physical activity for all ages and abilities.";
         $opp->save();
 		
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
