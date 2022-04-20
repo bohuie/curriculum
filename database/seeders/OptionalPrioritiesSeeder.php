@@ -37,7 +37,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 1;
         $osc->cat_id = 1;
-        $osc->subcat_name = "<a href=https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-administration/mandate-letters" target="_blank">UBC's Mandate by the Ministry</a>";
+        $osc->subcat_name = "<a href=\"https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-administration/mandate-letters\" target=\"_blank\">UBC's Mandate by the Ministry</a>";
         $osc->subcat_desc = "UBC's mandate letter outlines the below priorities, as they relate to curriculum:";
         $osc->subcat_postamble = "";
         $osc->save();
@@ -45,7 +45,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 2;
         $osc->cat_id = 1;
-        $osc->subcat_name = "<a href=https://www.workbc.ca/getmedia/c43af36f-f408-4990-9ae1-c5b5f5f7be7a/BC_Labour_Market_Outlook_2021_9MB.pdf.aspx" target="_blank">BC's Labour Market: Top skills in Demand</a>";
+        $osc->subcat_name = "<a href=\"https://www.workbc.ca/getmedia/c43af36f-f408-4990-9ae1-c5b5f5f7be7a/BC_Labour_Market_Outlook_2021_9MB.pdf.aspx\" target=\"_blank\">BC's Labour Market: Top skills in Demand</a>";
         $osc->subcat_desc = "BC's tops skills in demand,as forecasted to the year 2029 by the <a href=\"https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_
                                 Labour_Market_Outlook_2019.pdf.aspx\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> BC Labour Market Outlook (page 28)</a>
                                 , are the following:";
@@ -102,7 +102,7 @@ class OptionalPrioritiesSeeder extends Seeder
 		$osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 8;
         $osc->cat_id = 2;
-        $osc->subcat_name = "<a href=\"https://wellbeing.ubc.ca/framework" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
+        $osc->subcat_name = "<a href=\"https://wellbeing.ubc.ca/framework\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
                                         Wellbeing Strategic Framework</a>";
         $osc->subcat_desc = "";
         $osc->subcat_postamble = "";
