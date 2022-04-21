@@ -163,6 +163,13 @@
                                                             </button>
                                                         @endif
                                                     @endforeach
+                                                    <!-- @foreach ($programCourse->users as $courseUsers)
+                                                        @if ($courseUsers->user_id !== $user->id)
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                test
+                                                            </button>
+                                                        @endif
+                                                    @endforeach -->
                                                 @endif
                                                 
                                                 <!-- Delete Confirmation Modal -->

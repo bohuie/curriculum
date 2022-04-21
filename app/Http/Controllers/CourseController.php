@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\NotifyInstructorForMappingMail;
+use App\Mail\NotifyNewCourseInstructorMail;
 use App\Mail\NotifyNewInstructorMail;
+use App\Mail\NotifyNewUserAndInstructorMail;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\User;
@@ -108,7 +110,9 @@ class CourseController extends Controller
                 if (User::where('email', $request->input('email'))->exists()) {
                     $user = User::where('email', $request->input('email'))->first();
                     // TODO: Send email to new course owner
-                    
+                    $currentUser = User::where('id', $request->input('user_id'))->first();
+                    $program = Program::where('program_id', $request->input('program_id'))->first();
+                    Mail::to($user->email)->send(new NotifyNewCourseInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, $program->program));
                 }else {
                     // Create new user and assign them to the new course
                     $name = explode('@', $request->input('email'));
@@ -130,8 +134,9 @@ class CourseController extends Controller
                     $user->save();
 
                     $currentUser = User::where('id', $request->input('user_id'))->first();
+                    $program = Program::where('program_id', $request->input('program_id'))->first();
                     // TODO: Send email to new user
-                    Mail::to($user->email)->send(new NotifyNewInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $user->email));
+                    Mail::to($user->email)->send(new NotifyNewUserAndInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $user->email, $program->program));
                 }
             }
 
