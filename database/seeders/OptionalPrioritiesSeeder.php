@@ -37,7 +37,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 1;
         $osc->cat_id = 1;
-        $osc->subcat_name = "UBC's Mandate by the Ministry";
+        $osc->subcat_name = "<a href=\"https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/institution-resources-administration/mandate-letters\" target=\"_blank\">UBC's Mandate by the Ministry</a>";
         $osc->subcat_desc = "UBC's mandate letter outlines the below priorities, as they relate to curriculum:";
         $osc->subcat_postamble = "";
         $osc->save();
@@ -45,9 +45,9 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 2;
         $osc->cat_id = 1;
-        $osc->subcat_name = "BC's Labour Market: Top skills in Demand";
+        $osc->subcat_name = "<a href=\"https://www.workbc.ca/getmedia/c43af36f-f408-4990-9ae1-c5b5f5f7be7a/BC_Labour_Market_Outlook_2021_9MB.pdf.aspx\" target=\"_blank\">BC's Labour Market: Top skills in Demand</a>";
         $osc->subcat_desc = "BC's tops skills in demand,as forecasted to the year 2029 by the <a href=\"https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_
-                                Labour_Market_Outlook_2019.pdf.aspx\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> BC Labour Market Outlook (page 46)</a>
+                                Labour_Market_Outlook_2019.pdf.aspx\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> BC Labour Market Outlook (page 28)</a>
                                 , are the following:";
         $osc->subcat_postamble = "Additionally, BC expects <a href=\"https://www.workbc.ca/Labour-Market-Industry/Jobs-in-Demand/High-Demand-Occupations.aspx\""
                                 . "target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> these occupations to be of \"High Opportunity\"</a> in the province. 
@@ -58,7 +58,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 3;
         $osc->cat_id = 2;
-        $osc->subcat_name = "<a href=\"https://strategicplan.ubc.ca/\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> Shaping UBCs next Century</a>";
+        $osc->subcat_name = "<a href=\"https://strategicplan.ubc.ca/\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> Shaping UBCs Next Century</a>";
         $osc->subcat_desc = "";
         $osc->subcat_postamble = "";
         $osc->save();
@@ -90,7 +90,24 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->subcat_postamble = "";
         $osc->save();
         
+		$osc = new OptionalPrioritySubcategories;
+        $osc->subcat_id = 10;
+        $osc->cat_id = 2;
+        $osc->subcat_name = "<a href=\"https://equity.ubc.ca/about/inclusion-action-plan\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
+                                        UBC’s Inclusion Action Plan</a>";
+        $osc->subcat_desc = "The strategic plan defines inclusion as “a commitment to access, success, and representation of historically underserved, marginalized, or excluded populations”. To operationalize the inclusion theme of the strategic plan, UBC has developed an Inclusion Action Plan (IAP).";
+        $osc->subcat_postamble = "";
+        $osc->save();
         
+		$osc = new OptionalPrioritySubcategories;
+        $osc->subcat_id = 11;
+        $osc->cat_id = 2;
+        $osc->subcat_name = "<a href=\"https://wellbeing.ubc.ca/framework\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
+                                        Wellbeing Strategic Framework</a>";
+        $osc->subcat_desc = "";
+        $osc->subcat_postamble = "";
+        $osc->save();
+		
         // priorities themselves
         
         // UBC Mandate 2020 
@@ -211,78 +228,14 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->subcat_id = 2;
         $opp->optional_priority = "Coordination";
         $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 18;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-1-great-people/\" target=\"_blank\">Strategy 1: </a>
-                                        Great People: Attract, engage and retain a diverse global community of outstanding students, faculty and staff.";
-        $opp->save();
-        
+		
         $opp = new OptionalPriorities;
         $opp->op_id = 19;
         $opp->subcat_id = 3;
         $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-2-inspiring-spaces/\" target=\"_blank\">Strategy 2: </a>
                                         Inspiring Spaces: Create welcoming physical and virtual spaces to advance collaboration, innovation and community development.";
         $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 20;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-3-thriving-communities/\" target=\"_blank\">Strategy 3: </a>Thriving Communities: 
-                                        Support the ongoing development of sustainable, healthy and connected campuses and communities, consistent with the 20-Year Sustainability 
-                                        Strategy and the developing Wellbeing Strategy.";
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 21;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-4-inclusive-excellence/\" target=\"_blank\">Strategy 4: </a>
-                                        Inclusive Excellence: Cultivate a diverse community that creates and sustains equitable and inclusive campuses.";
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 22;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-5-systems-renewal/\" target=\"_blank\">Strategy 5: </a>Systems Renewal:
-                                        Transform university-level systems and processes to facilitate collaboration, innovation and agility.";
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 23;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-6-collaborative-clusters/\" target=\"_blank\">Strategy 6: </a>
-                                                Collaborative Clusters: Enable interdisciplinary clusters of research excellence in pursuit of societal impact.";
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 24;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-7-research-support/\" target=\"_blank\">Strategy 7: </a>
-                                Research Support: Strengthen shared infrastructure and resources to support research excellence.";
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 25;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-8-student-research/\" target=\"_blank\">Strategy 8: </a>
-                                        Student Research: Broaden access to, and enhance, student research experiences.";
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 26;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-9-knowledge-exchange/\" target=\"_blank\">Strategy 9: </a>
-                                        Knowledge Exchange: Improve the ecosystem that supports the translation of research into action.";
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 27;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-10-research-culture/\" target=\"_blank\">Strategy 10: </a>
-                                        Research Culture: Foster a strong and diverse research culture that embraces the highest standards of integrity, collegiality and service.";
-        $opp->save();
-        
+		
         $opp = new OptionalPriorities;
         $opp->op_id = 28;
         $opp->subcat_id = 3;
@@ -338,14 +291,7 @@ class OptionalPrioritiesSeeder extends Seeder
                                         Alumni Engagement: Reach, inspire and engage alumni through lifelong enrichment, consistent with the alumniUBC strategic plan,
                                         <a href=\"https://www.alumni.ubc.ca/about/strategic-plan/\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> Connecting Forward.</a>";
         $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 36;
-        $opp->subcat_id = 3;
-        $opp->optional_priority = "<a href=\"https://strategicplan.ubc.ca/strategy-19-global-networks/\" target=\"_blank\">Strategy 19: </a>
-                                        Global Networks: Build and sustain strategic global networks, notably around the Pacific Rim, that enhance impact.";
-        $opp->save();
-        
+		
         $opp = new OptionalPriorities;
         $opp->op_id = 37;
         $opp->subcat_id = 3;
@@ -466,6 +412,49 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->subcat_id = 6;
         $opp->optional_priority = "Applied learning opportunities grounded in the personal, local and regional community (e.g. flood and wildfire impacted communities in BC)";
         $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 70;
+        $opp->subcat_id = 10;
+        $opp->optional_priority = "Degree Requirements: Incorporate equity, diversity, and inclusion skills and competencies info degree requirements.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 71;
+        $opp->subcat_id = 10;
+        $opp->optional_priority = "Dialogue for Engagement: Facilitate and provide opportunities for dialogue and conversation around sensitive topics at UBC and beyond. Build conflict engagement skills and practices among all members of UBC’s community to equip people for working across differences.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 72;
+        $opp->subcat_id = 10;
+        $opp->optional_priority = "EDI Curriculum and Program Requirements: Embed equity and inclusion education into curriculum and program requirements for all students that incorporates intercultural understanding, empathy and mutual respect.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 73;
+        $opp->subcat_id = 10;
+        $opp->optional_priority = "Student Learning: Review and improve mechanisms to ensure that student perspectives on the inclusiveness of their learning experiences are integrated into the improvement of teaching.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 74;
+        $opp->subcat_id = 11;
+        $opp->optional_priority = "Mental Health & Resilience: Enhance mental health literacy to create a supportive campus culture and equipping our community with the skills needed to live well and improve their health, by creating environments that support them.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 75;
+        $opp->subcat_id = 11;
+        $opp->optional_priority = "Social Connection: Encourage everyone to work, learn, collaborate, and build connections in ways that are meaningful to them. Strong and lasting social and friendship connections are critical to our wellbeing.";
+        $opp->save();
+		
+		$opp = new OptionalPriorities;
+        $opp->op_id = 76;
+        $opp->subcat_id = 11;
+        $opp->optional_priority = "Physical Activity: Produce accessible programs, policies, and facilities that support physical activity for all ages and abilities.";
+        $opp->save();
+		
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
 

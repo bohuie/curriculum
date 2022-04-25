@@ -17,7 +17,7 @@
                 <div class="progress">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                 </div>
-                <a id="save-file" hidden></a>
+                <a id="save-file" hidden target="_blank" rel="noreferrer noopener" ></a>
             </div>
             <div class="modal-footer">
                 <button id="cancelDownloadBtn" type="button" class="btn btn-secondary" aria-label="Close">Cancel</button>
