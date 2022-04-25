@@ -1,6 +1,6 @@
 @component('mail::message')
 
-# You have been invited by {{$user_name}} to use UBC Curriculum Map Tool
+# You have been invited by {{$user_name}} to use UBC Curriculum MAP Tool
 
 {{$user_name}} has invited you to collaborate on the program: {{$program_title}}.
 <br>
