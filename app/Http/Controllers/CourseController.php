@@ -305,7 +305,6 @@ class CourseController extends Controller
         //
         $this->validate($request, [
             'course_code'=> 'required',
-            'course_num'=> 'required',
             'course_title'=> 'required',
             ]);
 

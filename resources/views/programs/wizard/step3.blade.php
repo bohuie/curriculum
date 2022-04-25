@@ -410,6 +410,15 @@
                                             <div class="col-md-2 float-right">
                                                 <select id="course_year" class="form-control @error('course_year') is-invalid @enderror"
                                                 name="course_year" required autofocus>
+                                                    <option value="2030">2030</option>
+                                                    <option value="2029">2029</option>
+                                                    <option value="2028">2028</option>
+                                                    <option value="2027">2027</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2024">2024</option>
+                                                    <option value="2023">2023</option>
+                                                    <option value="2022" selected>2022</option>
                                                     <option value="2021">2021</option>
                                                     <option value="2020">2020</option>
                                                     <option value="2019">2019</option>
@@ -507,7 +516,7 @@
                                                 <input id="email" name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Enter email of the owner..." autocomplete="email">
 
                                                 <small id="helpBlock" class="form-text text-muted">
-                                                    (<b>Optional</b>) This is used to give ownership of this course to another person.
+                                                    (<b>Optional</b>) This is used to give ownership of this course to another person. If you would like to be the owner of this course then leave this field blank.
                                                 </small>
 
                                                 @error('email')
