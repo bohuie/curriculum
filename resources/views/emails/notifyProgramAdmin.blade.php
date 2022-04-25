@@ -4,7 +4,7 @@
 
 {{$user_name}} has invited you to collaborate on the program: {{$program_title}}
 
-@component('mail::button', ['url' => env('LOGIN_URL')])
+@component('mail::button', ['url' => config('app.login_url')])
 
 Log In and See Program
 @endcomponent

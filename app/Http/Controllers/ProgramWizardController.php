@@ -1734,7 +1734,7 @@ class ProgramWizardController extends Controller
                     //     $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
                     // }else
                     if ($plo->plos->count() > 0) {
-                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_category.'</th>';
+                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_category).'</th>';
                     }
                 }
             }
@@ -1752,7 +1752,7 @@ class ProgramWizardController extends Controller
                         if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.($index + 1).'</th>';
                         } else {
-                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
                         }
                     }
                 }
@@ -1764,9 +1764,8 @@ class ProgramWizardController extends Controller
                         if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.( count($ploProgramCategories) + $uncatIndex).'</th>';
                         } else {
-                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
                         }
-                        // $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
                     }
                 }
             } else {
@@ -1779,9 +1778,9 @@ class ProgramWizardController extends Controller
             foreach ($programCourses as $course) {
                 $output .= '<tr>
                                 <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
-                                '.$course->course_code.' '.$course->course_num.' '.$course->section.'
+                                '.htmlspecialchars($course->course_code).' '.htmlspecialchars($course->course_num).' '.htmlspecialchars($course->section).'
                                 <br>
-                                '.$course->semester.' '.$course->year.'
+                                '.htmlspecialchars($course->semester).' '.htmlspecialchars($course->year).'
                                 </th>';
                                 // Frequency distribution from each course 
                                 // For Each Categorized PLO

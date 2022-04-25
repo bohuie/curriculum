@@ -57,7 +57,8 @@ class RegisterController extends Controller
     {    
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users','allowed_domain'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            // 'email' => ['required', 'string', 'email', 'max:255', 'unique:users','allowed_domain'], // remove restriction to ubc domains
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             // 'g-recaptcha-response' => ['required', new GoogleRecaptcha],
         ]);

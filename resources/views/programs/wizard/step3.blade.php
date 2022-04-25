@@ -42,8 +42,8 @@
                     
                     <div class="row mb-2">
                         <div class="col">
-                            <button type="button" class="btn btn-primary btn-sm col-2 mt-2 float-right" data-toggle="modal" data-target="#createCourseModal" style="background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i>New Course</button>
-                            <button type="button" class="btn btn-primary btn-sm col-2 mt-2 float-right" data-toggle="modal" data-target="#addCourseModal" style="margin-right: 10px; background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i>Existing Course</button>
+                            <button type="button" class="btn btn-primary btn-md col-2 mt-2 float-right" data-toggle="modal" data-target="#createCourseModal" style="background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i>New Course</button>
+                            <button type="button" class="btn btn-primary btn-md col-3 mt-2 float-right" data-toggle="modal" data-target="#addCourseModal" style="margin-right: 10px; background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i> Course From My Dashboard</button>
                         </div>
                     </div>
 
@@ -163,6 +163,13 @@
                                                             </button>
                                                         @endif
                                                     @endforeach
+                                                    <!-- @foreach ($programCourse->users as $courseUsers)
+                                                        @if ($courseUsers->user_id !== $user->id)
+                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
+                                                                test
+                                                            </button>
+                                                        @endif
+                                                    @endforeach -->
                                                 @endif
                                                 
                                                 <!-- Delete Confirmation Modal -->
@@ -458,7 +465,7 @@
 
                                         <!-- Passes Information for Ministry Standards -->
                                         <div class="form-group row">
-                                            <label for="standard_category_id" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Map this course against</label>
+                                            <label for="standard_category_id" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Map This Course Against</label>
                                             <div class="col-md-8">
                                                 <select class="form-control" name="standard_category_id" id="standard_category_id" required>
                                                     <option value="" disabled selected hidden>Please Choose...</option>
@@ -493,6 +500,24 @@
                                             </small>
                                             </div>
                                         </div>
+
+                                        <div class="form-group row">
+                                            <label for="email" class="col-md-3 col-form-label text-md-right">Assign Owner For Course</label>
+                                            <div class="col-md-8">
+                                                <input id="email" name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Enter email of the owner..." autocomplete="email">
+
+                                                <small id="helpBlock" class="form-text text-muted">
+                                                    (<b>Optional</b>) This is used to give ownership of this course to another person.
+                                                </small>
+
+                                                @error('email')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
                                         <!-- Passes 'program_id', type='assigned', and 'user_id' to be used by the CourseController store method -->
                                         <input type="hidden" class="form-check-input" name="program_id" value={{$program->program_id}}>
                                         <input type="hidden" class="form-check-input" name="type" value="assigned">
