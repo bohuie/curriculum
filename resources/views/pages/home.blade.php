@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Browser Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
+    <div id="browser-notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+
+    </div>
+</div>
+
 <!-- Notification -->
 @if ($user->has_temp == 1)
     <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
@@ -1642,6 +1649,28 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#notification").toast("show");
+
+        // Show notification if user is using a browser that's not either firefox chrome
+        // Chrome 1 - 79
+        //var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        // var isChrome = navigator.userAgent.indexOf("Chrome") > -1;
+        // Firefox 1.0+
+        // var isFirefox = typeof InstallTrigger !== 'undefined';
+        // alert("chrome? " + isChrome + " or Firefox? " + isFirefox);
+
+        // if(!(isChrome || isFirefox)) {
+        //     $("#browser-notification").append(`
+        //     <div class="toast-header bg-warning">
+        //         <i class="bi bi-exclamation-triangle-fill"></i>
+        //         <strong class="me-auto pl-2">Alert</strong>
+        //         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        //     </div>
+        //     <div class="toast-body">
+        //         It appears you are using a browser not recommended for use with the Curriculum MAP Tool. We recommend you use either <a href="https://www.mozilla.org/en-CA/firefox/products/" target="_BLANK" rel="noopener noreferrer">Firefox</a> or <a href="https://www.google.com/intl/en_ca/chrome/" target="_BLANK" rel="noopener noreferrer">Google Chrome</a>.
+        //     </div>
+        //     `);
+        //     $("#browser-notification").toast("show");
+        // }
 
         // Enables functionality of tool tips
         $('[data-toggle="tooltip"]').tooltip({html:true});
