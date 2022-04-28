@@ -14,3 +14,5 @@ database/seeders/UserSeeder.php
 /nbproject
 public/*.xlsx
 storage/app/public
+package-lock.json
+database/seeders/UserSeeder.php
