@@ -37,7 +37,6 @@
                     </h6>
                     <ul class="mr-2">
                         <li class="my-2"><b>Button - Map Course:</b> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
-                        <li class="my-2"><b>Button - Ask to map course:</b> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
                     </ul>
                     
                     <div class="row mb-2">
@@ -150,26 +149,8 @@
                                                                     Map Course
                                                                 </a>
                                                             @endif
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                Ask to Map Course
-                                                            </button>
                                                         @endif
                                                     @endforeach
-                                                    @foreach($programCourse->viewers as $viewer)
-                                                        @if($viewer->id == $user->id && $programCourse->pivot->map_status != 1)
-                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                Ask to Map Course
-                                                            </button>
-                                                        @endif
-                                                    @endforeach
-                                                    <!-- @foreach ($programCourse->users as $courseUsers)
-                                                        @if ($courseUsers->user_id !== $user->id)
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                test
-                                                            </button>
-                                                        @endif
-                                                    @endforeach -->
                                                 @endif
                                                 
                                                 <!-- Delete Confirmation Modal -->
@@ -278,34 +259,6 @@
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
                                                                     <button type="submit" class="btn btn-primary col-2 btn-sm">Save</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Ask to Map Course Modal -->
-                                                <div class="modal fade" id="emailInstructorToMapCourse{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="emailInstructorToMapCourse" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Email Course Instructor to Map this Course</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                            Are you sure you want to email {{$programCourse->owners[0]->name}} the instructor of {{$programCourse->course_code . ' ' . $programCourse->course_num}} to ask them to map their course to your program?
-                                                            </div>
-                                                            <form action="{{route('courses.emailCourseInstructor', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
-                                                                @csrf
-                                                                {{method_field('GET')}}
-                                                                <input type="hidden" class="form-check-input " name="program_owner_id" value={{$user->id}}>
-                                                                <input type="hidden" class="form-check-input " name="course_owner_id" value={{$programCourse->owners[0]->id}}>
-                                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
-                                                                <div class="modal-footer">
-                                                                    <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
-                                                                    <button style="width:100px" type="submit" class="btn btn-primary btn-sm">Yes, Email</button>
                                                                 </div>
                                                             </form>
                                                         </div>

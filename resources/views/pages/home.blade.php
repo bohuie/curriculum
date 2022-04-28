@@ -1652,7 +1652,6 @@
 
         // Show notification if user is using a browser that's not either firefox chrome
         // Chrome 1 - 79
-        //var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
         // var isChrome = navigator.userAgent.indexOf("Chrome") > -1;
         // Firefox 1.0+
         // var isFirefox = typeof InstallTrigger !== 'undefined';

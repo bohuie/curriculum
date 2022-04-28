@@ -102,7 +102,7 @@ class ProgramController extends Controller
         $programUser->permission = 1;
         $programUser->save();
         
-        return redirect()->route('home');
+        return redirect()->route('programWizard.step1', $program->program_id);
 
     }
 
