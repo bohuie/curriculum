@@ -4,7 +4,7 @@
 
 {{$user_name}} has invited you to collaborate with them on their course: {{$course_code}} {{$course_num}} - {{$course_title}}.
 
-@component('mail::button', ['url' => env('LOGIN_URL')])
+@component('mail::button', ['url' => config('app.login_url')])
 Log In and See Course
 @endcomponent
 <br>

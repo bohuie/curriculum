@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\NotifyInstructorForMappingMail;
+use App\Mail\NotifyNewCourseInstructorMail;
+use App\Mail\NotifyNewInstructorMail;
+use App\Mail\NotifyNewUserAndInstructorMail;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\User;
@@ -21,7 +24,9 @@ use App\Models\CourseProgram;
 use App\Models\OutcomeMap;
 use App\Models\Standard;
 use App\Models\StandardsOutcomeMap;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use PDF;
@@ -95,7 +100,46 @@ class CourseController extends Controller
             $course->assigned = -1;
             $course->save();
 
-            $user = User::where('id', $request->input('user_id'))->first();
+            if ($request->input('email') == null) {
+                // User Field is Empty
+                // The user who created this course will be the owner
+                $user = User::where('id', $request->input('user_id'))->first();
+            } else {
+                // assign the user specified to own this course 
+                // check if user exists in db
+                if (User::where('email', $request->input('email'))->exists()) {
+                    $user = User::where('email', $request->input('email'))->first();
+                    // TODO: Send email to new course owner
+                    $currentUser = User::where('id', $request->input('user_id'))->first();
+                    $program = Program::where('program_id', $request->input('program_id'))->first();
+                    Mail::to($user->email)->send(new NotifyNewCourseInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, $program->program));
+                }else {
+                    // Create new user and assign them to the new course
+                    $name = explode('@', $request->input('email'));
+                    $user = new User;
+                    $user->name = $name[0];
+                    $user->email = $request->input('email');
+                    $user->has_temp = 1;
+                    // generate random password
+                    $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                    $pass = array(); 
+                    $combLen = strlen($comb) - 1; 
+                    for ($i = 0; $i < 8; $i++) {
+                        $n = rand(0, $combLen);
+                        $pass[] = $comb[$n];
+                    }
+                    // store random password
+                    $user->password = Hash::make(implode($pass));
+                    $user->email_verified_at = Carbon::now();
+                    $user->save();
+
+                    $currentUser = User::where('id', $request->input('user_id'))->first();
+                    $program = Program::where('program_id', $request->input('program_id'))->first();
+                    // TODO: Send email to new user
+                    Mail::to($user->email)->send(new NotifyNewUserAndInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $user->email, $program->program));
+                }
+            }
+
             $courseUser = new CourseUser;
             $courseUser->course_id = $course->course_id;
             $courseUser->user_id = $user->id;
@@ -145,7 +189,7 @@ class CourseController extends Controller
                 $request->session()->flash('error', 'There was an error adding the course');
             }
 
-            return redirect()->route('home');
+            return redirect()->route('courseWizard.step1', $course->course_id);
         }
 
     }
@@ -261,7 +305,6 @@ class CourseController extends Controller
         //
         $this->validate($request, [
             'course_code'=> 'required',
-            'course_num'=> 'required',
             'course_title'=> 'required',
             ]);
 

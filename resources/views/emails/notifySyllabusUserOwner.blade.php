@@ -4,7 +4,7 @@
 
 {{$user_name}} is now a collaborator on the syllabus: {{$syllabus_code}} {{$syllabus_num}} - {{$syllabus_title}}.
 
-@component('mail::button', ['url' => env('LOGIN_URL')])
+@component('mail::button', ['url' => config('app.login_url')])
 Log In and See Syllabus
 @endcomponent
 <br>

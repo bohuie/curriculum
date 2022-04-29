@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateProgramsTable extends Migration
+class UpdateClassMeetingDaysSyllabiTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class UpdateProgramsTable extends Migration
      */
     public function up()
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('syllabi', function (Blueprint $table) {
             //
-            $table->string('campus')->default('Other')->nullable();
-            $table->string('faculty')->nullable()->change();
+            $table->string('class_meeting_days', 24)->nullable()->change();
         });
     }
 
@@ -27,9 +26,8 @@ class UpdateProgramsTable extends Migration
      */
     public function down()
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('syllabi', function (Blueprint $table) {
             //
-            $table->dropColumn('campus');
         });
     }
 }

@@ -12,6 +12,7 @@ npm-debug.log
 yarn-error.log
 database/seeders/UserSeeder.php
 /nbproject
-resources/views/emails/
 public/*.xlsx
 storage/app/public
+package-lock.json
+database/seeders/UserSeeder.php
