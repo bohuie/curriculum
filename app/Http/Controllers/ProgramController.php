@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssessmentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Program;
@@ -10,6 +11,7 @@ use App\Models\Role;
 use App\Models\Course;
 use App\Models\CourseProgram;
 use App\Models\CourseUser;
+use App\Models\LearningActivity;
 use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
@@ -17,6 +19,7 @@ use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\ProgramUser;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use PDF;
@@ -31,6 +34,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\ConditionalFormatting\Wizard;
 use PhpOffice\PhpSpreadsheet\Style\Style;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class ProgramController extends Controller
 {
@@ -257,6 +261,260 @@ class ProgramController extends Controller
         return $coursesByLevels;
     }
 
+
+    /**
+     * Helper for spreadsheet and pdf summary files which gets images of the charts included in this program
+     * @param Request HTTP request
+     * @param  int  $programId
+     * @return array $url of pdf 
+     */ 
+    private function getImagesOfCharts($programId) {
+        
+        // find the program
+        $program = Program::find($programId);
+        // get all the courses this program belongs to
+        $programCourses = $program->courses;
+        // get program mapping scales of this program
+        $mappingScales = $program->mappingScaleLevels;
+
+        // TODO: refactor and clean up the code BELOW to reduce its cognitive complexity. 
+        // It was taken from ProgramWizardController.php which also needs to be refactored 
+
+        // get array of mapping scale abbreviations and add N/A
+        $mappingScalesAbbrevArr = $mappingScales->pluck('abbreviation')->toArray();
+        $mappingScalesAbbrevArr[count($mappingScalesAbbrevArr)] = 'N/A';
+        // get array of mapping scale ids
+        $mappingScaleIdsArr = $mappingScales->pluck('map_scale_id')->toArray();
+        // set id of N/A to 0
+        $mappingScaleIdsArr[count($mappingScaleIdsArr)] = 0;
+        // create array of mapping scale colors
+        $programMappingScalesColors = [];
+        // create an array of mapping scale frequencies in course alignment
+        $freqOfMSIds = [];          
+        for ($index = 0; $index < count($mappingScaleIdsArr); $index++) {
+            $freqOfMSIds[$mappingScaleIdsArr[$index]] = [];
+            $programMappingScalesColors[$index] = (strtolower(MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first()) == "#ffffff" || strtolower(MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first()) == "#fff" ? "#6c757d" : MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first());
+        }
+        // get categorized plo's for the program (ordered by category then outcome id)
+        $plosInCatOrdered = ProgramLearningOutcome::where('program_id', $programId)->whereNotNull('plo_category_id')->orderBy('plo_category_id', 'ASC')->orderBy('pl_outcome_id', 'ASC')->get();
+        // get UnCategorized PLO's
+        $unCatPLOS = ProgramLearningOutcome::where('program_id', $programId)->whereNull('plo_category_id')->get();
+        // Merge Categorized PLOs and Uncategorized PLOs to get allPlos in the correct order
+        $allPlos = $plosInCatOrdered->toBase()->merge($unCatPLOS);
+        // get shortphrase of all plos
+        $plosInOrder = $allPlos->pluck('plo_shortphrase')->toArray();
+        // get array of all plo ids
+        $plosInOrderIds = $allPlos->pluck('pl_outcome_id')->toArray();
+        
+        // loop through $freqOfMSIds then
+        // loop through PLOs ($ploInOrderIds) and get array [countOfAbvFor(plo1), countOfAbvFor(plo2), ... , countOfAbvFor(plo7)]
+        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+            foreach($plosInOrderIds as $plosInOrderId) {
+                array_push($freqOfMSIds[$ms_id], OutcomeMap::where('pl_outcome_id', $plosInOrderId)->where('map_scale_id', $ms_id)->count());
+            }
+        }
+        // Change key so that order isn't messed up when data is used in highcharts 
+        $index = 0;
+        $freqForMS = [];
+        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+            $freqForMS[$index] = $freqOfMSId;
+            $index++;
+        }        
+        // create series array for highcharts 
+        $seriesPLOCLO = array();
+        for ($count = 0; $count < $mappingScales->count(); $count++) {
+            array_push($seriesPLOCLO, array("name" => $mappingScalesAbbrevArr[$count], "data" => $freqForMS[$count], "colour" => $programMappingScalesColors[$count]));
+        }
+    
+        // DATA FOR ASSESSMENT METHODS
+        
+        $assessmentMethods = [];
+        foreach ($programCourses as $programCourse) {
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+        }
+        $allAM = [];
+        foreach ($assessmentMethods as $ams) {
+            foreach ($ams as $am) {
+                array_push($allAM, ucwords($am));
+            }
+        }
+        // Get frequencies for all assessment methods
+        $amFrequencies = [];
+        if (count($allAM) >= 1) {
+            for ($i = 0; $i < count($allAM); $i++) {
+                if (array_key_exists($allAM[$i], $amFrequencies)) {
+                    $amFrequencies[$allAM[$i]] += 1;
+                } else {
+                    $amFrequencies += [ $allAM[$i] => 1 ];
+                }
+            }
+
+            // Special Case (Might be removed in the future) 
+            // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
+            if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
+                $amFrequencies['Final Exam'] += $amFrequencies['Final'];
+                unset($amFrequencies['Final']);
+            }
+        }
+        $amTitles = array_keys($amFrequencies);
+        $amData = array(
+            [
+            "name" => "# of Occurrences",
+            "data" => array_values($amFrequencies),
+            "colorByPoint" => true,
+            ]
+        );
+        
+        // Get frequencies for all learning activities
+        $learningActivities = [];
+        foreach ($programCourses as $programCourse) {
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+        }
+        $allLA = [];
+        foreach ($learningActivities as $lAS) {
+            foreach ($lAS as $la) {
+                array_push($allLA, ucwords($la));
+            }
+        }
+        // Get frequencies for all Learning Activities
+        $laFrequencies = [];
+        if (count($allLA) >= 1) {
+            for ($i = 0; $i < count($allLA); $i++) {
+                if (array_key_exists($allLA[$i], $laFrequencies)) {
+                    $laFrequencies[$allLA[$i]] += 1;
+                } else {
+                    $laFrequencies += [ $allLA[$i] => 1 ];
+                }
+            }
+        }
+
+        $laTitles = array_keys($laFrequencies);
+        $laData = array(
+            [
+            "name" => "# of Occurrences",
+            "data" => array_values($laFrequencies),
+            "colorByPoint" => true,
+            ]
+        );
+        // TODO: refactor and clean up the code ABOVE to reduce its cognitive complexity. 
+        // It was taken from ProgramWizardController.php which also needs to be refactored 
+        
+        // get url of plos to clos cluster chart
+        $plosToClosClusterChartImgURL = $this->barChartPOST(
+            "plosToClosCluster-" . $program->program_id . ".jpeg",
+            "Number of Course Outcomes per Program Learning Outcomes", 
+            "Program Learning Outcomes",
+            "# of Outcomes",
+            $plosInOrder,
+            $seriesPLOCLO,
+            true
+        );
+        // get url of assessment methods chart
+        $assessmentMethodsChartImgUrl = $this->barChartPOST(
+            "all-am-" . $program->program_id . ".jpeg",
+            "Assessment Methods", 
+            "Assessment Method",
+            "Frequency",
+            $amTitles,
+            $amData
+        );
+        // get url of learning activities chart
+        $learningActivitiesChartImgUrl = $this->barChartPOST(
+            "all-la-" . $program->program_id . ".jpeg",
+            "Learning Activities", 
+            "Learning Activity",
+            "Frequency",
+            $laTitles,
+            $laData
+        );
+
+        // return array of urls to charts
+        $charts = array(
+            "Program MAP Chart" => $plosToClosClusterChartImgURL,
+            "Assessment Methods Chart" => $assessmentMethodsChartImgUrl, 
+            "Learning Activities Chart" => $learningActivitiesChartImgUrl
+        );
+        return $charts;
+    }
+
+    /**
+     * Helper for spreadsheet and pdf summary files which fetches and saves an image of a highcharts bar chart used in this program
+     * @param string $filename: filename of saved image
+     * @param string $title: title of bar chart
+     * @param  string $xLabel: x axis label
+     * @param  string $yLabel: y axis label
+     * @param  array $categories: x axis categories
+     * @param  bool $hasLegend: include legend
+     * @param  array $data: data for each category
+     * @return String $url of image 
+     */
+    private function barChartPOST($filename, $title, $xLabel, $yLabel, $categories, $data, $hasLegend = false) {
+        
+        // create highcharts configuration object for a bar chart
+        $config =  json_encode(
+            array(
+                "chart" => [
+                    "type" => "column"
+                ],
+                "title" => [
+                    "text" => $title
+                ],
+                "xAxis" => [
+                    "title" => [
+                        "text" => $xLabel,
+                        "margin" => 20,
+                        "style" => [
+                            "fontWeight" => "bold"
+                        ]
+                    ],
+                    "categories" => $categories
+                ],
+                "yAxis" => [
+                    "title" => [
+                        "text" => $yLabel,
+                        "margin" => 20
+                    ],
+                    "allowDecimals" => false
+                ],
+                "legend" => [
+                    "enabled" => $hasLegend
+                ],
+                "series" => $data        
+            )
+        );
+        
+        // create curl resource for POST request
+        $ch = curl_init();
+        // set URL and other appropriate options for POST
+        $options = array(
+            // endpoint is the highcharts export server
+            CURLOPT_URL => 'http://export.highcharts.com/',
+            CURLOPT_HEADER => false,        
+            // return the transfer as a string
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => array("type" => "image/jpeg", "width" => 600, "options" => $config),
+
+        );   
+        curl_setopt_array($ch, $options);     
+        // $output contains the output string
+        $output = curl_exec($ch);
+        // save the image to the storage/public/charts directory which is accessible via public folder due to a symbolic link
+        Storage::put('public' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR . $filename, $output);
+        // close curl resource to free up system resources
+        curl_close($ch); 
+        // create url to img resource
+        $imgUrl = 'storage' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR . $filename;
+
+        return $imgUrl;
+    }
+
+    /**
+     * Create and save a pdf summary for this program.
+     * @param Request HTTP request
+     * @param  int  $programId
+     * @return String $url of pdf 
+     */ 
     public function pdf(Request $request, $program_id) {
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
@@ -341,14 +599,19 @@ class ProgramController extends Controller
             $store = $this->frequencyDistribution($arr, $store);
             $store = $this->replaceIdsWithAbv($store, $arr);
             $store = $this->assignColours($store);
-            
-            $pdf = PDF::loadView('programs.downloadSummary', compact('coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store',));
+
+            // get array of urls to charts in this program
+            $charts = $this->getImagesOfCharts($program_id);
+
+            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store',));
             // get the content of the pdf document
             $content = $pdf->output();
             // set name of pdf
-            $pdfName = 'summary-' . $program->program_id . 'pdf';
+            $pdfName = 'summary-' . $program->program_id . '.pdf';
             // store the pdf document in storage/app/public folder
             Storage::put('public' . DIRECTORY_SEPARATOR . 'pdfs' . DIRECTORY_SEPARATOR . $pdfName, $content);
+            // delete charts 
+            $this->deleteCharts($program_id, $charts);
             // get the url of the document
             $url = Storage::url('pdfs' . DIRECTORY_SEPARATOR . $pdfName);
             // return the location of the pdf document on the server
@@ -413,6 +676,7 @@ class ProgramController extends Controller
             $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+            $this->makeChartSheets($spreadsheet, $programId);
             // foreach sheet, set all possible columns in $columns to autosize
             array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet){
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -442,6 +706,38 @@ class ProgramController extends Controller
             Log::error($exception->getMessage());
             return -1;
         }
+    }
+    /** 
+    * Private helper function to create sheets with charts in the program summary spreadsheet
+    * @param Spreadsheet $spreadsheet
+    * @param int $programId
+    */
+   private function makeChartSheets($spreadsheet, $programId) {
+        try {
+            $program = Program::find($programId);
+            
+            // get array of urls to charts in this program
+            $charts = $this->getImagesOfCharts($programId);
+            foreach ($charts as $chartName => $chartUrl) {
+                $sheet = $spreadsheet->createSheet();
+                $sheet->setTitle($chartName);
+                $imageDrawing = new Drawing;
+                $imageDrawing->setPath($chartUrl); 
+                $imageDrawing->setCoordinates('A1');
+                $imageDrawing->setWorksheet($sheet);
+            }
+            // delete charts 
+            $this->deleteCharts($programId, $charts);
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
+            return -1;
+        } 
     }
 
     /**
@@ -571,7 +867,7 @@ class ProgramController extends Controller
         try {
             $program = Program::find($programId);
             $sheet = $spreadsheet->createSheet();
-            $sheet->setTitle('Program MAP');
+            $sheet->setTitle('Program MAP Table');
             $programLearningOutcomes = $program->programLearningOutcomes;
             $mappingScaleLevels = $program->mappingScaleLevels;
             $courses = $program->courses;
@@ -701,6 +997,27 @@ class ProgramController extends Controller
             Log::error($exception->getMessage());
             
             return $exception;
+        }
+    }
+
+    /**
+     * Delete the the temporarily saved charts for this program overview.
+     * @param  int  $programId
+     * @param array $charts: array of chart urls
+     */ 
+    private function deleteCharts($programId, $charts) {
+        $program = Program::find($programId);
+        try {
+            foreach ($charts as $chartUrl) {
+                File::delete($chartUrl);
+            }
+        } catch (Throwable $exception) {
+            $message = 'There was an error deleting the charts for the spreadsheet overview of: ' . $program->program;
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
         }
     }
 
