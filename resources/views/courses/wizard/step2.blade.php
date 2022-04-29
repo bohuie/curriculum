@@ -307,7 +307,7 @@
 
     function addAssessmentMethod() {
         // prepend assessment method to the table
-        $('#addAssessmentMethodsTbl tbody').prepend(`
+        $('#addAssessmentMethodsTbl tbody').append(`
             <tr>
                 <td>
                     <input list="assessmentMethodOptions" type="text" class="form-control @error('a_method') is-invalid @enderror" name="new_a_methods[]" value="${$('#assessmentMethod').val()}" placeholder="Choose from the dropdown list or type your own" form="saveAssessmentMethodChanges" required >

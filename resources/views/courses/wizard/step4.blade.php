@@ -61,7 +61,7 @@
                                             <tbody>
                                                 @for($i = 0; $i < count($l_outcomes); $i++)
                                                     <tr>
-                                                        <td class="fw-bold align-middle fs-5">∴</td>
+                                                        <td class="fw-bold align-middle fs-5">↕</td>
                                                         <td scope="row">
                                                             <b>{{$l_outcomes[$i]->clo_shortphrase}}</b><br>
                                                             {{$l_outcomes[$i]->l_outcome}}

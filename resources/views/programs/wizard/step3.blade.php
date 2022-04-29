@@ -37,7 +37,6 @@
                     </h6>
                     <ul class="mr-2">
                         <li class="my-2"><b>Button - Map Course:</b> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
-                        <li class="my-2"><b>Button - Ask to map course:</b> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
                     </ul>
                     
                     <div class="row mb-2">
@@ -150,26 +149,8 @@
                                                                     Map Course
                                                                 </a>
                                                             @endif
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                Ask to Map Course
-                                                            </button>
                                                         @endif
                                                     @endforeach
-                                                    @foreach($programCourse->viewers as $viewer)
-                                                        @if($viewer->id == $user->id && $programCourse->pivot->map_status != 1)
-                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                Ask to Map Course
-                                                            </button>
-                                                        @endif
-                                                    @endforeach
-                                                    <!-- @foreach ($programCourse->users as $courseUsers)
-                                                        @if ($courseUsers->user_id !== $user->id)
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                test
-                                                            </button>
-                                                        @endif
-                                                    @endforeach -->
                                                 @endif
                                                 
                                                 <!-- Delete Confirmation Modal -->
@@ -283,34 +264,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Ask to Map Course Modal -->
-                                                <div class="modal fade" id="emailInstructorToMapCourse{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="emailInstructorToMapCourse" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Email Course Instructor to Map this Course</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                            Are you sure you want to email {{$programCourse->owners[0]->name}} the instructor of {{$programCourse->course_code . ' ' . $programCourse->course_num}} to ask them to map their course to your program?
-                                                            </div>
-                                                            <form action="{{route('courses.emailCourseInstructor', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
-                                                                @csrf
-                                                                {{method_field('GET')}}
-                                                                <input type="hidden" class="form-check-input " name="program_owner_id" value={{$user->id}}>
-                                                                <input type="hidden" class="form-check-input " name="course_owner_id" value={{$programCourse->owners[0]->id}}>
-                                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
-                                                                <div class="modal-footer">
-                                                                    <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
-                                                                    <button style="width:100px" type="submit" class="btn btn-primary btn-sm">Yes, Email</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </td>                                        
                                         </tr>
                                         @endforeach
@@ -410,6 +363,15 @@
                                             <div class="col-md-2 float-right">
                                                 <select id="course_year" class="form-control @error('course_year') is-invalid @enderror"
                                                 name="course_year" required autofocus>
+                                                    <option value="2030">2030</option>
+                                                    <option value="2029">2029</option>
+                                                    <option value="2028">2028</option>
+                                                    <option value="2027">2027</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2024">2024</option>
+                                                    <option value="2023">2023</option>
+                                                    <option value="2022" selected>2022</option>
                                                     <option value="2021">2021</option>
                                                     <option value="2020">2020</option>
                                                     <option value="2019">2019</option>
@@ -507,7 +469,7 @@
                                                 <input id="email" name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Enter email of the owner..." autocomplete="email">
 
                                                 <small id="helpBlock" class="form-text text-muted">
-                                                    (<b>Optional</b>) This is used to give ownership of this course to another person.
+                                                    (<b>Optional</b>) This is used to give ownership of this course to another person. If you would like to be the owner of this course then leave this field blank.
                                                 </small>
 
                                                 @error('email')

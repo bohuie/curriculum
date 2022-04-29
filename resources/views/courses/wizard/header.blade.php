@@ -170,7 +170,7 @@
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="course_semester" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Year and Semester</label>
+                                                <label for="course_semester" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Term and Year</label>
 
                                                 <div class="col-md-3">
                                                     <select id="course_semester" class="form-control @error('course_semester') is-invalid @enderror"
@@ -191,6 +191,14 @@
                                                 <div class="col-md-2 float-right">
                                                     <select id="course_year" class="form-control @error('course_year') is-invalid @enderror"
                                                     name="course_year" required autofocus>
+                                                        <option @if($course->year === 2030) selected @endif value="2030">2030</option>
+                                                        <option @if($course->year === 2029) selected @endif value="2029">2029</option>
+                                                        <option @if($course->year === 2028) selected @endif value="2028">2028</option>
+                                                        <option @if($course->year === 2027) selected @endif value="2027">2027</option>
+                                                        <option @if($course->year === 2026) selected @endif value="2026">2026</option>
+                                                        <option @if($course->year === 2025) selected @endif value="2025">2025</option>
+                                                        <option @if($course->year === 2024) selected @endif value="2024">2024</option>
+                                                        <option @if($course->year === 2023) selected @endif value="2023">2023</option>
                                                         <option @if($course->year === 2022) selected @endif value="2022">2022</option>
                                                         <option @if($course->year === 2021) selected @endif value="2021">2021</option>
                                                         <option @if($course->year === 2020) selected @endif value="2020">2020</option>

@@ -189,7 +189,7 @@ class CourseController extends Controller
                 $request->session()->flash('error', 'There was an error adding the course');
             }
 
-            return redirect()->route('home');
+            return redirect()->route('courseWizard.step1', $course->course_id);
         }
 
     }
@@ -305,7 +305,6 @@ class CourseController extends Controller
         //
         $this->validate($request, [
             'course_code'=> 'required',
-            'course_num'=> 'required',
             'course_title'=> 'required',
             ]);
 
