@@ -676,7 +676,10 @@ class ProgramController extends Controller
             $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
-            $this->makeChartSheets($spreadsheet, $programId);
+            
+            // get array of urls to charts in this program
+            $charts = $this->getImagesOfCharts($programId);
+            $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
             array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet){
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -692,6 +695,8 @@ class ProgramController extends Controller
             $storagePath = storage_path('app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'spreadsheets' . DIRECTORY_SEPARATOR . $spreadsheetName);
             // save the spreadsheet document 
             $writer->save($storagePath);
+            // delete charts 
+            $this->deleteCharts($programId, $charts);
             // get the url of the document
             $url = Storage::url('spreadsheets' . DIRECTORY_SEPARATOR . $spreadsheetName);
             // return the location of the spreadsheet document on the server
@@ -711,13 +716,12 @@ class ProgramController extends Controller
     * Private helper function to create sheets with charts in the program summary spreadsheet
     * @param Spreadsheet $spreadsheet
     * @param int $programId
+    * @param array $charts: array of urls to charts indexed by their sheet name
     */
-   private function makeChartSheets($spreadsheet, $programId) {
+   private function makeChartSheets($spreadsheet, $programId, $charts) {
         try {
             $program = Program::find($programId);
             
-            // get array of urls to charts in this program
-            $charts = $this->getImagesOfCharts($programId);
             foreach ($charts as $chartName => $chartUrl) {
                 $sheet = $spreadsheet->createSheet();
                 $sheet->setTitle($chartName);
@@ -726,8 +730,6 @@ class ProgramController extends Controller
                 $imageDrawing->setCoordinates('A1');
                 $imageDrawing->setWorksheet($sheet);
             }
-            // delete charts 
-            $this->deleteCharts($programId, $charts);
 
         } catch (Throwable $exception) {
             $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
