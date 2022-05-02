@@ -823,7 +823,7 @@ class ProgramController extends Controller
         try {
             $program = Program::find($programId);
             $sheet = $spreadsheet->createSheet();
-            $sheet->setTitle('Mapping Scales');
+            $sheet->setTitle('Mapping Scale');
             $mappingScaleLevels = $program->mappingScaleLevels;
             
             if ($mappingScaleLevels->count() > 0) {
