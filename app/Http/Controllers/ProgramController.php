@@ -319,10 +319,10 @@ class ProgramController extends Controller
         foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
             $freqForMS[$index] = $freqOfMSId;
             $index++;
-        }        
+        }     
         // create series array for highcharts 
         $seriesPLOCLO = array();
-        for ($count = 0; $count < $mappingScales->count(); $count++) {
+        for ($count = 0; $count < count($mappingScalesAbbrevArr); $count++) {
             array_push($seriesPLOCLO, array("name" => $mappingScalesAbbrevArr[$count], "data" => $freqForMS[$count], "colour" => $programMappingScalesColors[$count]));
         }
     
@@ -398,7 +398,7 @@ class ProgramController extends Controller
         );
         // TODO: refactor and clean up the code ABOVE to reduce its cognitive complexity. 
         // It was taken from ProgramWizardController.php which also needs to be refactored 
-        
+
         // get url of plos to clos cluster chart
         $plosToClosClusterChartImgURL = $this->barChartPOST(
             "plosToClosCluster-" . $program->program_id . ".jpeg",
