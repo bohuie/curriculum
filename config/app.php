@@ -52,7 +52,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL'),
+
+    'login_url' => env('LOGIN_URL'),
 
     'login_url' => env('LOGIN_URL'),
 
