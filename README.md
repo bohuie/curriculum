@@ -1,61 +1,37 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
-
 <p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+    <a href="https://curriculum.ok.ubc.ca/" target="_blank">
+        <img src="public\img\UBC-logo-2018-crest-blue-rgb72-resized.png" width="75"> 
+        <strong style="color:#002145" ><h1  align="center">Curriculum MAP</h1></strong>
+    </a>
 </p>
 
-## About Laravel
+<p align="center">
+    <a href="https://github.com/bohuie/curriculum/blob/master/LICENSE.md"><img src="public\img\readme\license-gpl-flatsvg.svg" alt="License"></a>
+    <a href="https://www.php.net/"><img src="public\img\readme\php-require.svg" alt="PHP Version Require"></a>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## About Curriculum MAP
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Curriculum MAP is a web application developed to support curriculum mapping, analysis and planning. Curriculum MAP aims to support:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- <strong>Student Success</strong>: Give students a better understanding of what is expected of them, and what they will accomplish in different courses. 
+- <strong>Improve Learning</strong>: Help faculty use evidence-based information, see relationships between course and overall program goals, and learning outcomes. 
+- <strong>Quality Assurance</strong>: Allow for identification of gaps in course offerings as well as redundancies. 
+- <strong>Staff Collaboration</strong>: Provide an opportunity for faculty to work together and help new faculty develop professional relationships and a sense of belonging. 
 
-## Learning Laravel
+## License and Contributing
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Curriculum MAP is open-sourced software licensed under the [GNU General Public License v3.0 (GPL-3.0)]("https://github.com/bohuie/curriculum/blob/master/LICENSE.md").
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Curriculum MAP relies on software developed by third party individuals and groups. The <a href="https://github.com/bohuie/curriculum/blob/master/composer.json">composer.json</a> file and <a href="https://github.com/bohuie/curriculum/blob/master/package.json">package.json</a> file describe the third-party dependencies of Curriculum MAP. 
 
-## Laravel Sponsors
+Furthermore, all charts used in the Curriculum MAP tool are powered by <a href="https://www.highcharts.com/">Highcharts</a> and are licensed under the <a href="https://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Questions
+If you have a question about Curriculum MAP, please first check our <a href="https://curriculum.ok.ubc.ca/faq">Frequently Asked Questions (FAQs)</a>. If your question is unanswered please email the<a href="mailto:ctl.helpdesk@ubc.ca?subject=Curriculum MAP: Question"> Centre for Teaching and Learning</a> at UBC. 
 
-### Premium Partners
+## Note
+- Curriculum MAP is funded by the <a href="http://provost.ok.ubc.ca/">UBC Okanagan Office of the Provost and Vice President Academic</a>
+- Curriculum MAP is inspired by and based on the University of Calgary's tool <a href="https://taylorinstitute.ucalgary.ca/curriculum-links">Curriculum Links</a>
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
