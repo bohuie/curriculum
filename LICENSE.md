@@ -1,4 +1,4 @@
-<strong>Highcharts Attribution</strong>: All charts used in the Curriculum MAP tool are powered by <a href="">Highcharts</a> and are licensed under the <a href="https://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>.     
+<strong>Highcharts Attribution</strong>: All charts used in the Curriculum MAP tool are powered by <a href="">Highcharts</a> and are licensed under the <a href="https://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>. For commercial use, please be sure to license this software. 
                     
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
