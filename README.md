@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://curriculum.ok.ubc.ca/" target="_blank">
-        <img src="public\img\UBC-logo-2018-crest-blue-rgb72-resized.png" width="75"> 
+        <img src="public\img\UBC-logo-2018-crest-blue-rgb72-resized.png"> 
         <strong style="color:#002145" ><h1  align="center">Curriculum MAP</h1></strong>
     </a>
 </p>
