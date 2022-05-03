@@ -162,6 +162,14 @@
                         </div>
                     </div>
 
+                    
+                    <div class="row">
+                        <div class="col">
+                            <h6 class="card-subtitle mb-4 lh-lg">
+                            </h6>
+                        </div>
+                    </div>
+
                     <div class="row mb-1">
                         <div class="col">
                             <button type="button" class="btn btn-primary col-4 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addAssessmentMethodModal">
@@ -300,7 +308,7 @@
 
     function addAssessmentMethod() {
         // prepend assessment method to the table
-        $('#addAssessmentMethodsTbl tbody').prepend(`
+        $('#addAssessmentMethodsTbl tbody').append(`
             <tr>
                 <td>
                     <input list="assessmentMethodOptions" type="text" class="form-control @error('a_method') is-invalid @enderror" name="new_a_methods[]" value="${$('#assessmentMethod').val()}" placeholder="Choose from the dropdown list or type your own" form="saveAssessmentMethodChanges" required >

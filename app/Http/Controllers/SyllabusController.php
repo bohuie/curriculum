@@ -771,6 +771,10 @@ class SyllabusController extends Controller
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
                     break;
+                    case("O"):
+                        $templateProcessor->setValue('season',"Other");
+                        $templateProcessor->setValue('term',"To Be Determined");
+                    break;
                 }
 
                 if($learningOutcome = $syllabus->learning_outcomes){
@@ -1030,6 +1034,10 @@ class SyllabusController extends Controller
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
                     break;
+                    case("O"):
+                        $templateProcessor->setValue('season',"Other");
+                        $templateProcessor->setValue('term',"To Be Determined");
+                    break;
                 }
 
                 if($learningOutcome =  $syllabus->learning_outcomes){
@@ -1178,9 +1186,29 @@ class SyllabusController extends Controller
         $documentName = $syllabus->course_code.$syllabus->course_num.'-Syllabus.docx';
         // save word document on server
         $templateProcessor->saveAs($documentName);
-        // force user browser to download the saved document
-        return response()->download($documentName)->deleteFileAfterSend(true);            
-
+        //Get type of download requested
+        $downloadType = $_POST['download'];
+        //If user wants a word file, send them a word file. Otherwise give them a PDF file.
+        if($downloadType == 'word'){
+            return response()->download($documentName)->deleteFileAfterSend(true); 
+        }
+        else{
+            //Set PDF path and variables
+            $pdfName = $syllabus->course_code.$syllabus->course_num.'-Syllabus.pdf';
+            $domPdfPath = base_path('vendor/dompdf/dompdf');
+            \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
+            \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
+            //Load Word file
+            $Content = \PhpOffice\PhpWord\IOFactory::load(base_path('html/'.$documentName));
+            //Use above for staging/production, below for local
+            //$Content = \PhpOffice\PhpWord\IOFactory::load(public_path($documentName));
+            //Create PDF file from Word file
+            $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content,'PDF');
+            $PDFWriter->save($pdfName);
+            // force user browser to download the saved document, and delete the word version
+            unlink($documentName);
+            return response()->download($pdfName)->deleteFileAfterSend(true);
+        }
     }
 
     public function duplicate(Request $request, $syllabusId) {

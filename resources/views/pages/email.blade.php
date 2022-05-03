@@ -8,7 +8,7 @@
                 Welcome the admin Email creator, from here you will be able to create and send out mass emails to the users. This will be useful when updating <strong>terms-of-use, or notifying user about updates and features</strong>.
             </p>
             <p>
-            The body field of this form accepts Markdown for email formatting. To generate Markdown for your email please use <a href="https://markdownlivepreview.com/" target="_blank">Markdown Live Preview</a>.
+            The body field of this form accepts Markdown for email formatting. To generate Markdown for your email please use <a href="https://markdownlivepreview.com/" target="_blank" rel="noopener noreferrer">Markdown Live Preview</a>.
             </p>
             <form method="POST" action="{{ action('AdminEmailController@send') }}">
                 @csrf

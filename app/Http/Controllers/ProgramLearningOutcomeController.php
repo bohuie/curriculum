@@ -32,6 +32,7 @@ class ProgramLearningOutcomeController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**

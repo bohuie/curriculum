@@ -23,7 +23,7 @@
                             <div class="modal-body">
 
                                 <div class="form-group row">
-                                    <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                    <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span> Course Code</label>
                                     <div class="col-md-8">
                                         <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$syllabus->course_code}}" name="course_code" required autofocus>
                                         @error('course_code')
@@ -38,9 +38,9 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                    <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span> Course Number</label>
                                     <div class="col-md-8">
-                                        <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$syllabus->course_num}}" required autofocus>
+                                        <input id="course_num" type="number" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$syllabus->course_num}}" required autofocus>
                                         @error('course_num')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -50,7 +50,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                    <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span> Course Title</label>
                                     <div class="col-md-8">
                                         <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$syllabus->course_title}} - Copy" required autofocus>
                                         @error('course_title')
@@ -120,8 +120,10 @@
                                                 Winter {{$course->year}} Term 2
                                                 @elseif ($course->semester == "S1")
                                                 Summer {{$course->year}} Term 1
-                                                @else
+                                                @elseif ($course->semester == "S2")
                                                 Summer {{$course->year}} Term 2
+                                                @else
+                                                Other {{$course->year}}
                                                 @endif
                                             </td>
                                         </tr>
@@ -142,7 +144,7 @@
 
             <div class="card-body">
                 <h6 class="card-subtitle mb-4 lh-lg fs-6 ml-3 mt-2 mr-2">
-                    To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank"href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
+                    To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
                 </h6>
                 <hr class="w-auto text-secondary mb-4 ml-3 mr-3">
                 
@@ -196,7 +198,7 @@
                             </div>
                             <div class="col-2">
                                 <label for="courseNumber"><span class="requiredField">* </span>Course Number</label>
-                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="text" placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
+                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
                                 <div class="invalid-tooltip">
                                     Please enter the course number.
                                 </div>
@@ -304,6 +306,9 @@
 
                                     <input id="friday" type="checkbox" name="schedule[]" value="Fri">
                                     <label for="friday" class="mr-2">Friday</label>
+									
+									<input id="saturday" type="checkbox" name="schedule[]" value="Sat">
+                                    <label for="saturday" class="mr-2">Saturday</label>
                                 </div>
                             </div>
                         </div>
@@ -520,7 +525,11 @@
             <div class="card-footer p-4">
                 <div style="display:flex; flex-flow:row nowrap; justify-content:flex-end;">
                     <button type="submit" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save</button>
-                    <button type="submit" name="download" value="1" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save and Download <i class="bi bi-download"></i></button>
+                    <button type="button" style="white-space:normal; word-wrap:break-word;" class="btn btn-primary col-2 btn-sm m-2 dropdown-toggle" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false" form="sylabusGenerator">Save and Download</button>
+                    <ul class="dropdown-menu" aria-labelledby="downloadBtn">
+                        <li><button type="submit" name="download" value="pdf" form="sylabusGenerator" style="all: unset"><i class="bi-file-pdf-fill text-danger"></i>PDF</button></li>
+                        <li><button type="submit" name="download" value="word" form="sylabusGenerator" style="all: unset"><i class="bi-file-earmark-word-fill text-primary"></i>Word</button></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -1062,6 +1071,9 @@
             if (classMeetingDays.includes('Fri')) {
                 $('#friday').attr('checked', 'true');
             }
+			if (classMeetingDays.includes('Sat')) {
+                $('#saturday').attr('checked', 'true');
+            }
         }
         // use event delegation to show format note on focus in
         document.getElementById("sylabusGenerator").addEventListener('focusin', function (event) {
@@ -1277,7 +1289,7 @@
                 <span class="requiredField">* </span>
                 Course Credit
             </label>
-            <input name = "courseCredit" class ="form-control" type="number" min="0" step="1"placeholder="E.g. 3" required value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_credit : ''}}">
+            <input maxlength="2" oninput="validateMaxlength()" onpaste="validateMaxlength()" name = "courseCredit" class ="form-control" type="number" min="0" step="1"placeholder="E.g. 3" required value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_credit : ''}}">
             <div class="invalid-tooltip">
                 Please enter the course course credits.
             </div>
@@ -1286,7 +1298,7 @@
         var officeLocation = `
             <label for="officeLocation"><span class="requiredField">* </span>Office Location</label>
             <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['officeLocation']}}"></i>
-            <input name = "officeLocation" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->office_location : ''}}" required>
+            <input maxlength="191" oninput="validateMaxlength()" onpaste="validateMaxlength()" name = "officeLocation" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{isset($vancouverSyllabus) ? $vancouverSyllabus->office_location : ''}}" required>
             <div class="invalid-tooltip">
                 Please enter your office location.
             </div>
@@ -1297,7 +1309,7 @@
             <div class="col mb-3">
                 <label for="courseDescription">Course Description</label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseDescription']}}"></i>
-                <textarea name = "courseDescription" class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_description : ''}}</textarea>
+                <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDescription" class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_description : ''}}</textarea>
             </div>
             `;
 
@@ -1309,7 +1321,7 @@
                 <div id="formatContacts" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
-                <textarea id="courseContacts" data-formatnoteid="formatContacts" name = "courseContacts" placeholder="E.g. Professor, Jane Doe, jane.doe@ubc.ca, +1 234 567 8900, ... &#10;Teaching Assistant, John Doe, john.doe@ubc.ca, ..."class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_contacts : ''}}</textarea>
+                <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="courseContacts" data-formatnoteid="formatContacts" name = "courseContacts" placeholder="E.g. Professor, Jane Doe, jane.doe@ubc.ca, +1 234 567 8900, ... &#10;Teaching Assistant, John Doe, john.doe@ubc.ca, ..."class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_contacts : ''}}</textarea>
             </div>
             `;
 
@@ -1321,7 +1333,7 @@
                 <div id="formatPrereqs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
-                <textarea id="coursePrereqs" data-formatnoteid="formatPrereqs"name = "coursePrereqs" placeholder="E.g. CPSC 210 or EECE 210 or CPEN 221 &#10;E.g. CPSC 121 or MATH 220"class ="form-control" type="text" form="sylabusGenerator" >{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_prereqs : ''}}</textarea>
+                <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="coursePrereqs" data-formatnoteid="formatPrereqs"name = "coursePrereqs" placeholder="E.g. CPSC 210 or EECE 210 or CPEN 221 &#10;E.g. CPSC 121 or MATH 220"class ="form-control" type="text" form="sylabusGenerator" >{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_prereqs : ''}}</textarea>
             </div>
             `;
         var courseCoreqs = `
@@ -1332,14 +1344,14 @@
                 <div id="formatCoreqs"class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false" >
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
                 </div>                                            
-                <textarea id = "courseCoreqs" data-formatnoteid="formatCoreqs"placeholder="E.g. CPSC 107 or CPSC 110 &#10;E.g. CPSC 210" name = "courseCoreqs" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_coreqs : ''}}</textarea>
+                <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id = "courseCoreqs" data-formatnoteid="formatCoreqs"placeholder="E.g. CPSC 107 or CPSC 110 &#10;E.g. CPSC 210" name = "courseCoreqs" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_coreqs : ''}}</textarea>
             </div>
             `;
         var courseInstructorBio = `
             <div class="col mb-3">
                     <label for="courseInstructorBio">Course Instructor Biographical Statement</label>
                     <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['instructorBioStatement']}}"></i>
-                    <textarea id = "courseInstructorBio" name = "courseInstructorBio" class ="form-control" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->instructor_bio : ''}}</textarea>
+                    <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id = "courseInstructorBio" name = "courseInstructorBio" class ="form-control" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->instructor_bio : ''}}</textarea>
             </div>
             `;     
         
@@ -1348,7 +1360,7 @@
                 <label for="courseStructure">Course Structure</label>
                 <i class="bi bi-info-circle-fill has-tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseStructure']}}"></i>
                 <span class="requiredBySenate"></span>
-                <textarea name = "courseStructure" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_structure : ''}}</textarea>
+                <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseStructure" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_structure : ''}}</textarea>
             </div>
             `;
 
@@ -1356,7 +1368,7 @@
             <div class="col mb-3">
                 <label for="learningAnalytics">Learning Analytics</label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['learningAnalytics']}}"></i>                                            
-                <textarea id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
+                <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
             </div>
             `;
         var courseFormat = `

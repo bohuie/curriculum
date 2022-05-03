@@ -25,6 +25,7 @@ class LearningActivityController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**

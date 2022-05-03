@@ -199,7 +199,7 @@
 <script>
     $(document).ready(function () {
 
-     sortDropdown();
+        sortDropdown();
     //   $("form").submit(function () {
     //     // prevent duplicate form submissions
     //     $(this).find(":submit").attr('disabled', 'disabled');
@@ -207,7 +207,7 @@
 
     //   });
 
-      $('#addLearningActivitiesForm').submit(function (event) {
+        $('#addLearningActivitiesForm').submit(function (event) {
             // prevent default form submission handling
             event.preventDefault();
             event.stopPropagation();
@@ -248,7 +248,7 @@
 
     function addLearningActivity() {
         // prepend assessment method to the table
-        $('#addLearningActivitiesTbl tbody').prepend(`
+        $('#addLearningActivitiesTbl tbody').append(`
             <tr>
                 <td>
                     <input list="learningActivitiesOptions" type="text" class="form-control" name="new_l_activities[]" value = "${$('#learningActivity').val()}" placeholder="Choose from the dropdown list or type your own" form="saveLearningActivityChanges" required spellcheck="true" style="white-space: pre">

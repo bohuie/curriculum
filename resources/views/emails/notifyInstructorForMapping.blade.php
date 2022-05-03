@@ -11,7 +11,7 @@ Your course {{$course_code}} {{$course_num}} - {{$course_title}} has been includ
 3. Go to “Program Outcome Mapping or Step 5” to map the course learning outcomes to the program learning outcomes
 4. When your mapping is complete, be sure to click the save button to share your mapping with the program owner/editor  
 
-@component('mail::button', ['url' => 'http://127.0.0.1:8000/login'])
+@component('mail::button', ['url' => config('app.login_url')])
 Log in and map course
 @endcomponent
 <br>

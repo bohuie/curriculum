@@ -671,10 +671,10 @@ class ProgramWizardController extends Controller
         $output = '';
 
         if (!count($opFrequencies) < 1) {
-            $output .= '<table class="table table-light table-bordered"><tbody><tr class="table-secondary"><th>Strategic Priorities</th><th>Frequency</th></tr>';
+            $output .= '<table class="table table-light table-bordered"><tbody><tr class="table-primary"><th>Strategic Priorities</th><th>Courses</th></tr>';
             // loop through categories and add them to the output
             foreach($opFrequenciesSubcategories as $subcat_id => $opFrequenciesSubcategory) {
-                $output .= '<tr class="table-primary"><td colspan="2"><b>'. $opFrequenciesSubcategory .'</b></td></tr>';
+                $output .= '<tr class="table-secondary"><td colspan="2"><b>'. $opFrequenciesSubcategory .'</b></td></tr>';
                 // loop through the optional priorities and add them to the output
                 foreach($opFrequencies as $op_id => $opFrequency) {
                     if ($subcat_id == $opFrequency['subcat_id']) {
@@ -710,7 +710,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -752,7 +752,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -794,7 +794,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -836,7 +836,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -878,7 +878,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -920,7 +920,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all assessment methods
         $amFrequencies = [];
-        if (count($allAM) > 1) {
+        if (count($allAM) >= 1) {
             for ($i = 0; $i < count($allAM); $i++) {
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
@@ -956,7 +956,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -990,7 +990,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1024,7 +1024,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1058,7 +1058,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1092,7 +1092,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1126,7 +1126,7 @@ class ProgramWizardController extends Controller
         }
         // Get frequencies for all Learning Activities
         $laFrequencies = [];
-        if (count($allLA) > 1) {
+        if (count($allLA) >= 1) {
             for ($i = 0; $i < count($allLA); $i++) {
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
@@ -1734,7 +1734,7 @@ class ProgramWizardController extends Controller
                     //     $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
                     // }else
                     if ($plo->plos->count() > 0) {
-                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_category.'</th>';
+                        $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_category).'</th>';
                     }
                 }
             }
@@ -1752,7 +1752,7 @@ class ProgramWizardController extends Controller
                         if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.($index + 1).'</th>';
                         } else {
-                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
                         }
                     }
                 }
@@ -1764,9 +1764,8 @@ class ProgramWizardController extends Controller
                         if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.( count($ploProgramCategories) + $uncatIndex).'</th>';
                         } else {
-                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
                         }
-                        // $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.$plo->plo_shortphrase.'</th>';
                     }
                 }
             } else {
@@ -1779,9 +1778,9 @@ class ProgramWizardController extends Controller
             foreach ($programCourses as $course) {
                 $output .= '<tr>
                                 <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
-                                '.$course->course_code.' '.$course->course_num.' '.$course->section.'
+                                '.htmlspecialchars($course->course_code).' '.htmlspecialchars($course->course_num).' '.htmlspecialchars($course->section).'
                                 <br>
-                                '.$course->semester.' '.$course->year.'
+                                '.htmlspecialchars($course->semester).' '.htmlspecialchars($course->year).'
                                 </th>';
                                 // Frequency distribution from each course 
                                 // For Each Categorized PLO

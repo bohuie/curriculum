@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Browser Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
+    <div id="browser-notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+
+    </div>
+</div>
+
 <!-- Notification -->
 @if ($user->has_temp == 1)
     <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
@@ -1553,8 +1560,15 @@
                             <div class="col-md-2 float-right">
                                 <select id="course_year" class="form-control @error('course_year') is-invalid @enderror"
                                     name="course_year" required autofocus>
+                                    <option value="2030">2030</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
                                     <option value="2023">2023</option>
-                                    <option value="2022">2022</option>
+                                    <option value="2022" selected>2022</option>
                                     <option value="2021">2021</option>
                                     <option value="2020">2020</option>
                                     <option value="2019">2019</option>
@@ -1635,6 +1649,27 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#notification").toast("show");
+
+        // Show notification if user is using a browser that's not either firefox chrome
+        // Chrome 1 - 79
+        // var isChrome = navigator.userAgent.indexOf("Chrome") > -1;
+        // Firefox 1.0+
+        // var isFirefox = typeof InstallTrigger !== 'undefined';
+        // alert("chrome? " + isChrome + " or Firefox? " + isFirefox);
+
+        // if(!(isChrome || isFirefox)) {
+        //     $("#browser-notification").append(`
+        //     <div class="toast-header bg-warning">
+        //         <i class="bi bi-exclamation-triangle-fill"></i>
+        //         <strong class="me-auto pl-2">Alert</strong>
+        //         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        //     </div>
+        //     <div class="toast-body">
+        //         It appears you are using a browser not recommended for use with the Curriculum MAP Tool. We recommend you use either <a href="https://www.mozilla.org/en-CA/firefox/products/" target="_BLANK" rel="noopener noreferrer">Firefox</a> or <a href="https://www.google.com/intl/en_ca/chrome/" target="_BLANK" rel="noopener noreferrer">Google Chrome</a>.
+        //     </div>
+        //     `);
+        //     $("#browser-notification").toast("show");
+        // }
 
         // Enables functionality of tool tips
         $('[data-toggle="tooltip"]').tooltip({html:true});

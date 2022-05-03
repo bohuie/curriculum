@@ -2,20 +2,49 @@
 
 @section('content')
 <!-- Notification -->
-@if ($hasUnMappedCourses)
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
-        <div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-            <div class="toast-header bg-warning">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                <strong class="me-auto pl-2">Alert</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:11">
+        <div id="errorToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header " style="padding:1em;color:#842029;background-color:#f8d7da;border-color:#f5c2c7">
+                <i class="bi bi-exclamation-circle-fill pr-2 text-danger"></i>            
+                <strong class="me-auto">Error</strong>
+                <button type="button" class="btn-close" onclick="hideErrorToast()" aria-label="Close"></button>
             </div>
-            <div class="toast-body">
-                There are courses that haven't been fully mapped to this program. To see which courses have not been fully mapped go to the <a href="{{route('programWizard.step3', $program->program_id)}}">previous step</a>.
+            <div class="toast-body alert-danger">
+            @if (Request::is('courseWizard/*'))
+                We were unable to the download the course summary for {{$course->course_code}} {{$course->course_num}}. 
+                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
+                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Course Summary&cc=matthew.penner@ubc.ca&body=There was an error downloading the course summary for {{$course->course_code}} {{$course->course_num}}">
+                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
+                    </a>  
+                </div>        
+            @endif
+            @if (Request::is('programWizard/*'))
+                We were unable to the download the program overview for {{$program->program}}. 
+                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
+                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Program Overview&cc=matthew.penner@ubc.ca&body=There was an error downloading the program overview for {{$program->program}}">
+                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
+                    </a>      
+                </div>        
+            @endif      
             </div>
         </div>
+
+        @if ($hasUnMappedCourses)
+            <div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                <div class="toast-header bg-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong class="me-auto pl-2">Alert</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    There are courses that haven't been fully mapped to this program. To see which courses have not been fully mapped go to the <a href="{{route('programWizard.step3', $program->program_id)}}">previous step</a>.
+                </div>
+            </div>
+        @endif
     </div>
-@endif
+</div>
+
 
 <div>
     <div class="row justify-content-center">
@@ -30,9 +59,16 @@
                 <h3 class="card-header wizard">
                     <div class="row">
                         <div class="col text-left">
-                            <button id="downloadPDF" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('programs.pdf', $program->program_id)}}">
-                                Download<i class="bi bi-download pl-2"></i>
-                            </button>
+                            <div class="btn-group">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                                    Download <i class="bi bi-download"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="downloadBtn">
+                                    <li><a id="downloadPDFBtn" class="dropdown-item" data-route="{{route('programs.pdf', $program->program_id)}}"><i class="bi bi-file-pdf-fill text-danger"></i> PDF</a></li>
+                                    <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel</a></li>
+                                </ul>
+                                
+                            </div>
                         </div>
 
                         <div class="col">
@@ -772,7 +808,7 @@
                         // Append to table for all assessment methods frequencies
                         $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                         for (var i = 0; i < amTitles.length; i++) {
-                            $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                            $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                         }
 
                     }
@@ -861,7 +897,7 @@
                         // Append to table for all assessment methods frequencies
                         $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                         for (var i = 0; i < laTitles.length; i++) {
-                            $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                            $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                         }
 
                     }
@@ -1138,7 +1174,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
@@ -1221,7 +1257,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
@@ -1305,7 +1341,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
@@ -1389,7 +1425,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
@@ -1473,7 +1509,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
@@ -1557,7 +1593,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#am-table').append('<tr class="table-primary"><th>Assessment Method</th><th>Frequency</th></tr>');
                     for (var i = 0; i < amTitles.length; i++) {
-                        $('#am-table').append('<tr><td>' + amTitles[i] + '</td><td>' + amValues[i] + '</td></tr>');
+                        $('#am-table').append('<tr><td>' + sanitizeHTML(amTitles[i]) + '</td><td>' + amValues[i] + '</td></tr>');
                     }
 
                 }
@@ -1641,7 +1677,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
                 // display chart
@@ -1725,7 +1761,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
                 // display chart
@@ -1809,7 +1845,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
                 // display chart
@@ -1893,7 +1929,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
                 // display chart
@@ -1977,7 +2013,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
                 // display chart
@@ -2061,7 +2097,7 @@
                     // Append to table for all assessment methods frequencies
                     $('#la-table').append('<tr class="table-primary"><th>Learning Activity</th><th>Frequency</th></tr>');
                     for (var i = 0; i < laTitles.length; i++) {
-                        $('#la-table').append('<tr><td>' + laTitles[i] + '</td><td>' + laValues[i] + '</td></tr>');
+                        $('#la-table').append('<tr><td>' + sanitizeHTML(laTitles[i]) + '</td><td>' + laValues[i] + '</td></tr>');
                     }
                 }
                 // display chart
@@ -2297,6 +2333,19 @@
             StackedColumn();
         }
     });
+
+    /**
+    * Sanitize and encode all HTML in a user-submitted string
+    * https://portswigger.net/web-security/cross-site-scripting/preventing
+    * @param  {String} str  The user-submitted string
+    * @return {String} str  The sanitized string
+    * Referenced from: https://gomakethings.com/how-to-sanitize-third-party-content-with-vanilla-js-to-prevent-cross-site-scripting-xss-attacks/
+    */
+    var sanitizeHTML = function (str) {
+        return str.replace(/[^\w. ]/gi, function (c) {
+            return '&#' + c.charCodeAt(0) + ';';
+        });
+    };
 
 </script>
 <style>
