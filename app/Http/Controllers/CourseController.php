@@ -86,12 +86,12 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate request input
         $this->validate($request, [
-            'course_code' => 'required',
+            'course_code' => 'required|max:4',
             'course_title'=> 'required',
-
-            ]);
+            'course_num' => 'max:30',
+        ]);
 
         $course = new Course;
         $course->course_title = $request->input('course_title');
