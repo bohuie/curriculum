@@ -8,7 +8,7 @@
             <div class="toast-header " style="padding:1em;color:#842029;background-color:#f8d7da;border-color:#f5c2c7">
                 <i class="bi bi-exclamation-circle-fill pr-2 text-danger"></i>            
                 <strong class="me-auto">Error</strong>
-                <button type="button" class="btn-close" onclick="toggleErrorToast()" aria-label="Close"></button>
+                <button type="button" class="btn-close" onclick="hideErrorToast()" aria-label="Close"></button>
             </div>
             <div class="toast-body alert-danger">
             @if (Request::is('courseWizard/*'))

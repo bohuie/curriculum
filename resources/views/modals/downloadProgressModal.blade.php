@@ -59,7 +59,7 @@
                 $('#downloadProgressModal').modal('hide');
                 // check if controller handled an error
                 if (data == -1) 
-                    toggleErrorToast()
+                    showErrorToast()
                 else {
                     // Set href as a local object URL
                     $('#save-file').attr('href', data);
@@ -72,9 +72,9 @@
             error: (jqXHR, textStatus, error) => {
                 // hide download modal
                 $('#downloadProgressModal').modal('hide');
-                if (textStatus != abort) {
+                if (textStatus != "abort") {
                     // show error toast 
-                    toggleErrorToast()                   
+                    showErrorToast()                   
                 }
             },
         });     
@@ -89,17 +89,24 @@
         }
     }
 
-    // toggle the show/hide class of the error toast
-    function toggleErrorToast() {
+    // show the error toast
+    function showErrorToast() {
         var errorToast = $("#errorToast");
         if (errorToast.hasClass("hide")) {
             errorToast.removeClass("hide");
             errorToast.addClass("show");
-        } else {
+        } 
+    }
+
+    // hide the error toast
+    function hideErrorToast() {
+        var errorToast = $("#errorToast");
+        if (errorToast.hasClass("show")) {
             errorToast.removeClass("show");
             errorToast.addClass("hide");
-        }
+        } 
     }
+
 
     function deletePDF(route) {
         var token = $("meta[name='csrf-token']").attr("content");
