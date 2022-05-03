@@ -1199,7 +1199,9 @@ class SyllabusController extends Controller
             \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
             \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
             //Load Word file
-            $Content = \PhpOffice\PhpWord\IOFactory::load(public_path($documentName)); 
+            $Content = \PhpOffice\PhpWord\IOFactory::load(base_path('html/'.$documentName));
+            //Use above for staging/production, below for local
+            //$Content = \PhpOffice\PhpWord\IOFactory::load(public_path($documentName));
             //Create PDF file from Word file
             $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content,'PDF');
             $PDFWriter->save($pdfName);
