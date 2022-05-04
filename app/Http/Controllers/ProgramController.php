@@ -504,7 +504,7 @@ class ProgramController extends Controller
         // close curl resource to free up system resources
         curl_close($ch); 
         // create url to img resource
-        $imgUrl = 'storage' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR . $filename;
+        $imgUrl = config('app.url') . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR . $filename;
 
         return $imgUrl;
     }
