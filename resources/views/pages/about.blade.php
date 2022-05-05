@@ -147,6 +147,14 @@
                             <p class="lead"><i>Curriculum Consultant</i></p>
                         </figcaption>
                     </div>
+                    <div class="col-sm"> 
+                        <img class="team-img" src=" {{ asset('img/team/Matthew-200x200.png') }}"/>
+                        <figcaption style="text-align:center;">
+                            <p class="lead" style="margin-bottom:0px;"><strong>Matthew Penner</strong></p>
+                            <p class="lead" style="margin-bottom:0px;">Centre for Teaching, Learning and Technology</p>
+                            <p class="lead"><i>Support Analyst</i></p>
+                        </figcaption>
+                    </div>
                 </div>
                 <br>
                 <div class="row">
