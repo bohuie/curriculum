@@ -184,7 +184,7 @@
 
         <!-- START of frequency distribution tables -->
         <div class="panel panel-default">
-            <div class="panel-heading"><h4>Curriculum MAP</h4></div>
+            <div class="panel-heading"><h4>Curriculum MAP: Frequency Distribution Tables</h4></div>
                 @if($program->courses->count() < 1 )
                     <div class="panel-body">
                         <div class="alert alert-warning" role="alert">
@@ -194,13 +194,13 @@
                 @elseif ($program->programLearningOutcomes->count() < 1) 
                     <div class="panel-body">
                         <div class="alert alert-warning" role="alert">
-                            No problem learning outcomes have been added to this program yet. <a class="alert-link" href="{{route('programWizard.step1', $program->program_id)}}">Add program learning outcomes</a>                  
+                            No program learning outcomes have been added to this program yet. <a class="alert-link" href="{{route('programWizard.step1', $program->program_id)}}">Add program learning outcomes</a>                  
                         </div>
                     </div>
                 @else
                     <div class="panel-body">
                         <div class="alert alert-info" role="alert" style="margin:0px">
-                            <p>This chart shows the alignment of all courses to program learning outcomes for this program.</p>
+                            <p>This table shows the alignment of all courses to program learning outcomes for this program.</p>
                         </div>
                     </div>
                     @foreach ($coursesByLevels as $courseLevelTitle => $coursesByLevel) 
@@ -397,6 +397,70 @@
                             </table>
                         @endif
                     @endforeach
+                @endif
+            </div>  
+        </div>
+        <!-- END of frequency distribution tables -->
+        
+        <!-- START of Bar Charts -->
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Curriculum MAP: Bar Charts</h4></div>
+                @if($program->courses->count() < 1 )
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">
+                            There are no courses assigned to this program yet. <a class="alert-link" href="{{route('programWizard.step3', $program->program_id)}}">Add courses</a>               
+                        </div>
+                    </div>
+                @elseif ($program->programLearningOutcomes->count() < 1) 
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">
+                            No program learning outcomes have been added to this program yet. <a class="alert-link" href="{{route('programWizard.step1', $program->program_id)}}">Add program learning outcomes</a>                  
+                        </div>
+                    </div>
+                @elseif ($program->mappingScaleLevels->count() < 1)
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">
+                            There are no mapping scales for this program. <a class="alert-link" href="{{route('programWizard.step2', $program->program_id)}}">Add a mapping scale</a>                  
+                        </div>
+                    </div>
+                @else
+                    <div class="panel-body">
+                        <div class="alert alert-info" role="alert" style="margin:0px">
+                            <p>This chart shows how many course learning outcomes (CLOs) are aligned to each program learning outcome (PLO).</p>
+                        </div>
+                    </div>
+                    <img src={{$charts["Program MAP Chart"]}} width="600">
+
+                    @if ($charts["Assessment Methods Chart"])
+                        <div class="panel-body">
+                            <div class="alert alert-info" role="alert" style="margin:0px">
+                                <p>This chart shows the frequencies of the assessment methods for courses belonging to this program.</p>
+                            </div>
+                        </div>
+                        <img src={{$charts["Assessment Methods Chart"]}} width="600">
+                    @else 
+                        <div class="panel-body">
+                            <div class="alert alert-warning" role="alert">
+                                There are no assessment methods for the courses belonging to this program.                  
+                            </div>
+                        </div>
+                    @endif
+
+
+                    @if ($charts["Learning Activities Chart"])
+                        <div class="panel-body">
+                            <div class="alert alert-info" role="alert" style="margin:0px">
+                                <p>This chart shows the frequencies of the learning activities for courses belonging to this program.</p>
+                            </div>
+                        </div>
+                        <img src={{$charts["Learning Activities Chart"]}} width="600">
+                    @else 
+                        <div class="panel-body">
+                            <div class="alert alert-warning" role="alert">
+                                There are no learning activities for the courses belonging to this program.                  
+                            </div>
+                        </div>
+                    @endif
                 @endif
             </div>  
         </div>
