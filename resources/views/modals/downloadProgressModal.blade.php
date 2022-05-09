@@ -61,6 +61,8 @@
                 if (data == -1) 
                     showErrorToast()
                 else {
+                    // close error toast if open
+                    hideErrorToast();
                     // Set href as a local object URL
                     $('#save-file').attr('href', data);
                     // trigger download
@@ -74,7 +76,7 @@
                 $('#downloadProgressModal').modal('hide');
                 if (textStatus != "abort") {
                     // show error toast 
-                    showErrorToast()                   
+                    showErrorToast();                
                 }
             },
         });     
