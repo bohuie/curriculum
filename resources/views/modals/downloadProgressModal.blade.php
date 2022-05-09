@@ -45,7 +45,6 @@
 
     function download(trigger) {
         var route = $(trigger).data("route");
-        console.log(trigger);
         xhr = $.ajax({
             type: "GET",
             url: route,
