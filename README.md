@@ -25,7 +25,7 @@ Curriculum MAP is open-sourced software licensed under the [GNU General Public L
 
 Curriculum MAP relies on software developed by third party individuals and groups. The <a href="https://github.com/bohuie/curriculum/blob/master/composer.json">composer.json</a> file and <a href="https://github.com/bohuie/curriculum/blob/master/package.json">package.json</a> file describe the third-party dependencies of Curriculum MAP. 
 
-<strong>Highcharts Attribution: </strong>All charts used in the Curriculum MAP tool are powered by <a href="https://www.highcharts.com/">Highcharts</a> and are licensed under the <a href="https://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 License</a>. For commercial use, please be sure to license this software.
+<strong>Highcharts Attribution</strong>: All charts used in the Curriculum MAP tool are powered by <a href="https://www.highcharts.com/">Highcharts</a>. To use this feature, a licence from Highcharts is required. Contact <a href="https://www.highcharts.com/">Highcharts</a> directly for licensing options. 
 
 ## Questions
 If you have a question about Curriculum MAP, please first check our <a href="https://curriculum.ok.ubc.ca/faq">Frequently Asked Questions (FAQs)</a>. If your question is unanswered please email the<a href="mailto:ctl.helpdesk@ubc.ca?subject=Curriculum MAP: Question"> Centre for Teaching and Learning</a> at UBC. 
