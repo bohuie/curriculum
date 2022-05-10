@@ -326,9 +326,9 @@
                                                 @endif
                                             @else 
                                                 @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
-                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>PLO #{{$ploIndexArray[$unCatPLO->pl_outcome_id]}}</b></td>
                                                 @else 
-                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>PLO #{{$ploIndexArray[$unCatPLO->pl_outcome_id]}}</b></td>
                                                 @endif
                                             @endif
                                         @endforeach

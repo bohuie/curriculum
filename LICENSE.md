@@ -1,3 +1,5 @@
+<strong>Highcharts Attribution</strong>: All charts used in the Curriculum MAP tool are powered by <a href="https://www.highcharts.com/">Highcharts</a>. To use this feature, a licence from Highcharts is required. Contact <a href="https://www.highcharts.com/">Highcharts</a> directly for licensing options. 
+                    
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

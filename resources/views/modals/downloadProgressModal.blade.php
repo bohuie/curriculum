@@ -17,7 +17,7 @@
                 <div class="progress">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                 </div>
-                <a id="save-file" hidden target="_blank" rel="noreferrer noopener" ></a>
+                <a id="save-file" hidden download></a>
             </div>
             <div class="modal-footer">
                 <button id="cancelDownloadBtn" type="button" class="btn btn-secondary" aria-label="Close">Cancel</button>
@@ -45,7 +45,6 @@
 
     function download(trigger) {
         var route = $(trigger).data("route");
-        console.log(trigger);
         xhr = $.ajax({
             type: "GET",
             url: route,
@@ -61,6 +60,8 @@
                 if (data == -1) 
                     showErrorToast()
                 else {
+                    // close error toast if open
+                    hideErrorToast();
                     // Set href as a local object URL
                     $('#save-file').attr('href', data);
                     // trigger download
@@ -74,7 +75,7 @@
                 $('#downloadProgressModal').modal('hide');
                 if (textStatus != "abort") {
                     // show error toast 
-                    showErrorToast()                   
+                    showErrorToast();                
                 }
             },
         });     
