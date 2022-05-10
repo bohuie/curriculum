@@ -122,7 +122,8 @@
                                 <i class="bi bi-box-arrow-up-right"></i> Competencies
                             </a> 
                             are the knowledge, skills and attributes that students are expected to attain by the end of a course. Add, edit and delete CLOs below. 
-                            You may use an excel spreadsheet to import multiple CLOs. Follow the template provided below to save them on your computer first, and then upload them to this page.
+                            You may use an excel spreadsheet to import multiple CLOs (use row 1 for headers and begin list of CLOs on row 2). Follow the template provided below to save them on your computer first, and then upload them to this page.
+
                         </div>
                     </div>
 
