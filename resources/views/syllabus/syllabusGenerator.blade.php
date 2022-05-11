@@ -191,7 +191,7 @@
                         <div class="row mb-3">
                             <div class="col-3 ">
                                 <label for="courseCode"><span class="requiredField">* </span>Course Code</label>
-                                <input id = "courseCode" name = "courseCode" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->course_code : '' }}">
+                                <input id = "courseCode" pattern="[A-Za-z]+" minlength="1" name = "courseCode" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->course_code : '' }}">
                                 <div class="invalid-tooltip">
                                     Please enter the course code.
                                 </div>
