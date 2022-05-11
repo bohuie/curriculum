@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\OptionalPriorities;
+use App\Models\OptionalPrioritiesSubdescription;
 use App\Models\OptionalPrioritySubcategories;
 use App\Models\OptionalPriorityCategories;
 
@@ -89,6 +90,14 @@ class OptionalPrioritiesSeeder extends Seeder
                                 Programs are encouraged to take these and/or other initiatives that align with the report:";
         $osc->subcat_postamble = "";
         $osc->save();
+
+        $osc = new OptionalPrioritySubcategories;
+        $osc->subcat_id = 7;
+        $osc->cat_id = 2;
+        $osc->subcat_name = '<a href="https://health.ubc.ca/sites/health.ubc.ca/files/documents/UBCHealth_StrategicPlan_2021_2026_Printable.pdf" target="_blank">UBC Health Strategic Plan 2021-2026 <i class="bi bi-box-arrow-up-right"></i></a>"';
+        $osc->subcat_desc = "";
+        $osc->subcat_postamble = "";
+        $osc->save();
         
 		$osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 10;
@@ -168,11 +177,16 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->save();
 
         // End UBC Mandate 2020
+
+        $op_subDesc = new OptionalPrioritiesSubdescription;
+        $op_subDesc->description = "Top skills of the future (a skill is the ability to perform tasks based on one's knowledge, learning or practice):";
+        $op_subDesc->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 8;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Active Listening";
+        $opp->op_subdesc = $op_subDesc->op_subdesc;
         $opp->save();
         
         $opp = new OptionalPriorities;
@@ -192,11 +206,16 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->subcat_id = 2;
         $opp->optional_priority = "Critical Thinking";
         $opp->save();
+
+        $op_subDesc = new OptionalPrioritiesSubdescription;
+        $op_subDesc->description = "Top competencies of the future (competency is the ability to apply skills and knowledge to perform complex tasks well and to adapt easily to the activities of a variety of jobs):";
+        $op_subDesc->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 12;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Social Perceptiveness";
+        $opp->op_subdesc = $op_subDesc->op_subdesc;
         $opp->save();
         
         $opp = new OptionalPriorities;
@@ -412,83 +431,105 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->subcat_id = 6;
         $opp->optional_priority = "Applied learning opportunities grounded in the personal, local and regional community (e.g. flood and wildfire impacted communities in BC)";
         $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 57;
+        $opp->subcat_id = 1;
+        $opp->optional_priority = 'Incorporation of the Declaration on the Rights of Indigenous Peoples Act and Calls to Action of the Truth and Reconciliation Commission <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>';
+        $opp->year = "2021";
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 58;
+        $opp->subcat_id = 1;
+        $opp->optional_priority ="Align with CleanBC's plan to a protect our communities towards a more sustainable future<a href='https://cleanbc.gov.bc.ca/' target='_blank'>( <i class='bi bi-box-arrow-up-right'></i> More Information can be found here)</a>";
+        $opp->year = "2021";
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 59;
+        $opp->subcat_id = 1;
+        $opp->optional_priority = 'Work with communities, employers and industry to implement skills training towards career opportunities in BC <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>';
+        $opp->year = "2021";
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 60;
+        $opp->subcat_id = 1;
+        $opp->optional_priority = 'Offer programming aligned with <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> high opportunity and priority occupations</a> (such as trades, technology, early childhood educators and health)';
+        $opp->year = "2021";
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 74;
+        $opp->subcat_id = 1;
+        $opp->optional_priority = 'Incorporation of the Declaration on the Rights of Indigenous Peoples Act and Calls to Action of the Truth and Reconciliation Commission <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>';
+        $opp->year = "2022";
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 75;
+        $opp->subcat_id = 1;
+        $opp->optional_priority = "Align with CleanBC's plan to a protect our communities towards a more sustainable future<a href='https://cleanbc.gov.bc.ca/' target='_blank'>( <i class='bi bi-box-arrow-up-right'></i> More Information can be found here)</a>";
+        $opp->year = "2022";
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 76;
+        $opp->subcat_id = 1;
+        $opp->optional_priority = 'Work with communities, employers and industry to implement skills training towards career opportunities in BC <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>';
+        $opp->year = "2022";
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 77;
+        $opp->subcat_id = 1;
+        $opp->optional_priority = 'Offer programming aligned with <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> high opportunity and priority occupations</a> (such as trades, technology, early childhood educators and health)';
+        $opp->year = "2022";
+        $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 70;
+        $opp->op_id = 78;
         $opp->subcat_id = 10;
         $opp->optional_priority = "Degree Requirements: Incorporate equity, diversity, and inclusion skills and competencies info degree requirements.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 71;
+        $opp->op_id = 79;
         $opp->subcat_id = 10;
         $opp->optional_priority = "Dialogue for Engagement: Facilitate and provide opportunities for dialogue and conversation around sensitive topics at UBC and beyond. Build conflict engagement skills and practices among all members of UBC’s community to equip people for working across differences.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 72;
+        $opp->op_id = 80;
         $opp->subcat_id = 10;
         $opp->optional_priority = "EDI Curriculum and Program Requirements: Embed equity and inclusion education into curriculum and program requirements for all students that incorporates intercultural understanding, empathy and mutual respect.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 73;
+        $opp->op_id = 81;
         $opp->subcat_id = 10;
         $opp->optional_priority = "Student Learning: Review and improve mechanisms to ensure that student perspectives on the inclusiveness of their learning experiences are integrated into the improvement of teaching.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 74;
+        $opp->op_id = 82;
         $opp->subcat_id = 11;
         $opp->optional_priority = "Mental Health & Resilience: Enhance mental health literacy to create a supportive campus culture and equipping our community with the skills needed to live well and improve their health, by creating environments that support them.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 75;
+        $opp->op_id = 83;
         $opp->subcat_id = 11;
         $opp->optional_priority = "Social Connection: Encourage everyone to work, learn, collaborate, and build connections in ways that are meaningful to them. Strong and lasting social and friendship connections are critical to our wellbeing.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 76;
+        $opp->op_id = 84;
         $opp->subcat_id = 11;
         $opp->optional_priority = "Physical Activity: Produce accessible programs, policies, and facilities that support physical activity for all ages and abilities.";
         $opp->save();
 		
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
-
-
-        // UBC Mandate 2021
-        $opp = new OptionalPriorities();
-        $opp->op_id = 57;
-        $opp->subcat_id = 1;
-        $opp->optional_priority = `Incorporation of the Declaration on the Rights of Indigenous Peoples Act and Calls to Action of the Truth and Reconciliation Commission <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank" rel="noopener noreferrer">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>`;
-        $opp->year = 2021;
-
-        $opp = new OptionalPriorities();
-        $opp->op_id = 58;
-        $opp->subcat_id = 1;
-        $opp->optional_priority = `Align with CleanBC's plan to a protect our communities towards a more sustainable future
-        <a href="https://cleanbc.gov.bc.ca/" target="_blank" rel="noopener noreferrer">( <i class="bi bi-box-arrow-up-right"></i> 
-        More Information can be found here)</a>`;
-        $opp->year = 2021;
-
-        $opp = new OptionalPriorities();
-        $opp->op_id = 59;
-        $opp->subcat_id = 1;
-        $opp->optional_priority = `Work with communities, employers and industry to implement skills training towards career opportunities in BC <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank" rel="noopener noreferrer">( <i class="bi bi-box-arrow-up-right"></i> More 
-        Information can be found here)</a>`;
-        $opp->year = 2021;
-
-        $opp = new OptionalPriorities();
-        $opp->op_id = 60;
-        $opp->subcat_id = 1;
-        $opp->optional_priority = `Offer programming aligned with <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> high opportunity and priority occupations</a> (such as trades, technology, early childhood educators and health)`
-        ;
-        $opp->year = 2021;
-
-        // End of UBC Mandate 2021
-        
-
         }
 }

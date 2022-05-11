@@ -20,6 +20,7 @@ use App\Models\OutcomeAssessment;
 use App\Models\LearningActivity;
 use App\Models\OptionalPriorities;
 use App\Models\MappingScale;
+use App\Models\OptionalPrioritiesSubdescription;
 use App\Models\OptionalPriorityCategories;
 use App\Models\OptionalPrioritySubcategories;
 use App\Models\OutcomeActivity;
@@ -491,13 +492,15 @@ class CourseWizardController extends Controller
                 $standardsMapped[$l_outcome->l_outcome_id] = StandardsOutcomeMap::where('l_outcome_id', $l_outcome->l_outcome_id)->count();
             }
         }
+        // get all optional priority subdescriptions
+        $opSubDesc = OptionalPrioritiesSubdescription::all();
 
         return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)
         ->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)
         ->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
         ->with('standardsMapped', $standardsMapped)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
-        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
+        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('opSubDesc', $opSubDesc);
     }
     
     public function step7($course_id, Request $request)
