@@ -101,28 +101,38 @@
 @endsection
 
 <script>
+    window.addEventListener('load', function() {
+        const email = document.getElementById('email');
+        var input = email.value;
+        if (input.includes("@")) {
+            // get user email domain 
+            var domainArr = input.split('@');
+            var domainStr = domainArr[domainArr.length - 1];
+            setPrompt(domainStr);
+        }
+    });
+
     // display a message to the user if they are not using a UBC email address
     function notifyNonUBCUser(e) {
         const email = document.getElementById('email');
         var input = email.value;
-        const ubcDomains = ['ubc.ca', 'mail.ubc.ca', 'alumni.ubc.ca', 'student.ubc.ca'];
 
         if (input.includes("@")) {
             // get user email domain 
             var domainArr = input.split('@');
             var domainStr = domainArr[domainArr.length - 1];
-            // check if user domain == one of UBS's domains
-            if (ubcDomains.includes(domainStr.toLowerCase())) {
-                $('#prompt').fadeOut("slow");
-            }else {
-                $('#prompt').fadeIn("slow");
-            }
-
+            setPrompt(domainStr);
         }
-
     }
-    // TODO: runs on window.load to check if there is a email present and if the prompt needs to be displayed upon page load
-    function validateInput() {
 
+    // TODO: runs on window.load to check if there is a email present and if the prompt needs to be displayed upon page load
+    function setPrompt(domainStr) {
+        const ubcDomains = ['ubc.ca', 'mail.ubc.ca', 'alumni.ubc.ca', 'student.ubc.ca'];
+        // check if user domain == one of UBS's domains
+        if (ubcDomains.includes(domainStr.toLowerCase())) {
+            $('#prompt').fadeOut("slow");
+        }else {
+            $('#prompt').fadeIn("slow");
+        }
     }
 </script>
