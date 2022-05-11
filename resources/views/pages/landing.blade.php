@@ -187,6 +187,10 @@
                     If you have questions about the Curriculum MAP, please contact <a href="mailto:laura.prada@ubc.ca" target="_blank" rel="noopener noreferrer">laura.prada@ubc.ca</a> at the <a href="https://provost.ok.ubc.ca/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> Office of the Provost and Vice-President Academic, UBC Okanagan campus</a>.
                 </p>
 
+                <p class="lead">
+                    The coding supporting this tool is open source software. Tell us if you are using it for your own project by completing this <a href="https://ubc.ca1.qualtrics.com/jfe/form/SV_5yzttL1nBs0elBc" target="_blank" rel="noopener noreferrer">short form</a>.
+                </p>
+
             </div>
         </div>
     </div>
