@@ -188,7 +188,7 @@
                 </p>
 
                 <p class="lead">
-                    The coding supporting this tool is open source software. Tell us if you are using it for your own project by completing this <a href="https://ubc.ca1.qualtrics.com/jfe/form/SV_5yzttL1nBs0elBc" target="_blank" rel="noopener noreferrer">short form</a>.
+                    The code supporting this tool is available as open source software. Tell us if you are using it for your own project by completing this <a href="https://ubc.ca1.qualtrics.com/jfe/form/SV_5yzttL1nBs0elBc" target="_blank" rel="noopener noreferrer">short form</a>.
                 </p>
 
             </div>
