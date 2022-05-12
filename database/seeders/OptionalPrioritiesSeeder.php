@@ -460,72 +460,141 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->year = "2021";
         $opp->save();
 
+        $op_subDesc = new OptionalPrioritiesSubdescription;
+        $op_subDesc->description = '<a href="https://health.ubc.ca/collaborative-health-education" target="_blank">Collaborative Health Education <i class="bi bi-box-arrow-up-right"></i></a> integrating interprofessional and collaborative health education to shape the workforce of tomorrow';
+        $op_subDesc->save();
+
         $opp = new OptionalPriorities;
-        $opp->op_id = 74;
+        $opp->op_id = 61;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 1: Education innovation<br>Renew classroom-based and develop practice-based curricula, reinforced by scholarship in health education.';
+        $opp->op_subdesc = $op_subDesc->op_subdesc;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 62;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 2: Expanded placements Help UBC’s health and health-related programs develop models that build placement capacity, as well as promote collaborative placements across British Columbia.';
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 63;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 3: Education ecosystem in team-based care Support the establishment of a team-based clinic on campus and connect existing campus and other clinics as learner-informed models for team-based education.';
+        $opp->save();
+
+        $op_subDesc = new OptionalPrioritiesSubdescription;
+        $op_subDesc->description = '<a href="https://health.ubc.ca/interdisciplinary-health-research" target="_blank">Interdisciplinary Health Research <i class="bi bi-box-arrow-up-right"></i></a> catalyzing interdisciplinary collaborations in health research';
+        $op_subDesc->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 64;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 1: Community of practice Foster an active community of health research practice and mentorship, supporting and connecting health scholars and students.';
+        $opp->op_subdesc = $op_subDesc->op_subdesc;
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 65;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 2: New research collaborations Stimulate and support health research collaborations.';
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 66;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 3: Data infrastructure Contribute to provincial efforts to develop an integrated health research data infrastructure.';
+        $opp->save();
+        
+        $op_subDesc = new OptionalPrioritiesSubdescription;
+        $op_subDesc->description = '<a href="https://health.ubc.ca/health-systems" target="_blank">Health Systems <i class="bi bi-box-arrow-up-right"></i></a> advocating for and helping to develop capacity for positive change in health';
+        $op_subDesc->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 67;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 1: Public and patient engagement Expand engagement to advance diverse community priorities, enhance learner experiences, and align research activities.';
+        $opp->op_subdesc = $op_subDesc->op_subdesc;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 68;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 2: Coordinated responses Coalesce experts and efforts to further collaborative health education and interdisciplinary research in response to pressing health challenges.';
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 69;
+        $opp->subcat_id = 7;
+        $opp->optional_priority = 'Objective 3: Evidence for new approaches Help align university and sector activities to establish evidence for new approaches to health.';
+        $opp->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 70;
         $opp->subcat_id = 1;
         $opp->optional_priority = 'Incorporation of the Declaration on the Rights of Indigenous Peoples Act and Calls to Action of the Truth and Reconciliation Commission <a href="http://trc.ca/assets/pdf/Calls_to_Action_English2.pdf" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>';
         $opp->year = "2022";
         $opp->save();
 
         $opp = new OptionalPriorities;
-        $opp->op_id = 75;
+        $opp->op_id = 71;
         $opp->subcat_id = 1;
         $opp->optional_priority = "Align with CleanBC's plan to a protect our communities towards a more sustainable future<a href='https://cleanbc.gov.bc.ca/' target='_blank'>( <i class='bi bi-box-arrow-up-right'></i> More Information can be found here)</a>";
         $opp->year = "2022";
         $opp->save();
 
         $opp = new OptionalPriorities;
-        $opp->op_id = 76;
+        $opp->op_id = 72;
         $opp->subcat_id = 1;
         $opp->optional_priority = 'Work with communities, employers and industry to implement skills training towards career opportunities in BC <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank">( <i class="bi bi-box-arrow-up-right"></i> More Information can be found here)</a>';
         $opp->year = "2022";
         $opp->save();
 
         $opp = new OptionalPriorities;
-        $opp->op_id = 77;
+        $opp->op_id = 73;
         $opp->subcat_id = 1;
         $opp->optional_priority = 'Offer programming aligned with <a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> high opportunity and priority occupations</a> (such as trades, technology, early childhood educators and health)';
         $opp->year = "2022";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 78;
+        $opp->op_id = 74;
         $opp->subcat_id = 10;
         $opp->optional_priority = "Degree Requirements: Incorporate equity, diversity, and inclusion skills and competencies info degree requirements.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 79;
+        $opp->op_id = 75;
         $opp->subcat_id = 10;
         $opp->optional_priority = "Dialogue for Engagement: Facilitate and provide opportunities for dialogue and conversation around sensitive topics at UBC and beyond. Build conflict engagement skills and practices among all members of UBC’s community to equip people for working across differences.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 80;
+        $opp->op_id = 76;
         $opp->subcat_id = 10;
         $opp->optional_priority = "EDI Curriculum and Program Requirements: Embed equity and inclusion education into curriculum and program requirements for all students that incorporates intercultural understanding, empathy and mutual respect.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 81;
+        $opp->op_id = 77;
         $opp->subcat_id = 10;
         $opp->optional_priority = "Student Learning: Review and improve mechanisms to ensure that student perspectives on the inclusiveness of their learning experiences are integrated into the improvement of teaching.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 82;
+        $opp->op_id = 78;
         $opp->subcat_id = 11;
         $opp->optional_priority = "Mental Health & Resilience: Enhance mental health literacy to create a supportive campus culture and equipping our community with the skills needed to live well and improve their health, by creating environments that support them.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 83;
+        $opp->op_id = 79;
         $opp->subcat_id = 11;
         $opp->optional_priority = "Social Connection: Encourage everyone to work, learn, collaborate, and build connections in ways that are meaningful to them. Strong and lasting social and friendship connections are critical to our wellbeing.";
         $opp->save();
 		
 		$opp = new OptionalPriorities;
-        $opp->op_id = 84;
+        $opp->op_id = 80;
         $opp->subcat_id = 11;
         $opp->optional_priority = "Physical Activity: Produce accessible programs, policies, and facilities that support physical activity for all ages and abilities.";
         $opp->save();
