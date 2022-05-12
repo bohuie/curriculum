@@ -299,39 +299,27 @@
                                                                                     <!--  -->
                                                                                     <tr>
                                                                                         <td>
-                                                                                            @if ($optionalPriority->isCheckable)
-                                                                                                @if (in_array($optionalPriority->op_id, $opStored))
-                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
-                                                                                                @else
-                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
-                                                                                                @endif
+                                                                                            @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                            @else
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
                                                                                             @endif
                                                                                         </td>
                                                                                         <td>
-                                                                                            @if ($optionalPriority->isCheckable) 
-                                                                                                {!! $optionalPriority->optional_priority !!}
-                                                                                            @else
-                                                                                                <b>{!! $optionalPriority->optional_priority !!}</b>
-                                                                                            @endif
+                                                                                            {!! $optionalPriority->optional_priority !!}
                                                                                         </td>
                                                                                     </tr>
                                                                                 @else
                                                                                     <tr>
                                                                                         <td>
-                                                                                            @if ($optionalPriority->isCheckable)
-                                                                                                @if (in_array($optionalPriority->op_id, $opStored))
-                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
-                                                                                                @else
-                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
-                                                                                                @endif
+                                                                                            @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                            @else
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
                                                                                             @endif
                                                                                         </td>
                                                                                         <td>
-                                                                                            @if ($optionalPriority->isCheckable) 
-                                                                                                {!! $optionalPriority->optional_priority !!}
-                                                                                            @else
-                                                                                                <b>{!! $optionalPriority->optional_priority !!}</b>
-                                                                                            @endif
+                                                                                            {!! $optionalPriority->optional_priority !!}
                                                                                         </td>
                                                                                     </tr>
                                                                                 @endif

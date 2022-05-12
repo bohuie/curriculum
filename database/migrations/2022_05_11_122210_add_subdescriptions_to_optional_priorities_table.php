@@ -17,6 +17,7 @@ class AddSubdescriptionsToOptionalPrioritiesTable extends Migration
             //
             $table->unsignedBigInteger('op_subdesc')->nullable();
             $table->foreign('op_subdesc')->references('op_subdesc')->on('optional_priorities_subdescriptions')->onDelete('cascade')->onUpdate('cascade');
+            $table->dropColumn('isCheckable');
         });
     }
 
