@@ -418,7 +418,6 @@
                                 </span>
                             </div>
                         </div>
-                        <div>
 
                         <!-- div where course schedule table is created from scratch  -->
                         <div id="courseScheduleTblDiv">
@@ -524,12 +523,24 @@
 
             <div class="card-footer p-4">
                 <div style="display:flex; flex-flow:row nowrap; justify-content:flex-end;">
-                    <button type="submit" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save</button>
-                    <button type="button" style="white-space:normal; word-wrap:break-word;" class="btn btn-primary col-2 btn-sm m-2 dropdown-toggle" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false" form="sylabusGenerator">Save and Download</button>
-                    <ul class="dropdown-menu" aria-labelledby="downloadBtn">
-                        <li><button type="submit" name="download" value="pdf" form="sylabusGenerator" style="all: unset"><i class="bi-file-pdf-fill text-danger"></i>PDF</button></li>
-                        <li><button type="submit" name="download" value="word" form="sylabusGenerator" style="all: unset"><i class="bi-file-earmark-word-fill text-primary"></i>Word</button></li>
-                    </ul>
+                    <button type="submit" class="btn btn-primary col-3 m-2" form="sylabusGenerator">Save</button>
+                    <div class="dropdown col-3">
+                        <button form="sylabusGenerator" class="btn btn-primary dropdown-toggle m-2 col" type="button" id="downloadBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                            Save & Download
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <li>
+                                <button type="submit" name="download" value="pdf" form="sylabusGenerator" class="dropdown-item" type="button">
+                                    <i class="bi-file-pdf-fill text-danger"></i> PDF
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" name="download" value="word" form="sylabusGenerator" class="dropdown-item" type="button">
+                                    <i class="bi-file-earmark-word-fill text-primary"></i> Word
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
