@@ -439,12 +439,19 @@ class CourseController extends Controller
         try {
             // get the course
             $course =  Course::find($course_id);
+            // get the course learning outcomes in order specified by user
+            $courseLearningOutcomes = $course->learningOutcomes()->orderBy('pos_in_alignment', 'asc')->get();
             // get all the programs this course belongs to
             $coursePrograms = Course::find($course_id)->programs;
             // get the PLOs for each program
             $programsLearningOutcomes = array();
+            // get the uncategorized PLOs for each program
+            $unCategorizedProgramsLearningOutcomes = array();
             foreach ($coursePrograms as $courseProgram) {
-                $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
+                // get the plos for this program
+                $plos = $courseProgram->programLearningOutcomes;
+                $programsLearningOutcomes[$courseProgram->program_id] = $plos;
+                $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id] = $plos->filter(function ($plo, $key) {return !isset($plo->category);});
             }
             // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
             $courseProgramsOutcomeMaps = array();
@@ -493,7 +500,7 @@ class CourseController extends Controller
                 $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
             }
             // build pdf objcet
-            $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
+            $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
             // get the content of the pdf document
             $content = $pdf->output();
             // store the pdf document in storage/app/public folder
@@ -501,6 +508,7 @@ class CourseController extends Controller
             // get the url of the document
             $url = Storage::url('course-' . $course->course_id . '.pdf');
             // return the location of the pdf document on the server
+            // return view('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
             return $url;
 
         }  catch (Throwable $exception) {
@@ -510,7 +518,7 @@ class CourseController extends Controller
             Log::error('File - ' . $exception->getFile());
             Log::error('Line - ' . $exception->getLine());
             Log::error($exception->getMessage());
-            return $exception;
+            return -1;
         
         }
     }

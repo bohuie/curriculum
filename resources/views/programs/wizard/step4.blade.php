@@ -11,22 +11,12 @@
                 <button type="button" class="btn-close" onclick="hideErrorToast()" aria-label="Close"></button>
             </div>
             <div class="toast-body alert-danger">
-            @if (Request::is('courseWizard/*'))
-                We were unable to the download the course summary for {{$course->course_code}} {{$course->course_num}}. 
-                <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
-                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Course Summary&cc=matthew.penner@ubc.ca&body=There was an error downloading the course summary for {{$course->course_code}} {{$course->course_num}}">
-                        <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
-                    </a>  
-                </div>        
-            @endif
-            @if (Request::is('programWizard/*'))
                 We were unable to the download the program overview for {{$program->program}}. 
                 <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
                     <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Program Overview&cc=matthew.penner@ubc.ca&body=There was an error downloading the program overview for {{$program->program}}">
                         <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
                     </a>      
                 </div>        
-            @endif      
             </div>
         </div>
 
