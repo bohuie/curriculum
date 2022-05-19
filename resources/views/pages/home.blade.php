@@ -1607,6 +1607,7 @@
                                         <option value="O">Online</option>
                                         <option value="I">In-person</option>
                                         <option value="B">Hybrid</option>
+                                        <option value="M">Multi-Access</option>
 
                                     @error('delivery_modality')
                                     <span class="invalid-feedback" role="alert">

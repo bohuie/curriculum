@@ -284,8 +284,8 @@
                                                                         </thead>
                                                                         <tbody>
                                                                             @foreach ($optionalPrioritySubcategory->optionalPriorities as $optionalPriority)
+                                                                                <!-- If optional priority has a subdesc then loop through sub description and add description before optional priority -->
                                                                                 @if ($optionalPriority->op_subdesc != NULL)
-                                                                                    <!--  -->
                                                                                     @foreach ($opSubDesc as $subDesc)
                                                                                         @if ($subDesc->op_subdesc == $optionalPriority->op_subdesc)
                                                                                             <tr>
@@ -296,7 +296,6 @@
                                                                                             </tr>
                                                                                         @endif
                                                                                     @endforeach
-                                                                                    <!--  -->
                                                                                     <tr>
                                                                                         <td>
                                                                                             @if (in_array($optionalPriority->op_id, $opStored))
