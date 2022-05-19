@@ -9,8 +9,11 @@
                     Online
                     @break
                 @case('B')
-                    Blended
+                    Hybrid
                     @break
+                @case('M')
+                    Multi-Access
+                @break
                 @default
                     In-person
             @endswitch
@@ -242,6 +245,7 @@
                                                         <option @if($course->delivery_modality === 'O') selected @endif value="O">Online</option>
                                                         <option @if($course->delivery_modality === 'I') selected @endif value="I">In-person</option>
                                                         <option @if($course->delivery_modality === 'B') selected @endif value="B">Hybrid</option>
+                                                        <option @if($course->delivery_modality === 'M') selected @endif value="M">Multi-Access</option>
 
                                                     @error('delivery_modality')
                                                     <span class="invalid-feedback" role="alert">

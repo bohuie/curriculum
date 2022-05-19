@@ -178,6 +178,7 @@ class SyllabusController extends Controller
             'courseTitle' => ['required'],
             'courseCode' => ['required'],
             'courseNumber' => ['required'],
+            'deliveryModality' => ['required'],
             'courseInstructor' => ['required'],
             'courseYear' => ['required'],
             'courseSemester' => ['required'],
@@ -234,6 +235,7 @@ class SyllabusController extends Controller
             'courseTitle' => ['required'],
             'courseCode' => ['required'],
             'courseNumber' => ['required'],
+            'deliveryModality' => ['required'],
             'courseInstructor' => ['required'],
             'courseYear' => ['required'],
             'courseSemester' => ['required'],
@@ -243,6 +245,7 @@ class SyllabusController extends Controller
         $courseTitle = $request->input('courseTitle');
         $courseCode = $request->input('courseCode');
         $courseNumber = $request->input('courseNumber');
+        $deliveryModality = $request->input('deliveryModality');
         $courseInstructor = $request->input('courseInstructor');
         $courseYear = $request->input('courseYear');
         $courseSemester = $request->input('courseSemester');
@@ -255,6 +258,7 @@ class SyllabusController extends Controller
         $syllabus->course_title = $courseTitle;
         $syllabus->course_code = $courseCode;
         $syllabus->course_num = $courseNumber;
+        $syllabus->delivery_modality = $deliveryModality;
         $syllabus->course_instructor = $courseInstructor;
         $syllabus->course_term = $courseSemester;
         $syllabus->course_year = $courseYear;
@@ -395,6 +399,7 @@ class SyllabusController extends Controller
             'courseTitle' => ['required'],
             'courseCode' => ['required'],
             'courseNumber' => ['required'],
+            'deliveryModality' => ['required'],
             'courseInstructor' => ['required'],
             'courseYear' => ['required'],
             'courseSemester' => ['required'],
@@ -404,6 +409,7 @@ class SyllabusController extends Controller
         $courseTitle = $request->input('courseTitle');
         $courseCode = $request->input('courseCode');
         $courseNumber = $request->input('courseNumber');
+        $deliveryModality = $request->input('deliveryModality');
         $courseInstructor = $request->input('courseInstructor');
         $courseYear = $request->input('courseYear');
         $courseSemester = $request->input('courseSemester');
@@ -414,6 +420,7 @@ class SyllabusController extends Controller
         $syllabus->course_title = $courseTitle;
         $syllabus->course_code = $courseCode;
         $syllabus->course_num = $courseNumber;
+        $syllabus->delivery_modality = $deliveryModality;
         $syllabus->course_instructor = $courseInstructor;
         $syllabus->course_term = $courseSemester;
         $syllabus->course_year = $courseYear;
@@ -653,6 +660,7 @@ class SyllabusController extends Controller
         $data['c_title'] = $course->course_title;
         $data['c_code'] = $course->course_code;
         $data['c_num'] = $course->course_num;
+        $data['c_del'] = $course->delivery_modality;
         $data['c_year'] = $course->year;
         $data['c_term'] = $course->semester;
         $data['a_methods'] = $a_methods;

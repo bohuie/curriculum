@@ -203,6 +203,18 @@
                                     Please enter the course number.
                                 </div>
                             </div>
+                            <div class="col-2">
+                                <label for="deliveryModality"><span class="requiredField">*</span> Mode of Delivery</label>
+                                <select id="deliveryModality" class="form-select" name="deliveryModality" required>
+                                    <option value="O" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'O') ? 'selected=true' : '') : ''}}>Online</option>
+                                    <option value="I" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'I') ? 'selected=true' : '') : ''}}>In-person</option>
+                                    <option value="B" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'B') ? 'selected=true' : '') : ''}}>Hybrid</option>
+                                    <option value="M" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'M') ? 'selected=true' : '') : ''}}>Multi-Access</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please enter the course mode of delivery.
+                                </div>
+                            </div>
                             <div id="courseCredit" class="col-2"></div>
                         </div>
                         <!-- Course Instructor, Course Semester, Course Year -->
@@ -1142,6 +1154,7 @@
             var c_title_input = $('#courseTitle');
             var c_code_input = $('#courseCode');
             var c_num_input = $('#courseNumber');
+            var c_del_input = $('#deliveryModality');
             var c_year_input = $('#courseYear');
             var c_term_input = $('#courseSemester');
             var a_method_input = $('#learningAssessments');
@@ -1152,6 +1165,7 @@
             var c_title = decode_data['c_title'];
             var c_code = decode_data['c_code'];
             var c_num = decode_data['c_num'];
+            var c_del = decode_data['c_del'];
             var c_year = decode_data['c_year'];
             var c_term = decode_data['c_term'];
             var a_methods = decode_data['a_methods'];
@@ -1174,6 +1188,7 @@
             c_title_input.val(c_title);
             c_code_input.val(c_code);
             c_num_input.val(c_num);
+            c_del_input.val(c_del);
 
             c_year_input.val(c_year);
             c_term_input.val(c_term);
