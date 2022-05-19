@@ -112,7 +112,6 @@
         }
     }
 
-    // TODO: runs on window.load to check if there is a email present and if the prompt needs to be displayed upon page load
     function setPrompt(domainStr) {
         const ubcDomains = ['ubc.ca', 'mail.ubc.ca', 'alumni.ubc.ca', 'student.ubc.ca'];
         // check if user domain == one of UBS's domains
