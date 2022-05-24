@@ -53,6 +53,19 @@
                 {{$vancouverSyllabus->office_location}}
             </p>
             <p><b>Duration:</b> {{$syllabus->course_term}} {{$syllabus->course_year}}</p>
+            @switch($syllabus->delivery_modality)
+                @case('M')
+                    <p><b>Delivery Modality:</b> Multi-Access</p>
+                    @break
+                @case('I')
+                    <p><b>Delivery Modality:</b> In-Person</p>
+                    @break
+                @case('B')
+                    <p><b>Delivery Modality:</b> Hybrid</p>
+                    @break
+                @default
+                    <p><b>Delivery Modality:</b> Online</p>
+            @endswitch
             <p><b>Class Location:</b> {{$syllabus->course_location}}</p>
             <p><b>Class Days:</b> {{$syllabus->class_meeting_days}}</p>
             <p><b>Class Hours:</b> {{$syllabus->class_start_time}} - {{$syllabus->class_end_time}}</p>

@@ -1128,6 +1128,20 @@ class SyllabusController extends Controller
         // add required form fields common to both campuses to template
         $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseInstructor'=> $syllabus->course_instructor,
                     'courseYear'=> $syllabus->course_year,));
+        
+        switch ($syllabus->delivery_modality) {
+            case "M" :
+                $templateProcessor->setValue('deliveryModality', 'Multi-Access');
+                break;
+            case "I" :
+                $templateProcessor->setValue('deliveryModality', 'In-Person');
+                break;
+            case "B" :
+                $templateProcessor->setValue('deliveryModality', 'Hybrid');
+                break;
+            default:
+                $templateProcessor->setValue('deliveryModality', 'Online');
+        }
 
         // date the syllabus
         $templateProcessor->setValue('dateGenerated', date('d, M Y'));
