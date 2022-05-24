@@ -446,12 +446,16 @@ class CourseController extends Controller
             $coursePrograms = Course::find($course_id)->programs;
             // get the PLOs for each program
             $programsLearningOutcomes = array();
+            // get the mapping scale levels for each program 
+            $programsMappingScales = array();
             // get the uncategorized PLOs for each program
             $unCategorizedProgramsLearningOutcomes = array();
             foreach ($coursePrograms as $courseProgram) {
                 // get the plos for this program
                 $plos = $courseProgram->programLearningOutcomes;
                 $programsLearningOutcomes[$courseProgram->program_id] = $plos;
+                // get the mapping scale levels for this program and add N/A scale to the collection
+                $programsMappingScales[$courseProgram->program_id] = $courseProgram->mappingScaleLevels->push(MappingScale::find(0));
                 $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id] = $plos->filter(function ($plo, $key) {return !isset($plo->category);});
             }
             // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
@@ -490,10 +494,7 @@ class CourseController extends Controller
             $courseStandardScalesCategory = $course->standardScalesCategory;
             $courseStandardScales = $courseStandardScalesCategory->standardScales;
 
-            
-
             $standardOutcomeMap = array();
-            $scale_ids = array();
             foreach ($courseStandardOutcomes as $standardOutcome) {
                 foreach($courseLearningOutcomes as $clo) {
                     if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('l_outcome_id', $clo->l_outcome_id)->exists())
@@ -512,7 +513,7 @@ class CourseController extends Controller
                 $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
             }
             // build pdf objcet
-            $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'outcomeActivities', 'outcomeAssessments', 'courseStandardOutcomes','courseStandardScales','standardOutcomeMap','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
+            $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'programsMappingScales', 'outcomeActivities', 'outcomeAssessments', 'courseStandardOutcomes','courseStandardScales','standardOutcomeMap','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
             // get the content of the pdf document
             $content = $pdf->output();
             // store the pdf document in storage/app/public folder

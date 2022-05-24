@@ -356,28 +356,28 @@
                                     <th style="width:5%">CLOs</th>
                                     <th class="text-left" colspan="{{ $courseProgram->programLearningOutcomes->count() }}">Program Learning Outcomes</th>
                                 </tr> 
-                                <tr style="font-size:10px">
+                                <tr style="font-size:10px" style="vertical-align:middle;text-align:center">
                                     <td></td>
                                     @foreach ($category->plos as $index => $plo)
                                         @if ($plo->plo_shortphrase && $category->plos->count() < 5)     
                                             @if ($index < $category->plos->count() - ($courseProgram->programLearningOutcomes->count() % $category->plos->count()))   
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count())}}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count())}}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
                                             @else 
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count()) + 1}}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count()) + 1}}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
                                             @endif
                                             <?php $pos++ ?>
                                         @else 
                                             @if ($index < $category->plos->count() - ($courseProgram->programLearningOutcomes->count() % $category->plos->count()))   
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count())}}">#{{$pos + 1}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count())}}">#{{$pos + 1}}</th>
                                             @else 
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count()) + 1}}">#{{$pos + 1}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count()) + 1}}">#{{$pos + 1}}</th>
                                             @endif
                                             <?php $pos++ ?>
                                         @endif
                                     @endforeach
                                 </tr>
                                 @foreach($courseLearningOutcomes as $clo_index => $l_outcome)
-                                    <tr style="font-size:10px" style="vertical-align:middle;text-align:center">
+                                    <tr style="font-size:10px">
                                         <th colspan="1">
                                             @if(isset($l_outcome->clo_shortphrase))
                                                 {{$clo_index + 1}}. {{$l_outcome->clo_shortphrase}}
@@ -412,13 +412,13 @@
                                                     @endif
                                                 @else 
                                                     @if ($index < $category->plos->count() - ($courseProgram->programLearningOutcomes->count() % $category->plos->count()))   
-                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count())}}" @foreach($courseProgram->mappingScaleLevels as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
+                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count())}}" @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
                                                             <p @if($courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation == 'A') style="color:white;" @endif>
                                                                 {{$courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation}}
                                                             </p>
                                                         </td>
                                                     @else 
-                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count()) + 1}}" @foreach($courseProgram->mappingScaleLevels as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
+                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $category->plos->count()) + 1}}" @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
                                                             <p @if($courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation == 'A') style="color:white;" @endif>
                                                                 {{$courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation}}
                                                             </p>
@@ -455,16 +455,16 @@
                                     @foreach ($unCategorizedProgramsLearningOutcomes[$courseProgram->program_id] as $plo)
                                         @if ($plo->plo_shortphrase && $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count() < 5)     
                                             @if ($cnt < $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count() - ($courseProgram->programLearningOutcomes->count() % $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()))   
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) }}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) }}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
                                             @else 
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) + 1}}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) + 1}}">{{$pos + 1}}. {{$plo->plo_shortphrase}}</th>
                                             @endif
                                             <?php $pos++ ?>
                                         @else 
                                             @if ($cnt < $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count() - ($courseProgram->programLearningOutcomes->count() % $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()))   
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count())}}">#{{$pos + 1}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count())}}">#{{$pos + 1}}</th>
                                             @else 
-                                                <th colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) + 1}}">#{{$pos + 1}}</th>
+                                                <th style="vertical-align:middle;text-align:center;" colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) + 1}}">#{{$pos + 1}}</th>
                                             @endif
                                             <?php $pos++ ?>
                                         @endif
@@ -472,7 +472,7 @@
                                     @endforeach
                                 </tr>
                                 @foreach($courseLearningOutcomes as $clo_index => $l_outcome)
-                                    <tr style="font-size:10px" style="vertical-align:middle;text-align:center">
+                                    <tr style="font-size:10px" >
                                         <th colspan="1">
                                             @if(isset($l_outcome->clo_shortphrase))
                                                 {{$clo_index + 1}}. {{$l_outcome->clo_shortphrase}}
@@ -508,13 +508,13 @@
                                                     @endif
                                                 @else 
                                                     @if ($cnt < $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count() - ($courseProgram->programLearningOutcomes->count() % $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()))   
-                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count())}}" @foreach($courseProgram->mappingScaleLevels as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
+                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count())}}" @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
                                                             <p @if($courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation == 'A') style="color:white;" @endif>
                                                                 {{$courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation}}
                                                             </p>
                                                         </td>
                                                     @else 
-                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) + 1}}" @foreach($courseProgram->mappingScaleLevels as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
+                                                        <td colspan="{{floor($courseProgram->programLearningOutcomes->count() / $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id]->count()) + 1}}" @foreach($programsMappingScales[$courseProgram->program_id] as $programMappingScale) @if($programMappingScale->map_scale_id == $courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->map_scale_id) style="vertical-align:middle;text-align:center;background-color:{{$programMappingScale->colour}}"@endif @endforeach>
                                                             <p @if($courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation == 'A') style="color:white;" @endif>
                                                                 {{$courseProgramsOutcomeMaps[$courseProgram->program_id][$plo->pl_outcome_id][$l_outcome->l_outcome_id]->abbreviation}}
                                                             </p>
@@ -629,14 +629,14 @@
                             @if ($course->standardCategory->standards->count() > 7)
                                 <td></td>
                                 @foreach ($course->standardCategory->standards as $index => $standard)
-                                    <th style="text-align:center;">
+                                    <th style="vertical-align:middle;text-align:center;">
                                         {{$index+1}}
                                     </th>
                                 @endforeach
                             @else 
                                 <td></td>
                                 @foreach ($course->standardCategory->standards as $index => $standard)
-                                    <th>
+                                    <th style="vertical-align:middle;text-align:center;">
                                         @if(isset($standard->s_shortphrase))
                                             {{$index+1}}. {{$standard->s_shortphrase}}
                                         @else
@@ -647,7 +647,7 @@
                             @endif
                         </tr>
                         @foreach($courseLearningOutcomes as $clo_index => $l_outcome)
-                            <tr style="vertical-align:middle;text-align:center;font-size:10px">
+                            <tr style="font-size:10px">
                                 <th colspan="1">
                                     @if(isset($l_outcome->clo_shortphrase))
                                         {{$clo_index + 1}}. {{$l_outcome->clo_shortphrase}}
