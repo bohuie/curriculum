@@ -23,6 +23,7 @@ use App\Models\PLOCategory;
 use App\Models\CourseProgram;
 use App\Models\OutcomeMap;
 use App\Models\Standard;
+use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -482,13 +483,24 @@ class CourseController extends Controller
                                     ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                     ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
                                     ->where('assessment_methods.course_id','=',$course_id)->get();
-            // 
-            $standardOutcomeMaps = Standard::join('standards_outcome_maps','standards.standard_id','=','standards_outcome_maps.standard_id')
-                                    ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                    ->join('standard_scales', 'standard_scales.standard_scale_id', '=', 'standards_outcome_maps.standard_scale_id')
-                                    ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.standard_id','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                    ->where('learning_outcomes.course_id','=',$course_id)->get();
-            // 
+
+            // ministry standards
+            $courseStandardCategory = $course->standardCategory;
+            $courseStandardOutcomes = $courseStandardCategory->standards;
+            $courseStandardScalesCategory = $course->standardScalesCategory;
+            $courseStandardScales = $courseStandardScalesCategory->standardScales;
+
+            
+
+            $standardOutcomeMap = array();
+            $scale_ids = array();
+            foreach ($courseStandardOutcomes as $standardOutcome) {
+                foreach($courseLearningOutcomes as $clo) {
+                    if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('l_outcome_id', $clo->l_outcome_id)->exists())
+                        $standardOutcomeMap[$standardOutcome->standard_id][$clo->l_outcome_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['l_outcome_id', $clo->l_outcome_id]]))->first();
+                }
+            }
+
             $assessmentMethodsTotal = 0;
             foreach ($course->assessmentMethods as $a_method) {
                 $assessmentMethodsTotal += $a_method->weight;
@@ -500,7 +512,7 @@ class CourseController extends Controller
                 $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
             }
             // build pdf objcet
-            $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
+            $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'outcomeActivities', 'outcomeAssessments', 'courseStandardOutcomes','courseStandardScales','standardOutcomeMap','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
             // get the content of the pdf document
             $content = $pdf->output();
             // store the pdf document in storage/app/public folder
@@ -508,7 +520,6 @@ class CourseController extends Controller
             // get the url of the document
             $url = Storage::url('course-' . $course->course_id . '.pdf');
             // return the location of the pdf document on the server
-            // return view('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
             return $url;
 
         }  catch (Throwable $exception) {
