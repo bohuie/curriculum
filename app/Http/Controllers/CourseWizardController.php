@@ -561,6 +561,7 @@ class CourseWizardController extends Controller
         $standard_categories = DB::table('standard_categories')->get();
         // get all the programs this course belongs to
         $coursePrograms = $course->programs;
+        // ddd($coursePrograms[0]->programLearningOutcomes->where('plo_category_id', null));
         // get the PLOs for each program
         $programsLearningOutcomes = array();
 
@@ -586,13 +587,6 @@ class CourseWizardController extends Controller
                 } 
             }
         }
-
-        // get standards outcome map
-        $standardsOutcomeMap = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->get();
         
         $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
@@ -603,6 +597,19 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('assessment_methods.course_id','=',$course_id)->get();
+
+        $courseStandardCategory = $course->standardCategory;
+        $courseStandardOutcomes = $courseStandardCategory->standards;
+        $courseStandardScalesCategory = $course->standardScalesCategory;
+        $courseStandardScales = $courseStandardScalesCategory->standardScales;
+                    
+        $standardOutcomeMap = array();
+        foreach ($courseStandardOutcomes as $standardOutcome) {
+            foreach($course->learningOutcomes as $clo) {
+                if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('l_outcome_id', $clo->l_outcome_id)->exists())
+                    $standardOutcomeMap[$standardOutcome->standard_id][$clo->l_outcome_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['l_outcome_id', $clo->l_outcome_id]]))->first();
+            }
+        }
 
         $assessmentMethodsTotal = 0;
         foreach ($course->assessmentMethods as $a_method) {
@@ -619,8 +626,8 @@ class CourseWizardController extends Controller
 
         return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)
         ->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)
-        ->with('standardsOutcomeMap', $standardsOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalSubcategories', $optionalSubcategories)
-        ->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
+        ->with('standardOutcomeMap', $standardOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalSubcategories', $optionalSubcategories)
+        ->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
         ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('l_outcomes', $l_outcomes);
     }
 
