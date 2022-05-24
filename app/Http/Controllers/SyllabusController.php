@@ -25,6 +25,8 @@ use App\Models\syllabus\VancouverSyllabus;
 use App\Models\syllabus\SyllabusUser;
 use App\Models\syllabus\VancouverSyllabusResource;
 use Carbon\Carbon;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Settings;
 use stdClass;
 
 define("INPUT_TIPS", array(
@@ -214,7 +216,7 @@ class SyllabusController extends Controller
         // download syllabus as a word document
         if ($request->input('download')) {
             // download syllabus
-            return $this->syllabusToWordDoc($syllabus->id);
+            return $this->download($syllabus->id, $request->input('download'));
         }
 
         return redirect()->route('syllabus', [
@@ -671,7 +673,14 @@ class SyllabusController extends Controller
         return $data;
     }
 
-    public function syllabusToWordDoc($syllabusId) {
+    /**
+     * Download the given syllabus $syllabusId in $ext format
+     * @param Integer $syllabusId
+     * @param String $ext: the file extension
+     * @return a download response
+     */
+    public function download($syllabusId, $ext) {
+        
         $syllabus = Syllabus::find($syllabusId);
 
         switch ($syllabus->campus) {
@@ -1203,34 +1212,34 @@ class SyllabusController extends Controller
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
             $templateProcessor->setValue('courseScheduleTbl', '');
         }
-        
+
         // set document name
-        $documentName = $syllabus->course_code.$syllabus->course_num.'-Syllabus.docx';
+        $fileName = 'syllabus';   
+        // word file ext
+        $wordFileExt = '.docx';         
         // save word document on server
-        $templateProcessor->saveAs($documentName);
-        //Get type of download requested
-        $downloadType = $_POST['download'];
-        //If user wants a word file, send them a word file. Otherwise give them a PDF file.
-        if($downloadType == 'word'){
-            return response()->download($documentName)->deleteFileAfterSend(true); 
-        }
-        else{
-            //Set PDF path and variables
-            $pdfName = $syllabus->course_code.$syllabus->course_num.'-Syllabus.pdf';
-            $domPdfPath = base_path('vendor/dompdf/dompdf');
-            \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
-            \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
-            //Load Word file
-            $Content = \PhpOffice\PhpWord\IOFactory::load(base_path('html/'.$documentName));
-            //Use above for staging/production, below for local
-            //$Content = \PhpOffice\PhpWord\IOFactory::load(public_path($documentName));
-            //Create PDF file from Word file
-            $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content,'PDF');
-            $PDFWriter->save($pdfName);
-            // force user browser to download the saved document, and delete the word version
-            unlink($documentName);
-            return response()->download($pdfName)->deleteFileAfterSend(true);
-        }
+        $templateProcessor->saveAs($fileName . $wordFileExt);
+        
+        if ($ext == 'pdf') {
+            // pdf file ext
+            $pdfFileExt = '.pdf';
+            $pdfRendererPath = base_path(DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dompdf' . DIRECTORY_SEPARATOR . 'dompdf');
+            Settings::setPdfRendererPath($pdfRendererPath);
+            Settings::setPdfRendererName('DomPDF');   
+            // get path to word file
+            $wordFilePath = config('app.env') == 'local' ? public_path($fileName . $wordFileExt) : base_path('html' . DIRECTORY_SEPARATOR . $fileName . $wordFileExt);
+            // load word file
+            $wordFileContent = IOFactory::load($wordFilePath);
+            $pdfWriter = IOFactory::createWriter($wordFileContent, 'PDF');
+            $pdfWriter->save($fileName . $pdfFileExt);
+            // delete the word version
+            unlink($fileName . $wordFileExt);        
+            // return pdf download response 
+            return response()->download($fileName . $pdfFileExt)->deleteFileAfterSend(true);
+    
+        } 
+
+        return response()->download($fileName . $wordFileExt)->deleteFileAfterSend(true);
     }
 
     public function duplicate(Request $request, $syllabusId) {

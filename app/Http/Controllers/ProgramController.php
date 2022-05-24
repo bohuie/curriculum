@@ -268,7 +268,7 @@ class ProgramController extends Controller
      * @param  int  $programId
      * @return array $url of pdf 
      */ 
-    private function getImagesOfCharts($programId) {
+    private function getImagesOfCharts($programId, $dstFileExt) {
         
         // find the program
         $program = Program::find($programId);
@@ -428,13 +428,22 @@ class ProgramController extends Controller
             $laData
         );
 
-        // return array of urls to charts
-        $charts = array(
-            "Program MAP Chart" => $plosToClosClusterChartImgURL,
-            "Assessment Methods Chart" => $assessmentMethodsChartImgUrl, 
-            "Learning Activities Chart" => $learningActivitiesChartImgUrl
-        );
-        return $charts;
+
+        $chartsBaseURL = config('app.url') . '/storage/charts/';
+        $chartsBasePath = Storage::path('public' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR);
+        if ($dstFileExt == 'pdf') {
+            return array(
+                "Program MAP Chart" => $chartsBaseURL . $plosToClosClusterChartImgURL,
+                "Assessment Methods Chart" => $chartsBaseURL . $assessmentMethodsChartImgUrl, 
+                "Learning Activities Chart" => $chartsBaseURL . $learningActivitiesChartImgUrl
+            );
+        } else {
+            return array(
+                "Program MAP Chart" => $chartsBasePath . $plosToClosClusterChartImgURL,
+                "Assessment Methods Chart" => $chartsBasePath . $assessmentMethodsChartImgUrl, 
+                "Learning Activities Chart" => $chartsBasePath . $learningActivitiesChartImgUrl
+            );
+        }
     }
 
     /**
@@ -503,10 +512,8 @@ class ProgramController extends Controller
         Storage::put('public' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR . $filename, $output);
         // close curl resource to free up system resources
         curl_close($ch); 
-        // create url to img resource
-        $imgUrl = 'storage' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR . $filename;
-
-        return $imgUrl;
+        
+        return $filename;
     }
 
     /**
@@ -601,7 +608,7 @@ class ProgramController extends Controller
             $store = $this->assignColours($store);
 
             // get array of urls to charts in this program
-            $charts = $this->getImagesOfCharts($program_id);
+            $charts = $this->getImagesOfCharts($program_id, '.pdf');
 
             $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store',));
             // get the content of the pdf document
@@ -678,7 +685,7 @@ class ProgramController extends Controller
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             
             // get array of urls to charts in this program
-            $charts = $this->getImagesOfCharts($programId);
+            $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
             array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet){
@@ -790,7 +797,7 @@ class ProgramController extends Controller
                 $sheet->fromArray(['Short Phrase', 'Learning Outcome'], NULL, 'A'.strval($categoryRowInPLOsSheet + 1));
                 $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles["primaryHeading"]);
 
-                foreach ($plosInCategory as $index => $plo) {
+                foreach ($uncategorizedPLOs as $index => $plo) {
                     // create row to add to learning outcomes sheet with shortphrase and outcome
                     $ploArr = [$plo->plo_shortphrase, $plo->pl_outcome];
                     // add plo row to learning outcome sheets under secondary headings

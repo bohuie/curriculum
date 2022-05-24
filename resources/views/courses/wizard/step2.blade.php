@@ -169,6 +169,7 @@
                             </h6>
                         </div>
                     </div>
+
                     <div class="row mb-1">
                         <div class="col">
                             <button type="button" class="btn btn-primary col-4 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addAssessmentMethodModal">

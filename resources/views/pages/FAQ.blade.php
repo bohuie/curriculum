@@ -73,18 +73,21 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader4">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion4" aria-expanded="false" aria-controls="collapseFAQAccordion4">
-                            <h5>Can somebody <b>help</b> me use this tool?</h5>                
+                            <h5>I want to map a course or program, or generate a syllabus for my course. Can somebody <b>help</b> me use this tool?</h5>                
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
                     <div id="collapseFAQAccordion4" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader4" data-bs-parent="FAQAccordion4">
                         <div class="accordion-body lh-lg">
-                            <p>Yes, you may request support for course and program mapping from the Centre for Teaching and Learning or the Provost Office.</p>
+                            <p>
+                                Yes, you may request support for course and program mapping from the Centre for Teaching and Learning by emailing ctl.helpdesk@ubc.ca. If you are in UBC's Vancouver campus, you may contact Carrie Hunter (carrie.hunter@ubc.ca) at the Centre for Teaching, Learning and Technology.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div> 
+
 
             <div class="accordion" id="FAQAccordion5">
                 <div class="accordion-item mb-2">
@@ -225,6 +228,25 @@
                 </div>
             </div>
 
+            <div class="accordion" id="FAQAccordion9">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader9">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion9" aria-expanded="false" aria-controls="collapseFAQAccordion4">
+                            <h5>I ran into an error message or bug. What do I do?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion9" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader9" data-bs-parent="FAQAccordion9">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                                Please let us know right away so we can fix it and support you by emailing  ctl.helpdesk@ubc.ca                            
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
         </div>
     </div>    
 </div>
