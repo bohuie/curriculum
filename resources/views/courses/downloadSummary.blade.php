@@ -551,8 +551,7 @@
             @else 
                     <div class="panel-body">
                         <h5 class="font-weight:bold">Standards</h5>
-                        <!-- TODO -->
-                        <p>Description of standards</p>
+                        <p>This table shows the alignment of course learning outcomes (CLOs) to ministry standards.</p>
                     </div>
                     <table class="table">
                         <tr class="info">
