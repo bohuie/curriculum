@@ -9,7 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (index === 0) {
                     return;
                 }
-        
+                // if (row.parentElement.tagName == "TFOOT") {
+                //     return;
+                // }
                 const firstCell = row.firstElementChild;
                 firstCell.classList.add('draggable');
                 firstCell.addEventListener('mousedown', mouseDownHandler);
