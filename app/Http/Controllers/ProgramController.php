@@ -761,11 +761,11 @@ class ProgramController extends Controller
             $program = Program::find($programId);
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->setTitle('Learning Outcomes');
-            $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', NULL);
+            $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', NULL)->values();
             
             // keeps track of which row to put each category in the learning outcomes sheet
             $categoryRowInPLOsSheet = 1; 
-            foreach ($program->ploCategories as $category) {
+            foreach ($program->ploCategories as $index => $category) {
                 if ($plosInCategory = $category->plos()->get()) {
                     // add category title to learning outcomes sheet
                     $sheet->setCellValue('A'.strval($categoryRowInPLOsSheet), $category->plo_category);
@@ -774,15 +774,19 @@ class ProgramController extends Controller
                     $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles["secondaryHeading"]);
 
                     // add secondary header titles to learning outcomes sheet after the category title
-                    $sheet->fromArray(['Short Phrase', 'Learning Outcome'], NULL, 'A'.strval($categoryRowInPLOsSheet + 1));
+                    $sheet->fromArray(['Learning Outcome', 'Short Phrase'], NULL, 'A'.strval($categoryRowInPLOsSheet + 1));
                     $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles["primaryHeading"]);
 
                     foreach ($plosInCategory as $index => $plo) {
                         // create row to add to learning outcomes sheet with shortphrase and outcome
-                        $ploArr = [$plo->plo_shortphrase, $plo->pl_outcome];
+                        $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
                         // add plo row to learning outcome sheets under secondary headings
                         $sheet->fromArray($ploArr, NULL, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
                     }
+
+                    // if it's not the last increment position of next category heading by the number of plos in the current category
+                    if ($index != $program->ploCategories->count() - 1)
+                        $categoryRowInPLOsSheet = $categoryRowInPLOsSheet + $category->plos->count() + 3;
                 }
             }
 
@@ -799,7 +803,7 @@ class ProgramController extends Controller
 
                 foreach ($uncategorizedPLOs as $index => $plo) {
                     // create row to add to learning outcomes sheet with shortphrase and outcome
-                    $ploArr = [$plo->plo_shortphrase, $plo->pl_outcome];
+                    $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
                     // add plo row to learning outcome sheets under secondary headings
                     $sheet->fromArray($ploArr, NULL, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
                 }
