@@ -314,7 +314,7 @@
                                             <label for="course_num" class="col-md-3 col-form-label text-md-right">Course Number</label>
             
                                             <div class="col-md-8">
-                                                <input id="course_num" type="text" class="form-control @error('course_num') is-invalid @enderror" name="course_num" autofocus>
+                                                <input id="course_num" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30" class="form-control @error('course_num') is-invalid @enderror" name="course_num" autofocus>
             
                                                 @error('course_num')
                                                 <span class="invalid-feedback" role="alert">
@@ -329,7 +329,7 @@
                                                 class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
 
                                             <div class="col-md-8">
-                                                <input id="course_title" type="text"
+                                                <input id="course_title" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191"
                                                     class="form-control @error('course_title') is-invalid @enderror"
                                                     name="course_title" required autofocus>
 
@@ -394,7 +394,7 @@
                                                 Section</label>
 
                                             <div class="col-md-4">
-                                                <input id="course_section" type="text"
+                                                <input id="course_section" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20"
                                                     class="form-control @error('course_section') is-invalid @enderror"
                                                     name="course_section" autofocus>
 

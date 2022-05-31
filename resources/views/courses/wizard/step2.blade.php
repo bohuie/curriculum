@@ -35,7 +35,7 @@
                                     <div class="row align-items-end m-2">
                                         <div class="col-6">
                                             <label for="assessmentMethod" class="form-label fs-6"><b>Assessment Method</b></label>
-                                            <input id="assessmentMethod" class="form-control" list="assessmentMethodOptions" placeholder="Type to search..." required>
+                                            <input id="assessmentMethod" class="form-control" list="assessmentMethodOptions" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" placeholder="Type to search..." required>
                                             <div class="invalid-tooltip">
                                                 Please provide an assessment method.
                                             </div>                                            
@@ -88,7 +88,7 @@
                                         </div>
                                         <div class="col-4">
                                             <label for="weight" class="form-label fs-6"><b>Weight</b></label>
-                                            <input id="weight" type="number" step="0.1" class="form-control " min="0" max="100" required>
+                                            <input id="weight" type="number" step="0.1" class="form-control " min="0" max="100" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" required>
                                             <div class="invalid-tooltip">
                                                 Please provide a valid weight.
                                             </div>
@@ -117,11 +117,11 @@
                                             <tr>
 
                                                 <td>
-                                                    <input list="assessmentMethodOptions" id="a_method{{$a_method->a_method_id}}" type="text" class="form-control @error('a_method') is-invalid @enderror"
+                                                    <input list="assessmentMethodOptions" id="a_method{{$a_method->a_method_id}}" type="text" class="form-control @error('a_method') is-invalid @enderror" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191"
                                                     name="current_a_methods[{{$a_method->a_method_id}}]" value = "{{$a_method->a_method}}" placeholder="Choose from the dropdown list or type your own" form="saveAssessmentMethodChanges" required>
                                                 </td>
                                                 <td>                                                 
-                                                    <input class="p-1" id="a_method_weight{{$a_method->a_method_id}}" type="number" step="0.1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="{{$a_method->weight}}" name="current_weights[{{$a_method->a_method_id}}]" min="0" max="100" required>
+                                                    <input class="p-1" id="a_method_weight{{$a_method->a_method_id}}" type="number" step="0.1" form="saveAssessmentMethodChanges" class="form-control @error('weight') is-invalid @enderror" value="{{$a_method->weight}}" name="current_weights[{{$a_method->a_method_id}}]" min="0" max="100" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" required>
                                                     <label for="a_method_weight{{$a_method->a_method_id}}" style="font-size: medium; margin-top:5px;margin-left:5px"><strong>%</strong></label>
                                                 </td>
                                                 <td class="text-center">

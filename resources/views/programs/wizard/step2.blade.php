@@ -320,7 +320,7 @@
                                             <label for="title" class="col-md-4 col-form-label text-md-right">Title</label>
 
                                             <div class="col-md-8">
-                                                <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" required autofocus>
+                                                <input id="title" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" class="form-control @error('title') is-invalid @enderror" name="title" required autofocus>
 
                                                 @error('title')
                                                 <span class="invalid-feedback" role="alert">
@@ -334,7 +334,7 @@
                                             <label for="abbreviation" class="col-md-4 col-form-label text-md-right">Abbreviation</label>
 
                                             <div class="col-md-8">
-                                                <input id="abbreviation" type="text" class="form-control @error('abbreviation') is-invalid @enderror" name="abbreviation" maxlength="5" required autofocus>
+                                                <input id="abbreviation" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" class="form-control @error('abbreviation') is-invalid @enderror" name="abbreviation" maxlength="5" required autofocus>
 
                                                 @error('abbreviation')
                                                 <span class="invalid-feedback" role="alert">
@@ -394,7 +394,7 @@
 
                                             <div class="col-md-8">
                                                 
-                                                <textarea id="description" class="form-control" @error('description') is-invalid @enderror rows="3" name="description" required autofocus></textarea>
+                                                <textarea id="description" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000" class="form-control" @error('description') is-invalid @enderror rows="3" name="description" required autofocus></textarea>
 
                                                 @error('description')
                                                 <span class="invalid-feedback" role="alert">
