@@ -171,7 +171,7 @@
                                                     <label for="category" class="col-md-4 col-form-label text-md-right">Category Name</label>
 
                                                     <div class="col-md-8">
-                                                        <input id="category" type="text" class="form-control @error('category') is-invalid @enderror" name="category" autofocus>
+                                                        <input id="category" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" type="text" class="form-control @error('category') is-invalid @enderror" name="category" autofocus>
 
                                                         @error('category')
                                                             <span class="invalid-feedback" role="alert">
@@ -515,7 +515,7 @@
                                                     <label for="plo" class="col-md-4 col-form-label text-md-right">Program Learning Outcome</label>
 
                                                     <div class="col-md-8">
-                                                        <textarea id="plo" class="form-control" @error('plo') is-invalid @enderror rows="3" name="plo" required autofocus></textarea>
+                                                        <textarea id="plo" class="form-control" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000" @error('plo') is-invalid @enderror rows="3" name="plo" required autofocus></textarea>
 
                                                         @error('plo')
                                                         <span class="invalid-feedback" role="alert">
@@ -529,7 +529,7 @@
                                                     <label for="title" class="col-md-4 col-form-label text-md-right">Short Phrase</label>
 
                                                     <div class="col-md-8">
-                                                        <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" autofocus
+                                                        <input id="title" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" class="form-control @error('title') is-invalid @enderror" name="title" autofocus
                                                         placeholder="E.g. Citing Sources, Scientific Method" maxlength="50">
 
                                                         @error('title')

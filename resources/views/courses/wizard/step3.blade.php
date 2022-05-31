@@ -34,7 +34,7 @@
                                     <div class="row justify-content-between align-items-end m-2">
                                         <div class="col-10">
                                             <label for="learningActivity" class="form-label fs-6"><b>Learning Activity</b></label>
-                                            <input id="learningActivity" class="form-control" list="learningActivitiesOptions" placeholder="Type to search..." required>
+                                            <input id="learningActivity" class="form-control" list="learningActivitiesOptions" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" placeholder="Type to search..." required>
                                             <div class="invalid-tooltip">
                                                 Please provide a learning activity.
                                             </div>                                            
@@ -92,7 +92,7 @@
                                             @foreach($l_activities as $index => $l_activity)
                                             <tr>
                                                 <td>
-                                                    <input list="learningActivitiesOptions" id="l_activity{{$l_activity->l_activity_id}}" type="text" class="form-control"
+                                                    <input list="learningActivitiesOptions" id="l_activity{{$l_activity->l_activity_id}}" type="text" class="form-control" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191"
                                                     name="current_l_activities[{{$l_activity->l_activity_id}}]" value = "{{$l_activity->l_activity}}" placeholder="Choose from the dropdown list or type your own" form="saveLearningActivityChanges" required spellcheck="true" style="white-space: pre">
                                                 </td>
                                                 <td class="text-center">

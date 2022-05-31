@@ -38,7 +38,7 @@
                                                         <b>Short Phrase</b>
                                                         <div><small class="form-text text-muted" style="font-size:12px"><b><i class="bi bi-exclamation-circle-fill text-warning"></i> 50 character limit.</b></small></div>
                                                     </label>
-                                                    <textarea id="title" class="form-control" name="title" autofocus placeholder="E.g Experimental Design..." maxlength="50" style="resize:none"></textarea> 
+                                                    <textarea id="title" class="form-control" name="title" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="50" autofocus placeholder="E.g Experimental Design..." style="resize:none"></textarea> 
                                                 </div>
                                                 <div class="col-6">
                                                     <label for="l_outcome" class="form-label fs-6">
@@ -47,7 +47,7 @@
                                                         <div><small class="form-text text-muted" style="font-size:12px"><a href="https://tips.uark.edu/using-blooms-taxonomy/" target="_blank"><b><i class="bi bi-box-arrow-up-right"></i> Click here</b></a> for tips to write effective CLOs.</small></div>
                                                     </label>
                 
-                                                    <textarea id="l_outcome" class="form-control" name="l_outcome" required autofocus placeholder="E.g. Develop..." style="resize:none"></textarea>
+                                                    <textarea id="l_outcome" class="form-control" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000" name="l_outcome" required autofocus placeholder="E.g. Develop..." style="resize:none"></textarea>
                                                     <div class="invalid-tooltip">
                                                         You must input a course learning outcome or competency.
                                                     </div>
@@ -77,11 +77,11 @@
                                                     @foreach($l_outcomes as $index => $l_outcome)
                                                         <tr>
                                                             <td>
-                                                                <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                                                                <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="50"
                                                                 class="form-control @error('clo_shortphrase') is-invalid @enderror"  form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
                                                             </td>
                                                             <td>
-                                                                <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
+                                                                <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
                                                                 class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
                                                             </td>
                                                             <td class="text-center">
@@ -385,11 +385,11 @@
                 @foreach($l_outcomes as $index => $l_outcome)
                     <tr>
                         <td>
-                            <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}"
+                            <textarea type="text" name="current_l_outcome_short_phrase[{{$l_outcome->l_outcome_id}}]" id="l_outcome_short_phrase{{$l_outcome->l_outcome_id}}" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="50"
                             class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->clo_shortphrase}}</textarea>
                         </td>
                         <td>
-                            <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" 
+                            <textarea name="current_l_outcome[{{$l_outcome->l_outcome_id}}]" value="{{$l_outcome->l_outcome}}" id="l_outcome{{$l_outcome->l_outcome_id}}" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
                             class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>{{$l_outcome->l_outcome}}</textarea>
                         </td>
                         <td class="text-center">
@@ -422,10 +422,10 @@
         $('#addCLOTbl tbody').append(`
             <tr>
                 <td>
-                    <textarea type="text" name="new_short_phrases[]" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>${$('#title').val()}</textarea>
+                    <textarea type="text" name="new_short_phrases[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="50" class="form-control @error('clo_shortphrase') is-invalid @enderror" form="saveCLOChanges" required>${$('#title').val()}</textarea>
                 </td>
                 <td>
-                    <textarea name="new_l_outcomes[]" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
+                    <textarea name="new_l_outcomes[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000" value="${$('#l_outcome').val()}" class="form-control @error('l_outcome') is-invalid @enderror" form="saveCLOChanges" required>${$('#l_outcome').val()}</textarea>
                 </td>
                 <td class="text-center">
                     <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteCLO(this)"></i>
