@@ -960,7 +960,7 @@ class ProgramController extends Controller
             }
 
             // get uncategorized PLOs
-            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', NULL);
+            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', NULL)->values();
             if ($uncategorizedPLOs->count() > 0) {
                 // add uncategorized category to sheet 
                 $sheet->setCellValue($columns[$categoryColInMapSheet] . '2', 'Uncategorized');
@@ -980,7 +980,7 @@ class ProgramController extends Controller
                         else 
                             array_push($uncategorizedPLOsToCourseMapArr, '');
                     }
-    
+                    
                     // add array of map scale abv to the plo entry
                     $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), NULL, $columns[$categoryColInMapSheet + $index] . '4');
 
