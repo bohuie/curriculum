@@ -151,7 +151,6 @@
                         </h5>
 
                         <div class="body m-4 mb-2">
-
                             @if(count($course->learningActivities)<1)
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no teaching and learning activities set for this course. <a class="alert-link" href="{{route('courseWizard.step3', $course->course_id)}}">Add teaching and learning activities.</a>                     
@@ -164,7 +163,7 @@
                                         <th>Teaching and Learning Activity</th>
                                     </tr>
 
-                                    @foreach($course->learningActivities as $index => $l_activity)
+                                    @foreach($course->learningActivities->sortBy('l_activities_pos')->values() as $index => $l_activity)
                                     <tr>
                                         <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>
                                         <td>{{$l_activity->l_activity}}</td>
