@@ -21,7 +21,7 @@
                     </h3>
                 </div>
 
-                <div class="card-body" style="position:static">
+                <div class="card-body">
                     <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
                         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
                         <div>
@@ -51,58 +51,64 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <!-- Table -->
-                    <table class="table table-light reorder-tbl-rows mb-0" id="a_method_table">
-                        <thead>
-                            <tr class="table-primary">
-                                <th class="text-center">#</th>
-                                <th>Student Assesment Methods</th>
-                                <th>Weight</th>
-                                <th class="text-center w-25">Actions</th>                                    
-                            </tr>
-                        </thead>
-                        @if(count($a_methods)<1)
-                            <tr>
-                                <td colspan="4">
-                                    <div class="alert alert-warning wizard">
-                                        <i class="bi bi-exclamation-circle-fill"></i>There are no student assessment methods set for this course.                    
-                                    </div>
-                                </td>
-                            </tr>
-                        @else
-                            @foreach($a_methods as $index=>$a_method)
+
+                    <form action="{{route('courses.amReorder', $course->course_id)}}" method="POST">
+                        @csrf
+                        <!-- Table -->
+                        <table class="table table-light reorder-tbl-rows mb-0" id="a_method_table">
+                            <thead>
+                                <tr class="table-primary">
+                                    <th class="text-center"></th>
+                                    <th>Student Assesment Methods</th>
+                                    <th>Weight</th>
+                                    <th class="text-center w-25">Actions</th>                                    
+                                </tr>
+                            </thead>
+                            @if(count($a_methods)<1)
                                 <tr>
-                                    <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>                                                
-                                    <td>
-                                        {{$a_method->a_method}}                                                    
+                                    <td colspan="4">
+                                        <div class="alert alert-warning wizard">
+                                            <i class="bi bi-exclamation-circle-fill"></i>There are no student assessment methods set for this course.                    
+                                        </div>
                                     </td>
-                                    <td >
-                                        {{$a_method->weight}}%
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <form action="{{route('am.destroy', $a_method->a_method_id)}}" method="POST" >
+                                </tr>
+                            @else
+                                @foreach($a_methods as $index=>$a_method)
+                                    <tr>
+                                        <td class="text-center fw-bold" style="width:5%">↕</td>                                                
+                                        <td>
+                                            {{$a_method->a_method}}                                                    
+                                        </td>
+                                        <td >
+                                            {{$a_method->weight}}%
+                                        </td>
+                                        <td class="text-center align-middle">
                                             <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#addAssessmentMethodModal">
                                                 Edit
                                             </button>
-                                            @csrf
-                                            {{method_field('DELETE')}}
+                                            <!-- Removed Delete Button Modal Not Working -->
+                                            <!-- <button style="width:60px;" type="button" class="btn btn-danger btn-sm btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteAMethod{{$a_method->a_method_id}}">
+                                                Delete
+                                            </button> -->
                                             <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                                            <button type="submit" style="width:60px;" class="btn btn-danger btn-sm m-1">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
-                    </table>
-                    <table class="table table-light mt-0">
-                        <tr class="table-secondary footer">
-                            <td colspan="2"><b>TOTAL</b></td>
-                            <td></td>
-                            <td><b id="sum">{{$totalWeight}}%</b></td>
-                        </tr>
-                    </table>
-                    <!-- End Table -->
+                                        </td>
+                                        <input type="hidden" name="a_method_pos[]" value="{{ $a_method->a_method_id }}">
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </table>
+                        <table class="table table-light mt-0">
+                            <tr class="table-secondary footer">
+                                <td colspan="2"><b>TOTAL</b></td>
+                                <td></td>
+                                <td><b id="sum">{{$totalWeight}}%</b></td>
+                            </tr>
+                        </table>
+                        <!-- End Table -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success float-right col-2">Save Order</button>
+                        </div>
+                    </form>
 
                     <!-- start of add student assessment methods modal -->
                     <div id="addAssessmentMethodModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="addAssessmentMethodModalLabel" aria-hidden="true">
@@ -228,6 +234,34 @@
                         </div>
                     </div>
                     <!-- End of add student assessment methods modal -->
+
+                    <!-- start of delete student assessment methods modal -->
+                    <div class="modal fade" id="deleteAMethod{{$a_method->a_method_id}}" tabindex="-1" role="dialog" aria-labelledby="deleteAMethod" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteAMethod">Delete Confirmation</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-left">
+                                    Are you sure you want to delete {{$a_method->a_method}}
+                                </div>
+                                <form method="POST" id="deleteAssessmentMethodChanges" action="{{route('am.destroy', $a_method->a_method_id)}}">
+                                    @csrf
+                                    {{method_field('DELETE')}}
+                                    <input type="hidden" name="course_id" value="{{$course->course_id}}">
+
+                                    <div class="modal-footer">
+                                        <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                        <button style="width:60px;" type="submit" class="btn btn-danger btn-sm ">Delete</button>
+                                    </div>
+                                </form>    
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of delete student assessment methods modal -->
                 </div>
 
                 <!-- card footer -->

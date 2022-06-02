@@ -125,7 +125,7 @@
                                         <th>Weight</th>
                                     </tr>
 
-                                    @foreach($course->assessmentMethods as $index => $a_method)
+                                    @foreach($course->assessmentMethods->sortBy('pos_in_alignment')->values() as $index => $a_method)
                                     <tr>
                                         <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>
                                         <td>{{$a_method->a_method}}</td>

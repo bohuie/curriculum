@@ -2,11 +2,11 @@
 
 @section('content')
 <div>
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            @include('courses.wizard.header')
+    @include('courses.wizard.header')
+    <div id="app">
+        <div class="home">
 
-            <div class="card">
+            <div class="card" style="position:static">
                 <div class="card-header wizard" >
                     <h3>
                         Teaching and Learning Activities
@@ -135,48 +135,44 @@
                     </div>
 
                     <div id="admins">
-                        <div class="row">
-                            <div class="col">
-                                <table class="table table-light table-bordered" id="l_activity_table">
-                                    <tr class="table-primary">
-                                        <th class="text-center">#</th>
-                                        <th>Teaching and Learning Activities</th>
-                                        <th class="text-center w-25">Actions</th>
+                        <form action="{{route('courses.tlaReorder', $course->course_id)}}" method="POST">
+                            @csrf
+                            {{method_field('POST')}}
+                            <table class="table table-light reorder-tbl-rows" id="l_activity_table">
+                                <tr class="table-primary">
+                                    <th class="text-center">#</th>
+                                    <th>Teaching and Learning Activities</th>
+                                    <th class="text-center w-25">Actions</th>
+                                </tr>
+                                @if(count($l_activities)<1)
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="alert alert-warning wizard">
+                                                <i class="bi bi-exclamation-circle-fill"></i>There are no teaching and learning activities set for this course.                    
+                                            </div>
+                                        </td>
                                     </tr>
-
-                                    @if(count($l_activities)<1)
+                                @else
+                                    @foreach($l_activities as $index => $l_activity)
                                         <tr>
-                                            <td colspan="3">
-                                                <div class="alert alert-warning wizard">
-                                                    <i class="bi bi-exclamation-circle-fill"></i>There are no teaching and learning activities set for this course.                    
-                                                </div>
+                                            <td class="text-center fw-bold" style="width:5%">↕</td>                                                
+                                            <td>
+                                                {{$l_activity->l_activity}}
                                             </td>
+                                            <td class="text-center align-middle">
+                                                <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
+                                                    Edit
+                                                </button>
+                                            </td>
+                                            <input type="hidden" name="l_activities_pos[]" value="{{$l_activity->l_activity_id}}">
                                         </tr>
-                                    @else
-                                        @foreach($l_activities as $index => $l_activity)
-                                            <tr>
-                                                <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>                                                
-                                                <td>
-                                                    {{$l_activity->l_activity}}
-                                                </td>
-                                                <td class="text-center align-middle">
-                                                    <form action="{{route('la.destroy', $l_activity->l_activity_id)}}" method="POST" >
-                                                        <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
-                                                            Edit
-                                                        </button>
-                                                        @csrf
-                                                        {{method_field('DELETE')}}
-                                                        <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                                                        <button type="submit" style="width:60px;" class="btn btn-danger btn-sm m-1">Delete</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-
-                                    @endif
-                                </table>
+                                    @endforeach
+                                @endif
+                            </table>
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-success float-right col-2">Save Order</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
 
@@ -314,5 +310,8 @@
     }
 
 
-  </script>
+</script>
+
+<script src="{{ asset('js/drag_drop_tbl_row.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/drag_drop_tbl_row.css' ) }}">
 @endsection
