@@ -207,31 +207,17 @@
                         </div>
                         <!-- Course Instructor, Course Semester, Course Year -->
                         <div class="row mb-3">
-                            <div class="col-5">
+                            <div class="col-4">
                                 <label for="courseInstructor"><span class="requiredField">* </span>Course Instructor</label>
                                 <input id = "courseInstructor" name = "courseInstructor" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required value="{{ !empty($syllabus) ? $syllabus->course_instructor : ''}}">
                                 <div class="invalid-tooltip">
                                     Please enter the course instructor.
                                 </div>
                             </div>
-                            <div class="col-3">
-                                <label for="courseSemester" class="form-label"><span class="requiredField">* </span>Course Term</label>
-                                <select id="courseSemester" class="form-select" name="courseSemester" required>
-                                    <option disabled selected value=""> -- Year -- </option>
-                                    <option value="W1" {{!empty($syllabus) ? (($syllabus->course_term == 'W1') ? 'selected=true' : '') : ''}}>Winter Term 1</option>
-                                    <option value="W2" {{!empty($syllabus) ? (($syllabus->course_term == 'W2') ? 'selected=true' : '') : ''}}>Winter Term 2</option>
-                                    <option value="S1" {{!empty($syllabus) ? (($syllabus->course_term == 'S1') ? 'selected=true' : '') : ''}}>Summer Term 1</option>
-                                    <option value="S2" {{!empty($syllabus) ? (($syllabus->course_term == 'S2') ? 'selected=true' : '') : ''}}>Summer Term 2</option>
-                                    <option value="O" {{!empty($syllabus) ? (($syllabus->course_term == 'O') ? 'selected=true' : '') : ''}}>Other</option>
-                                </select>
-                                <div class="invalid-tooltip">
-                                    Please enter the course semester.
-                                </div>
-                            </div>
                             <div class="col-2">
                                 <label for="courseYear"><span class="requiredField">* </span>Course Year</label>
                                 <select id="courseYear" class="form-select" name="courseYear" required>
-                                    <option disabled selected value=""> -- Term -- </option>
+                                    <option disabled selected value="">  -- Year -- </option>
                                     <option value="2021" {{!empty($syllabus) ? (($syllabus->course_year == '2021') ? 'selected=true' : '') : ''}}>2021</option>
                                     <option value="2022" {{!empty($syllabus) ? (($syllabus->course_year == '2022') ? 'selected=true' : '') : ''}}>2022</option>
                                     <option value="2023" {{!empty($syllabus) ? (($syllabus->course_year == '2023') ? 'selected=true' : '') : ''}}>2023</option>
@@ -247,6 +233,30 @@
                                     Please enter the course year.
                                 </div>
                             </div>
+
+                            <div class="col-3">
+                                <label for="courseSemester" class="form-label"><span class="requiredField">* </span>Course Term</label>
+                                <select id="courseSemester" class="form-select" name="courseSemester" required>
+                                    <option disabled selected value=""> -- Term --</option>
+                                    <option value="W1" {{!empty($syllabus) ? (($syllabus->course_term == 'W1') ? 'selected=true' : '') : ''}}>Winter Term 1</option>
+                                    <option value="W2" {{!empty($syllabus) ? (($syllabus->course_term == 'W2') ? 'selected=true' : '') : ''}}>Winter Term 2</option>
+                                    <option value="S1" {{!empty($syllabus) ? (($syllabus->course_term == 'S1') ? 'selected=true' : '') : ''}}>Summer Term 1</option>
+                                    <option value="S2" {{!empty($syllabus) ? (($syllabus->course_term == 'S2') ? 'selected=true' : '') : ''}}>Summer Term 2</option>
+                                    <option value="O" {{!empty($syllabus) ? (($syllabus->course_term != 'W1' && $syllabus->course_term != 'W2' && $syllabus->course_term != 'S1' && $syllabus->course_term != 'S2') ? 'selected=true' : '') : ''}}>Other</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please enter the course term.
+                                </div>
+                            </div>
+                            <div id="courseSemesterOther" class="col-3">
+                                @if (!empty($syllabus))
+                                    @if ($syllabus->course_term != 'W1' && $syllabus->course_term != 'W2' && $syllabus->course_term != 'S1' && $syllabus->course_term != 'S2')
+                                        <label class="form-label" for="courseSemesterOther">Other</label>
+                                        <input name="courseSemesterOther" type="text" class="form-control" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="49" value="{{$syllabus->course_term}}">
+                                    @endif
+                                @endif
+                            </div>
+
                         </div>
                         <!-- Course Location, Office Location -->
                         <div class="row mb-3">
@@ -483,7 +493,7 @@
                         <!-- Course Passing Criteria -->
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="passingCriteria">Passing criteria</label>
+                                <label for="passingCriteria">Passing/Grading criteria</label>
                                 <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "passingCriteria" name = "passingCriteria" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
                             </div>
                         </div>
@@ -510,7 +520,7 @@
                         <!-- Course Optional Resources -->
                         <div class="row mb-3 mt-4" >
                             <div class="col">
-                                <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
+                                <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional Statements: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
                                 <div class="optionalSyllabus form-check">
                                     <ul id="optionalSyllabus" class="text-start" style="list-style-type:none;">
                                     </ul>
@@ -642,6 +652,24 @@
         $(function () {
             $('[data-bs-toggle="popover"]').popover()
         })
+
+        // event listener on select term dropdown
+        $('#courseSemester').on('change', function(event) { 
+            // insert a text input if user selects other
+            if ($('#courseSemester').val() == 'O') {
+                $('#courseSemesterOther').html(`
+                    <label class="form-label" for="courseSemesterOther">Other</label>
+                    <input class="form-control" type="text" name="courseSemesterOther" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="49">
+                    <div class="invalid-tooltip">
+                        Please specify the course term.
+                    </div>
+                `);
+            } else {
+                // remove html for other course term input
+                $('#courseSemesterOther').html('');
+            }
+        });
+
 
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 

@@ -33,7 +33,11 @@ class VancouverSyllabusResourceSeeder extends Seeder
             'id_name' => 'copyright',
             'title' => '© Copyright Statement',
         ]);
-
+        
+        VancouverSyllabusResource::create([
+            'id_name' => 'concession',
+            'title' => 'Academic Concession',
+        ]);
         
     }
 }

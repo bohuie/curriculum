@@ -247,7 +247,8 @@ class SyllabusController extends Controller
         $courseNumber = $request->input('courseNumber');
         $courseInstructor = $request->input('courseInstructor');
         $courseYear = $request->input('courseYear');
-        $courseSemester = $request->input('courseSemester');
+        $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
+
         // get current user
         $user = User::where('id', Auth::id())->first();
         
@@ -258,6 +259,7 @@ class SyllabusController extends Controller
         $syllabus->course_code = $courseCode;
         $syllabus->course_num = $courseNumber;
         $syllabus->course_instructor = $courseInstructor;
+    
         $syllabus->course_term = $courseSemester;
         $syllabus->course_year = $courseYear;
 
@@ -408,7 +410,7 @@ class SyllabusController extends Controller
         $courseNumber = $request->input('courseNumber');
         $courseInstructor = $request->input('courseInstructor');
         $courseYear = $request->input('courseYear');
-        $courseSemester = $request->input('courseSemester');
+        $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
 
         // get the syllabus, and start updating it
         $syllabus = Syllabus::find($syllabusId);
@@ -780,10 +782,9 @@ class SyllabusController extends Controller
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
                     break;
-                    case("O"):
-                        $templateProcessor->setValue('season',"Other");
-                        $templateProcessor->setValue('term',"To Be Determined");
-                    break;
+                    default: 
+                        $templateProcessor->setValue('term', $syllabus->course_term);
+                        $templateProcessor->setValue('season',"");
                 }
 
                 if($learningOutcome = $syllabus->learning_outcomes){
@@ -1043,10 +1044,9 @@ class SyllabusController extends Controller
                         $templateProcessor->setValue('season',"Summer");
                         $templateProcessor->setValue('term',"Term 2");
                     break;
-                    case("O"):
-                        $templateProcessor->setValue('season',"Other");
-                        $templateProcessor->setValue('term',"To Be Determined");
-                    break;
+                    default: 
+                        $templateProcessor->setValue('term', $syllabus->course_term);
+                        $templateProcessor->setValue('season',"");
                 }
 
                 if($learningOutcome =  $syllabus->learning_outcomes){

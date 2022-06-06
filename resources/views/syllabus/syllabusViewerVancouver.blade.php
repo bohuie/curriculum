@@ -262,7 +262,7 @@
         <!--  passing criteria -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>PASSING CRITERIA</h6>
+                <h6>PASSING/GRADING CRITERIA</h6>
             </div>
             <p>{{$syllabus->passing_criteria}}</p>
         </div>
@@ -351,6 +351,14 @@
                         <p>All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</p>
                         @break
 
+                        @case('concession')
+                        <p>In accordance with <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">UBC Policy V135</a>, academic concessions are generally granted when students are facing an unexpected situation or circumstance that prevents them from completing graded work or exams. Students may request an academic concession for unanticipated changes in personal responsibilities that create a conflict, medical circumstances, or compassionate grounds.
+                        <br>
+                        <br>
+                        In accordance with <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">UBC Policy V135</a>, Section 10, students’ requests for academic concession should be made as early as reasonably possible, in writing to their instructor or academic advising office or equivalent in accordance with the procedures for <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">Policy V135</a> and those set out by the student’s faculty/school. The requests should clearly state the grounds for the concession and the anticipated duration of the conflict and or hindrance to academic work. In some situations, this self-declaration is sufficient, but the submission of supporting documentation may be required along with, or following, the self-declaration.
+                        </p>
+                        @break
+
                     @endswitch
                 </div>
                 @endif
@@ -359,10 +367,28 @@
     </div>
     <!-- footer -->
     <div class="card-footer p-4">
-        <form method="POST" action="{{ action('SyllabusController@syllabusToWordDoc', $syllabus->id) }}">
-            @csrf        
-            <button type="submit" class="btn btn-primary col-2 btn-sm m-2 float-right">Download <i class="bi bi-download"></i></button>
-        </form>
+            <button class="btn btn-primary dropdown-toggle m-2 col-4 float-right" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Download
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li>
+                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'pdf']) }}">
+                    @csrf        
+                        <button type="submit" name="download" value="pdf" class="dropdown-item" type="button">
+                            <i class="bi-file-pdf-fill text-danger"></i> PDF
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'word']) }}">
+                    @csrf        
+                        <button type="submit" name="download" value="word" class="dropdown-item" type="button">
+                            <i class="bi-file-earmark-word-fill text-primary"></i> Word
+                        </button>
+                    </form>
+                </li>
+            </ul>
+
     </div>
 </div>
 
