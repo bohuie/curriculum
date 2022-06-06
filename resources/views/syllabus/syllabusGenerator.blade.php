@@ -483,7 +483,7 @@
                         <!-- Course Passing Criteria -->
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="passingCriteria">Passing criteria</label>
+                                <label for="passingCriteria">Passing/Grading criteria</label>
                                 <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "passingCriteria" name = "passingCriteria" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
                             </div>
                         </div>
@@ -510,7 +510,7 @@
                         <!-- Course Optional Resources -->
                         <div class="row mb-3 mt-4" >
                             <div class="col">
-                                <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
+                                <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional Statements: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
                                 <div class="optionalSyllabus form-check">
                                     <ul id="optionalSyllabus" class="text-start" style="list-style-type:none;">
                                     </ul>

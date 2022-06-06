@@ -184,7 +184,7 @@
         <!--  passing criteria -->
         <div class="mb-4">
             <div>
-                <h6 class="oSyllabusHeader">Passing Criteria</h6>
+                <h6 class="oSyllabusHeader">Passing/Grading Criteria</h6>
             </div>
             <p>{{$syllabus->passing_criteria}}</p>
         </div>

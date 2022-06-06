@@ -262,7 +262,7 @@
         <!--  passing criteria -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>PASSING CRITERIA</h6>
+                <h6>PASSING/GRADING CRITERIA</h6>
             </div>
             <p>{{$syllabus->passing_criteria}}</p>
         </div>
