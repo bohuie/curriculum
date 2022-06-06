@@ -47,8 +47,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc->subcat_id = 2;
         $osc->cat_id = 1;
         $osc->subcat_name = "<a href=\"https://www.workbc.ca/getmedia/c43af36f-f408-4990-9ae1-c5b5f5f7be7a/BC_Labour_Market_Outlook_2021_9MB.pdf.aspx\" target=\"_blank\">BC's Labour Market: Top skills in Demand</a>";
-        $osc->subcat_desc = "BC's tops skills in demand,as forecasted to the year 2029 by the <a href=\"https://www.workbc.ca/getmedia/18214b5d-b338-4bbd-80bf-b04e48a11386/BC_
-                                Labour_Market_Outlook_2019.pdf.aspx\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> BC Labour Market Outlook (page 28)</a>
+        $osc->subcat_desc = "BC's tops skills in demand,as forecasted to the year 2029 by the <a href=\"https://www.workbc.ca/getmedia/c43af36f-f408-4990-9ae1-c5b5f5f7be7a/BC_Labour_Market_Outlook_2021_9MB.pdf.aspx\"></i> BC Labour Market Outlook (page 28)</a>
                                 , are the following:";
         $osc->subcat_postamble = "Additionally, BC expects <a href=\"https://www.workbc.ca/Labour-Market-Industry/Jobs-in-Demand/High-Demand-Occupations.aspx\""
                                 . "target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> these occupations to be of \"High Opportunity\"</a> in the province. 
@@ -76,7 +75,7 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 5;
         $osc->cat_id = 2;
-        $osc->subcat_name = "<a href=\"https://aboriginal-2018.sites.olt.ubc.ca/files/2020/09/UBC.ISP_C2V13.1_Spreads_Sept1.pdf\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
+        $osc->subcat_name = "<a href=\"https://isp.ubc.ca/implementation/the-action-plan/\" target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i>
                                         UBC's Indigenous Strategic Plan (2020)</a>";
         $osc->subcat_desc = "";
         $osc->subcat_postamble = "";
@@ -177,75 +176,75 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->save();
 
         // End UBC Mandate 2020
-
-        $op_subDesc = new OptionalPrioritiesSubdescription;
-        $op_subDesc->description = "Top skills of the future (a skill is the ability to perform tasks based on one's knowledge, learning or practice):";
-        $op_subDesc->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 8;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Active Listening";
-        $opp->op_subdesc = $op_subDesc->op_subdesc;
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 9;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Speaking";
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 10;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Reading Comprehension";
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 11;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Critical Thinking";
+        $opp->year = 2021;
         $opp->save();
-
-        $op_subDesc = new OptionalPrioritiesSubdescription;
-        $op_subDesc->description = "Top competencies of the future (competency is the ability to apply skills and knowledge to perform complex tasks well and to adapt easily to the activities of a variety of jobs):";
-        $op_subDesc->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 12;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Social Perceptiveness";
-        $opp->op_subdesc = $op_subDesc->op_subdesc;
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 13;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Judgement and Decision Making";
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 14;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Writing";
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 15;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Monitoring";
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 16;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Complex Problem Solving";
+        $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
         $opp->op_id = 17;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Coordination";
+        $opp->year = 2021;
         $opp->save();
 		
         $opp = new OptionalPriorities;
@@ -597,6 +596,102 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->op_id = 80;
         $opp->subcat_id = 11;
         $opp->optional_priority = "Physical Activity: Produce accessible programs, policies, and facilities that support physical activity for all ages and abilities.";
+        $opp->save();
+
+        $op_subDesc = new OptionalPrioritiesSubdescription;
+        $op_subDesc->description = "Top skills of the future (a skill is the ability to perform tasks based on one's knowledge, learning or practice):";
+        $op_subDesc->save();
+
+        $opp = new OptionalPriorities;
+        $opp->op_id = 81;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Active Listening: Giving full attention to what other
+        people are saying, taking time to understand the points
+        being made, asking questions as appropriate and not
+        interrupting at inappropriate times.";
+        $opp->year = 2022;
+        $opp->op_subdesc = $op_subDesc->op_subdesc;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 82;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Speaking: Talking to others to share
+        information effectively.";
+        $opp->year = 2022;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 83;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Reading Comprehension: Understanding written
+        sentences and paragraphs in work-related documents.";
+        $opp->year = 2022;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 84;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Critical Thinking: Using logic and reasoning to identify
+        the strengths and weaknesses of alternative solutions,
+        conclusions or approaches to problems.";
+        $opp->year = 2022;
+        $opp->save();
+
+        $op_subDesc = new OptionalPrioritiesSubdescription;
+        $op_subDesc->description = "Top competencies of the future (competency is the ability to apply skills and knowledge to perform complex tasks well and to adapt easily to the activities of a variety of jobs):";
+        $op_subDesc->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 85;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Social Perceptiveness: Being aware of others’
+        reactions and understanding why they react as they do.";
+        $opp->year = 2022;
+        $opp->op_subdesc = $op_subDesc->op_subdesc;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 86;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Judgement and Decision Making: Considering
+        the relative costs and benefits of potential actions to
+        choose the most appropriate one.";
+        $opp->year = 2022;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 87;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Writing: Communicating effectively through composing
+        text as appropriate for the needs of the audience.";
+        $opp->year = 2022;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 88;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Monitoring: Keeping track of and assessing the
+        performance of oneself, other individuals or organizations
+        to make improvements or take corrective action.";
+        $opp->year = 2022;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 89;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Complex Problem Solving: Being able to solve novel,
+        ill-defined problems in complex, real-world settings.";
+        $opp->year = 2022;
+        $opp->save();
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 90;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Co-ordination: Organizing the different elements of
+        a complex initiative or activity so as to enable items,
+        tasks and people to work together effectively.";
+        $opp->year = 2022;
         $opp->save();
 		
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
