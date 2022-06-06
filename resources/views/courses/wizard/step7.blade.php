@@ -36,9 +36,6 @@
                             <button id="downloadPDFBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('courses.pdf', $course->course_id)}}">
                                 Download<i class="bi bi-download pl-2"></i>
                             </button>
-                            <a id="test" type="button" class="btn btn-primary" href="{{route('courses.pdf', $course->course_id)}}">
-                                Test<i class="bi bi-download pl-2"></i>
-                            </a>
 
                         </div>
                         <div class="col">
