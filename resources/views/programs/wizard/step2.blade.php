@@ -94,7 +94,7 @@
                                         @endforeach
                                         </div>
                                         <div class="modal-footer text-center" style="display: inline;">
-                                            <small class="text-center">Mapping scales inspired from <a href="https://taylorinstitute.ucalgary.ca/curriculum-links">UofC Curriculum Links</a></small>
+                                            <small class="text-center">Mapping scales retrieved from <a href="https://taylorinstitute.ucalgary.ca/curriculum-links">UofC Curriculum Links</a></small>
                                         </div>
                                     </div>
                                 </div>
