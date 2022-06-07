@@ -247,6 +247,69 @@
                     </div>
                 </div>
             </div> 
+            <div class="accordion" id="FAQAccordion10">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader10">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion10" aria-expanded="false" aria-controls="collapseFAQAccordion10">
+                            <h5>Can non-UBC users create an account and use this web application?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion10" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader10" data-bs-parent="FAQAccordion10">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            While this tool was created to serve the UBC community, anyone can register and use the site. However, since information such as BC’s Ministry-related standards and UBC strategic plans are presented, not all users may benefit from every feature.                            
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="accordion" id="FAQAccordion11">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader11">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion11" aria-expanded="false" aria-controls="collapseFAQAccordion11">
+                            <h5>Where is my information stored?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion11" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader11" data-bs-parent="FAQAccordion11">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            The information gathered on the UBC Curriculum MAP website is collected under the authority of section 26(e) of the British Columbia <a href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96165_02">Freedom of Information and Protection of Privacy Act</a>.
+                            <br>
+                            <br>
+                            Information entered by website users will only be used for the intended purposes of allowing instructors and departments to make informed decisions about course/program design and enhance the overall student learning experience. Website users retain authorship of information entered, and as such have ownership and responsibility for content. Specific permission for access to content may be sought for the purpose of evaluating and improving the UBC Curriculum MAP tool. Any data entered into the UBC Curriculum MAP website is stored on secure UBC Servers.
+                            <br>
+                            <br>
+                            UBC reserves the right to amend the website’s terms of use at any time and will notify registered users of changes. Use of this website is subject to UBC’s Information Systems Policy.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="accordion" id="FAQAccordion12">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader12">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion12" aria-expanded="false" aria-controls="collapseFAQAccordion12">
+                            <h5>Can I collaborate with someone outside my organization?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion12" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader12" data-bs-parent="FAQAccordion12">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            Yes, the “collaboration” feature allows all users to collaborate with anybody via a valid email address.                              
+                        </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
         </div>
     </div>    
 </div>
