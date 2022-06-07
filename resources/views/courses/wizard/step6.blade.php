@@ -211,7 +211,7 @@
                                                         <div class="accordion-body">
                                                             @foreach ($optionalPriorityCategory->optionalPrioritySubcategories as $optionalPrioritySubcategory)
                                                                 <!-- UBC Mandate -->
-                                                                @if ($optionalPrioritySubcategory->subcat_id == 1)
+                                                                @if ($optionalPrioritySubcategory->subcat_id == 1 )
                                                                     <div class="row">
                                                                         <div class="col-10">
                                                                             <!-- <h6 class="fw-bold mb-3">
@@ -244,7 +244,7 @@
                                                                                 </thead>
                                                                                 <tbody> 
                                                                                     @foreach ($optionalPrioritySubcategory->optionalPriorities->where('year', $year) as $optionalPriority)
-                                                                                        <tr>
+                                                                                        <!-- <tr>
                                                                                             <td>
                                                                                                 @if (in_array($optionalPriority->op_id, $opStored))
                                                                                                     <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
@@ -255,14 +255,144 @@
                                                                                             <td>
                                                                                                 {!! $optionalPriority->optional_priority !!}
                                                                                             </td>
-                                                                                        </tr>
+                                                                                        </tr> -->
+
+                                                                                        <!-- If optional priority has a subdesc then loop through sub description and add description before optional priority -->
+                                                                                        @if ($optionalPriority->op_subdesc != NULL)
+                                                                                            @foreach ($opSubDesc as $subDesc)
+                                                                                                @if ($subDesc->op_subdesc == $optionalPriority->op_subdesc)
+                                                                                                    <tr>
+                                                                                                        <td></td>
+                                                                                                        <td>
+                                                                                                            <b>{!! $subDesc->description !!}</b>
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            @endforeach
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                                    @else
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                                    @endif
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    {!! $optionalPriority->optional_priority !!}
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        @else
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                                    @else
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                                    @endif
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    {!! $optionalPriority->optional_priority !!}
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        @endif
                                                                                     @endforeach                                                                                
                                                                                 </tbody>
                                                                             </table> 
                                                                         </div>
                                                                         @endforeach
                                                                     </div>
-                                                                <!-- End of UBC Mandate -->
+                                                                @elseif ($optionalPrioritySubcategory->subcat_id == 2 )
+                                                                    <!-- UBC market -->
+                                                                        <div class="row">
+                                                                            <div class="col-10">
+                                                                                <!-- <h6 class="fw-bold mb-3">
+                                                                                    {!! $optionalPrioritySubcategory->subcat_name !!}
+                                                                                </h6>
+                                                                                <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p> -->
+                                                                            </div>
+                                                                            <!-- UBC Market Date Filter -->
+                                                                            <div class="col">
+                                                                                <select id="ubc-market" class="form-select col float-right bg-light fs-6" aria-label="UBC Market Year">
+                                                                                    @foreach ($optionalPrioritySubcategory->optionalPriorities->pluck('year')->unique()->sortDesc() as $year)
+                                                                                        <option value="{{$year}}-market">{{$year}}</option>
+                                                                                    @endforeach
+                                                                                </select>  
+                                                                            </div>
+
+                                                                        @foreach ($optionalPrioritySubcategory->optionalPriorities->pluck('year')->unique()->sortDesc() as $year)
+                                                                        <div class="collapse market show" id="{{$year}}-market">
+                                                                            <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
+                                                                                <thead class="thead-light">
+                                                                                <tr>
+                                                                                    <th data-field="state" data-checkbox="true"></th>
+                                                                                    <th data-field="Description">{!! $optionalPrioritySubcategory->subcat_name !!}</th>
+                                                                                </tr>
+                                                                                @if (($optionalPrioritySubcategory->subcat_desc != NULL) || ($optionalPrioritySubcategory->subcat_desc != ''))
+                                                                                    <tr>
+                                                                                        <td colspan="2">{!! $optionalPrioritySubcategory->subcat_desc !!}</td>
+                                                                                    </tr>
+                                                                                @endif
+                                                                                </thead>
+                                                                                <tbody> 
+                                                                                    @foreach ($optionalPrioritySubcategory->optionalPriorities->where('year', $year) as $optionalPriority)
+                                                                                        <!-- <tr>
+                                                                                            <td>
+                                                                                                @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                                @else
+                                                                                                    <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                                    @endif
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                {!! $optionalPriority->optional_priority !!}
+                                                                                            </td>
+                                                                                        </tr> -->
+
+                                                                                        <!-- If optional priority has a subdesc then loop through sub description and add description before optional priority -->
+                                                                                        @if ($optionalPriority->op_subdesc != NULL)
+                                                                                            @foreach ($opSubDesc as $subDesc)
+                                                                                                @if ($subDesc->op_subdesc == $optionalPriority->op_subdesc)
+                                                                                                    <tr>
+                                                                                                        <td></td>
+                                                                                                        <td>
+                                                                                                            <b>{!! $subDesc->description !!}</b>
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            @endforeach
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                                    @else
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                                    @endif
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    {!! $optionalPriority->optional_priority !!}
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        @else
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                                    @else
+                                                                                                        <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                                    @endif
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    {!! $optionalPriority->optional_priority !!}
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        @endif
+                                                                                    @endforeach                                                                                
+                                                                                </tbody>
+                                                                            </table> 
+                                                                        </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                <!-- End of UBC market -->
                                                                 @else
                                                                     <!-- <h6 class="fw-bold mb-3">
                                                                         {!! $optionalPrioritySubcategory->subcat_name !!}
@@ -284,24 +414,44 @@
                                                                         </thead>
                                                                         <tbody>
                                                                             @foreach ($optionalPrioritySubcategory->optionalPriorities as $optionalPriority)
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        @if ($optionalPriority->isCheckable)
+                                                                                <!-- If optional priority has a subdesc then loop through sub description and add description before optional priority -->
+                                                                                @if ($optionalPriority->op_subdesc != NULL)
+                                                                                    @foreach ($opSubDesc as $subDesc)
+                                                                                        @if ($subDesc->op_subdesc == $optionalPriority->op_subdesc)
+                                                                                            <tr>
+                                                                                                <td></td>
+                                                                                                <td>
+                                                                                                    <b>{!! $subDesc->description !!}</b>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        @endif
+                                                                                    @endforeach
+                                                                                    <tr>
+                                                                                        <td>
                                                                                             @if (in_array($optionalPriority->op_id, $opStored))
                                                                                                 <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
                                                                                             @else
                                                                                                 <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
                                                                                             @endif
-                                                                                        @endif
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @if ($optionalPriority->isCheckable) 
+                                                                                        </td>
+                                                                                        <td>
                                                                                             {!! $optionalPriority->optional_priority !!}
-                                                                                        @else
-                                                                                            <b>{!! $optionalPriority->optional_priority !!}</b>
-                                                                                        @endif
-                                                                                    </td>
-                                                                                </tr>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                @else
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            @if (in_array($optionalPriority->op_id, $opStored))
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}"checked>
+                                                                                            @else
+                                                                                                <input type="checkbox" name = "optionalItem[]" value="{{$optionalPriority->op_id}}">
+                                                                                            @endif
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            {!! $optionalPriority->optional_priority !!}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                @endif
                                                                             @endforeach
                                                                         </tbody>
                                                                     </table>
@@ -342,8 +492,10 @@
     $(document).ready(function () {
 
         var mandateCollapseList = $('.collapse.mandate');
+        var marketCollapseList = $('.collapse.market');
 
         changeMandate($('#ubc-mandate').val(), mandateCollapseList)
+        changeMarket($('#ubc-market').val(), marketCollapseList)
 
         $('[data-toggle="tooltip"]').tooltip();
 
@@ -376,49 +528,12 @@
             changeMandate(mandateId, mandateCollapseList);
             
         })
-
-        // $("form").submit(function (e) {
-        //     // prevent duplicate form submissions
-        //     e.preventDefault();
-
-        //     var id = $(this).attr('id');
-
-        //     $(this).find(":submit").attr('disabled', 'disabled');
-        //     $(this).find(":submit").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-
-        //     var form_action = $(this).attr("action");
-
-        //     $.ajax({
-        //         data: $(this).serialize(),
-        //         url: form_action,
-        //         type: "POST",
-        //         dataType: 'json',
-        //         success: function (data) {
-        //             $('form[id='+id+']').find(":submit").removeAttr('disabled');
-        //             $('form[id='+id+']').find(":submit").html('Save');
-
-
-        //             $('form[id='+id+']').find("#alert").html("Your answers have been saved successfully");
-        //             $('form[id='+id+']').find("#alert").toggleClass("alert alert-success");
-        //             $('form[id='+id+']').find("#alert").delay(2000).slideUp(200, function() {
-        //                 $(this).alert('close');
-        //             });
-
-        //         },
-        //         error: function (data) {
-        //             $('form[id='+id+']').find(":submit").removeAttr('disabled');
-        //             $('form[id='+id+']').find(":submit").html('Save');
-
-
-        //             $('form[id='+id+']').find("#alert").html("There was an error saving your answers");
-        //             $('form[id='+id+']').find("#alert").toggleClass("alert alert-danger");
-        //             $('form[id='+id+']').find("#alert").delay(2000).slideUp(200, function() {
-        //                 $(this).alert('close');
-        //             });
-        //         }
-        //     });
-
-        // });
+        $('#ubc-market').on('change', function (event) {
+            // get the value of the select 
+            var marketId = $(this).val();
+            changeMarket(marketId, marketCollapseList);
+            
+        })
     });
 
     function changeMandate(mandateId, mandateCollapseList) {
@@ -426,6 +541,12 @@
             $(mandateCollapse).removeClass('show');
         });
         $('#' + mandateId).addClass('show');
+    }
+    function changeMarket(marketId, marketCollapseList) {
+        marketCollapseList.each(function (index, marketCollapse) {    
+            $(marketCollapse).removeClass('show');
+        });
+        $('#' + marketId).addClass('show');
     }
 
     function add() {

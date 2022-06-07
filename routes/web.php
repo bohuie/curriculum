@@ -84,6 +84,9 @@ Route::get('/courseUserTransfer','CourseUserController@transferOwnership')->name
 
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
+Route::post('/courses/{course}/amReorder','CourseController@amReorder')->name('courses.amReorder');
+Route::post('/courses/{course}/loReorder','CourseController@loReorder')->name('courses.loReorder');
+Route::post('/courses/{course}/tlaReorder','CourseController@tlaReorder')->name('courses.tlaReorder');
 Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::delete('/courses/{course}/pdf', 'CourseController@deletePDF')->name('courses.delete.pdf');
 Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');

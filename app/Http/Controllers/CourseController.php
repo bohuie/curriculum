@@ -433,6 +433,78 @@ class CourseController extends Controller
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
 
+    public function amReorder(Request $request, $course_id)
+    {
+        $a_method_pos = $request->input('a_method_pos');
+
+        if ($a_method_pos) {
+            foreach ($a_method_pos as $pos => $a_method_id) {
+                $aMethod = AssessmentMethod::find($a_method_id);
+                $aMethod->pos_in_alignment = $pos + 1;
+                $aMethod->save();
+            }
+        }
+
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
+
+        return redirect()->route('courseWizard.step2', $course_id)->with('success', 'Changes have been saved successfully.');
+    }
+
+    public function loReorder(Request $request, $course_id)
+    {
+        $l_outcomes_pos = $request->input('l_outcomes_pos');
+
+        if ($l_outcomes_pos) {
+            foreach ($l_outcomes_pos as $pos => $l_outcome_id) {
+                $learningOutcome = LearningOutcome::find($l_outcome_id);
+                $learningOutcome->pos_in_alignment = $pos + 1;
+                $learningOutcome->save();
+            }
+        }
+
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
+
+        return redirect()->route('courseWizard.step1', $course_id)->with('success', 'Changes have been saved successfully.');
+    }
+
+    public function tlaReorder(Request $request, $course_id)
+    {
+        $l_activities_pos = $request->input('l_activities_pos');
+
+        if ($l_activities_pos) {
+            foreach ($l_activities_pos as $pos => $l_activity_id) {
+                $learningActivity = LearningActivity::find($l_activity_id);
+                $learningActivity->l_activities_pos = $pos + 1;
+                $learningActivity->save();
+            }
+        }
+
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
+
+        return redirect()->route('courseWizard.step3', $course_id)->with('success', 'Changes have been saved successfully.');
+    }
+
     public function pdf(Request $request, $course_id)
     {  
         // set the max time to generate a pdf summary as 5 mins/300 seconds

@@ -20,6 +20,7 @@ use App\Models\OutcomeAssessment;
 use App\Models\LearningActivity;
 use App\Models\OptionalPriorities;
 use App\Models\MappingScale;
+use App\Models\OptionalPrioritiesSubdescription;
 use App\Models\OptionalPriorityCategories;
 use App\Models\OptionalPrioritySubcategories;
 use App\Models\OutcomeActivity;
@@ -167,7 +168,8 @@ class CourseWizardController extends Controller
             }
         }
 
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
+        $a_methods = $course->assessmentMethods->sortBy('pos_in_alignment')->values();
+
         $custom_methods = Custom_assessment_methods::select('custom_methods')->get();
         $totalWeight = number_format(AssessmentMethod::where('course_id', $course_id)->sum('weight'), 1);
         $course =  Course::where('course_id', $course_id)->first();
@@ -239,7 +241,8 @@ class CourseWizardController extends Controller
             }
         }
 
-        $l_activities = LearningActivity::where('course_id', $course_id)->get();
+        $l_activities = $course->learningActivities->sortBy('l_activities_pos')->values();
+
         $custom_activities = Custom_learning_activities::select('custom_activities')->get();
         $course =  Course::where('course_id', $course_id)->first();
         // returns a collection of standard_categories, used in the create course modal
@@ -310,8 +313,8 @@ class CourseWizardController extends Controller
         }
 
         $course =  Course::where('course_id', $course_id)->first();
-        $l_activities = LearningActivity::where('course_id', $course_id)->get();
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
+        $l_activities = $course->learningActivities->sortBy('l_activities_pos')->values();
+        $a_methods = $course->assessmentMethods->sortBy('pos_in_alignment')->values();
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
 
@@ -491,13 +494,15 @@ class CourseWizardController extends Controller
                 $standardsMapped[$l_outcome->l_outcome_id] = StandardsOutcomeMap::where('l_outcome_id', $l_outcome->l_outcome_id)->count();
             }
         }
+        // get all optional priority subdescriptions
+        $opSubDesc = OptionalPrioritiesSubdescription::all();
 
         return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)
         ->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)
         ->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
         ->with('standardsMapped', $standardsMapped)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
-        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
+        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('opSubDesc', $opSubDesc);
     }
     
     public function step7($course_id, Request $request)

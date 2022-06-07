@@ -1607,15 +1607,16 @@
                                         <option value="O">Online</option>
                                         <option value="I">In-person</option>
                                         <option value="B">Hybrid</option>
+                                        <option value="M">Multi-Access</option>
 
-                                    @error('delivery_modality')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </select>
+                                        @error('delivery_modality')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
                             <div class="form-group row">
                                 <label for="standard_category_id" class="col-md-3 col-form-label text-md-right"><span class="requiredField">* </span>Map my course against</label>
