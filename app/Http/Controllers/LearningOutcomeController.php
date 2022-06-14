@@ -32,16 +32,6 @@ class LearningOutcomeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -54,8 +44,6 @@ class LearningOutcomeController extends Controller
             $courseId = $request->input('course_id');
             $currentCLOs = $request->input('current_l_outcome');
             $currentShortPhrases = $request->input('current_l_outcome_short_phrase');
-            // $newCLOs = array_reverse($request->input('new_l_outcomes'));
-            // $newShortPhrases = array_reverse($request->input('new_short_phrases'));
             $newCLOs = $request->input('new_l_outcomes');
             $newShortPhrases = $request->input('new_short_phrases');
 
@@ -114,30 +102,6 @@ class LearningOutcomeController extends Controller
         } finally {
             return redirect()->route('courseWizard.step1', $request->input('course_id'));
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\LearningOutcome  $learningOutcome
-     * @return \Illuminate\Http\Response
-     */
-    public function show(LearningOutcome $learningOutcome)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\LearningOutcome  $learningOutcome
-     * @return \Illuminate\Http\Response
-     */
-    public function edit( $l_outcome_id)
-    {
-        //
-        $lo = LearningOutcome::where('l_outcome_id', $l_outcome_id)->first();
-
     }
 
     /**

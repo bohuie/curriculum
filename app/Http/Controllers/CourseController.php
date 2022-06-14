@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Mail\NotifyInstructorForMappingMail;
 use App\Mail\NotifyNewCourseInstructorMail;
-use App\Mail\NotifyNewInstructorMail;
 use App\Mail\NotifyNewUserAndInstructorMail;
 use Illuminate\Http\Request;
 use App\Models\Course;
@@ -22,7 +21,6 @@ use App\Models\MappingScale;
 use App\Models\PLOCategory;
 use App\Models\CourseProgram;
 use App\Models\OutcomeMap;
-use App\Models\Standard;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use Carbon\Carbon;
@@ -49,16 +47,6 @@ class CourseController extends Controller
     public function index()
     {
         return redirect()->back();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -110,7 +98,7 @@ class CourseController extends Controller
                 // check if user exists in db
                 if (User::where('email', $request->input('email'))->exists()) {
                     $user = User::where('email', $request->input('email'))->first();
-                    // TODO: Send email to new course owner
+                    // Send email to new course owner
                     $currentUser = User::where('id', $request->input('user_id'))->first();
                     $program = Program::where('program_id', $request->input('program_id'))->first();
                     Mail::to($user->email)->send(new NotifyNewCourseInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, $program->program));
@@ -136,7 +124,7 @@ class CourseController extends Controller
 
                     $currentUser = User::where('id', $request->input('user_id'))->first();
                     $program = Program::where('program_id', $request->input('program_id'))->first();
-                    // TODO: Send email to new user
+                    // Send email to new user
                     Mail::to($user->email)->send(new NotifyNewUserAndInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $user->email, $program->program));
                 }
             }
@@ -244,7 +232,6 @@ class CourseController extends Controller
         $l_activities = LearningActivity::where('course_id', $course_id)->get();
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
         $pl_outcomes = ProgramLearningOutcome::where('program_id', $course->program_id)->get();
-        // $mappingScales = MappingScale::where('program_id', $course->program_id)->get();
         $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
                                     ->where('mapping_scale_programs.program_id', $course->program_id)->get();
         $ploCategories = PLOCategory::where('program_id', $course->program_id)->get();
@@ -329,8 +316,6 @@ class CourseController extends Controller
             // assign new standard category id for course.
             $course->standard_category_id = $request->input('standard_category_id');
         }
-        
-
 
         if($course->save()){
             // update courses 'updated_at' field
@@ -348,8 +333,6 @@ class CourseController extends Controller
         }
 
         return redirect()->back();
-
-
     }
 
     /**

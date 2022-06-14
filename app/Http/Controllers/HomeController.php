@@ -6,28 +6,18 @@ use App\Models\AssessmentMethod;
 use App\Models\Campus;
 use Illuminate\Http\Request;
 use App\Models\Course;
-use App\Models\CourseOptionalPriorities;
-use App\Models\CourseProgram;
-use App\Models\Program;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use App\Models\CourseUser;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\LearningActivity;
 use App\Models\LearningOutcome;
-use App\Models\OptionalPriorities;
 use App\Models\OutcomeActivity;
 use App\Models\OutcomeAssessment;
 use App\Models\ProgramUser;
-use App\Models\OutcomeMap;
 use App\Models\ProgramLearningOutcome;
 use App\Models\Standard;
-use Attribute;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use phpDocumentor\Reflection\PseudoTypes\False_;
 
 class HomeController extends Controller
 {

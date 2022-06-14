@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\custom_assessment_methods;
-use App\Models\Custom_assessment_methods as ModelsCustom_assessment_methods;
 use Illuminate\Http\Request;
 
 class CustomAssessmentMethodsController extends Controller
@@ -16,16 +15,7 @@ class CustomAssessmentMethodsController extends Controller
     public function index()
     {
         //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return redirect()->back();
     }
 
     /**
@@ -52,50 +42,5 @@ class CustomAssessmentMethodsController extends Controller
                 $request->session()->flash('error', 'There was an error adding the teaching/learning activity');
             }
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
-     * @return \Illuminate\Http\Response
-     */
-    public function show(custom_assessment_methods $custom_assessment_methods)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(custom_assessment_methods $custom_assessment_methods)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, custom_assessment_methods $custom_assessment_methods)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(custom_assessment_methods $custom_assessment_methods)
-    {
-        //
     }
 }

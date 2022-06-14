@@ -27,16 +27,6 @@ class AssessmentMethodController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -100,30 +90,6 @@ class AssessmentMethodController extends Controller
         }
     }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\AssessmentMethod  $assessmentMethod
-     * @return \Illuminate\Http\Response
-     */
-    public function show(AssessmentMethod $assessmentMethod)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\AssessmentMethod  $assessmentMethod
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($assessmentMethod)
-    {
-        //
-
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -146,18 +112,14 @@ class AssessmentMethodController extends Controller
             return redirect()->route('courseWizard.step2', $request->input('course_id'))->with('error', 'The total weight of all assessments will exceed 100%');
         }
 
-
         $am->a_method = $request->input('a_method');
         $am->weight = $request->input('weight');
-        //$am->course_id = $request->input('course_id');
-
 
         if($am->save()){
             $request->session()->flash('success', 'Student assessment method updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the student assessment method');
         }
-
 
         return redirect()->route('courseWizard.step2', $request->input('course_id'));
     }

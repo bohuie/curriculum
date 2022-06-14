@@ -2,35 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\OptionalPriorities as ControllersOptionalPriorities;
 use Illuminate\Http\Request;
-use App\Models\Program;
-use App\Models\CourseUser;
 use App\Models\User;
 use App\Models\ProgramLearningOutcome;
 use App\Models\Course;
 use App\Models\LearningOutcome;
-use App\Models\CourseOptionalPriorities;
 use App\Models\OutcomeMap;
 use App\Models\AssessmentMethod;
-use App\Models\CourseProgram;
 use App\Models\Custom_assessment_methods;
 use App\Models\Custom_learning_activities;
 use App\Models\OutcomeAssessment;
 use App\Models\LearningActivity;
-use App\Models\OptionalPriorities;
 use App\Models\MappingScale;
 use App\Models\OptionalPrioritiesSubdescription;
 use App\Models\OptionalPriorityCategories;
-use App\Models\OptionalPrioritySubcategories;
 use App\Models\OutcomeActivity;
-use App\Models\PLOCategory;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Standard;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class CourseWizardController extends Controller
 {
@@ -106,7 +97,6 @@ class CourseWizardController extends Controller
         return view('courses.wizard.step1')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
         ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
-
     }
 
     public function step2($course_id, Request $request)
@@ -157,7 +147,7 @@ class CourseWizardController extends Controller
             // multiple number of CLOs by num of PLOs
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
-        //
+
         // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
         $hasNonAlignedCLO = false;
@@ -180,8 +170,6 @@ class CourseWizardController extends Controller
         ->with('user', $user)->with('custom_methods',$custom_methods)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
         ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
-
-
     }
 
     public function step3($course_id, Request $request)
@@ -252,7 +240,6 @@ class CourseWizardController extends Controller
         ->with('custom_activities',$custom_activities)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
         ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
-
     }
 
     public function step4($course_id, Request $request)
@@ -635,12 +622,10 @@ class CourseWizardController extends Controller
             $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
         }
 
-
         return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)
         ->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)
         ->with('standardsOutcomeMap', $standardsOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalSubcategories', $optionalSubcategories)
         ->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
         ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('l_outcomes', $l_outcomes)->with('standardOutcomeMap', $standardOutcomeMap);
     }
-
 }

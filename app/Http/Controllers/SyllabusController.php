@@ -3,19 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Models\LearningOutcome;
-use App\Models\AssessmentMethod;
 use App\Models\Course;
 use App\Models\CourseSchedule;
-use App\Models\CourseUser;
-use PhpOffice\PhpWord\Element\TextRun;
-use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Element\Table;
-use Illuminate\Support\Facades\Log;
 use App\Models\syllabus\Syllabus;
 use App\Models\syllabus\OkanaganSyllabus;
 use App\Models\syllabus\OkanaganSyllabusResource;
@@ -27,7 +20,6 @@ use App\Models\syllabus\VancouverSyllabusResource;
 use Carbon\Carbon;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
-use stdClass;
 
 define("INPUT_TIPS", array(
     "otherCourseStaff" => "If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?",
@@ -54,7 +46,6 @@ define("INPUT_TIPS", array(
 
 class SyllabusController extends Controller
 {
-
     //
     public function __construct()
     {
@@ -104,7 +95,6 @@ class SyllabusController extends Controller
         }
     }
 
-
     public function syllabusEditor($syllabusId, $data) {
         // get this syllabus
         $syllabus = Syllabus::find($syllabusId);
@@ -133,7 +123,6 @@ class SyllabusController extends Controller
             break;
                 
         }
-
     }
 
 
@@ -185,9 +174,6 @@ class SyllabusController extends Controller
             'courseYear' => ['required'],
             'courseSemester' => ['required'],
         ]);
-
-        // $courseScheduleOutline['headings'] = $request->input('courseScheduleTblHeadings');
-        // $courseScheduleOutline['rows'] = $request->input('courseScheduleTblRows');
         
         // if syllabus already exists, update it
         if ($syllabusId) {
@@ -643,8 +629,6 @@ class SyllabusController extends Controller
         // return to the dashboard
         return redirect()->route('home');
     }
-
-    
 
     // get existing course information
     // Ajax to get course infomation
@@ -1238,7 +1222,6 @@ class SyllabusController extends Controller
             return response()->download($fileName . $pdfFileExt)->deleteFileAfterSend(true);
     
         } 
-
         return response()->download($fileName . $wordFileExt)->deleteFileAfterSend(true);
     }
 

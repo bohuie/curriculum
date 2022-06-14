@@ -29,16 +29,6 @@ class LearningActivityController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -98,40 +88,6 @@ class LearningActivityController extends Controller
             // return back to teaching and learning activities step
             return redirect()->route('courseWizard.step3', $request->input('course_id'));
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\LearningActivity  $learningActivity
-     * @return \Illuminate\Http\Response
-     */
-    public function show(LearningActivity $learningActivity)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\LearningActivity  $learningActivity
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(LearningActivity $learningActivity)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\LearningActivity  $learningActivity
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, LearningActivity $learningActivity)
-    {
-        //
     }
 
     /**

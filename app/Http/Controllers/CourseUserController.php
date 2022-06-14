@@ -6,7 +6,6 @@ use App\Models\CourseUser;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
-
 use App\Mail\NotifyInstructorMail;
 use App\Mail\NotifyInstructorOwnerMail;
 use App\Mail\NotifyNewInstructorMail;
@@ -14,8 +13,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class CourseUserController extends Controller
@@ -34,16 +31,7 @@ class CourseUserController extends Controller
     public function index()
     {
         //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return redirect()->back();
     }
 
     /**
@@ -201,28 +189,6 @@ class CourseUserController extends Controller
 
         // return to the previous page
         return redirect()->back()->with('errorMessages', $errorMessages)->with('warningMessages', $warningMessages);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\CourseUser  $courseUser
-     * @return \Illuminate\Http\Response
-     */
-    public function show(CourseUser $courseUser)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\CourseUser  $courseUser
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(CourseUser $courseUser)
-    {
-        //
     }
 
     /**

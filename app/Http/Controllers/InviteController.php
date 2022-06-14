@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreInvitationRequest;
 use Illuminate\Http\Request;
 use App\Models\Invite;
-use Illuminate\Support\Str;
 use App\Mail\Invitation;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-
-use function PHPUnit\Framework\directoryExists;
 
 class InviteController extends Controller
 {
@@ -20,11 +16,6 @@ class InviteController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
-    }
-
-    public function invite() {
-        // show the user a form with an email field to invite a new user
-
     }
 
     // function to get to Invitation page

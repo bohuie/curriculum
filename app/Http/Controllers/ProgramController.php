@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Program;
 use App\Models\User;
-use App\Models\Role;
 use App\Models\Course;
 use App\Models\CourseProgram;
-use App\Models\CourseUser;
 use App\Models\LearningActivity;
 use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
@@ -23,15 +21,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use PDF;
-use PhpOffice\PhpSpreadsheet\Reader\Xls\Color as XlsColor;
-use Response;
 use Throwable;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Color as StyleColor;
-use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\ConditionalFormatting\Wizard;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -52,17 +45,6 @@ class ProgramController extends Controller
     public function index()
     {
         return redirect()->back();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-        
     }
 
     /**
@@ -108,32 +90,6 @@ class ProgramController extends Controller
         
         return redirect()->route('programWizard.step1', $program->program_id);
 
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    
-        
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-
-        
     }
 
     /**
@@ -260,7 +216,6 @@ class ProgramController extends Controller
         }
         return $coursesByLevels;
     }
-
 
     /**
      * Helper for spreadsheet and pdf summary files which gets images of the charts included in this program
@@ -725,7 +680,7 @@ class ProgramController extends Controller
     * @param int $programId
     * @param array $charts: array of urls to charts indexed by their sheet name
     */
-   private function makeChartSheets($spreadsheet, $programId, $charts) {
+    private function makeChartSheets($spreadsheet, $programId, $charts) {
         try {
             $program = Program::find($programId);
             
@@ -1275,8 +1230,6 @@ class ProgramController extends Controller
     }
 
     public function duplicate(Request $request, $program_id) {
-
-        //
         $this->validate($request, [
             'program'=> 'required',
             ]);
@@ -1367,5 +1320,4 @@ class ProgramController extends Controller
 
         return redirect()->route('home');
     }
-
 }

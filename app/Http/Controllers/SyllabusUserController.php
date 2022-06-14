@@ -13,9 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Throwable;
 
 class SyllabusUserController extends Controller
 {
@@ -33,16 +31,7 @@ class SyllabusUserController extends Controller
     public function index()
     {
         //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return redirect()->back();
     }
 
     /**
@@ -182,7 +171,6 @@ class SyllabusUserController extends Controller
                         } else {
                             $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to course ' . $syllabus->course_title);
                         }
-                        // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
                 }
             }
@@ -196,28 +184,6 @@ class SyllabusUserController extends Controller
         }
         // return to the previous page
         return redirect()->back()->with('errorMessages', $errorMessages)->with('warningMessages', $warningMessages);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
-     * @return \Illuminate\Http\Response
-     */
-    public function show(SyllabusUser $syllabusUser)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(SyllabusUser $syllabusUser)
-    {
-        //
     }
 
     /**
@@ -240,7 +206,6 @@ class SyllabusUserController extends Controller
         }
         
         $syllabusUser->save();
-        
     }
 
     /**

@@ -6,8 +6,6 @@ use App\Models\AssessmentMethod;
 use App\Models\Campus;
 use Illuminate\Http\Request;
 use App\Models\Program;
-use App\Models\ProgramUser;
-use App\Models\CourseUser;
 use App\Models\User;
 use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
@@ -19,19 +17,11 @@ use App\Models\Faculty;
 use App\Models\LearningActivity;
 use App\Models\MappingScale;
 use App\Models\LearningOutcome;
-use App\Models\MappingScaleCategory;
-use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\OptionalPriorities;
 use App\Models\OptionalPrioritySubcategories;
-use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Sabberworm\CSS\Value\Size;
-use SebastianBergmann\Environment\Console;
-
-use function PHPUnit\Framework\isNull;
 
 class ProgramWizardController extends Controller
 {   
@@ -67,7 +57,6 @@ class ProgramWizardController extends Controller
             $programUsers[$program->program_id] = $programsUsers;
         }
 
-        //$plos = ProgramLearningOutcome::join('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
 
         $program = Program::where('program_id', $program_id)->first();
@@ -88,8 +77,7 @@ class ProgramWizardController extends Controller
                 $hasUncategorized = true;
             }
         }
-        
-        //dd($ploCategories);
+
         // get UnCategorized PLO's
         $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
 
@@ -154,7 +142,6 @@ class ProgramWizardController extends Controller
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $msCount = count($mappingScales);
         $courseCount = CourseProgram::where('program_id', $program_id)->count();
-
 
         return view('programs.wizard.step2')->with('mappingScales', $mappingScales)->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
@@ -278,7 +265,6 @@ class ProgramWizardController extends Controller
             $programUsers[$program->program_id] = $programsUsers;
         }
 
-        //
         $program = Program::where('program_id', $program_id)->first();
 
         //progress bar
@@ -306,7 +292,7 @@ class ProgramWizardController extends Controller
             $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
         }
 
-                // Get all PLO Id's
+        // Get all PLO Id's
         $arrayPLOutcomeIds = ProgramLearningOutcome::where('program_id', $program_id)->pluck('pl_outcome_id')->toArray();
 
         // Loop through All Learning Outcomes for program courses
@@ -1729,10 +1715,6 @@ class ProgramWizardController extends Controller
 
             foreach ($ploCategories as $index =>$plo) {
                 if ($plo->plo_category != NULL) {
-                    // Use short name for category if there are more than 3
-                    // if (($this->numCatUsed > 3) && ($plo->plos->count() > 0)) {
-                    //     $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
-                    // }else
                     if ($plo->plos->count() > 0) {
                         $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_category).'</th>';
                     }

@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProgramLearningOutcome;
-use App\Models\LearningOutcome;
 use App\Models\Course;
 use App\Models\OutcomeMap;
-use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,16 +28,6 @@ class OutcomeMapController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -53,8 +40,6 @@ class OutcomeMapController extends Controller
             ]);
 
         $outcomeMap = $request->input('map');
-        
-        // dd($outcomeMap);
 
         foreach ($outcomeMap as $cloId => $ploToScaleIds) {
             foreach (array_keys($ploToScaleIds) as $ploId) {
@@ -74,50 +59,5 @@ class OutcomeMapController extends Controller
         $course->save();
 
         return redirect()->back()->with('success', 'Your answers have been saved successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\OutcomeMap  $outcomeMap
-     * @return \Illuminate\Http\Response
-     */
-    public function show(OutcomeMap $outcomeMap)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\OutcomeMap  $outcomeMap
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(OutcomeMap $outcomeMap)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\OutcomeMap  $outcomeMap
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, OutcomeMap $outcomeMap)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\OutcomeMap  $outcomeMap
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(OutcomeMap $outcomeMap)
-    {
-        //
     }
 }

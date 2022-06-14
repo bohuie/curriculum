@@ -15,16 +15,7 @@ class CustomLearningActivitiesController extends Controller
     public function index()
     {
         //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return redirect()->back();
     }
 
     /**
@@ -51,50 +42,5 @@ class CustomLearningActivitiesController extends Controller
                 $request->session()->flash('error', 'There was an error adding the teaching/learning activity');
             }
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
-     * @return \Illuminate\Http\Response
-     */
-    public function show(custom_learning_activities $custom_learning_activities)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(custom_learning_activities $custom_learning_activities)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, custom_learning_activities $custom_learning_activities)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(custom_learning_activities $custom_learning_activities)
-    {
-        //
     }
 }

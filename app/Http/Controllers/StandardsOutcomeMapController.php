@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProgramLearningOutcome;
-use App\Models\LearningOutcome;
 use App\Models\Course;
-use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

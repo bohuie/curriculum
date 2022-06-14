@@ -8,8 +8,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-//use App\Models\OptionalPriorities;
-
 
 class OptionalPriorities extends Controller
 {
@@ -32,7 +30,6 @@ class OptionalPriorities extends Controller
         // Check If Any PLO's have been selected 
         if ($optionalPLOs_op_ids != NULL) {
             // Get op_id's from optionalPLOs
-            //$optionalPLOs_op_ids = DB::table('optional_priorities')->whereIn('optional_priority',$optionalPLOs)->pluck('op_id');
 
             // Delete all OptionalPLO's not checked (Selected).
             DB::table('course_optional_priorities')->whereNotIn('op_id',$optionalPLOs_op_ids)->where('course_id',$course_id)->delete();

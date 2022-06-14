@@ -7,7 +7,6 @@ use App\Models\Program;
 use App\Models\CourseProgram;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class CourseProgramController extends Controller
 {
@@ -24,25 +23,12 @@ class CourseProgramController extends Controller
             'program_id' => 'required',
             ]);
         
-        
         $programId = $request->input('program_id');
         // if courseIds is null, use an empty array 
         if (!$courseIds = $request->input('selectedCourses'))
             $courseIds = array();
 
         $numCoursesAddedSuccessfully = 0; 
-
-        // // get all courses that currently belong to this program
-        // $currentProgramCourseIds = Program::find($programId)->courses()->pluck('course_programs.course_id');
-        // foreach ($currentProgramCourseIds as $currentProgramCourseId) {
-        //     if (!in_array(strval($currentProgramCourseId), $courseIds)) {
-        //         // delete course program record for the courses that were removed from this program
-        //         CourseProgram::where([
-        //             ['course_id', $currentProgramCourseId],
-        //             ['program_id', $programId],
-        //         ])->delete();
-        //     }            
-        // }
 
         // update or create a programCourse for each course
         foreach ($courseIds as $index => $courseId) {
@@ -53,7 +39,6 @@ class CourseProgramController extends Controller
                 ['course_required' => ($isCourseRequired) ? 1 : 0]
             );
             $numCoursesAddedSuccessfully++;
-
         }
 
         if ($numCoursesAddedSuccessfully == count($courseIds)) {

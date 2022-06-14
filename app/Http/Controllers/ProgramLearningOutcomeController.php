@@ -36,16 +36,6 @@ class ProgramLearningOutcomeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -118,29 +108,6 @@ class ProgramLearningOutcomeController extends Controller
         } finally { 
             return redirect()->route('programWizard.step1', $request->input('program_id'));
         }
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ProgramLearningOutcome $programLearningOutcome)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ProgramLearningOutcome $programLearningOutcome)
-    {
-        //
     }
 
     /**
@@ -284,6 +251,5 @@ class ProgramLearningOutcomeController extends Controller
         unset($spreadsheet);
         // return 
         return redirect()->back();
-
     }
 }

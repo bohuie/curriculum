@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CourseProgram;
 use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\User;
@@ -26,16 +25,6 @@ class PLOCategoryController extends Controller
     {
         //
         return redirect()->back();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -104,28 +93,6 @@ class PLOCategoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function show(PLOCategory $pLOCategory)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PLOCategory $pLOCategory)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -191,6 +158,4 @@ class PLOCategoryController extends Controller
         
         return redirect()->route('programWizard.step1', $request->input('program_id'));
     }
-
-    
 }
