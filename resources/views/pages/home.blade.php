@@ -988,7 +988,11 @@
                                     </td>
                                     <!-- term -->
                                     <td>
-                                        {{$syllabus->course_year}} {{$syllabus->course_term}}
+                                        @if (strlen($syllabus->course_term) > 20 && $syllabus->course_term != 'W1' && $syllabus->course_term != 'W2' && $syllabus->course_term != 'S1' && $syllabus->course_term != 'S2')
+                                            {{$syllabus->course_year}} Other
+                                        @else 
+                                            {{$syllabus->course_year}}  {{$syllabus->course_term}}
+                                        @endif
                                     </td>
                                     @if ($syllabus->last_modified_user != NULL) 
                                         <td><p data-toggle="tooltip" data-html="true" data-bs-placement="top" title="Last updated by: {{$syllabus->last_modified_user}}">{{$syllabus->timeSince}}</p></td>
