@@ -96,19 +96,6 @@ class RegisterController extends Controller
         return $user;
     }
 
-    /*
-    //Limits email domain to be only UBC  
-    protected function checkEmail(array $data)
-    {
-        $email = $data['email'];
-        $substr = substr($email, -6);
-        if (strtolower($substr) !== "ubc.ca") {
-            // redirect to register page with an error  
-            return view('auth.register');
-        }
-    }
-    */
-
     /**
      * Handle a registration request for the application.
      *
