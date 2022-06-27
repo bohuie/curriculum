@@ -525,7 +525,10 @@
 
         <div class="col-12">
             <h5  class="fw-bold">Optional Statements</h5>
-            <p class="inputFieldDescription">The below are suggested syllabus sections to communicate various resources on campus.</p>
+            <p class="inputFieldDescription">
+                The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
+                <a href="https://senate.ubc.ca/okanagan/curriculum/forms" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> These resources are also available online for your reference.</a>
+            </p>
             <div class="form-check m-4">
                 <div class="row" id="optionalSyllabus"></div>
             </div>
