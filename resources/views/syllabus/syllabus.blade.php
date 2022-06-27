@@ -19,31 +19,75 @@
 <div class="m-auto" style="max-width:860px;height:100%;">
     <div class="m-3">
         <h3 class="text-center lh-lg fw-bold mt-4">Syllabus Generator</h3>
-        <div class="text-center">
-            <button type="submit" form="sylabusGenerator" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save my syllabus"><i class="text-secondary bi bi-clipboard2-check-fill"></i></button>
-            <button type="submit" name="download" value="pdf" form="sylabusGenerator" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save and Download syllabus as PDF"><i class="text-danger bi-file-pdf-fill "></i></button>
-            <button type="submit" name="download" value="word" form="sylabusGenerator" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save and Download syllabus as Word"><i class="bi-file-earmark-word-fill text-primary"></i></i></button>
-            <span data-bs-toggle="modal" data-bs-target="#importExistingCourse">
-                <button type="button" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Import an existing course"><i class="text-secondary bi bi-box-arrow-in-down-left"></i></button>
-            </span>
+
+        <div class="text-center row justify-content-center">
+            <div class="col-2" style="max-width:10%">
+                <button type="submit" form="sylabusGenerator" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save my syllabus">
+                    <i class="btn btn-light rounded-circle m-2 text-secondary bi bi-clipboard2-check-fill"></i>
+                    <p style="font-size:12px" class="text-muted m-0">SAVE</p>
+                </button>
+            </div>
+            <div class="col-2" style="max-width:10%">
+                <button type="submit" name="download" value="pdf" form="sylabusGenerator"
+                    class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Save and download my syllabus as PDF">
+                    <i class="text-danger bi-file-pdf-fill btn btn-light rounded-circle m-2"></i>
+                    <p style="font-size:12px" class="text-muted m-0">PDF</p>
+                </button>
+            </div>
+            <div class="col-2" style="max-width:10%">
+                <button type="submit" name="download" value="word" form="sylabusGenerator"
+                    class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Save and Download syllabus as Word"><i
+                        class="bi-file-earmark-word-fill text-primary btn btn-light rounded-circle m-2"></i></i>
+                    <p style="font-size:12px" class="text-muted m-0">WORD</p>
+                </button>
+            </div>
+            <div class="col-2" style="max-width:10%">
+                <span data-bs-toggle="modal" data-bs-target="#importExistingCourse">
+                    <button type="button" class="btn m-0 p-0" data-bs-toggle="tooltip"
+                        data-bs-placement="bottom" title="Import an existing course" style="background:none;border:none"><i
+                            class="text-secondary bi bi-box-arrow-in-down-left btn btn-light rounded-circle m-2"></i>
+                            <p style="font-size:12px" class="text-muted m-0">IMPORT</p>
+                        </button>
+                </span>
+            </div>
+    
             @if (!empty($syllabus))
                 @include('modals.syllabusCollabsModal', ['syllabus' => $syllabus, 'user' => $user])
-                <span data-bs-toggle="modal" data-bs-target="#addSyllabusCollaboratorsModal{{$syllabus->id}}">
-                    <button type="button" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add collaborators"><i class="text-primary bi bi-people-fill"></i></button>
-                </span>
-
+                <div class="col-2" style="max-width:10%">
+                    <span data-bs-toggle="modal" data-bs-target="#addSyllabusCollaboratorsModal{{$syllabus->id}}">
+                        <button type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="Add collaborators to my syllabus"><i
+                                class="text-primary bi bi-people-fill btn btn-light rounded-circle m-2"></i>
+                            <p style="font-size:12px" class="text-muted m-0">PEOPLE</p>
+                        </button>
+                    </span>
+                </div>
+        
                 @include('modals.duplicateModal', ['syllabus' => $syllabus])
-                <span data-bs-toggle="modal" data-bs-target="#duplicateConfirmation">
-                    <button type="button" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Duplicate Syllabus"><i class="text-success bi bi-files"></i></button>
-                </span>
-
+                <div class="col-2" style="max-width:10%">
+                    <span data-bs-toggle="modal" data-bs-target="#duplicateConfirmation">
+                        <button type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="Make a copy of my syllabus"><i
+                                class="btn btn-light rounded-circle m-2 text-success bi bi-files"></i>
+                                <p style="font-size:12px" class="text-muted m-0">COPY</p>
+                        </button>
+                    </span>
+                </div>
+        
                 @include('modals.deleteModal', ['syllabus' => $syllabus])
-                <span data-bs-toggle="modal" data-bs-target="#deleteSyllabusConfirmation">
-                    <button type="button" class="btn btn-danger rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete Syllabus"><i class="bi bi-trash-fill"></i></button>
-                </span>
+                <div class="col-2" style="max-width:10%">
+                    <span data-bs-toggle="modal" data-bs-target="#deleteSyllabusConfirmation">
+                        <button type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="Delete my syllabus"><i class="btn btn-danger rounded-circle m-2 bi bi-trash-fill"></i>
+                            <p style="font-size:12px" class="text-muted m-0">DELETE</p>
+                        </button>
+                    </span>
+                </div>
             @endif
         </div>
-    </div>    
+    </div>
     
     <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
@@ -334,43 +378,53 @@
             <div class="col-12 text-center">
                 <span title="Row Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover"
                     data-bs-placement="bottom" data-bs-content="You have reached the maximum number of rows allowed">
-                    <button title="Add Row Top" type="button" class="addRow btn btn-light rounded-pill m-2 text-secondary" data-bs-toggle="tooltip" data-bs-placement="top"  data-side="top">
-                        <i class="bi bi-plus"></i>
-                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
+                    <button type="button" class="col-2 addRow btn m-0 p-0" style="background:none;border:none" data-side="top" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add row on top">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD ROW TOP</p>
                     </button>
-                    <button title="Add Row Bottom" type="button" class="addRow btn btn-light rounded-pill m-2 text-secondary"
-                        data-side="bottom" data-bs-toggle="tooltip" data-bs-placement="top">
-                        <i class="bi bi-plus pr-1"></i>
-                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
-                    </button>
+
+                    <button type="button" class="col-2 addRow btn m-0 p-0" style="background:none;border:none" data-side="bottom" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add row on bottom">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD ROW BOTTOM</p>
+                    </button>                    
                 </span>
 
                 <span title="Column Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover"
                     data-bs-placement="bottom" data-bs-content="You have reached the maximum number of columns allowed">
-                    <button title="Add Column Left" type="button" class="addCol btn btn-light rounded-pill m-2 text-secondary"
-                        data-side="left" data-bs-toggle="tooltip" data-bs-placement="top">
-                        <i class="bi bi-plus pr-1"></i>
-                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
-                    </button>
+                    <button type="button" class="col-2 addCol btn m-0 p-0" style="background:none;border:none" data-side="left" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add column on left">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD COLUMN LEFT</p>
+                    </button>  
 
-                    <button title="Add Column Right" type="button" class="addCol btn btn-light rounded-pill m-2 text-secondary"
-                        data-side="right" data-bs-toggle="tooltip" data-bs-placement="top">
-                        <i class="bi bi-plus pr-1"></i>
-                        <span class="iconify-inline" data-icon="clarity:view-columns-line"></span>
-                    </button>
+                    <button type="button" class="col-2 addCol btn m-0 p-0" style="background:none;border:none" data-side="right" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add column on left">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD COLUMN RIGHT</p>
+                    </button>  
                 </span>
 
-                <button id="delCols" title="Delete Column(s)" type="button" class="btn btn-light rounded-pill m-2 text-danger" data-bs-toggle="tooltip" data-bs-placement="top">
-                    <i class="bi bi-trash-fill pr-1"></i>
-                    <span class="iconify-inline" data-icon="fluent:column-triple-20-filled"></span>
+                <button id="delCols" type="button" class="col-2 btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete column(s)">
+                    <i class="btn btn-light rounded-pill m-2 text-danger bi bi-trash-fill">
+                        <span class="iconify-inline ml-1" data-icon="fluent:column-triple-20-filled"></span>
+                    </i>
+                    <p style="font-size:12px" class="text-muted m-0">DELETE COLUMN(S)</p>
                 </button>
+
                 
-                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Table">
-                    <button id="delTable" type="button" class="btn btn-danger rounded-pill m-2"
-                        data-bs-toggle="modal" data-bs-target="#delCourseScheduleTbl" >
-                        <i class="bi bi-trash-fill"></i>
-                        <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
-                    </button>
+                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete Table" class="col-2">
+                    <button id="delTable" type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="modal" data-bs-target="#delCourseScheduleTbl">
+                        <i class="btn btn-danger rounded-pill m-2 bi bi-trash-fill">
+                            <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">DELETE TABLE</p>
+                    </button>                    
                 </span>
             </div>
         </div>
@@ -479,28 +533,71 @@
     </form>
 
     <div class="m-3">
-        <div class="text-center">
-            <button type="submit" form="sylabusGenerator" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save my syllabus"><i class="text-secondary bi bi-clipboard2-check-fill"></i></button>
-            <button type="submit" name="download" value="pdf" form="sylabusGenerator" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save and Download syllabus as PDF"><i class="text-danger bi-file-pdf-fill "></i></button>
-            <button type="submit" name="download" value="word" form="sylabusGenerator" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save and Download syllabus as Word"><i class="bi-file-earmark-word-fill text-primary"></i></i></button>
-            <span data-bs-toggle="modal" data-bs-target="#importExistingCourse">
-                <button type="button" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Import an existing course"><i class="text-secondary bi bi-box-arrow-in-down-left"></i></button>
-            </span>
+        <div class="text-center row justify-content-center">
+            <div class="col-2" style="max-width:10%">
+                <button type="submit" form="sylabusGenerator" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save my syllabus">
+                    <i class="btn btn-light rounded-circle m-2 text-secondary bi bi-clipboard2-check-fill"></i>
+                    <p style="font-size:12px" class="text-muted m-0">SAVE</p>
+                </button>
+            </div>
+            <div class="col-2" style="max-width:10%">
+                <button type="submit" name="download" value="pdf" form="sylabusGenerator"
+                    class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Save and download my syllabus as PDF">
+                    <i class="text-danger bi-file-pdf-fill btn btn-light rounded-circle m-2"></i>
+                    <p style="font-size:12px" class="text-muted m-0">PDF</p>
+                </button>
+            </div>
+            <div class="col-2" style="max-width:10%">
+                <button type="submit" name="download" value="word" form="sylabusGenerator"
+                    class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Save and Download syllabus as Word"><i
+                        class="bi-file-earmark-word-fill text-primary btn btn-light rounded-circle m-2"></i></i>
+                    <p style="font-size:12px" class="text-muted m-0">WORD</p>
+                </button>
+            </div>
+            <div class="col-2" style="max-width:10%">
+                <span data-bs-toggle="modal" data-bs-target="#importExistingCourse">
+                    <button type="button" class="btn m-0 p-0" data-bs-toggle="tooltip"
+                        data-bs-placement="bottom" title="Import an existing course" style="background:none;border:none"><i
+                            class="text-secondary bi bi-box-arrow-in-down-left btn btn-light rounded-circle m-2"></i>
+                            <p style="font-size:12px" class="text-muted m-0">IMPORT</p>
+                        </button>
+                </span>
+            </div>
+    
             @if (!empty($syllabus))
                 @include('modals.syllabusCollabsModal', ['syllabus' => $syllabus, 'user' => $user])
-                <span data-bs-toggle="modal" data-bs-target="#addSyllabusCollaboratorsModal{{$syllabus->id}}">
-                    <button type="button" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add collaborators"><i class="text-primary bi bi-people-fill"></i></button>
-                </span>
-
+                <div class="col-2" style="max-width:10%">
+                    <span data-bs-toggle="modal" data-bs-target="#addSyllabusCollaboratorsModal{{$syllabus->id}}">
+                        <button type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="Add collaborators to my syllabus"><i
+                                class="text-primary bi bi-people-fill btn btn-light rounded-circle m-2"></i>
+                            <p style="font-size:12px" class="text-muted m-0">PEOPLE</p>
+                        </button>
+                    </span>
+                </div>
+        
                 @include('modals.duplicateModal', ['syllabus' => $syllabus])
-                <span data-bs-toggle="modal" data-bs-target="#duplicateConfirmation">
-                    <button type="button" class="btn btn-light rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Duplicate Syllabus"><i class="text-success bi bi-files"></i></button>
-                </span>
-
+                <div class="col-2" style="max-width:10%">
+                    <span data-bs-toggle="modal" data-bs-target="#duplicateConfirmation">
+                        <button type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="Make a copy of my syllabus"><i
+                                class="btn btn-light rounded-circle m-2 text-success bi bi-files"></i>
+                                <p style="font-size:12px" class="text-muted m-0">COPY</p>
+                        </button>
+                    </span>
+                </div>
+        
                 @include('modals.deleteModal', ['syllabus' => $syllabus])
-                <span data-bs-toggle="modal" data-bs-target="#deleteSyllabusConfirmation">
-                    <button type="button" class="btn btn-danger rounded-circle m-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete Syllabus"><i class="bi bi-trash-fill"></i></button>
-                </span>
+                <div class="col-2" style="max-width:10%">
+                    <span data-bs-toggle="modal" data-bs-target="#deleteSyllabusConfirmation">
+                        <button type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="Delete my syllabus"><i class="btn btn-danger rounded-circle m-2 bi bi-trash-fill"></i>
+                            <p style="font-size:12px" class="text-muted m-0">DELETE</p>
+                        </button>
+                    </span>
+                </div>
             @endif
         </div>
     </div>  
