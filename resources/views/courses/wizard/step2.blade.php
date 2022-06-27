@@ -234,34 +234,6 @@
                         </div>
                     </div>
                     <!-- End of add student assessment methods modal -->
-
-                    <!-- start of delete student assessment methods modal -->
-                    <div class="modal fade" id="deleteAMethod{{$a_method->a_method_id}}" tabindex="-1" role="dialog" aria-labelledby="deleteAMethod" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteAMethod">Delete Confirmation</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body text-left">
-                                    Are you sure you want to delete {{$a_method->a_method}}
-                                </div>
-                                <form method="POST" id="deleteAssessmentMethodChanges" action="{{route('am.destroy', $a_method->a_method_id)}}">
-                                    @csrf
-                                    {{method_field('DELETE')}}
-                                    <input type="hidden" name="course_id" value="{{$course->course_id}}">
-
-                                    <div class="modal-footer">
-                                        <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
-                                        <button style="width:60px;" type="submit" class="btn btn-danger btn-sm ">Delete</button>
-                                    </div>
-                                </form>    
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End of delete student assessment methods modal -->
                 </div>
 
                 <!-- card footer -->

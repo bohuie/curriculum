@@ -63,9 +63,7 @@
                                                     </thead>
                                                     <tbody>
                                                         @foreach($course->standardScalesCategory->standardScales as $ms)
-
                                                             <tr>
-
                                                                 <td style="width:20%">
                                                                     <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
                                                                     {{$ms->title}}<br>
@@ -74,7 +72,6 @@
                                                                 <td>
                                                                     {{$ms->description}}
                                                                 </td>
-
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -103,13 +100,8 @@
                                                 <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
                                                     <div class="accordion-item mb-2">
                                                         <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                            @if ($standardsMapped[$courseLearningOutcome->l_outcome_id] == $course->standards->count())
-                                                                <button class="accordion-button white-arrow clo collapsed bg-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}} &emsp;-&emsp; {{ number_format((float)($standardsMapped[$courseLearningOutcome->l_outcome_id] / $course->standards->count()) * 100) }} %
-                                                            @else
-                                                                <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}} &emsp;-&emsp; {{ number_format((float)($standardsMapped[$courseLearningOutcome->l_outcome_id] / $course->standards->count()) * 100) }} %
-                                                            @endif
+                                                            <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
+                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
                                                             </button>
                                                         </h2>
                                                         <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
