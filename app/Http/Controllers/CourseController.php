@@ -322,10 +322,7 @@ class CourseController extends Controller
         
         // if standard category id has been updated then, delete all old standard mappings
         if ($course->standard_category_id != $request->input('standard_category_id')) {
-            $clos = $course->learningOutcomes->pluck('l_outcome_id')->toArray();
-            foreach ($clos as $clo) {
-                StandardsOutcomeMap::where('l_outcome_id', $clo)->delete();
-            }
+            StandardsOutcomeMap::where('course_id', $course->course_id)->delete();
             // assign new standard category id for course.
             $course->standard_category_id = $request->input('standard_category_id');
         }

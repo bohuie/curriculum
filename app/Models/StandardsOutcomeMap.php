@@ -12,7 +12,7 @@ class StandardsOutcomeMap extends Pivot
 
     protected $table = "standards_outcome_maps";
 
-    protected $primaryKey = ['standard_id', 'l_outcome_id'];
+    protected $primaryKey = ['standard_id', 'course_id'];
 
     public $incrementing = false;
 }

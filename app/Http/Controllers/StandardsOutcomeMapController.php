@@ -42,11 +42,11 @@ class StandardsOutcomeMapController extends Controller
             ]);
 
         $outcomeMap = $request->input('map');
-        foreach ($outcomeMap as $cloId => $standardToScaleIds) {
+        foreach ($outcomeMap as $courseId => $standardToScaleIds) {
             foreach (array_keys($standardToScaleIds) as $standardId) {
                 DB::table('standards_outcome_maps')->updateOrInsert(
-                    ['standard_id' => $standardId, 'l_outcome_id' => $cloId],
-                    ['standard_scale_id' => $outcomeMap[$cloId][$standardId]]
+                    ['standard_id' => $standardId, 'course_id' => $courseId],
+                    ['standard_scale_id' => $outcomeMap[$courseId][$standardId]]
                 );
             }
         }

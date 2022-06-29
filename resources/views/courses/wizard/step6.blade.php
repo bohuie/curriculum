@@ -38,10 +38,6 @@
                                 <div class="alert alert-warning wizard">
                                     <i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for this course to map to.                     
                                 </div>
-                            @elseif ($l_outcomes->count() < 1)
-                                <div class="alert alert-warning wizard">
-                                    <i class="bi bi-exclamation-circle-fill"></i>There are no course learning outcomes set for this course. <a class="alert-link" href="{{route('courseWizard.step1', $course->course_id)}}">Add course learning outcomes.</a>                     
-                                </div>
                             @else
 
                                 <div class="alert alert-primary d-flex align-items-center mt-3" role="alert" style="text-align:justify">
@@ -51,124 +47,102 @@
                                     </div>
                                 </div>                            
 
-                                    <!-- Ministry Standards mapping scale -->
-                                    <div class="container row">
-                                        <div class="col">
-                                            @if($course->standardScalesCategory->standardScales->count() > 0)
-                                                <table class="table table-bordered table-sm">
-                                                    <thead>
+                                <!-- Ministry Standards mapping scale -->
+                                <div class="container row">
+                                    <div class="col">
+                                        @if($course->standardScalesCategory->standardScales->count() > 0)
+                                            <table class="table table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="2">Mapping Scale</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($course->standardScalesCategory->standardScales as $ms)
                                                         <tr>
-                                                            <th colspan="2">Mapping Scale</th>
+                                                            <td style="width:20%">
+                                                                <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
+                                                                {{$ms->title}}<br>
+                                                                ({{$ms->abbreviation}})
+                                                            </td>
+                                                            <td>
+                                                                {{$ms->description}}
+                                                            </td>
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($course->standardScalesCategory->standardScales as $ms)
-                                                            <tr>
-                                                                <td style="width:20%">
-                                                                    <div style="background-color:{{$ms->colour}}; height: 10px; width: 10px;"></div>
-                                                                    {{$ms->title}}<br>
-                                                                    ({{$ms->abbreviation}})
-                                                                </td>
-                                                                <td>
-                                                                    {{$ms->description}}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            @else
-                                                <div class="alert alert-warning wizard">
-                                                    <i class="bi bi-exclamation-circle-fill"></i>There are no mapping scale levels set for this program.                   
-                                                </div>
-
-                                            @endif
-                                        </div>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        @else
+                                            <div class="alert alert-warning wizard">
+                                                <i class="bi bi-exclamation-circle-fill"></i>There are no mapping scale levels set for this program.                   
+                                            </div>
+                                        @endif
                                     </div>
-                                    
-                                    <div class="jumbotron pt-4">
-                                        <h4 class="mb-4">Course Learning Outcomes/Competencies</h4>
-                                        <h6 class="card-subtitle wizard mb-4 text-primary fw-bold">
-                                            Note: Remember to click save once you are done.
-                                        </h6>
-
-                                        <!-- list of course learning outcome accordions with mapping form -->
-                                        <div class="cloAccordions mb-4">
-                                            <form action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
+                                </div>
+                                <div class="container row">
+                                    <div class="col">
+                                        <form action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
                                             @csrf
                                             <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                                            @foreach($l_outcomes as $index => $courseLearningOutcome)
-                                                <div class="accordion" id="accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                    <div class="accordion-item mb-2">
-                                                        <h2 class="accordion-header" id="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                            <button class="accordion-button white-arrow clo collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" aria-expanded="false" aria-controls="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                                <b>CLO {{$index+1}} </b>. {{$courseLearningOutcome->clo_shortphrase}}
-                                                            </button>
-                                                        </h2>
-                                                        <div id="collapse{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" class="accordion-collapse collapse" aria-labelledby="header{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" data-bs-parent="#accordionGroup{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}">
-                                                            <div class="accordion-body">
-                                                                <!-- <form id="{{$course->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('StandardsOutcomeMapController@store')}}" method="POST"> -->
-                                                                    <!-- @csrf -->
-                                                                    <div class="card border-white">
-                                                                        <div class="card-body">
-                                                                            <h5 style="margin-bottom:16px;text-align:center;font-weight: bold;">{{$courseLearningOutcome->l_outcome}}</h5>
-                                                                                @if ($course->standardOutcomes->count() > 0) 
-                                                                                    <table class="table table-bordered table-sm">
-                                                                                        <thead class="thead-light">
-                                                                                            <tr class="table-active">
-                                                                                                <th>Standards</th>
-                                                                                                <!-- Mapping Table Levels -->
-                                                                                                @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
-                                                                                                    <th data-toggle="tooltip" title="{{$mappingScaleLevel->title}}: {{$mappingScaleLevel->description}}">
-                                                                                                        {{$mappingScaleLevel->abbreviation}}
-                                                                                                    </th>
-                                                                                                @endforeach
-                                                                                                
-                                                                                                <th data-toggle="tooltip" title="Not Aligned">N/A</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        
-                                                                                        <tbody>
-                                                                                            @foreach($course->standardOutcomes as $standard_outcome)
-                                                                                                <tr>
-                                                                                                    <td>
-                                                                                                        <b>{{$standard_outcome->s_shortphrase}}</b>
-                                                                                                        <br>
-                                                                                                        {!! $standard_outcome->s_outcome !!}
-                                                                                                    </td>
-                                                                                                    @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
-                                                                                                        <td>
-                                                                                                            <div class="form-check">
-                                                                                                                <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="{{$mappingScaleLevel->standard_scale_id}}" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == $mappingScaleLevel->standard_scale_id) checked=checked @endif @endif>
-                                                                                                            </div>
-                                                                                                        </td>
-                                                                                                    @endforeach
-                                                                                                    <td>
-                                                                                                        <div class="form-check">
-                                                                                                            <input class="form-check-input position-static" type="radio" name="map[{{$courseLearningOutcome->l_outcome_id}}][{{$standard_outcome->standard_id}}]" value="0" @if(isset($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot)) @if($courseLearningOutcome->standardOutcomeMap->find($standard_outcome->standard_id)->pivot->standard_scale_id == 0) checked=checked @endif @else checked @endif>
-                                                                                                        </div>
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            @endforeach
-                                                                                        </tbody>
-                                                                                    </table>
-                                                                                @else 
-                                                                                    <div class="alert alert-warning text-center">
-                                                                                        <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
+                                            <div class="card border-white">
+                                                <div class="card-body">
+                                                        @if ($course->standardOutcomes->count() > 0) 
+                                                            <table class="table table-bordered table-sm">
+                                                                <thead class="thead-light">
+                                                                    <tr class="table-active">
+                                                                        <th>Standards</th>
+                                                                        <!-- Mapping Table Levels -->
+                                                                        @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
+                                                                            <th data-toggle="tooltip" title="{{$mappingScaleLevel->title}}: {{$mappingScaleLevel->description}}">
+                                                                                {{$mappingScaleLevel->abbreviation}}
+                                                                            </th>
+                                                                        @endforeach
+                                                                        <th data-toggle="tooltip" title="Not Aligned">N/A</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach($course->standardOutcomes as $standard_outcome)
+                                                                        <tr>
+                                                                            <td>
+                                                                                <b>{{$standard_outcome->s_shortphrase}}</b>
+                                                                                <br>
+                                                                                {!! $standard_outcome->s_outcome !!}
+                                                                            </td>
+                                                                            @foreach($course->standardScalesCategory->standardScales as $mappingScaleLevel)
+                                                                                <td>
+                                                                                    <div class="form-check">
+                                                                                        @if (DB::table('standards_outcome_maps')->where('standard_id', $standard_outcome->standard_id)->where('course_id', $course->course_id)->where('standard_scale_id', $mappingScaleLevel->standard_scale_id)->exists()) 
+                                                                                            <input class="form-check-input position-static" type="radio" name="map[{{$course->course_id}}][{{$standard_outcome->standard_id}}]" value="{{$mappingScaleLevel->standard_scale_id}}" checked>
+                                                                                        @else
+                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$course->course_id}}][{{$standard_outcome->standard_id}}]" value="{{$mappingScaleLevel->standard_scale_id}}">
+                                                                                        @endif
                                                                                     </div>
-                                                                                @endif
-                                                                        </div>                                                                                                    
-                                                                    </div>
-                                                                <!-- </form> -->
+                                                                                </td>
+                                                                            @endforeach
+                                                                            <td>
+                                                                                <div class="form-check">
+                                                                                    @if (DB::table('standards_outcome_maps')->where('standard_id', $standard_outcome->standard_id)->where('course_id', $course->course_id)->where('standard_scale_id', 0)->exists() || (!DB::table('standards_outcome_maps')->where('standard_id', $standard_outcome->standard_id)->where('course_id', $course->course_id)->exists()))
+                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$course->course_id}}][{{$standard_outcome->standard_id}}]" value="0" checked>
+                                                                                    @else
+                                                                                        <input class="form-check-input position-static" type="radio" name="map[{{$course->course_id}}][{{$standard_outcome->standard_id}}]" value="0">
+                                                                                    @endif
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                        @else 
+                                                            <div class="alert alert-warning text-center">
+                                                                <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>Program learning outcomes have not been set for this program                    
                                                             </div>
-                                                        </div>                                                                            
-                                                    </div>
-                                                </div>
-                                        
-                                            @endforeach
-                                            <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>
-                                            </form>
-                                        </div>
+                                                        @endif
+                                                    <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2" >Save</button>  
+                                                </div>                                                                                           
+                                            </div>                                                                         
+                                        </form>
                                     </div>
+                                </div>
                             @endif
                         </div>
 

@@ -68,6 +68,7 @@ class Course extends Model
     public function standardOutcomes() {
         return $this->hasMany(Standard::class, 'standard_category_id', 'standard_category_id');
     }
+    
     public function courseStandardOutcomes() {
         //return $this->hasMany(Standard::class, 'standard_category_id', 'standard_category_id');
         return $this->hasManyThrough(StandardScale::class, StandardsScaleCategory::class);
@@ -76,7 +77,6 @@ class Course extends Model
     public function optionalPriorities(){
         return $this->belongsToMany(OptionalPriorities::class, 'course_optional_priorities', 'course_id', 'op_id');
     }
-
     
     //these are for the tables of child records on the course crud controller
     public function getCLOtableAttribute(){
