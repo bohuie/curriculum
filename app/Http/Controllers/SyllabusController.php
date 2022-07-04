@@ -6,13 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Models\LearningOutcome;
-use App\Models\AssessmentMethod;
 use App\Models\Course;
 use App\Models\CourseSchedule;
-use App\Models\CourseUser;
-use PhpOffice\PhpWord\Element\TextRun;
-use PhpOffice\PhpWord\PhpWord;
+use App\Models\Department;
+use App\Models\Faculty;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Element\Table;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +25,6 @@ use App\Models\SyllabusInstructor;
 use Carbon\Carbon;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
-use stdClass;
 
 define("INPUT_TIPS", array(
     "otherCourseStaff" => "If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?",
@@ -72,6 +68,10 @@ class SyllabusController extends Controller
         $vancouverSyllabusResources = VancouverSyllabusResource::all();
         // get okanagan campus resources
         $okanaganSyllabusResources = OkanaganSyllabusResource::all();
+        // get faculties
+        $faculties =  Faculty::all();
+        // get departments
+        $departments =  Department::all();
 
         if ($syllabusId != null) {
             // get this users permission level 
@@ -81,12 +81,12 @@ class SyllabusController extends Controller
             switch ($userPermission) {
                 // owner
                 case 1:
-                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
+                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments));
 
                 break;
                 case 2:
                     // editor
-                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
+                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments));
                 break;
                 // viewer
                 case 3:
@@ -95,12 +95,12 @@ class SyllabusController extends Controller
                 break;
                 // return view to create a syllabus as default
                 default:
-                    return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+                    return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
             }
 
         // return view to create a syllabus
         } else {
-            return view("syllabus.syllabus")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('syllabus', []);
+            return view("syllabus.syllabus")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
         }
     }
 
@@ -122,7 +122,7 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments']);
             break;
             case 'V':
                 // get data specific to vancouver campus
@@ -130,7 +130,7 @@ class SyllabusController extends Controller
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments']);
             break;
                 
         }
@@ -146,8 +146,8 @@ class SyllabusController extends Controller
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
         $courseScheduleTbl['numCols'] = $courseScheduleTblColsCount;
         $courseScheduleTbl['numRows'] = $courseScheduleTblRowsCount;
+        $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabus->id)->get()->implode('name', ', ');
 
-        
         switch ($syllabus->campus) {
             case 'O':
                 // get data specific to okanagan campus
@@ -155,7 +155,7 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds);
+                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors);
             break;
             case 'V':
                 // get data specific to vancouver campus
@@ -163,7 +163,7 @@ class SyllabusController extends Controller
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds);        
+                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors);        
         }
     }
 
@@ -254,6 +254,9 @@ class SyllabusController extends Controller
         $courseInstructorEmails = $request->input('courseInstructorEmail');
         $courseYear = $request->input('courseYear');
         $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
+        // get faculty input or use null if it's not present 
+        $faculty = $request->input('faculty', null);        
+        $department = $request->input('department', null);        
 
         // get current user
         $user = User::where('id', Auth::id())->first();
@@ -266,9 +269,10 @@ class SyllabusController extends Controller
         $syllabus->course_num = $courseNumber;
         $syllabus->delivery_modality = $deliveryModality;
         $syllabus->course_instructor = $courseInstructors[0];
-
         $syllabus->course_term = $courseSemester;
         $syllabus->course_year = $courseYear;
+        $syllabus->faculty = $faculty;
+        $syllabus->department = $department;
 
         // set optional syllabus fields common to both campuses 
         $syllabus->course_location = $request->input('courseLocation');
@@ -430,6 +434,9 @@ class SyllabusController extends Controller
         $courseInstructorEmails = $request->input('courseInstructorEmail');
         $courseYear = $request->input('courseYear');
         $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
+        // get faculty input or use null if it's not present 
+        $faculty = $request->input('faculty', null);        
+        $department = $request->input('department', null);        
 
         // get the syllabus, and start updating it
         $syllabus = Syllabus::find($syllabusId);
@@ -441,6 +448,8 @@ class SyllabusController extends Controller
         $syllabus->course_instructor = $courseInstructors[0];
         $syllabus->course_term = $courseSemester;
         $syllabus->course_year = $courseYear;
+        $syllabus->faculty = $faculty;
+        $syllabus->department = $department;
 
         // update optional syllabus fields common to both campuses
         $syllabus->course_location = $request->input('courseLocation');
@@ -1181,6 +1190,21 @@ class SyllabusController extends Controller
 
         // date the syllabus
         $templateProcessor->setValue('dateGenerated', date('d, M Y'));
+
+        if($faculty = $syllabus->faculty){
+            $templateProcessor->cloneBlock('NoFaculty');
+            $templateProcessor->setValue('faculty', $faculty);
+        }else{
+            $templateProcessor->cloneBlock('NoFaculty', 0);
+        }
+
+        if($department = $syllabus->department){
+            $templateProcessor->cloneBlock('NoDepartment');
+            $templateProcessor->setValue('department', $department);
+        }else{
+            $templateProcessor->cloneBlock('NoDepartment', 0);
+        }
+
         
         if($latePolicy = $syllabus->late_policy){
             $templateProcessor->cloneBlock('NolatePolicy');

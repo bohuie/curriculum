@@ -101,21 +101,12 @@
 
         <h5 class="fw-bold col-12 mt-5">Course Information</h5>
 
-        <div class="col-9">
+        <div class="col-6">
             <label for="courseTitle" class="form-label">Course Title<span class="requiredField"> *</span></label>
             <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text" placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
             <div class="invalid-tooltip">
                 Please enter the course title.
             </div>
-        </div>
-        
-        <div class="col-3">
-            <label for="campus" class="form-label">Campus<span class="requiredField"> *</span></label>
-            <select class="form-select" id="campus" name="campus" form="sylabusGenerator" required>
-                <option selected value=""> -- Campus -- </option>
-                <option value="O">UBC Okanagan</option>
-                <option value="V">UBC Vancouver</option>
-            </select>
         </div>
 
         <div class="col-3">
@@ -133,21 +124,48 @@
                 Please enter the course number.
             </div>
         </div>
+
+        <div class="col-3">
+            <label for="campus" class="form-label">Campus<span class="requiredField"> *</span></label>
+            <select class="form-select" id="campus" name="campus" form="sylabusGenerator" required>
+                <option selected value="" class="text-muted" disabled hidden> -- Campus -- </option>
+                <option value="O">UBC Okanagan</option>
+                <option value="V">UBC Vancouver</option>
+            </select>
+        </div>
         
         <div class="col-3">
-            <label for="deliveryModality">Mode of Delivery<span class="requiredField"> *</span></label>
-            <select id="deliveryModality" class="form-select" name="deliveryModality" required>
-                <option value="O" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'O') ? 'selected=true' : '') : ''}}>Online</option>
-                <option value="I" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'I') ? 'selected=true' : '') : ''}}>In-person</option>
-                <option value="B" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'B') ? 'selected=true' : '') : ''}}>Hybrid</option>
-                <option value="M" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'M') ? 'selected=true' : '') : ''}}>Multi-Access</option>
+            <label for="faculty" class="form-label">Faculty</label>
+            <select class="form-select" id="faculty" name="faculty" form="sylabusGenerator" disabled onchange="setDepartments(this.selectedOptions[0].getAttribute('name'))">
+                <option value="" class="text-muted"> -- Faculty -- </option>
             </select>
-            <div class="invalid-tooltip">
-                Please enter the course mode of delivery.
-            </div>
+        </div>
+
+        <div class="col-3">
+            <label for="department" class="form-label">Department</label>
+            <select class="form-select" id="department" name="department" form="sylabusGenerator" disabled>
+                <option value="" class="text-muted"> -- Department -- </option>
+            </select>
         </div>
 
         <div id="courseCredit" class="col-3"></div>
+
+        <div class="col-3">
+            <label for="startTime">Class Start Time</label>
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "startTime" name = "startTime" class ="form-control" type="text" placeholder="E.g. 1:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_start_time : ''}}">
+        </div>
+        
+        <div class="col-3">
+            <label for="endTime">Class End Time</label>
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "endTime" name = "endTime" class ="form-control" type="text" placeholder="E.g. 2:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_end_time : ''}}" >
+        </div>
+
+        <div class="col-3">
+            <label for="courseLocation">Course Location</label>
+            <input id = "courseLocation" name = "courseLocation" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="150" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{ !empty($syllabus) ? $syllabus->course_location : ''}}">
+        </div>
+        
+        <div id="officeLocation" class="col-3"></div>
 
         <div class="col-3">
             <label for="courseYear">Course Year <span class="requiredField">*</span></label>
@@ -194,50 +212,59 @@
         </div>
 
         <div class="col-3">
-            <label for="startTime">Class Start Time</label>
-            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "startTime" name = "startTime" class ="form-control" type="text" placeholder="E.g. 1:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_start_time : ''}}">
-        </div>
-        
-        <div class="col-3">
-            <label for="endTime">Class End Time</label>
-            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "endTime" name = "endTime" class ="form-control" type="text" placeholder="E.g. 2:00 PM" value="{{ !empty($syllabus) ? $syllabus->class_end_time : ''}}" >
+            <label for="deliveryModality">Mode of Delivery<span class="requiredField"> *</span></label>
+            <select id="deliveryModality" class="form-select" name="deliveryModality" required>
+                <option value="O" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'O') ? 'selected=true' : '') : ''}}>Online</option>
+                <option value="I" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'I') ? 'selected=true' : '') : ''}}>In-person</option>
+                <option value="B" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'B') ? 'selected=true' : '') : ''}}>Hybrid</option>
+                <option value="M" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'M') ? 'selected=true' : '') : ''}}>Multi-Access</option>
+            </select>
+            <div class="invalid-tooltip">
+                Please enter the course mode of delivery.
+            </div>
         </div>
 
-        <div class="col-3">
-            <label for="courseLocation">Course Location</label>
-            <input id = "courseLocation" name = "courseLocation" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="150" class ="form-control" type="text" placeholder="E.g. WEL 140" value="{{ !empty($syllabus) ? $syllabus->course_location : ''}}">
-        </div>
-        
-        <div id="officeLocation" class="col-3"></div>
+        <div class="col-9">
+            <label for="classDate">Class Meeting Days</label>
+            <div class="classDate mt-1">
+                <div class="form-check form-check-inline">
+                    <input id="monday" type="checkbox" name="schedule[]" value="Mon" class="form-check-input">
+                    <label for="monday" class="mr-2 form-check-label" >Monday</label>
+                </div>
+                
+                <div class="form-check form-check-inline">
+                    <input id="tuesday" type="checkbox" name="schedule[]" value="Tue" class="form-check-input">
+                    <label for="tuesday" class="mr-2 form-check-label">Tuesday</label>
+                </div>
 
-        <div class="col">
+                <div class="form-check form-check-inline">
+                    <input id="wednesday" type="checkbox" name="schedule[]" value="Wed" class="form-check-input">
+                    <label for="wednesday" class="mr-2 form-check-label">Wednesday</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input id="thursday" type="checkbox" name="schedule[]" value= "Thu" class="form-check-input">
+                    <label for="thursday" class="mr-2 form-check-label">Thursday</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input id="friday" type="checkbox" name="schedule[]" value="Fri" class="form-check-input">
+                    <label for="friday" class="mr-2 form-check-label">Friday</label>
+                </div>
+                
+                <div class="form-check form-check-inline">
+                    <input id="saturday" type="checkbox" name="schedule[]" value="Sat" class="form-check-input">
+                    <label for="saturday" class="mr-2 form-check-label">Saturday</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
             <label for="officeHour">Office Hours</label>
             <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="2500" spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
         </div>
 
-        <div class="col-12">
-            <label for="classDate">Class Meeting Days</label>
-            <div class="classDate">
-                <input id="monday" type="checkbox" name="schedule[]" value="Mon">
-                <label for="monday" class="mr-2">Monday</label>
-
-                <input id="tuesday" type="checkbox" name="schedule[]" value="Tue">
-                <label for="tuesday" class="mr-2">Tuesday</label>
-
-                <input id="wednesday" type="checkbox" name="schedule[]" value="Wed">
-                <label for="wednesday" class="mr-2">Wednesday</label>
-
-                <input id="thursday" type="checkbox" name="schedule[]" value= "Thu">
-                <label for="thursday" class="mr-2">Thursday</label>
-
-                <input id="friday" type="checkbox" name="schedule[]" value="Fri">
-                <label for="friday" class="mr-2">Friday</label>
-									
-				<input id="saturday" type="checkbox" name="schedule[]" value="Sat">
-                <label for="saturday" class="mr-2">Saturday</label>
-            </div>
-        </div>
 
         <h5 class="col-12 fw-bold">Course Instructor(s)</h5>
 
@@ -261,7 +288,7 @@
                     </div>
 
                     <div class="col-2">
-                        <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)">Delete</button>
+                        <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)"><i class="bi bi-trash-fill"></i> Delete</button>
                     </div>
                 </div>
             @endforeach 
@@ -607,6 +634,19 @@
 </div>
 
 <script type="application/javascript">
+    
+    var syllabus = <?php echo json_encode($syllabus);?>;
+
+    var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
+
+    var vFaculties = faculties.filter(item => {
+        return item.campus_id === 1;
+    });
+    var oFaculties = faculties.filter(item => {
+        return item.campus_id === 2;
+    });
+    var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+
     $(document).ready(function () {
 
         $(function () {
@@ -921,7 +961,6 @@
                 var side = event.currentTarget.dataset.side;
                 // get the number of cols in the tbl
                 var numCols = courseScheduleTbl.rows[0].cells.length;
-                console.log(numCols);
                 // if num rows in the tbl is less than the max, add row
                 if (courseScheduleTbl.rows.length < $('#courseScheduleTblRowsCount').attr('max')) {
                     // create <textarea>
@@ -1016,8 +1055,6 @@
             }
         });
 
-        var syllabus = <?php echo json_encode($syllabus);?>;
-        $('[data-bs-toggle="tooltip"]').tooltip();
         // add on change event listener to campus select 
         $('#campus').change(function(){
             onChangeCampus();
@@ -1142,7 +1179,7 @@
             </div>
             
             <div class="col-2">
-                <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)">Delete</button>
+                <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)"><i class="bi bi-trash-fill"></i> Delete</button>
             </div>
         </div>`;
 
@@ -1276,7 +1313,7 @@
                     <div class="col-6">
                         <input class="form-check-input " id="{{$vSyllabusResource->id_name}}" type="checkbox" name="vancouverSyllabusResources[{{$vSyllabusResource->id}}]" value="{{$vSyllabusResource->id_name}}" checked>
                         <label class="form-check-label mb-2" for="{{$vSyllabusResource->id_name}}">{{$vSyllabusResource->title}}</label>   
-                    <div>
+                    </div>
                 @endforeach
             @else
                 @foreach($vancouverSyllabusResources as $index => $vSyllabusResource)
@@ -1423,9 +1460,10 @@
             $('#courseFormat').addClass('m-0 p-0');
             $('#courseOverview').empty();
             $('#courseOverview').addClass('m-0 p-0');
-
-        }
-        else
+            // update faculty dropdown
+            setFaculties('Vancouver');
+        }   
+        else if (campus.val() == 'O')
         {
             // add data specific to okanagan campus
             $('#optionalSyllabus').html(okanaganOptionalList);
@@ -1450,6 +1488,9 @@
             $('#courseDescription').empty();
             $('#learningAnalytics').empty();
             $('.requiredBySenate').empty();
+
+            // update faculty dropdown
+            setFaculties('Okanagan');
         }
 
         var formatNotes = document.querySelectorAll('.collapsibleNotes').forEach(function(note) {
@@ -1458,6 +1499,60 @@
             if (!isCollapsed) {
                 collapseSection(note);
             }
+        });
+    }
+
+    // activates faculty dropdown with faculties from the given campus
+    function setFaculties(campus) {
+        $('#faculty').removeAttr('disabled');
+        $('#faculty').empty();
+        $('#department').empty();
+
+
+        placeholderFaculty = `<option value="" class="text-muted" > -- Faculty -- </option>`;
+        placeholderDept = `<option value="" class="text-muted"> -- Department -- </option>`;
+        
+        $('#faculty').append(placeholderFaculty);
+        $('#department').append(placeholderDept);
+
+        if (campus == 'Vancouver') {
+            vFaculties.forEach(function(faculty, index) {
+                $('#faculty').append($(`<option name="${faculty.faculty_id}" />`).val(faculty.faculty).text(faculty.faculty));
+                // change selected value if syllabus has a faculty
+                if (faculty.faculty == syllabus.faculty) {
+                    $('#faculty').val(faculty.faculty);
+                    setDepartments(faculty.faculty_id);
+                }
+            });
+        } else if (campus == 'Okanagan') {
+            oFaculties.forEach(function(faculty, index) {
+                $('#faculty').append($(`<option name="${faculty.faculty_id}" />`).val(faculty.faculty).text(faculty.faculty));
+                // change selected value if syllabus has a faculty
+                if (faculty.faculty == syllabus.faculty) {
+                    $('#faculty').val(syllabus.faculty);
+                    setDepartments(faculty.faculty_id);
+                }
+            });
+        }
+    }
+
+    // activates department dropdown with departments from the given faculty
+    function setDepartments(facultyId) {
+        $('#department').removeAttr('disabled');
+        $('#department').empty();
+        placeholder = `<option value="" class="text-muted"> -- Department -- </option>`;
+        $('#department').append(placeholder);
+        filteredDepartments = departments.filter(department => {
+            return department.faculty_id == facultyId;
+        });
+
+        filteredDepartments.forEach(function(department, index) {
+            $('#department').append($('<option />').val(department.department).text(department.department));
+            // change selected value if syllabus has a faculty
+            if (department.department == syllabus.department) {
+                $('#department').val(syllabus.department);
+            }
+
         });
     }
     

@@ -44,7 +44,9 @@
                 </tbody>
             </table>
             <p><b>Campus:</b> @if ($syllabus->campus == 'V') Vancouver @else Okanagan @endif</p>
-            <p><b>Instructor:</b> {{$syllabus->course_instructor}}</p>
+            <p><b>Faculty:</b> {{$syllabus->faculty}}</p>
+            <p><b>Department:</b> {{$syllabus->department}}</p>
+            <p><b>Instructor(s):</b> {{$syllabusInstructors}}</p>
             <p><b>Office Location
                 <span>
                     <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['officeLocation']}}"></i>

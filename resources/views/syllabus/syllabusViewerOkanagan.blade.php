@@ -27,7 +27,9 @@
                 <h5 class="oSyllabusHeader text-decoration-none">{{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}}</h5>
             </div>
             <p><b>Campus:</b> @if ($syllabus->campus == 'V') Vancouver @else Okanagan @endif</p>
-            <p><b>Instructor:</b> {{$syllabus->course_instructor}}</p>
+            <p><b>Faculty:</b> {{$syllabus->faculty}}</p>
+            <p><b>Department:</b> {{$syllabus->department}}</p>
+            <p><b>Instructor(s):</b> {{$syllabusInstructors}}</p>
             <p><b>Duration:</b> {{$syllabus->course_term}} {{$syllabus->course_year}}</p>
             @switch($syllabus->delivery_modality)
                 @case('M')
