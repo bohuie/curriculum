@@ -69,9 +69,10 @@ class SyllabusController extends Controller
         // get okanagan campus resources
         $okanaganSyllabusResources = OkanaganSyllabusResource::all();
         // get faculties
-        $faculties =  Faculty::all();
+        $faculties =  Faculty::orderBy('faculty')->get();
         // get departments
-        $departments =  Department::all();
+        $departments =  Department::orderBy('department')->get();
+        // ddd($faculties);
 
         if ($syllabusId != null) {
             // get this users permission level 

@@ -51,8 +51,8 @@ class HomeController extends Controller
         //Artisan::call('route:clear', []);
 
         $campuses =  Campus::all();
-        $faculties =  Faculty::all();
-        $departments =  Department::all();
+        $faculties =  Faculty::orderBy('faculty')->get();
+        $departments =  Department::orderBy('department')->get();
         // get the current authenticated user
         $user = User::find(Auth::id());
         // get my programs

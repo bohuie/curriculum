@@ -1688,14 +1688,14 @@
 </script>
 
 <script type="application/javascript">
-    var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
+    var faculties = <?php echo json_encode($faculties);?>;
     var vFaculties = faculties.filter(item => {
         return item.campus_id === 1;
     });
     var oFaculties = faculties.filter(item => {
         return item.campus_id === 2;
     });
-    var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+    var departments = <?php echo json_encode($departments);?>;
 
     $(document).ready(function () {
         // Enables functionality of tool tips

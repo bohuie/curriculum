@@ -352,7 +352,6 @@
         <div class="col-12" id="courseOverview"></div>
 
 
-
         <div class="col-12">
             <label for="learningOutcome"><h5 class="fw-bold">Learning Outcomes</h5></label>
             <span class="requiredBySenate"></span>
@@ -636,8 +635,7 @@
 <script type="application/javascript">
     
     var syllabus = <?php echo json_encode($syllabus);?>;
-
-    var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
+    var faculties = <?php echo json_encode($faculties);?>;
 
     var vFaculties = faculties.filter(item => {
         return item.campus_id === 1;
@@ -645,7 +643,7 @@
     var oFaculties = faculties.filter(item => {
         return item.campus_id === 2;
     });
-    var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+    var departments = <?php echo json_encode($departments);?>;
 
     $(document).ready(function () {
 
@@ -1463,7 +1461,7 @@
             // update faculty dropdown
             setFaculties('Vancouver');
         }   
-        else if (campus.val() == 'O')
+        else
         {
             // add data specific to okanagan campus
             $('#optionalSyllabus').html(okanaganOptionalList);
