@@ -565,10 +565,8 @@ class CourseController extends Controller
 
             $standardOutcomeMap = array();
             foreach ($courseStandardOutcomes as $standardOutcome) {
-                foreach($courseLearningOutcomes as $clo) {
-                    if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('l_outcome_id', $clo->l_outcome_id)->exists())
-                        $standardOutcomeMap[$standardOutcome->standard_id][$clo->l_outcome_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['l_outcome_id', $clo->l_outcome_id]]))->first();
-                }
+                    if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists())
+                        $standardOutcomeMap[$standardOutcome->standard_id][$course->course_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]))->first();
             }
 
             $assessmentMethodsTotal = 0;

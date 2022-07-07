@@ -553,12 +553,12 @@
                             @endif
 
                             <h5 class="card-title">Outcome Map:</h5>
-                            <p>This chart shows the alignment of course learning outcomes to ministry standards.</p>
+                            <p>This chart shows the alignment of ministry standards to this course.</p>
 
                             @if(count($standardOutcomeMap) < 1)
 
                                 <div class="alert alert-warning wizard">
-                                    <i class="bi bi-exclamation-circle-fill"></i>Course learning outcomes have not been mapped to this programs learning outcomes. <a class="alert-link" href="{{route('courseWizard.step6', $course->course_id)}}">Map CLOs to Ministry Standards.</a>                 
+                                    <i class="bi bi-exclamation-circle-fill"></i>This course has not been mapped to the ministry standards yet. <a class="alert-link" href="{{route('courseWizard.step6', $course->course_id)}}">Map CLOs to Ministry Standards.</a>                 
                                 </div>
 
                             @else

@@ -43,7 +43,7 @@
                                 <div class="alert alert-primary d-flex align-items-center mt-3" role="alert" style="text-align:justify">
                                     <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
                                     <div>
-                                        In lieu of specific PLOs, the below are the <a class="alert-link" href="https://www2.gov.bc.ca/assets/gov/education/post-secondary-education/institution-resources-administration/degree-authorization/degree-program-criteria.pdf#page=19" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> standards provided by the Ministry of Advanced Education in BC</a>. Using the mapping scale provided, identify the alignment between each of the CLOs against the standards.                        
+                                        In lieu of specific PLOs, the below are the <a class="alert-link" href="https://www2.gov.bc.ca/assets/gov/education/post-secondary-education/institution-resources-administration/degree-authorization/degree-program-criteria.pdf#page=19" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> standards provided by the Ministry of Advanced Education in BC</a>. Using the mapping scale provided, identify the alignment between this course against the ministry standards.                        
                                     </div>
                                 </div>                            
 
@@ -360,11 +360,6 @@
                                                                     </div>
                                                                 <!-- End of UBC market -->
                                                                 @else
-                                                                    <!-- <h6 class="fw-bold mb-3">
-                                                                        {!! $optionalPrioritySubcategory->subcat_name !!}
-                                                                    </h6>
-                                                                    <p>{!! $optionalPrioritySubcategory->subcat_desc !!}</p> -->
-
                                                                     <!--optional Priorities for subcategory-->
                                                                     <table class="table table-hover optionalPLO" id="{{$optionalPrioritySubcategory->subcat_id}}" data-toolbar="#toolbar" data-toggle="table" data-maintain-meta-data="true">
                                                                         <thead class="thead-light">
@@ -431,13 +426,11 @@
                                         </div>
                                         <button type="submit" class="btn btn-success my-3 btn-sm float-right col-2">Save</button>
                                     </form>
-                        <!--End Accordion-->
-
-                            <!-- End of optional priorities -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-        
                 <div class="card-footer">
                     <div class="card-body mb-4">
                         <a href="{{route('courseWizard.step5', $course->course_id)}}">
