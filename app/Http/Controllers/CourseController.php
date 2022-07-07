@@ -765,16 +765,18 @@ class CourseController extends Controller
                     $newOutcomeAssessment->save();
                 }
             }
-            // duplicate standards 
-            if($clo->standardOutcomeMap()->exists()) {
-                $oldStandardOutcomes = $clo->standardOutcomeMap()->get();
-                foreach($oldStandardOutcomes as $oldStandardOutcome) {
-                    $oldStandardOutcomeMap = new StandardsOutcomeMap;
-                    $oldStandardOutcomeMap->l_outcome_id = $newCLO->l_outcome_id;
-                    $oldStandardOutcomeMap->standard_id = $oldStandardOutcome->pivot->standard_id;
-                    $oldStandardOutcomeMap->standard_scale_id = $oldStandardOutcome->pivot->standard_scale_id;
-                    $oldStandardOutcomeMap->save();
-                }
+        }
+
+        $courseStandardCategory = $course->standardCategory;
+        $courseStandardOutcomes = $courseStandardCategory->standards;
+        // dd($courseStandardOutcomes);
+        foreach ($courseStandardOutcomes as $standardOutcome) {
+            if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists()) {
+                $newStandardOutcomeMap = new StandardsOutcomeMap;
+                $newStandardOutcomeMap->course_id = $course->course_id;
+                $newStandardOutcomeMap->standard_id = $standardOutcome->standard_id;
+                $newStandardOutcomeMap->standard_scale_id = StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course_old->course_id)->value('standard_scale_id');
+                $newStandardOutcomeMap->save();
             }
         }
 
