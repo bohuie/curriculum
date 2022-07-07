@@ -24,6 +24,7 @@ use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\OptionalPriorities;
 use App\Models\OptionalPrioritySubcategories;
+use App\Models\StandardCategory;
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -399,6 +400,47 @@ class ProgramWizardController extends Controller
             $freqForMS[$index] = $freqOfMSId;
             $index++;
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////Feature *Frequency Distribution Table For Ministry Standards*//////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        // Get all Standard Categories for courses in the program
+        $standardCategories = [];
+        foreach ($programCourses as $course) {
+            $standardCategories[$course->standardCategory->standard_category_id] = $course->standardCategory;
+        }
+
+        // Get all Standards for courses in the program
+        $standards = [];
+        foreach ($programCourses as $course) {
+            $standards[$course->standardCategory->standard_category_id] = $course->standardCategory->standards;
+        }
+
+        // Get all Standard Mapping Scale Categories for courses in the program
+        $standardMappingScalesCategories = [];
+        foreach($programCourses as $course) {
+            $standardMappingScalesCategories[$course->scale_category_id] = $course->standardScalesCategory;
+        }
+
+        // Get all Standard Mapping Scales for courses in the program
+        $standardMappingScales = [];
+        foreach($programCourses as $course) {
+            $standardMappingScales[$course->scale_category_id] = $course->standardScalesCategory->standardScales;
+        }
+
+        // TODO: Get Standard Outcome Maps for Each Course in the Program
+
+        dd("Standard Categories", $standardCategories, "Standards", $standards, "Standard Mapping Scale Categories", $standardMappingScalesCategories , "Standard Mapping Scales", $standardMappingScales, "Program Courses", $programCourses);
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
