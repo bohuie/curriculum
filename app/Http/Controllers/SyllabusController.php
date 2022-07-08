@@ -684,27 +684,53 @@ class SyllabusController extends Controller
     // get existing course information
     // Ajax to get course infomation
     public function getCourseInfo(Request $request) {
-
+        // validate request data
         $this->validate($request, [
             'course_id'=> 'required',
             ]);
-
-        $course_id = $request->course_id;
-        $course = Course::find($course_id);
-        // get relevant course info for import into Syllabus Generator
-        $a_methods = $course->assessmentMethods;
-        $l_outcomes = $course->learningOutcomes;
-        $l_activities = $course->learningActivities;
-        // put courseInfo, assessment methods and CLOs in the return object
+        $courseId = $request->course_id;
+        // get the corresponding course
+        $course = Course::find($courseId);
+        // 2D array with user requested info
+        $importCourseSettings = $request->input('importCourseSettings', []);
+        // reduce user requested info array to a 1D array
+        $importCourseSettings = array_reduce($importCourseSettings, function ($acc, $setting) {
+            $temp = [$setting["name"]];
+            return array_merge($acc, $temp);
+        }, []);
+        // create return data object with basic course info 
         $data['c_title'] = $course->course_title;
         $data['c_code'] = $course->course_code;
         $data['c_num'] = $course->course_num;
         $data['c_del'] = $course->delivery_modality;
         $data['c_year'] = $course->year;
         $data['c_term'] = $course->semester;
-        $data['a_methods'] = $a_methods;
-        $data['l_outcomes'] = $l_outcomes;
-        $data['l_activities'] = $l_activities;
+        // check if clos were requested
+        if (in_array("importLearningOutcomes", $importCourseSettings)) {
+            $data['l_outcomes'] = $course->learningOutcomes;
+        }
+        // check if assessment methods were requested
+        if (in_array("importAssessmentMethods", $importCourseSettings)) {
+            $data['a_methods'] = $course->assessmentMethods;
+        }
+        // check if teaching and learning activities were requested
+        if (in_array("importLearningActivities", $importCourseSettings)) {
+            $data['l_activities'] = $course->learningActivities;
+        }
+        // check if course alignment was requested
+        if (in_array("importCourseAlignment", $importCourseSettings)) {
+            $data['course_alignment'] = $course->learningOutcomes;
+            foreach ($data['course_alignment'] as $clo) {
+                $clo->assessmentMethods;
+                $clo->learningActivities;
+            }
+        }
+        // check if program outcome maps were requested
+        $course->programs->each(function ($program, $key) use ($importCourseSettings) {
+            if (in_array($program->program_id, $importCourseSettings)) {
+                Log::debug('give me ' . $program->program);
+            }
+        });
 
         $data = json_encode($data);
         return $data;

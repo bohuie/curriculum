@@ -19,8 +19,8 @@ class CreateSyllabusInstructorsTable extends Migration
             $table->foreign('syllabus_id')->references('id')->on('syllabi')->onDelete('cascade')->onUpdate('cascade');
             $table->string('name');
             $table->string('email');
-            $table->string('office_hours');
-            $table->string('office_location');
+            // $table->string('office_hours');
+            // $table->string('office_location');
             $table->timestamps();
         });
     }

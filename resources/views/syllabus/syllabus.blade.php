@@ -383,8 +383,9 @@
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
         </div>
 
+        <div class="p-0 m-0" id="courseAlignment"></div>
+
         <!-- course schedule table -->
-        
         <div class="col mb-3">
             <label for="courseSchedule">
                 <h5 class="fw-bold">Course Schedule</h5>
@@ -1193,60 +1194,112 @@
     // Import course info into using GET AJAX call
     function importCourseInfo() {
         var course_id = $('input[name="importCourse"]:checked').val();
+        // get user specified course componenets to import
+        var importCourseSettings = $('#importCourseSettingsForm').serializeArray();
+
         $.ajax({
             type: "GET",
             url: "/syllabusGenerator/import/course",
-            data: {course_id : course_id},
+            data: {
+                course_id : course_id, 
+                importCourseSettings: importCourseSettings
+            },
             headers: {
                 'X-CSRF-Token': '{{ csrf_token() }}',
             },
         }).done(function(data) {
-            // get fields we want to populate
-            var c_title_input = $('#courseTitle');
-            var c_code_input = $('#courseCode');
-            var c_num_input = $('#courseNumber');
-            var c_del_input = $('#deliveryModality');
-            var c_year_input = $('#courseYear');
-            var c_term_input = $('#courseSemester');
-            var a_method_input = $('#learningAssessments');
-            var l_outcome_input = $('#learningOutcome');
-            var l_activities_input = $('#learningActivities');
-            // get saved data 
-            var decode_data = JSON.parse(data);
-            var c_title = decode_data['c_title'];
-            var c_code = decode_data['c_code'];
-            var c_num = decode_data['c_num'];
-            var c_del = decode_data['c_del'];
-            var c_year = decode_data['c_year'];
-            var c_term = decode_data['c_term'];
-            var a_methods = decode_data['a_methods'];
-            var l_outcomes = decode_data['l_outcomes'];
-            var l_activities = decode_data['l_activities'];
-            // format saved data
-            var a_methods_text = "";
-            var l_outcomes_text = "";
-            var l_activities_text = "";
-            a_methods.forEach(element => {
-                a_methods_text += element.a_method + " " + element.weight + "%\n";
-            });
-            for(var i = 0; i < l_outcomes.length; i++) {
-                l_outcomes_text += (i+1) + ". " + l_outcomes[i].l_outcome + "\n";
-            }
-            for(var i = 0; i < l_activities.length; i++) {
-                l_activities_text += l_activities[i].l_activity + "\n";
-            }
-            // import saved and formatted data
-            c_title_input.val(c_title);
-            c_code_input.val(c_code);
-            c_num_input.val(c_num);
-            c_del_input.val(c_del);
+            data = JSON.parse(data);
+            $('#courseTitle').val(data['c_title']);
+            $('#courseCode').val(data['c_code']);
+            $('#courseNumber').val(data['c_num']);
+            $('#deliveryModality').val(data['c_del']);
+            $('#courseYear').val(data['c_year']);
+            $('#courseSemester').val(data['c_term']);
 
-            c_year_input.val(c_year);
-            c_term_input.val(c_term);
-            a_method_input.val(a_methods_text);
-            l_outcome_input.val(l_outcomes_text);
-            l_activities_input.val(l_activities_text);
+            if (data.hasOwnProperty('l_outcomes')) {
+                var l_outcomes = data['l_outcomes'];
+                var l_outcomes_text = "";
+                for(var i = 0; i < l_outcomes.length; i++) {
+                    l_outcomes_text += l_outcomes[i].l_outcome + "\n";
+                }
+                $('#learningOutcome').val(l_outcomes_text);
+            }
+            if (data.hasOwnProperty('a_methods')) {
+                var a_methods = data['a_methods'];
+                var a_methods_text = "";
+                a_methods.forEach(element => {
+                    a_methods_text += element.a_method + " " + element.weight + "%\n";
+                });
+                $('#learningAssessments').val(a_methods_text);
+            }
+            if (data.hasOwnProperty('l_activities')) {
+                var l_activities = data['l_activities'];
+                var l_activities_text = "";
+                for(var i = 0; i < l_activities.length; i++) {
+                    l_activities_text += l_activities[i].l_activity + "\n";
+                }
+                $('#learningActivities').val(l_activities_text);
+            }
+            if (data.hasOwnProperty('course_alignment')) {
+                $('#courseAlignment').empty();
+                courseAlignmentHTML = getCourseAlignmentHTML(data['course_alignment']);
+                $('#courseAlignment').append(courseAlignmentHTML);
+            }
         });
+    }
+
+    function getCourseAlignmentHTML(courseAlignment) {
+        tbody = ``;
+        courseAlignment.forEach(function(learningOutcome){
+            assessmentMethodsText = learningOutcome["assessment_methods"].reduce(function (acc, assessmentMethod, index) { 
+                if (index == 0) 
+                    return acc + assessmentMethod['a_method'];
+                else 
+                    return acc + ', ' + assessmentMethod['a_method']
+            }, '');
+            learningActivitiesText = learningOutcome["learning_activities"].reduce(function (acc, learningActivity, index) { 
+                if (index == 0) 
+                    return acc + learningActivity['l_activity'];
+                else 
+                    return acc + ', ' + learningActivity['l_activity']
+            }, '');
+
+            row = `
+                <tr>
+                    <td scope="row">
+                        <b>${learningOutcome["clo_shortphrase"]}</b><br>
+                        ${learningOutcome["l_outcome"]}
+                    </td>
+                    <td>${assessmentMethodsText}</td>
+                    <td>${learningActivitiesText}</td>
+                </tr>
+            `;
+            tbody += row;
+        });
+        return `
+            <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
+                Course Alignment                                     
+                <button id="removeCourseAlignment" type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+            </h5>            
+            <div class="col-12" id="courseAlignmentTable">
+                <table class="table table-light table-bordered table " >
+                    <thead>
+                        <tr class="table-primary">
+                            <th class="w-50">Course Learning Outcome</th>
+                            <th>Student Assessment Method</th>
+                            <th>Teaching and Learning Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tbody}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function removeSection(btn){
+        $(btn.parentNode.parentNode).empty();
     }
 
     function expandSection(element) {
