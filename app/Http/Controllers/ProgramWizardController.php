@@ -24,7 +24,9 @@ use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\OptionalPriorities;
 use App\Models\OptionalPrioritySubcategories;
+use App\Models\Standard;
 use App\Models\StandardCategory;
+use App\Models\StandardsOutcomeMap;
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -408,32 +410,35 @@ class ProgramWizardController extends Controller
         /////////////////////////////////////////////////////////////////////////////////////////////////
         
         // Get all Standard Categories for courses in the program
-        $standardCategories = [];
-        foreach ($programCourses as $course) {
-            $standardCategories[$course->standardCategory->standard_category_id] = $course->standardCategory;
+
+        if ($program->level == "Undergraduate") {
+            $standardCategory = StandardCategory::find(1);
+        } elseif($program->level == "Masters") {
+            $standardCategory = StandardCategory::find(2);
+        } elseif($program->level == "Doctoral") {
+            $standardCategory = StandardCategory::find(3);
+        } else {
+            $standardCategory = StandardCategory::find(0);
         }
 
         // Get all Standards for courses in the program
-        $standards = [];
-        foreach ($programCourses as $course) {
-            $standards[$course->standardCategory->standard_category_id] = $course->standardCategory->standards;
-        }
+        $standards = $standardCategory->standards;
 
-        // Get all Standard Mapping Scale Categories for courses in the program
-        $standardMappingScalesCategories = [];
-        foreach($programCourses as $course) {
-            $standardMappingScalesCategories[$course->scale_category_id] = $course->standardScalesCategory;
-        }
+        $programCoursesFiltered = $program->courses()->where('standard_category_id', $standardCategory->standard_category_id)->get();
 
-        // Get all Standard Mapping Scales for courses in the program
-        $standardMappingScales = [];
-        foreach($programCourses as $course) {
-            $standardMappingScales[$course->scale_category_id] = $course->standardScalesCategory->standardScales;
+        $outputStandardOutcomeMaps = [];
+        foreach ($programCoursesFiltered as $course) {
+            // check that outcome map exists
+            if (StandardsOutcomeMap::where('course_id', $course->course_id)->exists()) {
+                foreach ($standards as $standard) {
+                    $outputStandardOutcomeMaps[$course->course_id][$standard->standard_id] = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
+                }
+            }
         }
 
         // TODO: Get Standard Outcome Maps for Each Course in the Program
-
-        dd("Standard Categories", $standardCategories, "Standards", $standards, "Standard Mapping Scale Categories", $standardMappingScalesCategories , "Standard Mapping Scales", $standardMappingScales, "Program Courses", $programCourses);
+        dd("Category", $standardCategory, "Standards", $standards, 'Courses', $programCoursesFiltered, 'Outcome Maps', $outputStandardOutcomeMaps);
+        // dd("Standards", $standards, "Standard Mapping Scale Categories", $standardMappingScalesCategories , "Standard Mapping Scales", $standardMappingScales, "Program Courses", $programCourses);
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////

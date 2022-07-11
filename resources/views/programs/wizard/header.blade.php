@@ -138,25 +138,52 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label for="Level" class="col-md-2 col-form-label text-md-right">Level</label>
-                                                    <div class="col-md-6">
-                                                        @for($i =0; $i<3 ; $i++)
-                                                            @if($levels[$i]==$program->level)
-                                                                <div class="form-check ">
-                                                                    <label class="form-check-label">
-                                                                        <input type="radio" class="form-check-input" name="level" value="{{$levels[$i]}}" checked>
-                                                                        {{$levels[$i]}}
-                                                                    </label>
-                                                                </div>
+                                                    <label for="level" class="col-md-2 col-form-label text-md-right"><span class="requiredField">* </span>Level</label>
+                                                    <div class="col-md-8">
+                                                        <div class="form-check ">
+                                                            <label class="form-check-label">
+                                                            @if ($program->level == "Undergraduate") 
+                                                            <input type="radio" class="form-check-input" name="level" value="Undergraduate" checked>
+                                                                Undergraduate
                                                             @else
-                                                                <div class="form-check ">
-                                                                    <label class="form-check-label">
-                                                                        <input type="radio" class="form-check-input" name="level" value="{{$levels[$i]}}">
-                                                                        {{$levels[$i]}}
-                                                                    </label>
-                                                                </div>
+                                                                <input type="radio" class="form-check-input" name="level" value="Undergraduate">
+                                                                    Undergraduate
                                                             @endif
-                                                        @endfor
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                            @if ($program->level == "Masters") 
+                                                                <input type="radio" class="form-check-input" name="level" value="Masters" checked>
+                                                                Masters
+                                                            @else
+                                                                <input type="radio" class="form-check-input" name="level" value="Masters">
+                                                                    Masters
+                                                            @endif
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                                @if ($program->level == "Doctoral")
+                                                                    <input type="radio" class="form-check-input" name="level" value="Doctoral" checked>
+                                                                    Doctoral
+                                                                @else
+                                                                    <input type="radio" class="form-check-input" name="level" value="Doctoral">
+                                                                        Doctoral
+                                                                @endif
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                                @if ($program->level == "Other") 
+                                                                    <input type="radio" class="form-check-input" name="level" value="Other" checked>
+                                                                    Other
+                                                                @else
+                                                                <input type="radio" class="form-check-input" name="level" value="Other">
+                                                                    Other
+                                                                @endif
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -528,16 +555,17 @@
     });
 
     $(document).ready(function () {
-	//This method is used to make sure that the proper amount of characters are entered so it doesn't exceed the max character limits
-    function validateMaxlength(e){
-        //Whitespaces are counted as 1 but character wise are 2 (\n).
-        var MAX_LENGTH = event.target.getAttribute("maxlength");
-        var currentLength = event.target.value.length;
-        var whiteSpace = event.target.value.split(/\n/).length;
-        if((currentLength+(whiteSpace))>MAX_LENGTH)
-        { 
-            //Goes to MAX_LENGTH-(whiteSpace)+1 because it starts at 1
-            event.target.value = event.target.value.substr(0,MAX_LENGTH-(whiteSpace)+1);	        
+	    //This method is used to make sure that the proper amount of characters are entered so it doesn't exceed the max character limits
+        function validateMaxlength(e){
+            //Whitespaces are counted as 1 but character wise are 2 (\n).
+            var MAX_LENGTH = event.target.getAttribute("maxlength");
+            var currentLength = event.target.value.length;
+            var whiteSpace = event.target.value.split(/\n/).length;
+            if((currentLength+(whiteSpace))>MAX_LENGTH)
+            { 
+                //Goes to MAX_LENGTH-(whiteSpace)+1 because it starts at 1
+                event.target.value = event.target.value.substr(0,MAX_LENGTH-(whiteSpace)+1);	        
+            }
         }
-    }
+    });
 </script>
