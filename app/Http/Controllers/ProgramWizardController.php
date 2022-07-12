@@ -26,6 +26,7 @@ use App\Models\OptionalPriorities;
 use App\Models\OptionalPrioritySubcategories;
 use App\Models\Standard;
 use App\Models\StandardCategory;
+use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Auth;
@@ -408,9 +409,8 @@ class ProgramWizardController extends Controller
         //////////////Feature *Frequency Distribution Table For Ministry Standards*//////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        // Get all Standard Categories for courses in the program
 
+        // Get all Standard Categories for courses in the program
         if ($program->level == "Undergraduate") {
             $standardCategory = StandardCategory::find(1);
         } elseif($program->level == "Masters") {
@@ -424,6 +424,32 @@ class ProgramWizardController extends Controller
         // Get all Standards for courses in the program
         $standards = $standardCategory->standards;
 
+        // Get the names of the standards for the categories (x-axis)
+        $namesStandards = [];
+        for($i = 0; $i < count($standards); $i++) {
+            $namesStandards[$i] = $standards[$i]->s_shortphrase;
+        }
+        
+        // Get Standards Mapping Scales for high-chart
+        $standardsMappingScales = StandardScale::where('scale_category_id', 1)->pluck('abbreviation')->toArray();
+        $standardsMappingScales[count($standardsMappingScales)] = 'N/A';
+
+        // Get Standards Mapping Scale Colours for high-chart
+        $standardMappingScalesIds = StandardScale::where('scale_category_id', 1)->pluck('standard_scale_id')->toArray();
+        $standardMappingScalesIds[count($standardMappingScalesIds)] = 0;
+        $standardMappingScalesColours = [];
+        $freqOfMinistryStandardIds = [];          // used in a later step
+        for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
+            $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
+            $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+        }
+        foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+            foreach ($standards as $standard) {
+                $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
+            }
+        }
+        // dd($freqOfMinistryStandardIds);
+
         $programCoursesFiltered = $program->courses()->where('standard_category_id', $standardCategory->standard_category_id)->get();
 
         $outputStandardOutcomeMaps = [];
@@ -431,14 +457,14 @@ class ProgramWizardController extends Controller
             // check that outcome map exists
             if (StandardsOutcomeMap::where('course_id', $course->course_id)->exists()) {
                 foreach ($standards as $standard) {
-                    $outputStandardOutcomeMaps[$course->course_id][$standard->standard_id] = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
+                    //$outputStandardOutcomeMaps[$course->course_id][$standard->standard_id] = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
+                    $scale_id = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
+                    // array_push($freqOfMinistryStandardIds[$scale_id], StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->count());
+                    $freqOfMinistryStandardIds[$scale_id][$standard->standard_id] += 1;
                 }
             }
         }
-
-        // TODO: Get Standard Outcome Maps for Each Course in the Program
-        dd("Category", $standardCategory, "Standards", $standards, 'Courses', $programCoursesFiltered, 'Outcome Maps', $outputStandardOutcomeMaps);
-        // dd("Standards", $standards, "Standard Mapping Scale Categories", $standardMappingScalesCategories , "Standard Mapping Scales", $standardMappingScales, "Program Courses", $programCourses);
+        //dd($freqOfMinistryStandardIds);
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +478,9 @@ class ProgramWizardController extends Controller
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
                                             ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)
+                                            ->with('programCoursesFiltered', $programCoursesFiltered)->with('standards', $standards)->with('namesStandards', $namesStandards)->with('outputStandardOutcomeMaps', $outputStandardOutcomeMaps)
+                                            ->with('standardsMappingScales', $standardsMappingScales)->with('standardMappingScalesColours', $standardMappingScalesColours)->with('freqOfMinistryStandardIds', $freqOfMinistryStandardIds);
     }
 
     public function getOptionalPriorities($program_id) {

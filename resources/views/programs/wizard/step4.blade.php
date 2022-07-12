@@ -212,6 +212,7 @@
                                             <button class="inner-nav-link nav-link active w-15" id="nav-plo-clo-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-plo-clo" type="button" role="tab" aria-controls="nav-plo-clo" aria-selected="true">PLOs to CLOs</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-assessment-methods-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-assessment-methods" type="button" role="tab" aria-controls="nav-assessment-methods" aria-selected="false">Assessment Methods</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-learning-activity-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-learning-activity" type="button" role="tab" aria-controls="nav-learning-activity" aria-selected="false">Learning Activities</button>
+                                            <button class="inner-nav-link nav-link w-15" id="nav-ministry-standards-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-ministry-standards" type="button" role="tab" aria-controls="nav-ministry-standards" aria-selected="false">Ministry Standards</button>
                                             <button class="inner-nav-link nav-link w-15" id="nav-optional-priorities-tab" href="javascript:;" data-bs-toggle="tab" data-bs-target="#nav-optional-priorities" type="button" role="tab" aria-controls="nav-optional-priorities" aria-selected="false">Strategic Priorities</button>
                                         </div>
                                     </nav>
@@ -359,6 +360,32 @@
 
                                     </div>
                                     <!-- End Learning Activities Tab -->
+
+                                    <!-- Ministry Standards Tab -->
+                                    <div class="tab-pane fade show active" id="nav-ministry-standards" role="tabpanel" aria-labelledby="nav-ministry-standards">
+                                        <!-- Column Chart -->
+                                        <div class="mt-3" id="ministry-standards-chart">
+                                            <p>This chart shows how many ministry standards are aligned with each courses belonging to this program</p>
+                                                @if (!(count($programCourses) < 1)) 
+                                                    <form action="">
+                                                        <div class=" mx-5 mt-2 text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="chart_select-ms" id="Cluster-ms" checked>
+                                                                <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="chart_select-ms" id="Stacked-ms">
+                                                                <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                @endif
+                                            <div class="container mt-0">
+                                                <div id="high-chart-ms"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Ministry Standards Tab -->
 
                                     <!-- Optional Priorities Tab -->
                                     <div class="tab-pane fade" id="nav-optional-priorities" role="tabpanel" aria-labelledby="nav-optional-priorities">
@@ -2192,6 +2219,7 @@
     var seriesPLOCLO = [];
     
     seriesPLOCLO = generateData();
+    console.log(seriesPLOCLO);
 
     function generateData() {
         var seriesPLOCLO = [];
@@ -2254,6 +2282,79 @@
             series: seriesPLOCLO
         });
     }
+
+    //////////////////////////////
+    //////////////////////////////
+    var standardsMappingScales = <?php echo json_encode($standardsMappingScales)?>;
+    var standardMappingScalesColours = <?php echo json_encode($standardMappingScalesColours)?>;
+    var freqOfMinistryStandardIds = <?php echo json_encode($freqOfMinistryStandardIds)?>;
+    var seriesMS = [];
+
+    seriesMS = generateDataMS();
+    console.log(seriesMS);
+
+    function generateDataMS() {
+        var seriesMS = [];
+
+        for (var i = 0; i < standardsMappingScales.length; i++) {
+            seriesMS.push({
+                name: standardsMappingScales[i],
+                data: freqOfMinistryStandardIds[i],
+                color: standardMappingScalesColours[i]
+            });
+        }
+        return seriesMS;
+    }
+    
+    var programCoursesFiltered = <?php echo json_encode($programCoursesFiltered)?>;
+    var namesStandards = <?php echo json_encode($namesStandards)?>;
+
+    if (namesStandards.length < 1) {
+        $('#high-chart-ms').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this program.
+            </div>
+        `);
+    // }else if (ms.length < 1) {
+    //     $('#high-chart').html(`
+    //         <div class="alert alert-warning wizard">
+    //             <i class="bi bi-exclamation-circle-fill"></i>There are no mapping scales for this program.
+    //         </div>
+    //     `);
+    }  else if (programCoursesFiltered.length < 1) {
+        $('#high-chart-ms').html(`
+            <div class="alert alert-warning wizard">
+                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+            </div>
+        `);
+    } else {
+        $('#high-chart-ms').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Alignment of Ministry Standards'
+            },
+            xAxis: {
+                title: {
+                    text: 'Ministry Standards Outcomes',
+                    margin: 20,
+                    style: {
+                        fontWeight: 'bold',
+                    },
+                },
+                categories: namesStandards
+            },
+            yAxis: {
+                title: {
+                    text: '# of Outcomes',
+                    margin: 20,
+                }
+            },
+            series: seriesMS
+        });
+    }
+    /////////////////////////////
 
     function StackedColumn() {
         $('#high-chart').highcharts({
