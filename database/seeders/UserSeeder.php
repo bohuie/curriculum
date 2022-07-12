@@ -31,8 +31,8 @@ class UserSeeder extends Seeder
         ]);
 
         $user = User::create([
-            'name' => 'Michael Users',
-            'email' => '---@gmail.com',
+            'name' => 'Michael Ogden',
+            'email' => 'michael.ogden@ubc.ca',
             'password' => Hash::make('password'), /*default local password is "password" */
         ]);
 
