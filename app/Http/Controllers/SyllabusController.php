@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
@@ -22,9 +21,12 @@ use App\Models\syllabus\VancouverSyllabus;
 use App\Models\syllabus\SyllabusUser;
 use App\Models\syllabus\VancouverSyllabusResource;
 use App\Models\SyllabusInstructor;
+use App\Models\SyllabusProgram;
 use Carbon\Carbon;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
+Use \PhpOffice\PhpWord\SimpleType\TblWidth;
+use \PhpOffice\PhpWord\Shared\Converter;
 
 define("INPUT_TIPS", array(
     "otherCourseStaff" => "If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?",
@@ -72,26 +74,37 @@ class SyllabusController extends Controller
         $faculties =  Faculty::orderBy('faculty')->get();
         // get departments
         $departments =  Department::orderBy('department')->get();
-        // ddd($faculties);
-
+        
+        $courseAlignment = null;
         if ($syllabusId != null) {
+            $syllabus = Syllabus::find($syllabusId);
             // get this users permission level 
             $userPermission = $user->syllabi->where('id', $syllabusId)->first()->pivot->permission;
+            // check for user settings
+            if (isset($syllabus->course_id)) {
+                $importCourse = Course::find($syllabus->course_id);
+                $courseAlignment = $importCourse->learningOutcomes;
+                foreach ($courseAlignment as $clo) {
+                    $clo->assessmentMethods;
+                    $clo->learningActivities;
+                }
+            }
+            $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id);            
             
             // show view based on user permission
             switch ($userPermission) {
                 // owner
                 case 1:
-                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments));
+                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment));
 
                 break;
                 case 2:
                     // editor
-                    return $this->syllabusEditor($syllabusId, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments));
+                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment));
                 break;
                 // viewer
                 case 3:
-                    return $this->syllabusViewer($syllabusId, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources));
+                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment));
 
                 break;
                 // return view to create a syllabus as default
@@ -106,10 +119,9 @@ class SyllabusController extends Controller
     }
 
 
-    public function syllabusEditor($syllabusId, $data) {
+    public function syllabusEditor($syllabus, $data) {
         // get this syllabus
-        $syllabus = Syllabus::find($syllabusId);
-        $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabusId)->get();
+        $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabus->id)->get();
         $courseScheduleTblRowsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('col', 0)->get()->count();
         $courseScheduleTblColsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('row', 0)->get()->count();
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
@@ -123,15 +135,15 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments']);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment']);
             break;
             case 'V':
                 // get data specific to vancouver campus
-                $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+                $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id)->first();
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments']);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment']);
             break;
                 
         }
@@ -139,9 +151,7 @@ class SyllabusController extends Controller
     }
 
 
-    public function syllabusViewer($syllabusId, $data) {
-        // get this syllabus
-        $syllabus = Syllabus::find($syllabusId);
+    public function syllabusViewer($syllabus, $data) {
         $courseScheduleTblRowsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('col', 0)->get()->count();
         $courseScheduleTblColsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('row', 0)->get()->count();
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
@@ -156,15 +166,15 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors);
+                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment']);
             break;
             case 'V':
                 // get data specific to vancouver campus
-                $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabusId)->first();
+                $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id)->first();
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors);        
+                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment']);        
         }
     }
 
@@ -257,7 +267,7 @@ class SyllabusController extends Controller
         $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
         // get faculty input or use null if it's not present 
         $faculty = $request->input('faculty', null);        
-        $department = $request->input('department', null);        
+        $department = $request->input('department', null);  
 
         // get current user
         $user = User::where('id', Auth::id())->first();
@@ -299,6 +309,10 @@ class SyllabusController extends Controller
         $syllabus->learning_resources = $request->input('learningResources');
         // save syllabus
         $syllabus->save();
+        $importCourseSettings = $request->input('import_course_settings', null); 
+        if ($importCourseSettings)      
+            $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
+
         // save syllabus instructors 
         foreach ($courseInstructors as $index => $courseInstructor) {
             $syllabusInstructor = new SyllabusInstructor();
@@ -402,6 +416,27 @@ class SyllabusController extends Controller
         return $syllabus;
     }
 
+    /**
+     * Helper to create the import course settings (e.g. import course alignment and program outcome maps)
+     *
+     * @param Array specifying what information needs to be imported/linked from a course to a syllabus
+     */
+    private function createImportCourseSettings($syllabusId, $settings) {
+        if (array_key_exists("importCourseAlignment", $settings)) {
+            $syllabus = Syllabus::find($syllabusId);
+            $syllabus->course_id = $settings["importCourseAlignment"];
+            $syllabus->save();
+        }
+        if (array_key_exists("programs", $settings)) {
+            $programIds = array_keys($settings["programs"]);
+            foreach($programIds as $programId) {
+                $syllabiProgram = new SyllabusProgram;
+                $syllabiProgram->syllabus_id = $syllabusId;
+                $syllabiProgram->program_id = $programId;
+                $syllabiProgram->save();
+            }
+        } 
+    }
 
     
     /**
@@ -437,7 +472,8 @@ class SyllabusController extends Controller
         $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
         // get faculty input or use null if it's not present 
         $faculty = $request->input('faculty', null);        
-        $department = $request->input('department', null);        
+        $department = $request->input('department', null);  
+        $importCourseSettings = $request->input('import_course_settings', null);       
 
         // get the syllabus, and start updating it
         $syllabus = Syllabus::find($syllabusId);
@@ -451,6 +487,14 @@ class SyllabusController extends Controller
         $syllabus->course_year = $courseYear;
         $syllabus->faculty = $faculty;
         $syllabus->department = $department;
+
+        // reset previous syllabi import settings
+        $syllabus->course_id = null;
+        $syllabus->save();
+        SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
+        // check if user set import settings and update them
+        if ($importCourseSettings)
+            $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
 
         // update optional syllabus fields common to both campuses
         $syllabus->course_location = $request->input('courseLocation');
@@ -745,6 +789,9 @@ class SyllabusController extends Controller
     public function download($syllabusId, $ext) {
         
         $syllabus = Syllabus::find($syllabusId);
+        $tableStyle = array('borderSize'=> 8, 'borderColor' => 'DCDCDC', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50, 'cellMargin' => Converter::cmToTwip(0.25));
+        $tableHeaderRowStyle = array('bgColor' => 'c6e0f5', 'borderBottomColor' => '000000');
+        $tableHeaderFontStyle = array('bold' => true);
 
         switch ($syllabus->campus) {
             case 'O':
@@ -774,7 +821,10 @@ class SyllabusController extends Controller
                     // split learning activities string on newline char
                     $learningActivitiesArr = explode("\n", $learningActivities);
                     // create a table for learning activities (workaround for no list option)
-                    $learningActivitiesTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $learningActivitiesTable = new Table($tableStyle);
+                    $learningActivitiesTable->addRow();
+                    $learningActivitiesTable->addCell(10, $tableHeaderRowStyle);                    $learningActivitiesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Activity', $tableHeaderFontStyle);
+
                     // add a new row and cell to table for each learning activity
                     foreach($learningActivitiesArr as $index => $learningActivity){
                         $learningActivitiesTable->addRow();
@@ -792,7 +842,10 @@ class SyllabusController extends Controller
                     // split other course staff string on newline char
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
                     // create a table for other course staff (workaround for no list option)
-                    $otherCourseStaffTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $otherCourseStaffTable = new Table($tableStyle);
+                    $otherCourseStaffTable->addRow();
+                    $otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other  Instructional Staff', $tableHeaderFontStyle);
+
                     // add a new row and cell to table for each course staff member
                     foreach($otherCourseStaffArr as $index => $courseStaffMember){
                         $otherCourseStaffTable->addRow();
@@ -861,10 +914,14 @@ class SyllabusController extends Controller
                     // split learning outcomes string on newline char
                     $learningOutcomes = explode("\n", $learningOutcome);
                     // create a table for learning outcomes (workaround for no list option)
-                    $learningOutcomesTable = new Table(array('borderSize'=>8, 'borderColor' => 'DCDCDC'));
+                    $learningOutcomesTable = new Table($tableStyle);
+                    $learningOutcomesTable->addRow();
+                    $learningOutcomesTable->addCell(10, $tableHeaderRowStyle);                    $learningOutcomesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Outcome', $tableHeaderFontStyle);
+
                     // add a new row and cell to table for each learning outcome
-                    foreach($learningOutcomes as $outcome) {
+                    foreach($learningOutcomes as $index => $outcome) {
                         $learningOutcomesTable->addRow();
+                        $learningOutcomesTable->addCell()->addText(strval($index + 1));
                         $learningOutcomesTable->addCell()->addText($outcome);
                     }
                     // add learning outcome table to word doc
@@ -878,7 +935,9 @@ class SyllabusController extends Controller
                     // split assessment methods string on newline char
                     $assessmentMethods = explode("\n", $learningAssessments);
                     // create a table for learning outcomes (workaround for no list option)
-                    $assessmentMethodsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $assessmentMethodsTable = new Table($tableStyle);
+                    $assessmentMethodsTable->addRow();
+                    $assessmentMethodsTable->addCell(10, $tableHeaderRowStyle);                    $assessmentMethodsTable->addCell(null, $tableHeaderRowStyle)->addText('Assessment Methods', $tableHeaderFontStyle);
                     // add a new row and cell to table for each assessment method
                     foreach($assessmentMethods as $index => $assessmentMethod){
                         $assessmentMethodsTable->addRow();
@@ -949,7 +1008,9 @@ class SyllabusController extends Controller
                     // split contacts string on newline char
                     $contactsArr = explode("\n", $contacts);
                     // create a table for contacts (workaround for no list option)
-                    $contactsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $contactsTable = new Table($tableStyle);
+                    $contactsTable->addRow();
+                    $contactsTable->addCell(10, $tableHeaderRowStyle);                    $contactsTable->addCell(null, $tableHeaderRowStyle)->addText('Contact', $tableHeaderFontStyle);
                     // add a new row and cell to table for each contact
                     foreach($contactsArr as $index => $contact){
                         $contactsTable->addRow();
@@ -969,7 +1030,9 @@ class SyllabusController extends Controller
                     // split course prereqs string on newline char
                     $coursePrereqsArr = explode("\n", $coursePrereqs);
                     // create a table for course prereqs (workaround for no list option)
-                    $coursePrereqsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $coursePrereqsTable = new Table($tableStyle);
+                    $coursePrereqsTable->addRow();
+                    $coursePrereqsTable->addCell(10, $tableHeaderRowStyle);                    $coursePrereqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Prerequisites', $tableHeaderFontStyle);
                     // add a new row and cell to table for each prereq
                     foreach($coursePrereqsArr as $index => $prereq){
                         $coursePrereqsTable->addRow();
@@ -988,7 +1051,9 @@ class SyllabusController extends Controller
                     // split course coreqs string on newline char
                     $courseCoreqsArr = explode("\n", $courseCoreqs);
                     // create a table for course coreqs (workaround for no list option)
-                    $courseCoreqsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $courseCoreqsTable = new Table($tableStyle);
+                    $courseCoreqsTable->addRow();
+                    $courseCoreqsTable->addCell(10, $tableHeaderRowStyle);                    $courseCoreqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Corequisites', $tableHeaderFontStyle);
                     // add a new row and cell to table for each coreq
                     foreach($courseCoreqsArr as $index => $coreq){
                         $courseCoreqsTable->addRow();
@@ -1031,7 +1096,9 @@ class SyllabusController extends Controller
                     // split learning activities string on newline char
                     $learningActivitiesArr = explode("\n", $learningActivities);
                     // create a table for learning activities (workaround for no list option)
-                    $learningActivitiesTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $learningActivitiesTable = new Table($tableStyle);
+                    $learningActivitiesTable->addRow();
+                    $learningActivitiesTable->addCell(10, $tableHeaderRowStyle);                    $learningActivitiesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Activity', $tableHeaderFontStyle);
                     // add a new row and cell to table for each learning activity
                     foreach($learningActivitiesArr as $index => $learningActivity){
                         $learningActivitiesTable->addRow();
@@ -1051,7 +1118,9 @@ class SyllabusController extends Controller
                     // split other course staff string on newline char
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
                     // create a table for other course staff (workaround for no list option)
-                    $otherCourseStaffTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $otherCourseStaffTable = new Table($tableStyle);
+                    $otherCourseStaffTable->addRow();
+                    $otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other Instructional Staff', $tableHeaderFontStyle);
                     // add a new row and cell to table for each course staff member
                     foreach($otherCourseStaffArr as $index => $courseStaffMember){
                         $otherCourseStaffTable->addRow();
@@ -1123,10 +1192,13 @@ class SyllabusController extends Controller
                     // split learning outcomes string on newline char
                     $learningOutcomes = explode("\n", $learningOutcome);
                     // create a table for learning outcomes (workaround for no list option)
-                    $learningOutcomesTable = new Table(array('borderSize'=>8, 'borderColor' => 'DCDCDC'));
+                    $learningOutcomesTable = new Table($tableStyle);
+                    $learningOutcomesTable->addRow();
+                    $learningOutcomesTable->addCell(10, $tableHeaderRowStyle);                    $learningOutcomesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Outcome', $tableHeaderFontStyle);
                     // add a new row and cell to table for each learning outcome
-                    foreach($learningOutcomes as $outcome) {
+                    foreach($learningOutcomes as $index => $outcome) {
                         $learningOutcomesTable->addRow();
+                        $learningOutcomesTable->addCell()->addText(strval($index + 1));
                         $learningOutcomesTable->addCell()->addText($outcome);
                     }
                     // add learning outcome table to word doc
@@ -1141,7 +1213,9 @@ class SyllabusController extends Controller
                     // split assessment methods string on newline char
                     $assessmentMethods = explode("\n", $learningAssessments);
                     // create a table for learning outcomes (workaround for no list option)
-                    $assessmentMethodsTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+                    $assessmentMethodsTable = new Table($tableStyle);
+                    $assessmentMethodsTable->addRow();
+                    $assessmentMethodsTable->addCell(10, $tableHeaderRowStyle);                    $assessmentMethodsTable->addCell(null, $tableHeaderRowStyle)->addText('Assessment Method', $tableHeaderFontStyle);
                     // add a new row and cell to table for each assessment method
                     foreach($assessmentMethods as $index => $assessmentMethod){
                         $assessmentMethodsTable->addRow();
@@ -1266,7 +1340,7 @@ class SyllabusController extends Controller
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
         if($courseScheduleTbl['rows']) {
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
-            $courseScheduleTable = new Table(array('borderSize' => 8, 'borderColor' => 'DCDCDC'));
+            $courseScheduleTable = new Table($tableStyle);
             // add a new row and cell to table for each learning activity
             foreach ($courseScheduleTbl['rows'] as $rowIndex => $row) {
                 // add a row to the table
@@ -1274,7 +1348,7 @@ class SyllabusController extends Controller
                 if ($rowIndex == 0) {
                     foreach ($row as $headerIndex => $header) {
                         $heading = ($header->val) ? $header->val : '';
-                        $courseScheduleTable->addCell(null, array('bgColor' => 'd9d9d9',))->addText($heading, array('bold' => true, 'size' => 14,));
+                        $courseScheduleTable->addCell(null, $tableHeaderRowStyle)->addText($heading, $tableHeaderFontStyle);
                     }
                 } else {
                     foreach ($row as $colIndex => $rowItem) {
@@ -1289,6 +1363,31 @@ class SyllabusController extends Controller
         } else {
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
             $templateProcessor->setValue('courseScheduleTbl', '');
+        }
+
+        if ($syllabus->course_id) {
+            $templateProcessor->cloneBlock('NoCourseAlignmentTbl');
+            $importCourse = Course::find($syllabus->course_id);
+            $courseAlignmentTable = new Table($tableStyle);
+            // add a header row to the table
+            $courseAlignmentTable->addRow();
+            // add header cells
+            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Course Learning Outcome', $tableHeaderFontStyle);
+            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Student Assessment Method', $tableHeaderFontStyle);
+            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Teaching and Learning Activity', $tableHeaderFontStyle);
+
+            // add a new row and cell to table for each learning outcome and its alignment
+            foreach ($importCourse->learningOutcomes as $rowIndex => $clo) {
+                $courseAlignmentTable->addRow();
+                $courseAlignmentTable->addCell()->addText($clo->l_outcome);
+                $courseAlignmentTable->addCell()->addText($clo->assessmentMethods->implode('a_method', ', '));
+                $courseAlignmentTable->addCell()->addText($clo->learningActivities->implode('l_activity', ', '));
+            }
+            // add course schedule table to word doc
+            $templateProcessor->setComplexBlock('courseAlignmentTbl', $courseAlignmentTable);
+
+        } else {
+            $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
         }
 
         // set document name

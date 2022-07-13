@@ -383,7 +383,41 @@
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
         </div>
 
-        <div class="p-0 m-0" id="courseAlignment"></div>
+        @if (isset($courseAlignment))
+            <div class="p-0 m-0" id="courseAlignment"> 
+                <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
+                    Course Alignment                                     
+                    <button id="removeCourseAlignment" type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                <input hidden name="import_course_settings[importCourseAlignment]" value="{{$syllabus->course_id}}">
+
+                </h5>            
+                <div class="col-12" id="courseAlignmentTable">
+                    <table class="table table-light table-bordered table " >
+                        <thead>
+                            <tr class="table-primary">
+                                <th class="w-50">Course Learning Outcome</th>
+                                <th>Student Assessment Method</th>
+                                <th>Teaching and Learning Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($courseAlignment as $clo)
+                                <tr>
+                                    <td scope="row">
+                                        <b>{{$clo->clo_shortphrase}}</b><br>
+                                        {{$clo->l_outcome}}
+                                    </td>
+                                    <td>{{$clo->assessmentMethods->implode('a_method', ', ')}}</td>
+                                    <td>{{$clo->learningActivities->implode('l_activity', ', ')}}</td>
+                                </tr>   
+                            @endforeach                 
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @else 
+            <div class="p-0 m-0" id="courseAlignment"></div>    
+        @endif
 
         <!-- course schedule table -->
         <div class="col mb-3">
@@ -1193,7 +1227,7 @@
 
     // Import course info into using GET AJAX call
     function importCourseInfo() {
-        var course_id = $('input[name="importCourse"]:checked').val();
+        var course_id = $('input[name="importCourseId"]:checked').val();
         // get user specified course componenets to import
         var importCourseSettings = $('#importCourseSettingsForm').serializeArray();
 
@@ -1242,29 +1276,32 @@
             }
             if (data.hasOwnProperty('course_alignment')) {
                 $('#courseAlignment').empty();
-                courseAlignmentHTML = getCourseAlignmentHTML(data['course_alignment']);
+                courseAlignmentHTML = getCourseAlignmentHTML(course_id, data['course_alignment']);
                 $('#courseAlignment').append(courseAlignmentHTML);
             }
         });
     }
 
-    function getCourseAlignmentHTML(courseAlignment) {
+    function getCourseAlignmentHTML(courseId, courseAlignment) {
+        // course alignment table body
         tbody = ``;
         courseAlignment.forEach(function(learningOutcome){
+            // create comma separated string of asssessment methods
             assessmentMethodsText = learningOutcome["assessment_methods"].reduce(function (acc, assessmentMethod, index) { 
                 if (index == 0) 
                     return acc + assessmentMethod['a_method'];
                 else 
                     return acc + ', ' + assessmentMethod['a_method']
             }, '');
+            // create comma separated string of learning activities
             learningActivitiesText = learningOutcome["learning_activities"].reduce(function (acc, learningActivity, index) { 
                 if (index == 0) 
                     return acc + learningActivity['l_activity'];
                 else 
                     return acc + ', ' + learningActivity['l_activity']
             }, '');
-
-            row = `
+        // course alignment table row
+        row = `
                 <tr>
                     <td scope="row">
                         <b>${learningOutcome["clo_shortphrase"]}</b><br>
@@ -1276,10 +1313,13 @@
             `;
             tbody += row;
         });
+        // course alignment section
         return `
             <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
                 Course Alignment                                     
                 <button id="removeCourseAlignment" type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                <input hidden name="import_course_settings[importCourseAlignment]" value="${courseId}">
+
             </h5>            
             <div class="col-12" id="courseAlignmentTable">
                 <table class="table table-light table-bordered table " >
