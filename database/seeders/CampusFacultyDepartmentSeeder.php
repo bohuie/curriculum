@@ -465,7 +465,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $faculty->save();
 
         $department = new Department;
-        $department->department = 'Continuing education for adult learners (in-class and online)';
+        $department->department = 'Continuing Education for Adult Learners (In-class and Online)';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
 
@@ -1038,12 +1038,22 @@ class CampusFacultyDepartmentSeeder extends Seeder
 
         // Faculty of Creative and critical Studies
         $faculty = new Faculty;
-        $faculty->faculty = 'Faculty of Creative and critical Studies';
+        $faculty->faculty = 'Faculty of Creative and Critical Studies';
         $faculty->campus_id = $campusO->campus_id;
         $faculty->save();
 
         $department = new Department;
-        $department->department = 'Creative and critical Studies';
+        $department->department = 'Creative Studies';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'English and Cultural Studies';
+        $department->faculty_id = $faculty->faculty_id;
+        $department->save();
+
+        $department = new Department;
+        $department->department = 'Languages and World Literature';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
 

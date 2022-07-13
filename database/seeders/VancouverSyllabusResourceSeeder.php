@@ -16,7 +16,7 @@ class VancouverSyllabusResourceSeeder extends Seeder
     {
         VancouverSyllabusResource::create([
             'id_name' => 'land',
-            'title' => 'Acknowledgement',
+            'title' => 'Land Acknowledgement',
         ]);
 
         VancouverSyllabusResource::create([
