@@ -29,7 +29,7 @@ class UpdateSyllabiTable extends Migration
     public function down()
     {
         Schema::table('syllabi', function (Blueprint $table) {
-            $table->dropForeign('course_id');
+            $table->dropForeign('syllabi_course_id_foreign');
             $table->dropColumn(['faculty', 'department', 'course_id']);
         });
     }
