@@ -1011,13 +1011,13 @@
                             series: seriesMS
                         });
 
-                        // var tableHTML = data[6];
-                        // // empty table before loading new data
-                        // $('#ms-table').empty();
-                        // // Append to table for all optional priority frequencies
-                        // $('#ms-table').append(tableHTML);
-                        // // Enables functionality of tool tips
-                        // $('[data-toggle="tooltip"]').tooltip({html:true});
+                        var tableHTML = data[6];
+                        // empty table before loading new data
+                        $('#ms-table').empty();
+                        // Append to table for all optional priority frequencies
+                        $('#ms-table').append(tableHTML);
+                        // Enables functionality of tool tips
+                        $('[data-toggle="tooltip"]').tooltip({html:true});
                     }
                     // display chart
                     $("#high-chart-ms").show();
