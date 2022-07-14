@@ -322,10 +322,7 @@ class CourseController extends Controller
         
         // if standard category id has been updated then, delete all old standard mappings
         if ($course->standard_category_id != $request->input('standard_category_id')) {
-            $clos = $course->learningOutcomes->pluck('l_outcome_id')->toArray();
-            foreach ($clos as $clo) {
-                StandardsOutcomeMap::where('l_outcome_id', $clo)->delete();
-            }
+            StandardsOutcomeMap::where('course_id', $course->course_id)->delete();
             // assign new standard category id for course.
             $course->standard_category_id = $request->input('standard_category_id');
         }
@@ -568,10 +565,8 @@ class CourseController extends Controller
 
             $standardOutcomeMap = array();
             foreach ($courseStandardOutcomes as $standardOutcome) {
-                foreach($courseLearningOutcomes as $clo) {
-                    if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('l_outcome_id', $clo->l_outcome_id)->exists())
-                        $standardOutcomeMap[$standardOutcome->standard_id][$clo->l_outcome_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['l_outcome_id', $clo->l_outcome_id]]))->first();
-                }
+                    if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists())
+                        $standardOutcomeMap[$standardOutcome->standard_id][$course->course_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]))->first();
             }
 
             $assessmentMethodsTotal = 0;
@@ -770,16 +765,18 @@ class CourseController extends Controller
                     $newOutcomeAssessment->save();
                 }
             }
-            // duplicate standards 
-            if($clo->standardOutcomeMap()->exists()) {
-                $oldStandardOutcomes = $clo->standardOutcomeMap()->get();
-                foreach($oldStandardOutcomes as $oldStandardOutcome) {
-                    $oldStandardOutcomeMap = new StandardsOutcomeMap;
-                    $oldStandardOutcomeMap->l_outcome_id = $newCLO->l_outcome_id;
-                    $oldStandardOutcomeMap->standard_id = $oldStandardOutcome->pivot->standard_id;
-                    $oldStandardOutcomeMap->standard_scale_id = $oldStandardOutcome->pivot->standard_scale_id;
-                    $oldStandardOutcomeMap->save();
-                }
+        }
+
+        $courseStandardCategory = $course->standardCategory;
+        $courseStandardOutcomes = $courseStandardCategory->standards;
+        // dd($courseStandardOutcomes);
+        foreach ($courseStandardOutcomes as $standardOutcome) {
+            if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists()) {
+                $newStandardOutcomeMap = new StandardsOutcomeMap;
+                $newStandardOutcomeMap->course_id = $course->course_id;
+                $newStandardOutcomeMap->standard_id = $standardOutcome->standard_id;
+                $newStandardOutcomeMap->standard_scale_id = StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course_old->course_id)->value('standard_scale_id');
+                $newStandardOutcomeMap->save();
             }
         }
 

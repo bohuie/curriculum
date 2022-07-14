@@ -56,15 +56,6 @@ Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->n
 Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
 Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
-// Route::group(['middleware' => ['XSS']], function () {
-//     Route::resource('/programs','ProgramController');
-//     Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
-//     //PDF for Program summary
-//     Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
-//     Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
-//     Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
-// });
-
 Route::resource('/programs','ProgramController');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 // Program Summary PDF routes
@@ -162,6 +153,8 @@ Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardControll
 Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
 Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
 Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
+// Ministry Standards
+Route::get('/programWizard/{program}/get-ms', 'ProgramWizardController@getMinistryStandards');
 // optional priorities filter routes
 Route::get('/programWizard/{program}/get-op', 'ProgramWizardController@getOptionalPriorities');
 Route::get('/programWizard/{program}/get-op-first-year', 'ProgramWizardController@getOptionalPrioritiesFirstYear');

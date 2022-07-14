@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 
 use App\Http\Controllers\Auth\Redirect;
+use Illuminate\Support\Facades\App;
 
 class RegisterController extends Controller
 {
@@ -55,13 +56,23 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {    
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            // 'email' => ['required', 'string', 'email', 'max:255', 'unique:users','allowed_domain'], // remove restriction to ubc domains
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            // 'g-recaptcha-response' => ['required', new GoogleRecaptcha],
-        ]);
+        if (!App::environment('local')) {
+            return Validator::make($data, [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                // 'email' => ['required', 'string', 'email', 'max:255', 'unique:users','allowed_domain'], // remove restriction to ubc domains
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+                'g-recaptcha-response' => ['required', new GoogleRecaptcha],
+            ]);
+        } else {
+            return Validator::make($data, [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                // 'email' => ['required', 'string', 'email', 'max:255', 'unique:users','allowed_domain'], // remove restriction to ubc domains
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+                // 'g-recaptcha-response' => ['required', new GoogleRecaptcha],
+            ]);
+        }
     }
 
     /**
@@ -84,19 +95,6 @@ class RegisterController extends Controller
 
         return $user;
     }
-
-    /*
-    //Limits email domain to be only UBC  
-    protected function checkEmail(array $data)
-    {
-        $email = $data['email'];
-        $substr = substr($email, -6);
-        if (strtolower($substr) !== "ubc.ca") {
-            // redirect to register page with an error  
-            return view('auth.register');
-        }
-    }
-    */
 
     /**
      * Handle a registration request for the application.

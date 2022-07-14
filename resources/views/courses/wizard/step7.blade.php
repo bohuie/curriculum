@@ -553,64 +553,49 @@
                             @endif
 
                             <h5 class="card-title">Outcome Map:</h5>
-                            <p>This chart shows the alignment of course learning outcomes to ministry standards.</p>
+                            <p>This chart shows the alignment of ministry standards to this course.</p>
 
-                            @if(count($standardOutcomeMap)<1)
+                            @if(count($standardOutcomeMap) < 1)
 
                                 <div class="alert alert-warning wizard">
-                                    <i class="bi bi-exclamation-circle-fill"></i>Course learning outcomes have not been mapped to this programs learning outcomes. <a class="alert-link" href="{{route('courseWizard.step6', $course->course_id)}}">Map CLOs to Ministry Standards.</a>                 
+                                    <i class="bi bi-exclamation-circle-fill"></i>This course has not been mapped to the ministry standards yet. <a class="alert-link" href="{{route('courseWizard.step6', $course->course_id)}}">Map CLOs to Ministry Standards.</a>                 
                                 </div>
 
                             @else
                                 <div style="overflow: auto;">
                                     <table class="table table-light table-bordered table mb-4" >
                                         <tr class="table-primary">
-                                            <th >CLOs</th>
                                             <th colspan="{{$course->standardOutcomes->count()}}">Ministry Standard</th>
                                         </tr>
                                         <tr>
-                                            <td></td>
                                             @for($i = 0; $i < $course->standardOutcomes->count(); $i++)
-    
                                                 <td style="height:0; text-align: left;">
                                                     <span >
                                                         @if(isset($course->standardOutcomes[$i]->s_shortphrase))
                                                             <b>{{$i+1}}.</b><br>
                                                             {{$course->standardOutcomes[$i]->s_shortphrase}}
                                                         @else
-                                                            PLO {{$i+1}}
+                                                            CLO {{$i+1}}
                                                         @endif
-    
                                                     </span>
                                                 </td>
-    
                                             @endfor
                                         </tr>
-    
-                                        @foreach($l_outcomes as $clo_index => $l_outcome)
-                                            <tr>
-                                                <td class="w-25" style="max-width:0; height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >
-                                                    @if(isset($l_outcome->clo_shortphrase))
-                                                        <b>{{$clo_index+1}}.</b> {{$l_outcome->clo_shortphrase}}
-                                                    @else
-                                                        CLO {{$clo_index+1}}
-                                                    @endif
-                                                </td>
-                                                @foreach($course->standardCategory->standards as $standard)
-                                                    <!-- Check if this CLO has been mapped to this standard -->
-                                                    @if (isset($standardOutcomeMap[$standard->standard_id][$l_outcome->l_outcome_id]))
-                                                        <td style="vertical-align:middle;text-align:center;background-color:{{$standardOutcomeMap[$standard->standard_id][$l_outcome->l_outcome_id]->colour}}">
-                                                            <p @if($standardOutcomeMap[$standard->standard_id][$l_outcome->l_outcome_id]->abbreviation == 'A') style="color:white;" @endif>
-                                                                {{$standardOutcomeMap[$standard->standard_id][$l_outcome->l_outcome_id]->abbreviation}}
-                                                            </p>
-                                                        </td>                                    
-                                                    @else 
-                                                        <td></td>
-                                                        <!-- <td>&#63;</td> -->
-                                                    @endif
-                                                @endforeach
-                                            </tr>
-                                        @endforeach
+                                        <tr>
+                                            @foreach($course->standardCategory->standards as $standard)
+                                                <!-- Check if this CLO has been mapped to this standard -->
+                                                @if (isset($standardOutcomeMap[$standard->standard_id][$course->course_id]))
+                                                    <td style="vertical-align:middle;text-align:center;background-color:{{$standardOutcomeMap[$standard->standard_id][$course->course_id]->colour}}">
+                                                        <p @if($standardOutcomeMap[$standard->standard_id][$course->course_id]->abbreviation == 'A') style="color:white;" @endif>
+                                                            {{$standardOutcomeMap[$standard->standard_id][$course->course_id]->abbreviation}}
+                                                        </p>
+                                                    </td>                                    
+                                                @else 
+                                                    <td></td>
+                                                    <!-- <td>&#63;</td> -->
+                                                @endif
+                                            @endforeach
+                                        </tr>
                                     </table>
                                 </div>
 
