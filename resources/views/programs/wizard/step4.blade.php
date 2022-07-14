@@ -371,17 +371,20 @@
                                                         <div class=" mx-5 mt-2 text-center">
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio" name="chart_select-ms" id="Cluster-ms" checked>
-                                                                <label class="form-check-label" for="Cluster"><b>Cluster Chart</b></label>
+                                                                <label class="form-check-label" for="Cluster-ms"><b>Cluster Chart</b></label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio" name="chart_select-ms" id="Stacked-ms">
-                                                                <label class="form-check-label" for="Stacked"><b>Stacked Chart</b></label>
+                                                                <label class="form-check-label" for="Stacked-ms"><b>Stacked Chart</b></label>
                                                             </div>
                                                         </div>
                                                     </form>
                                                 @endif
                                             <div class="container mt-0">
                                                 <div id="high-chart-ms"></div>
+                                            </div>
+                                            <div class="container mt-2">
+                                                <table class="table table-light table-bordered" style="margin: auto;"><tbody id="ms-table"></tbody></table>
                                             </div>
                                         </div>
                                     </div>
@@ -926,6 +929,267 @@
             });
         });
 
+        $("#nav-ministry-standards-tab").click(function() { 
+            // This is required to set the radio button to checked
+            document.getElementById("Cluster-ms").checked = true;
+            $("#high-chart-ms").hide();
+            $("#loading-div-ms").show();
+
+            $.ajax({
+                type: "GET",
+                url: "get-ms/",       
+                success: function (data) {
+                    $("#loading-div-ms").fadeOut("fast");
+                    
+                    var standardsMappingScales = data[3];
+                    var standardMappingScalesColours = data[4];
+                    var frequencyOfMinistryStandardIds = data[5];
+                    var seriesMS = [];
+
+                    seriesMS = generateDataMS();
+
+                    function generateDataMS() {
+                        var seriesMS = [];
+                    
+                        for (var i = 0; i < standardsMappingScales.length; i++) {
+                            seriesMS.push({
+                                name: standardsMappingScales[i],
+                                data: frequencyOfMinistryStandardIds[i],
+                                color: standardMappingScalesColours[i]
+                            });
+                        }
+                        return seriesMS;
+                    }
+
+                    var programCoursesFiltered = data[0];
+                    var namesStandards = data[1];
+
+                    if (namesStandards.length < 1) {
+                        $('#high-chart-ms').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this program.
+                            </div>
+                        `);
+                    }  else if (programCoursesFiltered.length < 1) {
+                        $('#high-chart-ms').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                            </div>
+                        `);
+                    } else {
+                        $('#high-chart-ms').highcharts({
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: 'Alignment of Ministry Standards'
+                            },
+                            xAxis: {
+                                title: {
+                                    text: 'Ministry Standards Outcomes',
+                                    margin: 20,
+                                    style: {
+                                        fontWeight: 'bold',
+                                    },
+                                },
+                                categories: namesStandards
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '# of Outcomes',
+                                    margin: 20,
+                                }
+                            },
+                            series: seriesMS
+                        });
+
+                        // var tableHTML = data[6];
+                        // // empty table before loading new data
+                        // $('#ms-table').empty();
+                        // // Append to table for all optional priority frequencies
+                        // $('#ms-table').append(tableHTML);
+                        // // Enables functionality of tool tips
+                        // $('[data-toggle="tooltip"]').tooltip({html:true});
+                    }
+                    // display chart
+                    $("#high-chart-ms").show();
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#Stacked-ms").click(function() { 
+            // This is required to set the radio button to checked
+            document.getElementById("Stacked-ms").checked = true;
+            $("#high-chart-ms").hide();
+            $("#loading-div-ms").show();
+
+            $.ajax({
+                type: "GET",
+                url: "get-ms/",       
+                success: function (data) {
+                    $("#loading-div-ms").fadeOut("fast");
+                    
+                    var standardsMappingScales = data[3];
+                    var standardMappingScalesColours = data[4];
+                    var frequencyOfMinistryStandardIds = data[5];
+                    var seriesMS = [];
+
+                    seriesMS = generateDataMS();
+
+                    function generateDataMS() {
+                        var seriesMS = [];
+                    
+                        for (var i = 0; i < standardsMappingScales.length; i++) {
+                            seriesMS.push({
+                                name: standardsMappingScales[i],
+                                data: frequencyOfMinistryStandardIds[i],
+                                color: standardMappingScalesColours[i]
+                            });
+                        }
+                        return seriesMS;
+                    }
+
+                    var programCoursesFiltered = data[0];
+                    var namesStandards = data[1];
+
+                    if (namesStandards.length < 1) {
+                        $('#high-chart-ms').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this program.
+                            </div>
+                        `);
+                    }  else if (programCoursesFiltered.length < 1) {
+                        $('#high-chart-ms').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                            </div>
+                        `);
+                    } else {
+                        $('#high-chart-ms').highcharts({
+                            chart: {
+                                type: 'column'
+                            },
+                            
+                            title: {
+                                text: 'Alignment of Ministry Standards'
+                            },
+                            plotOptions: {
+                                series: {
+                                    stacking: 'normal'
+                                }
+                            },
+                            xAxis: {
+                                title: {
+                                    text: 'Ministry Standards Outcomes',
+                                    margin: 20,
+                                    style: {
+                                        fontWeight: 'bold',
+                                    },
+                                },
+                                categories: namesStandards
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '# of Outcomes',
+                                    margin: 20,
+                                }
+                            },
+                            series: seriesMS
+                        });
+                    }
+                    // display chart
+                    $("#high-chart-ms").show();
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
+        $("#Cluster-ms").click(function() { 
+            // This is required to set the radio button to checked
+            document.getElementById("Cluster-ms").checked = true;
+            $("#high-chart-ms").hide();
+            $("#loading-div-ms").show();
+
+            $.ajax({
+                type: "GET",
+                url: "get-ms/",       
+                success: function (data) {
+                    $("#loading-div-ms").fadeOut("fast");
+                    
+                    var standardsMappingScales = data[3];
+                    var standardMappingScalesColours = data[4];
+                    var frequencyOfMinistryStandardIds = data[5];
+                    var seriesMS = [];
+
+                    seriesMS = generateDataMS();
+
+                    function generateDataMS() {
+                        var seriesMS = [];
+                    
+                        for (var i = 0; i < standardsMappingScales.length; i++) {
+                            seriesMS.push({
+                                name: standardsMappingScales[i],
+                                data: frequencyOfMinistryStandardIds[i],
+                                color: standardMappingScalesColours[i]
+                            });
+                        }
+                        return seriesMS;
+                    }
+
+                    var programCoursesFiltered = data[0];
+                    var namesStandards = data[1];
+
+                    if (namesStandards.length < 1) {
+                        $('#high-chart-ms').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this program.
+                            </div>
+                        `);
+                    }  else if (programCoursesFiltered.length < 1) {
+                        $('#high-chart-ms').html(`
+                            <div class="alert alert-warning wizard">
+                                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
+                            </div>
+                        `);
+                    } else {
+                        $('#high-chart-ms').highcharts({
+                            chart: {
+                                type: 'column'
+                            },
+                            
+                            title: {
+                                text: 'Alignment of Ministry Standards'
+                            },
+                            xAxis: {
+                                title: {
+                                    text: 'Ministry Standards Outcomes',
+                                    margin: 20,
+                                    style: {
+                                        fontWeight: 'bold',
+                                    },
+                                },
+                                categories: namesStandards
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '# of Outcomes',
+                                    margin: 20,
+                                }
+                            },
+                            series: seriesMS
+                        });
+                    }
+                    // display chart
+                    $("#high-chart-ms").show();
+                    // Enables functionality of tool tips
+                    $('[data-toggle="tooltip"]').tooltip({html:true});
+                }
+            });
+        });
+
         $("#nav-optional-priorities-tab").click(function() {
             // This is required to set the radio button to checked
             document.getElementById("all-op").checked = true;
@@ -952,18 +1216,23 @@
             $("#assessment-methods-chart").hide();
             $("#learning-activity-chart").hide();
             $("#optional-priority-chart").hide();
+            $("#ministry-standards-chart").hide();
             $('#nav-assessment-methods-tab').removeClass('active');
             $('#nav-learning-activity-tab').removeClass('active');
             $('#nav-optional-priorities-tab').removeClass('active');
+            $('#nav-ministry-standards-tab').removeClass('active');
             $('#nav-assessment-methods-tab').attr('aria-selected', false);
             $('#nav-learning-activity-tab').attr('aria-selected', false);
             $('#nav-optional-priorities-tab').attr('aria-selected', false);
+            $('#nav-ministry-standards-tab').attr('aria-selected', false);
             $('#nav-assessment-methods').removeClass('show');
             $('#nav-learning-activity').removeClass('show');
             $('#nav-optional-priorities').removeClass('show');
+            $('#nav-ministry-standards').removeClass('show');
             $('#nav-assessment-methods').removeClass('active');
             $('#nav-learning-activity').removeClass('active');
             $('#nav-optional-priorities').removeClass('active');
+            $('#nav-ministry-standards').removeClass('active');
 
             // show plo-clo chart and add classes/set attributes
             $('#nav-plo-clo-tab').addClass('active');
@@ -978,6 +1247,7 @@
             $("#assessment-methods-chart").hide();
             $("#learning-activity-chart").hide();
             $("#optional-priority-chart").hide();
+            $("#ministry-standards-chart").hide();
             // show plo-clo chart
             $("#plo-clo-chart").show();
         });
@@ -987,6 +1257,7 @@
             $("#plo-clo-chart").hide();
             $("#learning-activity-chart").hide();
             $("#optional-priority-chart").hide();
+            $("#ministry-standards-chart").hide();
             //show plo-clo charts
             $("#assessment-methods-chart").show();
         });
@@ -996,8 +1267,19 @@
             $("#plo-clo-chart").hide();
             $("#assessment-methods-chart").hide();
             $("#optional-priority-chart").hide();
+            $("#ministry-standards-chart").hide();
             //show plo-clo charts
             $("#learning-activity-chart").show();
+        });
+
+        $("#nav-ministry-standards-tab").click(function() {
+            // hide other charts
+            $("#plo-clo-chart").hide();
+            $("#assessment-methods-chart").hide();
+            $("#learning-activity-chart").hide();
+            $("#optional-priority-chart").hide();
+            // show optional priorities charts
+            $("#ministry-standards-chart").show();
         });
 
         $("#nav-optional-priorities-tab").click(function() {
@@ -1005,6 +1287,7 @@
             $("#plo-clo-chart").hide();
             $("#assessment-methods-chart").hide();
             $("#learning-activity-chart").hide();
+            $("#ministry-standards-chart").hide();
             // show optional priorities charts
             $("#optional-priority-chart").show();
         });
@@ -2204,6 +2487,7 @@
         $("#assessment-methods-chart").hide();
         $("#learning-activity-chart").hide();
         $("#optional-priority-chart").hide();
+        $("#ministry-standards-chart").hide();
     });
     // high chart for PLOs to CLOs 
     // This is required to set the radio button to checked, this is a known firefox bug.
@@ -2219,7 +2503,6 @@
     var seriesPLOCLO = [];
     
     seriesPLOCLO = generateData();
-    console.log(seriesPLOCLO);
 
     function generateData() {
         var seriesPLOCLO = [];
@@ -2282,79 +2565,6 @@
             series: seriesPLOCLO
         });
     }
-
-    //////////////////////////////
-    //////////////////////////////
-    var standardsMappingScales = <?php echo json_encode($standardsMappingScales)?>;
-    var standardMappingScalesColours = <?php echo json_encode($standardMappingScalesColours)?>;
-    var freqOfMinistryStandardIds = <?php echo json_encode($freqOfMinistryStandardIds)?>;
-    var seriesMS = [];
-
-    seriesMS = generateDataMS();
-    console.log(seriesMS);
-
-    function generateDataMS() {
-        var seriesMS = [];
-
-        for (var i = 0; i < standardsMappingScales.length; i++) {
-            seriesMS.push({
-                name: standardsMappingScales[i],
-                data: freqOfMinistryStandardIds[i],
-                color: standardMappingScalesColours[i]
-            });
-        }
-        return seriesMS;
-    }
-    
-    var programCoursesFiltered = <?php echo json_encode($programCoursesFiltered)?>;
-    var namesStandards = <?php echo json_encode($namesStandards)?>;
-
-    if (namesStandards.length < 1) {
-        $('#high-chart-ms').html(`
-            <div class="alert alert-warning wizard">
-                <i class="bi bi-exclamation-circle-fill"></i>There are no standards for this program.
-            </div>
-        `);
-    // }else if (ms.length < 1) {
-    //     $('#high-chart').html(`
-    //         <div class="alert alert-warning wizard">
-    //             <i class="bi bi-exclamation-circle-fill"></i>There are no mapping scales for this program.
-    //         </div>
-    //     `);
-    }  else if (programCoursesFiltered.length < 1) {
-        $('#high-chart-ms').html(`
-            <div class="alert alert-warning wizard">
-                <i class="bi bi-exclamation-circle-fill"></i>There are no courses for this program.
-            </div>
-        `);
-    } else {
-        $('#high-chart-ms').highcharts({
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Alignment of Ministry Standards'
-            },
-            xAxis: {
-                title: {
-                    text: 'Ministry Standards Outcomes',
-                    margin: 20,
-                    style: {
-                        fontWeight: 'bold',
-                    },
-                },
-                categories: namesStandards
-            },
-            yAxis: {
-                title: {
-                    text: '# of Outcomes',
-                    margin: 20,
-                }
-            },
-            series: seriesMS
-        });
-    }
-    /////////////////////////////
 
     function StackedColumn() {
         $('#high-chart').highcharts({

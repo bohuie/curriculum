@@ -150,6 +150,8 @@ Route::get('/programWizard/{program}/get-am-second-year', 'ProgramWizardControll
 Route::get('/programWizard/{program}/get-am-third-year', 'ProgramWizardController@getAssessmentMethodsThirdYear');
 Route::get('/programWizard/{program}/get-am-fourth-year', 'ProgramWizardController@getAssessmentMethodsFourthYear');
 Route::get('/programWizard/{program}/get-am-graduate', 'ProgramWizardController@getAssessmentMethodsGraduate');
+// Ministry Standards
+Route::get('/programWizard/{program}/get-ms', 'ProgramWizardController@getMinistryStandards');
 // optional priorities filter routes
 Route::get('/programWizard/{program}/get-op', 'ProgramWizardController@getOptionalPriorities');
 Route::get('/programWizard/{program}/get-op-first-year', 'ProgramWizardController@getOptionalPrioritiesFirstYear');
