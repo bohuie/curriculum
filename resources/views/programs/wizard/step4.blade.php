@@ -380,6 +380,14 @@
                                                         </div>
                                                     </form>
                                                 @endif
+                                            
+                                            <div id='loading-div-ms'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            
                                             <div class="container mt-0">
                                                 <div id="high-chart-ms"></div>
                                             </div>
