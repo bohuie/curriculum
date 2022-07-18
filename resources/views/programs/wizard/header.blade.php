@@ -142,12 +142,12 @@
                                                     <div class="col-md-8">
                                                         <div class="form-check ">
                                                             <label class="form-check-label">
-                                                            @if ($program->level == "Undergraduate") 
-                                                            <input type="radio" class="form-check-input" name="level" value="Undergraduate" checked>
-                                                                Undergraduate
+                                                            @if ($program->level == "Undergraduate" || $program->level == "Bachelors") 
+                                                            <input type="radio" class="form-check-input" name="level" value="Bachelors" checked>
+                                                                Bachelors
                                                             @else
-                                                                <input type="radio" class="form-check-input" name="level" value="Undergraduate">
-                                                                    Undergraduate
+                                                                <input type="radio" class="form-check-input" name="level" value="Bachelors">
+                                                                    Bachelors
                                                             @endif
                                                             </label>
                                                         </div>

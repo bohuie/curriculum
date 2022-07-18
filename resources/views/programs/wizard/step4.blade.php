@@ -990,7 +990,7 @@
                                 type: 'column'
                             },
                             title: {
-                                text: 'Alignment of Ministry Standards'
+                                text: 'Alignment with Ministry Standards'
                             },
                             xAxis: {
                                 title: {
@@ -1081,7 +1081,7 @@
                             },
                             
                             title: {
-                                text: 'Alignment of Ministry Standards'
+                                text: 'Alignment with Ministry Standards'
                             },
                             plotOptions: {
                                 series: {
@@ -1169,7 +1169,7 @@
                             },
                             
                             title: {
-                                text: 'Alignment of Ministry Standards'
+                                text: 'Alignment with Ministry Standards'
                             },
                             xAxis: {
                                 title: {

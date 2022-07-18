@@ -1379,8 +1379,8 @@
                         <div class="col-md-6">
                             <div class="form-check ">
                                 <label class="form-check-label">
-                                <input type="radio" class="form-check-input" name="level" value="Undergraduate" required>
-                                    Undergraduate
+                                <input type="radio" class="form-check-input" name="level" value="Bachelors" required>
+                                    Bachelors
                                 </label>
                             </div>
                             <div class="form-check">
