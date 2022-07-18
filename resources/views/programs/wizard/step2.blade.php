@@ -24,9 +24,12 @@
                 </h3>
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 text-center lh-lg">
-                        The mapping scale is the scale that will be used to indicate the degree to which a program-level learning outcome is addressed by a course outcome, or the degree of alignment between the course outcome and program-level learning outcome.
-                    </h6>
+                    <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div>
+                            The mapping scale is the scale that will be used to indicate the degree to which a program-level learning outcome is addressed by a course outcome, or the degree of alignment between the course outcome and program-level learning outcome.
+                        </div>
+                    </div>
 
                     <div class="d-flex justify-content-end">
                                 <!-- Show default mapping scale button  -->
@@ -91,7 +94,7 @@
                                         @endforeach
                                         </div>
                                         <div class="modal-footer text-center" style="display: inline;">
-                                            <small class="text-center">Mapping scales inspired from <a href="https://taylorinstitute.ucalgary.ca/curriculum-links">UofC Curriculum Links</a></small>
+                                            <small class="text-center">Mapping scales retrieved from <a href="https://taylorinstitute.ucalgary.ca/curriculum-links">UofC Curriculum Links</a></small>
                                         </div>
                                     </div>
                                 </div>

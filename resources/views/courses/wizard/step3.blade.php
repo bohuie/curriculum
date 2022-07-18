@@ -2,11 +2,11 @@
 
 @section('content')
 <div>
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            @include('courses.wizard.header')
+    @include('courses.wizard.header')
+    <div id="app">
+        <div class="home">
 
-            <div class="card">
+            <div class="card" style="position:static">
                 <div class="card-header wizard" >
                     <h3>
                         Teaching and Learning Activities
@@ -118,67 +118,61 @@
                 <!-- End of add student assessment methods modal -->
 
                 <div class="card-body">
-
-                <div class="row">
-                    <div class="col">
-                        <h6 class="card-subtitle mb-4 lh-lg">
-                            Input all teaching and learning activities or <a target="_blank" href="https://teaching.cornell.edu/teaching-resources/teaching-cornell-guide/instructional-strategies"><i class="bi bi-box-arrow-up-right"></i> instructional strategies</a> of the course individually. For increased accessibility and enhanced student participation, while still offering challenging learning opportunities,
-                            use there <a target="_blank" href="https://udlguidelines.cast.org/binaries/content/assets/udlguidelines/udlg-v2-2/udlg_graphicorganizer_v2-2_numbers-no.pdf"><i class="bi bi-box-arrow-up-right"></i> Universal Design for Learning Guildlines</a>
-                            (Offered by CAST) to design your course. You may also use <a target="_blank" href="https://udlguidelines.cast.org/binaries/content/assets/common/publications/articles/cast-udl-planningq-a11y.pdf"><i class="bi bi-box-arrow-up-right"></i> these key questions to guide</a> you.               
-                        </h6>
+                    <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div>
+                            Input all teaching and learning activities or <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://teaching.cornell.edu/teaching-resources/teaching-cornell-guide/instructional-strategies"><i class="bi bi-box-arrow-up-right"></i> instructional strategies</a> of the course individually. For increased accessibility and enhanced student participation, while still offering challenging learning opportunities,
+                            use there <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://udlguidelines.cast.org/binaries/content/assets/udlguidelines/udlg-v2-2/udlg_graphicorganizer_v2-2_numbers-no.pdf"><i class="bi bi-box-arrow-up-right"></i> Universal Design for Learning Guidelines</a>
+                            (Offered by CAST) to design your course. You may also use <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://udlguidelines.cast.org/binaries/content/assets/common/publications/articles/cast-udl-planningq-a11y.pdf"><i class="bi bi-box-arrow-up-right"></i> these key questions to guide</a> you.               
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col mb-1">
-                        <button type="button" class="btn btn-primary col-3 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
-                            <i class="bi bi-plus mr-2"></i>Learning Activities
-                        </button>
+                    <div class="row">
+                        <div class="col mb-1">
+                            <button type="button" class="btn btn-primary col-3 float-right bg-primary text-white fs-5"  data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
+                                <i class="bi bi-plus mr-2"></i>Learning Activities
+                            </button>
+                        </div>
                     </div>
-                </div>
 
                     <div id="admins">
-                        <div class="row">
-                            <div class="col">
-                                <table class="table table-light table-bordered" id="l_activity_table">
-                                    <tr class="table-primary">
-                                        <th class="text-center">#</th>
-                                        <th>Teaching and Learning Activities</th>
-                                        <th class="text-center w-25">Actions</th>
+                        <form action="{{route('courses.tlaReorder', $course->course_id)}}" method="POST">
+                            @csrf
+                            {{method_field('POST')}}
+                            <table class="table table-light reorder-tbl-rows" id="l_activity_table">
+                                <tr class="table-primary">
+                                    <th class="text-center">#</th>
+                                    <th>Teaching and Learning Activities</th>
+                                    <th class="text-center w-25">Actions</th>
+                                </tr>
+                                @if(count($l_activities)<1)
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="alert alert-warning wizard">
+                                                <i class="bi bi-exclamation-circle-fill"></i>There are no teaching and learning activities set for this course.                    
+                                            </div>
+                                        </td>
                                     </tr>
-
-                                    @if(count($l_activities)<1)
+                                @else
+                                    @foreach($l_activities as $index => $l_activity)
                                         <tr>
-                                            <td colspan="3">
-                                                <div class="alert alert-warning wizard">
-                                                    <i class="bi bi-exclamation-circle-fill"></i>There are no teaching and learning activities set for this course.                    
-                                                </div>
+                                            <td class="text-center fw-bold" style="width:5%">↕</td>                                                
+                                            <td>
+                                                {{$l_activity->l_activity}}
                                             </td>
+                                            <td class="text-center align-middle">
+                                                <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
+                                                    Edit
+                                                </button>
+                                            </td>
+                                            <input type="hidden" name="l_activities_pos[]" value="{{$l_activity->l_activity_id}}">
                                         </tr>
-                                    @else
-                                        @foreach($l_activities as $index => $l_activity)
-                                            <tr>
-                                                <td class="text-center fw-bold" style="width:5%" >{{$index+1}}</td>                                                
-                                                <td>
-                                                    {{$l_activity->l_activity}}
-                                                </td>
-                                                <td class="text-center align-middle">
-                                                    <form action="{{route('la.destroy', $l_activity->l_activity_id)}}" method="POST" >
-                                                        <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#addLearningActivitiesModal">
-                                                            Edit
-                                                        </button>
-                                                        @csrf
-                                                        {{method_field('DELETE')}}
-                                                        <input type="hidden" name="course_id" value="{{$course->course_id}}">
-                                                        <button type="submit" style="width:60px;" class="btn btn-danger btn-sm m-1">Delete</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-
-                                    @endif
-                                </table>
+                                    @endforeach
+                                @endif
+                            </table>
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-success float-right col-2">Save Order</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
 
@@ -201,7 +195,7 @@
 <script>
     $(document).ready(function () {
 
-     sortDropdown();
+        sortDropdown();
     //   $("form").submit(function () {
     //     // prevent duplicate form submissions
     //     $(this).find(":submit").attr('disabled', 'disabled');
@@ -209,7 +203,7 @@
 
     //   });
 
-      $('#addLearningActivitiesForm').submit(function (event) {
+        $('#addLearningActivitiesForm').submit(function (event) {
             // prevent default form submission handling
             event.preventDefault();
             event.stopPropagation();
@@ -250,7 +244,7 @@
 
     function addLearningActivity() {
         // prepend assessment method to the table
-        $('#addLearningActivitiesTbl tbody').prepend(`
+        $('#addLearningActivitiesTbl tbody').append(`
             <tr>
                 <td>
                     <input list="learningActivitiesOptions" type="text" class="form-control" name="new_l_activities[]" value = "${$('#learningActivity').val()}" placeholder="Choose from the dropdown list or type your own" form="saveLearningActivityChanges" required spellcheck="true" style="white-space: pre">
@@ -316,5 +310,8 @@
     }
 
 
-  </script>
+</script>
+
+<script src="{{ asset('js/drag_drop_tbl_row.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/drag_drop_tbl_row.css' ) }}">
 @endsection

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Rules\GoogleRecaptcha;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class LoginController extends Controller
 {
@@ -49,10 +50,18 @@ class LoginController extends Controller
 
     protected function validateLogin(Request $request)
     {
-        $request->validate([
-            $this->username() => 'required|string',
-            'password' => 'required|string',
-            /*'g-recaptcha-response' => ['required', new GoogleRecaptcha],*/  //this is commented for use on localhost as captcha does not work on local instance.
-        ]);
+        if (!App::environment('local')) {
+            $request->validate([
+                $this->username() => 'required|string',
+                'password' => 'required|string',
+                'g-recaptcha-response' => ['required', new GoogleRecaptcha],  //this is commented for use on localhost as captcha does not work on local instance.
+            ]);
+        } else {
+            $request->validate([
+                $this->username() => 'required|string',
+                'password' => 'required|string',
+                /*'g-recaptcha-response' => ['required', new GoogleRecaptcha],*/  //this is commented for use on localhost as captcha does not work on local instance.
+            ]);
+        }
     }
 }

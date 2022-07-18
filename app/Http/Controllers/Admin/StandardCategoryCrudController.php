@@ -96,7 +96,8 @@ class StandardCategoryCrudController extends CrudController
         $this->crud->addField([   // repeatable
             'name'  => 'Standardtable', //NO SPACE!!!
             'label' => 'Standards',
-            'type'  => 'repeatable',
+            // 'type'  => 'repeatable',
+            'type'  => 'select_multiple',
             'entity' => 'standards',
             'model' => 'App\Models\StandardCategory',
             'fields' => [

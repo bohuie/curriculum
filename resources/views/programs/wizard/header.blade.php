@@ -7,7 +7,7 @@
             <h5 class="text-muted">{{$program->level}}</h5>
         </div>
         <div class="col">
-        @if (!$isEditor && !$isViewer) 
+        @if (!$isViewer)
             <div class="row my-2">
                 <div class="col">
                     <button type="button" style="width:200px" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#duplicateConfirmation">Duplicate Program</button>
@@ -52,21 +52,20 @@
                     </div>
                 </div>
             </div>
+        @endif
+        @if (!$isEditor && !$isViewer) 
             <div class="row">
                 <div class="col">
                         <!-- Edit button -->
-                        <button type="button" style="width:200px" class="btn btn-secondary btn-sm float-right" data-toggle="modal" data-target="#editInfoModal">
+                        <button type="button" style="width:200px" class="btn btn-secondary btn-sm float-right" data-toggle="modal" data-target="#editInfoModal" onclick="fillInformation()">
                             Edit Program Information
                         </button>
                         <!-- Modal -->
-                        <div class="modal fade" id="editInfoModal" tabindex="-1" role="dialog" aria-labelledby="editInfoModalLabel" aria-hidden="true">
+                        <div class="modal fade" data-keyboard="false" data-backdrop="static" id="editInfoModal" tabindex="-1" role="dialog" aria-labelledby="editInfoModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="editInfoModalLabel">Edit Program Information</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
                                         </div>
 
                                         <form method="POST" action="{{ action('ProgramController@update', $program->program_id) }}">
@@ -88,19 +87,34 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label for="faculty" class="col-md-2 col-form-label text-md-right">Faculty</label>
+                                                    <label for="campus" class="col-md-2 col-form-label text-md-right">Campus</label>
 
                                                     <div class="col-md-8">
-                                                        <select id='faculty' class="custom-select" name="faculty" required>
-                                                            @for($i =0; $i<count($faculties) ; $i++)
+                                                        <select id='campus' class="custom-select" name="campus">
+                                                            
+                                                        </select>
+                                                        <input id='campus-text' class="form-control" name="campus" type="text" placeholder="(Optional) Enter the Campus" disabled hidden></input>
+                                                        @error('faculty')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label for="faculty" class="col-md-2 col-form-label text-md-right">Faculty/School</label>
+                                                    <div class="col-md-8">
+                                                        <select id='faculty' class="custom-select" name="faculty">
+                                                            <!-- @for($i =0; $i<count($faculties) ; $i++)
                                                                 @if($faculties[$i]==$program->faculty)
                                                                     <option value="{{$program->faculty}}" selected>{{$program->faculty}}</option>
                                                                 @else
                                                                     <option value="{{$faculties[$i]}}">{{$faculties[$i]}} </option>
                                                                 @endif
-                                                            @endfor
+                                                            @endfor -->
                                                         </select>
-
+                                                        <input id='faculty-text' class="form-control" name="faculty" type="text" placeholder="(Optional) Enter the faculty/School" disabled hidden></input>
                                                         @error('faculty')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
@@ -111,18 +125,10 @@
 
                                                 <div class="form-group row">
                                                     <label for="department" class="col-md-2 col-form-label text-md-right">Department</label>
-
                                                     <div class="col-md-8">
-                                                        <select id='department' class="custom-select" name="department" required>
-                                                            @for($i =0; $i<count($departments) ; $i++)
-                                                                @if($departments[$i]==$program->department)
-                                                                    <option value="{{$program->department}}" selected>{{$program->department}}</option>
-                                                                @else
-                                                                    <option value="{{$departments[$i]}}">{{$departments[$i]}}</option>
-                                                                @endif
-                                                            @endfor
+                                                        <select id='department' class="custom-select" name="department">
                                                         </select>
-
+                                                        <input id='department-text' class="form-control" name="department" type="text" placeholder="(Optional) Enter the department" disabled hidden></input>
                                                         @error('department')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
@@ -132,25 +138,52 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label for="Level" class="col-md-2 col-form-label text-md-right">Level</label>
-                                                    <div class="col-md-6">
-                                                        @for($i =0; $i<3 ; $i++)
-                                                            @if($levels[$i]==$program->level)
-                                                                <div class="form-check ">
-                                                                    <label class="form-check-label">
-                                                                        <input type="radio" class="form-check-input" name="level" value="{{$levels[$i]}}" checked>
-                                                                        {{$levels[$i]}}
-                                                                    </label>
-                                                                </div>
+                                                    <label for="level" class="col-md-2 col-form-label text-md-right"><span class="requiredField">* </span>Level</label>
+                                                    <div class="col-md-8">
+                                                        <div class="form-check ">
+                                                            <label class="form-check-label">
+                                                            @if ($program->level == "Undergraduate") 
+                                                            <input type="radio" class="form-check-input" name="level" value="Undergraduate" checked>
+                                                                Undergraduate
                                                             @else
-                                                                <div class="form-check ">
-                                                                    <label class="form-check-label">
-                                                                        <input type="radio" class="form-check-input" name="level" value="{{$levels[$i]}}">
-                                                                        {{$levels[$i]}}
-                                                                    </label>
-                                                                </div>
+                                                                <input type="radio" class="form-check-input" name="level" value="Undergraduate">
+                                                                    Undergraduate
                                                             @endif
-                                                        @endfor
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                            @if ($program->level == "Masters") 
+                                                                <input type="radio" class="form-check-input" name="level" value="Masters" checked>
+                                                                Masters
+                                                            @else
+                                                                <input type="radio" class="form-check-input" name="level" value="Masters">
+                                                                    Masters
+                                                            @endif
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                                @if ($program->level == "Doctoral")
+                                                                    <input type="radio" class="form-check-input" name="level" value="Doctoral" checked>
+                                                                    Doctoral
+                                                                @else
+                                                                    <input type="radio" class="form-check-input" name="level" value="Doctoral">
+                                                                        Doctoral
+                                                                @endif
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                                @if ($program->level == "Other") 
+                                                                    <input type="radio" class="form-check-input" name="level" value="Other" checked>
+                                                                    Other
+                                                                @else
+                                                                <input type="radio" class="form-check-input" name="level" value="Other">
+                                                                    Other
+                                                                @endif
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -159,7 +192,7 @@
                                             </div>
 
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Close</button>
+                                                <button type="button" id="cancel" class="btn btn-secondary col-2 btn-sm" data-dismiss="modal">Cancel</button>
                                                 <button type="submit" class="btn btn-primary col-2 btn-sm">Save</button>
                                             </div>
                                         </form>
@@ -232,18 +265,307 @@
     @endif
 
 </div>
-<script type="application/javascript">
-    $(document).ready(function () {
-	//This method is used to make sure that the proper amount of characters are entered so it doesn't exceed the max character limits
-    function validateMaxlength(e){
-        //Whitespaces are counted as 1 but character wise are 2 (\n).
-        var MAX_LENGTH = event.target.getAttribute("maxlength");
-        var currentLength = event.target.value.length;
-        var whiteSpace = event.target.value.split(/\n/).length;
-        if((currentLength+(whiteSpace))>MAX_LENGTH)
-        { 
-            //Goes to MAX_LENGTH-(whiteSpace)+1 because it starts at 1
-            event.target.value = event.target.value.substr(0,MAX_LENGTH-(whiteSpace)+1);	        
+
+<script>
+    var program = {!! json_encode($program, JSON_HEX_TAG) !!};
+    var campuses = {!! json_encode($campuses, JSON_HEX_TAG) !!};
+    var faculties = {!! json_encode($faculties, JSON_HEX_TAG) !!};
+    var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+    var vFaculties = faculties.filter(item => {
+        return item.campus_id === 1;
+    });
+    var oFaculties = faculties.filter(item => {
+        return item.campus_id === 2;
+    });
+
+    function appendCampuses() {
+        // empty options
+        $('#campus').empty();
+        // append all campuses
+        campuses.forEach(function(campus) {
+            $('#campus').append('<option name="'+campus.campus_id+'" value="'+campus.campus+'">'+campus.campus+'</option>');
+        });
+        $('#campus').append('<option name="-1" value="Other">Other</option>');
+        // select campus option
+        $('#campus').val(program.campus).change();
+    }
+
+    function appendFaculties() {
+        // empty options
+        $('#faculty').empty();
+        // get faculties for campus_id
+        var campusId = parseInt($('#campus').find(':selected').attr('name'));
+        var filteredFaculties =  faculties.filter(item => {
+            return item.campus_id === campusId;
+        });
+        // append all filtered faculties
+        filteredFaculties.forEach(function(faculty) {
+            $('#faculty').append('<option name="'+faculty.faculty_id+'" value="'+faculty.faculty+'">'+faculty.faculty+'</option>');
+        });
+        $('#faculty').append('<option name="-1" value="Other">Other</option>');
+        // select faculty value
+        $('#faculty').val(program.faculty).change();
+    }
+
+    function appendDepartments() {
+        // empty options
+        $('#department').empty();
+        // get faculties for campus_id
+        var facultyId = parseInt($('#faculty').find(':selected').attr('name'));
+        var filteredDepartments =  departments.filter(item => {
+            return item.faculty_id === facultyId;
+        });
+        // append all filtered faculties
+        filteredDepartments.forEach(function(department) {
+            $('#department').append('<option name="'+department.department_id+'" value="'+department.department+'">'+department.department+'</option>');
+        });
+        $('#department').append('<option name="-1" value="Other">Other</option>');
+        // select faculty value
+        $('#department').val(program.department).change();
+    }
+
+    appendCampuses();
+    appendFaculties();
+    appendDepartments();
+
+    function fillInformation() {
+
+        if (!(campuses.every(e => {
+            if (e.campus === program.campus) {
+                return false;
+            } else {
+                return true;
+            }
+        }))) {
+            // search for faculty
+            if (!(faculties.every(e => {
+                if (e.faculty === program.faculty) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }))) {
+                appendFaculties()
+
+                // search for faculty
+                if (!(departments.every(e => {
+                    if (e.department === program.department) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }))) {
+                    appendDepartments();
+                } else {
+                    // other department selected
+                    $('#department').val('Other').change();
+                    $('#department-text').prop( "hidden", false );
+                    $('#department-text').prop( "disabled", false );
+                    $('#department-text').val(program.department);
+                }
+
+            } else {
+                // other faculty selected
+                $('#faculty').val('Other').change();
+                $('#faculty-text').prop( "hidden", false );
+                $('#faculty-text').prop( "disabled", false );
+                $('#faculty-text').val(program.faculty);
+                $('#department').prop( "disabled", true );
+                $('#department').text('');
+                $('#department-text').prop( "hidden", false );
+                $('#department-text').prop( "disabled", false );
+                $('#department-text').val(program.department);
+            }
+
+        } else {
+            // other campus selected
+            $('#campus').val('Other').change();
+            $('#campus-text').prop( "hidden", false );
+            $('#campus-text').prop( "disabled", false );
+            $('#campus-text').val(program.campus);
+            $('#faculty').prop( "disabled", true );
+            $('#faculty').text('');
+            $('#faculty-text').prop( "hidden", false );
+            $('#faculty-text').prop( "disabled", false );
+            $('#faculty-text').val(program.faculty);
+            $('#department').prop( "disabled", true );
+            $('#department').text('');
+            $('#department-text').prop( "hidden", false );
+            $('#department-text').prop( "disabled", false );
+            $('#department-text').val(program.department);
         }
-    } 
+    }
+
+    $('#campus').change( function() {
+        // filter faculty based on campus
+        if ($('#campus').find(':selected').text() == 'Vancouver') {
+            // Hide text / show select
+            campusDefaultOption();
+            
+            //Displays Vancouver Faculties
+            // delete drop down items
+            $('#faculty').empty();
+            // populate drop down
+            $('#faculty').append($('<option disabled selected hidden>Open list of faculties/schools</option>'));
+            vFaculties.forEach (faculty => $('#faculty').append($('<option name="'+faculty.faculty_id+'" />').val(faculty.faculty).text(faculty.faculty)));
+            $('#faculty').append($('<option name="-1" />').val('Other').text('Other'));
+            // enable the faculty select field
+            if ($('#faculty').is(':disabled')) {
+                $('#faculty').prop('disabled', false);
+            }
+            // disable the department field
+            if (!($('#department').is(':disabled'))) {
+                $('#department').empty();
+                $('#department').append($('<option disabled selected hidden>Open list of departments</option>'));
+                $('#department').prop('disabled', true);
+            }
+        } else if ($('#campus').find(':selected').text() == 'Okanagan') {
+            // Hide text / show select
+            campusDefaultOption();
+            // Display Okangan Faculties
+            // delete drop down items
+            $('#faculty').empty();
+            // populate drop down
+            $('#faculty').append($('<option disabled selected hidden>Open list of faculties/schools</option>'));
+            oFaculties.forEach (faculty => $('#faculty').append($('<option name="'+faculty.faculty_id+'" />').val(faculty.faculty).text(faculty.faculty)));
+            $('#faculty').append($('<option name="-1" />').val('Other').text('Other'));
+            // enable the faculty select field
+            if ($('#faculty').is(':disabled')) {
+                $('#faculty').prop('disabled', false);
+            }
+            // disable the department field
+            if (!($('#department').is(':disabled'))) {
+                $('#department').empty();
+                $('#department').append($('<option disabled selected hidden>Open list of departments</option>'));
+                $('#department').prop('disabled', true);
+            }
+        } else {
+            campusOtherOption();
+        }
+    });
+
+        // var departments = {!! json_encode($departments, JSON_HEX_TAG) !!};
+
+        $('#faculty').change( function() {
+            var facultyId = parseInt($('#faculty').find(':selected').attr('name'));
+
+            // get departments by faculty if they belong to a faculty, else display all departments
+            if (facultyId >= 0) {
+                // Hide text / show select
+                facultyDefaultOption();
+
+                // delete drop down items
+                $('#department').empty();
+                // populate drop down
+                $('#department').append($('<option disabled selected hidden>Open list of departments</option>'));
+                var filteredDepartments = departments.filter(item => {
+                    return item.faculty_id === facultyId;
+                });
+                filteredDepartments.forEach(department => $('#department').append($('<option />').val(department.department).text(department.department)));
+
+
+                $('#department').append($('<option />').val('Other').text('Other'));
+
+                // enable the faculty select field
+                if ($('#department').is(':disabled')) {
+                    $('#department').prop('disabled', false);
+                }
+
+            } else {
+                // Hide text / show select
+                facultyOtherOption();
+            }
+
+        });
+
+        $('#department').change( function() { 
+            if ($('#department').find(':selected').val() !== 'Other') {
+                departmentDefaultOption();
+            } else {
+                departmentOtherOption();
+            }
+        });
+
+    function departmentDefaultOption() {
+        // Hide text / show select
+        $('#department-text').prop( "hidden", true );
+        $('#department-text').prop( "disabled", true );
+    }
+
+    function departmentOtherOption() {
+        // Hide text / show select
+        $('#department-text').prop( "hidden", false );
+        $('#department-text').prop( "disabled", false );
+    }
+
+    function facultyDefaultOption() {
+        // Hide text / show select
+        $('#faculty-text').prop( "hidden", true );
+        $('#faculty-text').prop( "disabled", true );
+        $('#department').prop( "hidden", false );
+        $('#department').prop( "disabled", false );
+        $('#department-text').prop( "hidden", true );
+        $('#department-text').prop( "disabled", true );
+    }
+
+    function facultyOtherOption() {
+        // Hide text / show select
+        $('#faculty-text').prop( "hidden", false );
+        $('#faculty-text').prop( "disabled", false );
+        $('#department').prop( "disabled", true );
+        $('#department').prop( "hidden", true );
+        $('#department').text('');
+        $('#department-text').prop( "hidden", false );
+        $('#department-text').prop( "disabled", false );
+    }
+
+    function campusDefaultOption() {
+        // Hide text / show select
+        $('#campus-text').prop( "hidden", true );
+        $('#campus-text').prop( "disabled", true );
+        $('#faculty').prop( "hidden", false );
+        $('#faculty').prop( "disabled", false );
+        $('#faculty-text').prop( "hidden", true );
+        $('#faculty-text').prop( "disabled", true );
+        $('#department').prop( "hidden", false );
+        $('#department').prop( "disabled", false );
+        $('#department-text').prop( "hidden", true );
+        $('#department-text').prop( "disabled", true );
+    }
+
+    function campusOtherOption() {
+        // Hide text / show select
+        $('#campus-text').prop( "hidden", false );
+        $('#campus-text').prop( "disabled", false );
+        $('#faculty').prop( "disabled", true );
+        $('#faculty').prop( "hidden", true );
+        $('#faculty').text('');
+        $('#faculty-text').prop( "hidden", false );
+        $('#faculty-text').prop( "disabled", false );
+        $('#department').prop( "disabled", true );
+        $('#department').prop( "hidden", true );
+        $('#department').text('');
+        $('#department-text').prop( "hidden", false );
+        $('#department-text').prop( "disabled", false );
+    }
+
+    // refresh page on cancel
+    $('#cancel').click(function() {
+        location.reload();
+    });
+
+    $(document).ready(function () {
+	    //This method is used to make sure that the proper amount of characters are entered so it doesn't exceed the max character limits
+        function validateMaxlength(e){
+            //Whitespaces are counted as 1 but character wise are 2 (\n).
+            var MAX_LENGTH = event.target.getAttribute("maxlength");
+            var currentLength = event.target.value.length;
+            var whiteSpace = event.target.value.split(/\n/).length;
+            if((currentLength+(whiteSpace))>MAX_LENGTH)
+            { 
+                //Goes to MAX_LENGTH-(whiteSpace)+1 because it starts at 1
+                event.target.value = event.target.value.substr(0,MAX_LENGTH-(whiteSpace)+1);	        
+            }
+        }
+    });
 </script>

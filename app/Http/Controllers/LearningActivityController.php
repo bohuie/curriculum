@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\LearningActivity;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class LearningActivityController extends Controller
@@ -23,6 +25,7 @@ class LearningActivityController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**
@@ -50,6 +53,10 @@ class LearningActivityController extends Controller
             $newActivities = $request->input('new_l_activities');
             // get the course
             $course = Course::find($courseId);
+            // case: delete all teaching and learning activities
+            if (!$currentActivities && !$newActivities) {
+                Course::find($courseId)->learningActivities()->delete();
+            }
             // get the saved assessment methods for this course
             $learningActivities = $course->learningActivities;
             // update current assessment methods
@@ -72,6 +79,14 @@ class LearningActivityController extends Controller
                     $newLearningActivity->save();
                 }
             }
+            // update courses 'updated_at' field
+            $course = Course::find($request->input('course_id'));
+            $course->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
 
             $request->session()->flash('success','Your teaching and learning activities were updated successfully!');
 
@@ -133,6 +148,15 @@ class LearningActivityController extends Controller
 
 
         if($la->delete()){
+            // update courses 'updated_at' field
+            $course = Course::find($course_id);
+            $course->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
+            
             $request->session()->flash('success','Teaching/learning activity has been deleted');
         }else{
             $request->session()->flash('error', 'There was an error deleting the teaching/learning activity');

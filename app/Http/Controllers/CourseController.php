@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\NotifyInstructorForMappingMail;
+use App\Mail\NotifyNewCourseInstructorMail;
+use App\Mail\NotifyNewInstructorMail;
+use App\Mail\NotifyNewUserAndInstructorMail;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\User;
@@ -18,15 +21,18 @@ use App\Models\OutcomeActivity;
 use App\Models\MappingScale;
 use App\Models\PLOCategory;
 use App\Models\CourseProgram;
-use PDF;
-use Illuminate\Support\Facades\DB;
-use App\Models\Optional_priorities;
 use App\Models\OutcomeMap;
 use App\Models\Standard;
-use App\Models\StandardCategory;
+use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use PDF;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class CourseController extends Controller
 {
@@ -42,30 +48,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
-        // $courseUsers = CourseUser::select('course_code', 'program_id')->where('user_id',Auth::id())->get();
-        // $courses = Course::all();
-        // $programs = Program::all();
-        $user = User::where('id', Auth::id())->first();
-
-        $activeCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-                ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-                ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-                ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-                'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-                ->where('course_users.user_id','=',Auth::id())->where('courses.status','=', -1)
-                ->get();
-
-        $archivedCourses = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-                ->join('courses', 'course_users.course_id', '=', 'courses.course_id')
-                ->join('programs', 'courses.program_id', '=', 'programs.program_id')
-                ->select('courses.program_id','courses.course_code','courses.delivery_modality','courses.semester','courses.year','courses.section',
-                'courses.course_id','courses.course_num','courses.course_title', 'courses.status','programs.program', 'programs.faculty', 'programs.department','programs.level')
-                ->where('course_users.user_id','=',Auth::id())->where('courses.status','=', 1)
-                ->get();
-
-        return view('courses.index')->with('user', $user)->with('activeCourses', $activeCourses)->with('archivedCourses', $archivedCourses);
-
+        return redirect()->back();
     }
 
     /**
@@ -86,13 +69,12 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate request input
         $this->validate($request, [
-            'course_code' => 'required',
-            'course_num' => 'required',
+            'course_code' => 'required|max:4',
             'course_title'=> 'required',
-
-            ]);
+            'course_num' => 'max:30',
+        ]);
 
         $course = new Course;
         $course->course_title = $request->input('course_title');
@@ -109,6 +91,8 @@ class CourseController extends Controller
         $course->semester = $request->input('course_semester');
         $course->section = $request->input('course_section');
         $course->standard_category_id = $request->input('standard_category_id');
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
 
         // course creation triggered by add new course for program
         if($request->input('type') == 'assigned'){
@@ -117,7 +101,46 @@ class CourseController extends Controller
             $course->assigned = -1;
             $course->save();
 
-            $user = User::where('id', $request->input('user_id'))->first();
+            if ($request->input('email') == null) {
+                // User Field is Empty
+                // The user who created this course will be the owner
+                $user = User::where('id', $request->input('user_id'))->first();
+            } else {
+                // assign the user specified to own this course 
+                // check if user exists in db
+                if (User::where('email', $request->input('email'))->exists()) {
+                    $user = User::where('email', $request->input('email'))->first();
+                    // TODO: Send email to new course owner
+                    $currentUser = User::where('id', $request->input('user_id'))->first();
+                    $program = Program::where('program_id', $request->input('program_id'))->first();
+                    Mail::to($user->email)->send(new NotifyNewCourseInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, $program->program));
+                }else {
+                    // Create new user and assign them to the new course
+                    $name = explode('@', $request->input('email'));
+                    $user = new User;
+                    $user->name = $name[0];
+                    $user->email = $request->input('email');
+                    $user->has_temp = 1;
+                    // generate random password
+                    $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                    $pass = array(); 
+                    $combLen = strlen($comb) - 1; 
+                    for ($i = 0; $i < 8; $i++) {
+                        $n = rand(0, $combLen);
+                        $pass[] = $comb[$n];
+                    }
+                    // store random password
+                    $user->password = Hash::make(implode($pass));
+                    $user->email_verified_at = Carbon::now();
+                    $user->save();
+
+                    $currentUser = User::where('id', $request->input('user_id'))->first();
+                    $program = Program::where('program_id', $request->input('program_id'))->first();
+                    // TODO: Send email to new user
+                    Mail::to($user->email)->send(new NotifyNewUserAndInstructorMail($course->course_code, $course->course_num == null ? " " : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $user->email, $program->program));
+                }
+            }
+
             $courseUser = new CourseUser;
             $courseUser->course_id = $course->course_id;
             $courseUser->user_id = $user->id;
@@ -132,6 +155,15 @@ class CourseController extends Controller
 
             if($courseUser->save()){
                 if ($courseProgram->save()) {
+                    // update courses 'updated_at' field
+                    $program = Program::find($request->input('program_id'));
+                    $program->touch();
+
+                    // get users name for last_modified_user
+                    $user = User::find(Auth::id());
+                    $program->last_modified_user = $user->name;
+                    $program->save();
+                    
                     $request->session()->flash('success', 'New course added');
                 }
             }else{
@@ -158,7 +190,7 @@ class CourseController extends Controller
                 $request->session()->flash('error', 'There was an error adding the course');
             }
 
-            return redirect()->route('home');
+            return redirect()->route('courseWizard.step1', $course->course_id);
         }
 
     }
@@ -274,7 +306,6 @@ class CourseController extends Controller
         //
         $this->validate($request, [
             'course_code'=> 'required',
-            'course_num'=> 'required',
             'course_title'=> 'required',
             ]);
 
@@ -291,10 +322,7 @@ class CourseController extends Controller
         
         // if standard category id has been updated then, delete all old standard mappings
         if ($course->standard_category_id != $request->input('standard_category_id')) {
-            $clos = $course->learningOutcomes->pluck('l_outcome_id')->toArray();
-            foreach ($clos as $clo) {
-                StandardsOutcomeMap::where('l_outcome_id', $clo)->delete();
-            }
+            StandardsOutcomeMap::where('course_id', $course->course_id)->delete();
             // assign new standard category id for course.
             $course->standard_category_id = $request->input('standard_category_id');
         }
@@ -302,6 +330,15 @@ class CourseController extends Controller
 
 
         if($course->save()){
+            // update courses 'updated_at' field
+            $course = Course::find($course_id);
+            $course->touch();
+
+            // get users name for last_modified_user
+            $user = User::find(Auth::id());
+            $course->last_modified_user = $user->name;
+            $course->save();
+
             $request->session()->flash('success', 'Course updated');
         }else{
             $request->session()->flash('error', 'There was an error updating the course');
@@ -356,140 +393,218 @@ class CourseController extends Controller
 
     public function outcomeDetails(Request $request, $course_id)
     {
-        //
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $l_outcomes_pos = $request->input('l_outcomes_pos');
+        $clos_l_activities = $request->input('l_activities') ? $request->input('l_activities') : array();
+        $clos_a_methods = $request->input('a_methods') ? $request->input('a_methods') : array();
 
+        if ($l_outcomes_pos) {
 
+            foreach ($l_outcomes_pos as $pos => $l_outcome_id) {
+                $learningOutcome = LearningOutcome::find($l_outcome_id);
+                $learningOutcome->pos_in_alignment = $pos + 1;
+                $learningOutcome->save();
 
-        foreach($l_outcomes as $l_outcome){
-            $i = $l_outcome->l_outcome_id;
+                if (array_key_exists($learningOutcome->l_outcome_id, $clos_l_activities)) {
+                    $learningOutcome->learningActivities()->sync($clos_l_activities[$learningOutcome->l_outcome_id]);
+                } else {
+                    $learningOutcome->learningActivities()->detach();
+                }
 
-            if($request->input('l_activities')== null){
-
-                $l_outcome->learningActivities()->detach();
-
-            }elseif (array_key_exists($i,$request->input('l_activities'))){
-                $arr=$request->input('l_activities');
-                $l_outcome->learningActivities()->detach();
-                $l_outcome->learningActivities()->sync($arr[$i]);
-
-            }else{
-
-                $l_outcome->learningActivities()->detach();
+                if (array_key_exists($learningOutcome->l_outcome_id, $clos_a_methods)) {
+                    $learningOutcome->assessmentMethods()->sync($clos_a_methods[$learningOutcome->l_outcome_id]);
+                } else {
+                    $learningOutcome->assessmentMethods()->detach();
+                }
             }
-
         }
 
-        foreach($l_outcomes as $l_outcome){
-            $i = $l_outcome->l_outcome_id;
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
 
-            if($request->input('a_methods')== null){
-
-                $l_outcome->assessmentMethods()->detach();
-
-            }elseif (array_key_exists($i,$request->input('a_methods'))){
-                $arr=$request->input('a_methods');
-                $l_outcome->assessmentMethods()->detach();
-                $l_outcome->assessmentMethods()->sync($arr[$i]);
-
-            }else{
-
-                $l_outcome->assessmentMethods()->detach();
-            }
-
-        }
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
 
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
 
-    public function pdf($course_id)
+    public function amReorder(Request $request, $course_id)
     {
-        $user = User::where('id',Auth::id())->first();
-        $course =  Course::find($course_id);
-        $courseUsers = Course::join('course_users','courses.course_id',"=","course_users.course_id")
-                                ->join('users','course_users.user_id',"=","users.id")
-                                ->select('users.email')
-                                ->where('courses.course_id','=',$course_id)->get();
+        $a_method_pos = $request->input('a_method_pos');
 
-        //for progress bar
-        $lo_count = LearningOutcome::where('course_id', $course_id)->count();
-        $am_count = AssessmentMethod::where('course_id', $course_id)->count();
-        $la_count = LearningActivity::where('course_id', $course_id)->count();
-        $oAct = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
-                                ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_activities.course_id','=',$course_id)->count();
-        $oAss = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
-                                ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('assessment_methods.course_id','=',$course_id)->count();
-        $outcomeMapsCount = ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')
-                                ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
-
-        //
-
-        // get all the programs this course belongs to
-        $coursePrograms = Course::find($course_id)->programs;
-
-        // get the PLOs for each program
-        $programsLearningOutcomes = array();
-        foreach ($coursePrograms as $courseProgram) {
-            $programsLearningOutcomes[$courseProgram->program_id] = $courseProgram->programLearningOutcomes;
-        }
-
-        // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
-        $courseProgramsOutcomeMaps = array();
-        foreach ($programsLearningOutcomes as $programId => $programLearningOutcomes) {
-            foreach ($programLearningOutcomes as $programLearningOutcome) {
-                $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $course_id);
-                foreach($outcomeMaps as $outcomeMap){
-                    $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
-                } 
+        if ($a_method_pos) {
+            foreach ($a_method_pos as $pos => $a_method_id) {
+                $aMethod = AssessmentMethod::find($a_method_id);
+                $aMethod->pos_in_alignment = $pos + 1;
+                $aMethod->save();
             }
         }
 
-        $coursePrograms->map(function($courseProgram, $key) {
-            $courseProgram->push(0, 'num_plos_categorized');
-            $courseProgram->programLearningOutcomes->each(function($plo, $key) use ($courseProgram) {
-                if (isset($plo->category)) {
-                    $courseProgram->num_plos_categorized++;
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
+
+        return redirect()->route('courseWizard.step2', $course_id)->with('success', 'Changes have been saved successfully.');
+    }
+
+    public function loReorder(Request $request, $course_id)
+    {
+        $l_outcomes_pos = $request->input('l_outcomes_pos');
+
+        if ($l_outcomes_pos) {
+            foreach ($l_outcomes_pos as $pos => $l_outcome_id) {
+                $learningOutcome = LearningOutcome::find($l_outcome_id);
+                $learningOutcome->pos_in_alignment = $pos + 1;
+                $learningOutcome->save();
+            }
+        }
+
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
+
+        return redirect()->route('courseWizard.step1', $course_id)->with('success', 'Changes have been saved successfully.');
+    }
+
+    public function tlaReorder(Request $request, $course_id)
+    {
+        $l_activities_pos = $request->input('l_activities_pos');
+
+        if ($l_activities_pos) {
+            foreach ($l_activities_pos as $pos => $l_activity_id) {
+                $learningActivity = LearningActivity::find($l_activity_id);
+                $learningActivity->l_activities_pos = $pos + 1;
+                $learningActivity->save();
+            }
+        }
+
+        // update courses 'updated_at' field
+        $course = Course::find($course_id);
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
+
+        return redirect()->route('courseWizard.step3', $course_id)->with('success', 'Changes have been saved successfully.');
+    }
+
+    public function pdf(Request $request, $course_id)
+    {  
+        // set the max time to generate a pdf summary as 5 mins/300 seconds
+        set_time_limit(300);
+        try {
+            // get the course
+            $course =  Course::find($course_id);
+            // get the course learning outcomes in order specified by user
+            $courseLearningOutcomes = $course->learningOutcomes()->orderBy('pos_in_alignment', 'asc')->get();
+            // get all the programs this course belongs to
+            $coursePrograms = Course::find($course_id)->programs;
+            // get the PLOs for each program
+            $programsLearningOutcomes = array();
+            // get the mapping scale levels for each program 
+            $programsMappingScales = array();
+            // get the uncategorized PLOs for each program
+            $unCategorizedProgramsLearningOutcomes = array();
+            foreach ($coursePrograms as $courseProgram) {
+                // get the plos for this program
+                $plos = $courseProgram->programLearningOutcomes;
+                $programsLearningOutcomes[$courseProgram->program_id] = $plos;
+                // get the mapping scale levels for this program and add N/A scale to the collection
+                $programsMappingScales[$courseProgram->program_id] = $courseProgram->mappingScaleLevels->push(MappingScale::find(0));
+                $unCategorizedProgramsLearningOutcomes[$courseProgram->program_id] = $plos->filter(function ($plo, $key) {return !isset($plo->category);});
+            }
+            // courseProgramsOutcomeMaps[$program_id][$plo][$clo] = map_scale_id
+            $courseProgramsOutcomeMaps = array();
+            foreach ($programsLearningOutcomes as $programId => $programLearningOutcomes) {
+                foreach ($programLearningOutcomes as $programLearningOutcome) {
+                    $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $course_id);
+                    foreach($outcomeMaps as $outcomeMap){
+                        $courseProgramsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+                    } 
                 }
-            });            
-        });
+            }
+            // 
+            $coursePrograms->map(function($courseProgram, $key) {
+                $courseProgram->push(0, 'num_plos_categorized');
+                $courseProgram->programLearningOutcomes->each(function($plo, $key) use ($courseProgram) {
+                    if (isset($plo->category)) {
+                        $courseProgram->num_plos_categorized++;
+                    }
+                });            
+            });
+            // 
+            $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
+                                    ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                    ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
+                                    ->where('learning_activities.course_id','=',$course_id)->get();
+            // 
+            $outcomeAssessments = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
+                                    ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
+                                    ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
+                                    ->where('assessment_methods.course_id','=',$course_id)->get();
+
+            // ministry standards
+            $courseStandardCategory = $course->standardCategory;
+            $courseStandardOutcomes = $courseStandardCategory->standards;
+            $courseStandardScalesCategory = $course->standardScalesCategory;
+            $courseStandardScales = $courseStandardScalesCategory->standardScales;
+
+            $standardOutcomeMap = array();
+            foreach ($courseStandardOutcomes as $standardOutcome) {
+                    if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists())
+                        $standardOutcomeMap[$standardOutcome->standard_id][$course->course_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]))->first();
+            }
+
+            $assessmentMethodsTotal = 0;
+            foreach ($course->assessmentMethods as $a_method) {
+                $assessmentMethodsTotal += $a_method->weight;
+            }
+            // get subcategories for optional priorities
+            $optionalPriorities = $course->optionalPriorities;
+            $optionalSubcategories = array();
+            foreach ($optionalPriorities as $optionalPriority) {
+                $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
+            }
+            // build pdf objcet
+            $pdf = PDF::loadView('courses.downloadSummary', compact('course','courseLearningOutcomes','programsLearningOutcomes', 'unCategorizedProgramsLearningOutcomes', 'programsMappingScales', 'outcomeActivities', 'outcomeAssessments', 'courseStandardOutcomes','courseStandardScales','standardOutcomeMap','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
+            // get the content of the pdf document
+            $content = $pdf->output();
+            // store the pdf document in storage/app/public folder
+            Storage::put('public/course-' . $course->course_id . '.pdf', $content);
+            // get the url of the document
+            $url = Storage::url('course-' . $course->course_id . '.pdf');
+            // return the location of the pdf document on the server
+            return $url;
+
+        }  catch (Throwable $exception) {
+            $message = 'There was an error downloading your course summary report';
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
+            return -1;
         
-        $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
-                                ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('outcome_activities.l_activity_id','learning_activities.l_activity','outcome_activities.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('learning_activities.course_id','=',$course_id)->get();
-
-        $outcomeAssessments = AssessmentMethod::join('outcome_assessments','assessment_methods.a_method_id','=','outcome_assessments.a_method_id')
-                                ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
-                                ->where('assessment_methods.course_id','=',$course_id)->get();
-
-        $standardOutcomeMaps = Standard::join('standards_outcome_maps','standards.standard_id','=','standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standard_scales.standard_scale_id', '=', 'standards_outcome_maps.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.standard_id','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->get();
-            
-        $assessmentMethodsTotal = 0;
-        foreach ($course->assessmentMethods as $a_method) {
-            $assessmentMethodsTotal += $a_method->weight;
         }
+    }
 
-        // get subcategories for optional priorities
-        $optionalPriorities = $course->optionalPriorities;
-        $optionalSubcategories = array();
-        foreach ($optionalPriorities as $optionalPriority) {
-            $optionalSubcategories[$optionalPriority->subcat_id] = $optionalPriority->optionalPrioritySubcategory;
-        }
-        
-        $pdf = PDF::loadView('courses.downloadSummary', compact('course','outcomeActivities', 'outcomeAssessments', 'standardOutcomeMaps','assessmentMethodsTotal', 'courseProgramsOutcomeMaps', 'optionalSubcategories'));
-
-        return $pdf->download('summary.pdf');
+    public function deletePDF(Request $request, $course_id)
+    {  
+        Storage::delete('public/course-' . $course_id . '.pdf');
     }
 
     // Removes the program id for a given course (Used In program wizard step 3).
@@ -511,6 +626,15 @@ class CourseController extends Controller
                 }
             }
         }
+
+        // update courses 'updated_at' field
+        $program = Program::find($request->input('program_id'));
+        $program->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $program->last_modified_user = $user->name;
+        $program->save();
 
         $request->session()->flash('success', 'Course updated');
     }else{
@@ -641,16 +765,18 @@ class CourseController extends Controller
                     $newOutcomeAssessment->save();
                 }
             }
-            // duplicate standards 
-            if($clo->standardOutcomeMap()->exists()) {
-                $oldStandardOutcomes = $clo->standardOutcomeMap()->get();
-                foreach($oldStandardOutcomes as $oldStandardOutcome) {
-                    $oldStandardOutcomeMap = new StandardsOutcomeMap;
-                    $oldStandardOutcomeMap->l_outcome_id = $newCLO->l_outcome_id;
-                    $oldStandardOutcomeMap->standard_id = $oldStandardOutcome->pivot->standard_id;
-                    $oldStandardOutcomeMap->standard_scale_id = $oldStandardOutcome->pivot->standard_scale_id;
-                    $oldStandardOutcomeMap->save();
-                }
+        }
+
+        $courseStandardCategory = $course->standardCategory;
+        $courseStandardOutcomes = $courseStandardCategory->standards;
+        // dd($courseStandardOutcomes);
+        foreach ($courseStandardOutcomes as $standardOutcome) {
+            if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists()) {
+                $newStandardOutcomeMap = new StandardsOutcomeMap;
+                $newStandardOutcomeMap->course_id = $course->course_id;
+                $newStandardOutcomeMap->standard_id = $standardOutcome->standard_id;
+                $newStandardOutcomeMap->standard_scale_id = StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course_old->course_id)->value('standard_scale_id');
+                $newStandardOutcomeMap->save();
             }
         }
 
@@ -676,4 +802,14 @@ class CourseController extends Controller
         }
         return redirect()->route('home');
     }
+
+    /*
+        Helper function to get this courses programs
+    */
+    public function getPrograms(Request $request, $courseId) {    
+        $course = Course::find($courseId);
+        return $course->programs;
+    }
 }
+
+

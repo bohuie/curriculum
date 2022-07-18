@@ -6,7 +6,9 @@ use App\Models\ProgramLearningOutcome;
 use App\Models\LearningOutcome;
 use App\Models\Course;
 use App\Models\Program;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StandardsOutcomeMapController extends Controller
@@ -24,6 +26,7 @@ class StandardsOutcomeMapController extends Controller
     public function index()
     {
        //
+        return redirect()->back();
     }
 
     /**
@@ -39,14 +42,23 @@ class StandardsOutcomeMapController extends Controller
             ]);
 
         $outcomeMap = $request->input('map');
-        foreach ($outcomeMap as $cloId => $standardToScaleIds) {
+        foreach ($outcomeMap as $courseId => $standardToScaleIds) {
             foreach (array_keys($standardToScaleIds) as $standardId) {
                 DB::table('standards_outcome_maps')->updateOrInsert(
-                    ['standard_id' => $standardId, 'l_outcome_id' => $cloId],
-                    ['standard_scale_id' => $outcomeMap[$cloId][$standardId]]
+                    ['standard_id' => $standardId, 'course_id' => $courseId],
+                    ['standard_scale_id' => $outcomeMap[$courseId][$standardId]]
                 );
             }
         }
+
+        // update courses 'updated_at' field
+        $course = Course::find($request->input('course_id'));
+        $course->touch();
+
+        // get users name for last_modified_user
+        $user = User::find(Auth::id());
+        $course->last_modified_user = $user->name;
+        $course->save();
 
         return redirect()->back()->with('success', 'Your answers have been saved successfully.');
     }

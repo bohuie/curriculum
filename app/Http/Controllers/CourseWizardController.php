@@ -20,12 +20,14 @@ use App\Models\OutcomeAssessment;
 use App\Models\LearningActivity;
 use App\Models\OptionalPriorities;
 use App\Models\MappingScale;
+use App\Models\OptionalPrioritiesSubdescription;
 use App\Models\OptionalPriorityCategories;
 use App\Models\OptionalPrioritySubcategories;
 use App\Models\OutcomeActivity;
 use App\Models\PLOCategory;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Standard;
+use App\Models\StandardCategory;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use Illuminate\Support\Facades\DB;
@@ -72,14 +74,10 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+        $standardsOutcomeMapCount = StandardsOutcomeMap::where('course_id', $course_id)->count();
+        $expectedStandardOutcomeMapCount = StandardCategory::find($course->standard_category_id)->standards->count();
         $numClos = LearningOutcome::where('course_id', $course_id)->count();
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
-        $expectedStandardOutcomeMapCount = $numClos * $numStandards;
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
         $expectedProgramOutcomeMapCount = 0;
@@ -97,13 +95,13 @@ class CourseWizardController extends Controller
             }
         }
         //
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $l_outcomes = $course->learningOutcomes->sortBy('pos_in_alignment')->values();
         $course =  Course::where('course_id', $course_id)->first();
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
 
         return view('courses.wizard.step1')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
-        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)
+        ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('standard_categories', $standard_categories)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
         ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
 
     }
@@ -141,14 +139,10 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+        $standardsOutcomeMapCount = StandardsOutcomeMap::where('course_id', $course_id)->count();
+        $expectedStandardOutcomeMapCount = StandardCategory::find($course->standard_category_id)->standards->count();
         $numClos = LearningOutcome::where('course_id', $course_id)->count();
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
-        $expectedStandardOutcomeMapCount = $numClos * $numStandards;
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
         $expectedProgramOutcomeMapCount = 0;
@@ -167,9 +161,10 @@ class CourseWizardController extends Controller
             }
         }
 
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
+        $a_methods = $course->assessmentMethods->sortBy('pos_in_alignment')->values();
+
         $custom_methods = Custom_assessment_methods::select('custom_methods')->get();
-        $totalWeight = AssessmentMethod::where('course_id', $course_id)->sum('weight');
+        $totalWeight = number_format(AssessmentMethod::where('course_id', $course_id)->sum('weight'), 1);
         $course =  Course::where('course_id', $course_id)->first();
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
@@ -214,14 +209,10 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+        $standardsOutcomeMapCount = StandardsOutcomeMap::where('course_id', $course_id)->count();
+        $expectedStandardOutcomeMapCount = StandardCategory::find($course->standard_category_id)->standards->count();
         $numClos = LearningOutcome::where('course_id', $course_id)->count();
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
-        $expectedStandardOutcomeMapCount = $numClos * $numStandards;
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
         $expectedProgramOutcomeMapCount = 0;
@@ -239,7 +230,8 @@ class CourseWizardController extends Controller
             }
         }
 
-        $l_activities = LearningActivity::where('course_id', $course_id)->get();
+        $l_activities = $course->learningActivities->sortBy('l_activities_pos')->values();
+
         $custom_activities = Custom_learning_activities::select('custom_activities')->get();
         $course =  Course::where('course_id', $course_id)->first();
         // returns a collection of standard_categories, used in the create course modal
@@ -284,14 +276,10 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+        $standardsOutcomeMapCount = StandardsOutcomeMap::where('course_id', $course_id)->count();
+        $expectedStandardOutcomeMapCount = StandardCategory::find($course->standard_category_id)->standards->count();
         $numClos = LearningOutcome::where('course_id', $course_id)->count();
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
-        $expectedStandardOutcomeMapCount = $numClos * $numStandards;
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
         $expectedProgramOutcomeMapCount = 0;
@@ -300,7 +288,7 @@ class CourseWizardController extends Controller
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
         // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $l_outcomes = $course->learningOutcomes->sortBy('pos_in_alignment')->values();
         $hasNonAlignedCLO = false;
         foreach ($l_outcomes as $clo) {
             if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
@@ -310,8 +298,8 @@ class CourseWizardController extends Controller
         }
 
         $course =  Course::where('course_id', $course_id)->first();
-        $l_activities = LearningActivity::where('course_id', $course_id)->get();
-        $a_methods = AssessmentMethod::where('course_id', $course_id)->get();
+        $l_activities = $course->learningActivities->sortBy('l_activities_pos')->values();
+        $a_methods = $course->assessmentMethods->sortBy('pos_in_alignment')->values();
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
 
@@ -354,14 +342,10 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_id','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+        $standardsOutcomeMapCount = StandardsOutcomeMap::where('course_id', $course_id)->count();
+        $expectedStandardOutcomeMapCount = StandardCategory::find($course->standard_category_id)->standards->count();
         $numClos = LearningOutcome::where('course_id', $course_id)->count();
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
-        $expectedStandardOutcomeMapCount = $numClos * $numStandards;
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
         $expectedProgramOutcomeMapCount = 0;
@@ -370,7 +354,7 @@ class CourseWizardController extends Controller
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
         // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $l_outcomes = $course->learningOutcomes->sortBy('pos_in_alignment')->values();
         $hasNonAlignedCLO = false;
         foreach ($l_outcomes as $clo) {
             if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
@@ -408,7 +392,7 @@ class CourseWizardController extends Controller
         return view('courses.wizard.step5')->with('course', $course)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
         ->with('outcomeMapsCountPerProgram', $outcomeMapsCountPerProgram)->with('outcomeMapsCountPerProgramCLO', $outcomeMapsCountPerProgramCLO)->with('standard_categories', $standard_categories)
-        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
+        ->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('l_outcomes', $l_outcomes);
     }
 
     public function step6($course_id, Request $request)
@@ -443,14 +427,10 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+        $standardsOutcomeMapCount = StandardsOutcomeMap::where('course_id', $course_id)->count();
+        $expectedStandardOutcomeMapCount = StandardCategory::find($course->standard_category_id)->standards->count();
         $numClos = LearningOutcome::where('course_id', $course_id)->count();
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
-        $expectedStandardOutcomeMapCount = $numClos * $numStandards;
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
         $expectedProgramOutcomeMapCount = 0;
@@ -471,7 +451,7 @@ class CourseWizardController extends Controller
         // returns a collection of standard_categories, used in the create course modal
         $standard_categories = DB::table('standard_categories')->get();
         // get learning outcomes for a course
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $l_outcomes = $course->learningOutcomes->sortBy('pos_in_alignment')->values();
         // get Standards and strategic outcomes for a course
         $standard_outcomes = Standard::where('standard_category_id', $course->standard_category_id)->get();
         // get mapping scales associated with course
@@ -481,23 +461,15 @@ class CourseWizardController extends Controller
         // get the saved optional priorities
         $opStored = $course->optionalPriorities->pluck('op_id')->toArray();
 
-        // return a count for the completed number of standards
-        $standardsMapped = [];
-        foreach ($l_outcomes as $l_outcome) {
-            $standardsMapped[$l_outcome->l_outcome_id] = 0;
-        }
-        foreach ($l_outcomes as $l_outcome) {
-            if (StandardsOutcomeMap::where('l_outcome_id', $l_outcome->l_outcome_id)->exists()) {
-                $standardsMapped[$l_outcome->l_outcome_id] = StandardsOutcomeMap::where('l_outcome_id', $l_outcome->l_outcome_id)->count();
-            }
-        }
+        // get all optional priority subdescriptions
+        $opSubDesc = OptionalPrioritiesSubdescription::all();
 
         return view('courses.wizard.step6')->with('l_outcomes', $l_outcomes)->with('course', $course)->with('mappingScales', $mappingScales)
         ->with('courseUsers', $courseUsers)->with('user', $user)->with('oAct', $oAct)->with('oAss', $oAss)->with('outcomeMapsCount', $outcomeMapsCount)
         ->with('standard_outcomes', $standard_outcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)
         ->with('optionalPriorityCategories', $optionalPriorityCategories)->with('opStored', $opStored)->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)
-        ->with('standardsMapped', $standardsMapped)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
-        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
+        ->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
+        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('opSubDesc', $opSubDesc);
     }
     
     public function step7($course_id, Request $request)
@@ -532,14 +504,10 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('learning_outcomes.course_id','=',$course_id)->count();
-        $standardsOutcomeMapCount = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->count();
+        $standardsOutcomeMapCount = StandardsOutcomeMap::where('course_id', $course_id)->count();
+        $expectedStandardOutcomeMapCount = StandardCategory::find($course->standard_category_id)->standards->count();
         $numClos = LearningOutcome::where('course_id', $course_id)->count();
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
-        $expectedStandardOutcomeMapCount = $numClos * $numStandards;
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
         $expectedProgramOutcomeMapCount = 0;
@@ -548,7 +516,7 @@ class CourseWizardController extends Controller
             $expectedProgramOutcomeMapCount += $program->programLearningOutcomes->count() * $numClos;
         }
         // checks if all learning outcomes have been aligned to a student assessment method AND a Teaching and Learning Outcome. Breaks and returns true if a clo is not aligned.
-        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
+        $l_outcomes = $course->learningOutcomes->sortBy('pos_in_alignment')->values();
         $hasNonAlignedCLO = false;
         foreach ($l_outcomes as $clo) {
             if ((!OutcomeAssessment::where('l_outcome_id', $clo->l_outcome_id)->exists()) || (!OutcomeActivity::where('l_outcome_id', $clo->l_outcome_id)->exists())) {
@@ -561,6 +529,7 @@ class CourseWizardController extends Controller
         $standard_categories = DB::table('standard_categories')->get();
         // get all the programs this course belongs to
         $coursePrograms = $course->programs;
+        // ddd($coursePrograms[0]->programLearningOutcomes->where('plo_category_id', null));
         // get the PLOs for each program
         $programsLearningOutcomes = array();
 
@@ -588,11 +557,7 @@ class CourseWizardController extends Controller
         }
 
         // get standards outcome map
-        $standardsOutcomeMap = Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')
-                                ->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
-                                ->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')
-                                ->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')
-                                ->where('learning_outcomes.course_id','=',$course_id)->get();
+        $standardsOutcomeMap = StandardsOutcomeMap::where('course_id', $course_id)->get();
         
         $outcomeActivities = LearningActivity::join('outcome_activities','learning_activities.l_activity_id','=','outcome_activities.l_activity_id')
                                 ->join('learning_outcomes', 'outcome_activities.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
@@ -603,6 +568,17 @@ class CourseWizardController extends Controller
                                 ->join('learning_outcomes', 'outcome_assessments.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )
                                 ->select('assessment_methods.a_method_id','assessment_methods.a_method','outcome_assessments.l_outcome_id', 'learning_outcomes.l_outcome')
                                 ->where('assessment_methods.course_id','=',$course_id)->get();
+
+        $courseStandardCategory = $course->standardCategory;
+        $courseStandardOutcomes = $courseStandardCategory->standards;
+        $courseStandardScalesCategory = $course->standardScalesCategory;
+        $courseStandardScales = $courseStandardScalesCategory->standardScales;
+                    
+        $standardOutcomeMap = array();
+        foreach ($courseStandardOutcomes as $standardOutcome) {
+                if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists())
+                    $standardOutcomeMap[$standardOutcome->standard_id][$course->course_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]))->first();
+        }
 
         $assessmentMethodsTotal = 0;
         foreach ($course->assessmentMethods as $a_method) {
@@ -621,7 +597,7 @@ class CourseWizardController extends Controller
         ->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)
         ->with('standardsOutcomeMap', $standardsOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalSubcategories', $optionalSubcategories)
         ->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
-        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO);
+        ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('l_outcomes', $l_outcomes)->with('standardOutcomeMap', $standardOutcomeMap);
     }
 
 }

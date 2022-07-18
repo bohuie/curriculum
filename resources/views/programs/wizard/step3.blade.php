@@ -22,32 +22,27 @@
                 </h3>
 
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-4 lh-lg">
-                        <ol>
-                            <li>
-                                Add required and non-required courses to this program.
-                            </li>
-                            <li>
-                                After adding the courses, each course should be mapped to the Program Learning Outcomes (PLOs) of this Program.
-                            </li>
-                            <li>
-                                Once all courses have been individually mapped to this program, visit the “Program Summary/Step 4” to see the learning outcomes map of the program.
-                            </li>
-                        </ol>
-
-                    </h6>
-                    <h6 class="card-subtitle wizard text-primary fw-bold">
+                    <div class="alert alert-primary d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
+                        <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                        <div class="ml-2">
+                            <div class="mt-2 mb-2">
+                                <li class="m-0 p-0">Add required and non-required courses to the program.</li>
+                                <li class="m-0 p-0">After adding courses to the program, map or request to map each course to the program learning outcomes (PLOs) of this program.</li>
+                                <li class="m-0 p-0">Once all courses have been mapped to this program, go to <a class="alert-link" href="{{route('programWizard.step4', $program->program_id)}}">step 4, Program Overview</a>, to see your completed program and its curriculum MAP.</li>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="card-subtitle wizard text-primary fw-bold float-right mr-3">
                         Note: Only course owners or editors can map the course to this program.
                     </h6>
-                    <ul>
+                    <ul class="mr-2">
                         <li class="my-2"><b>Button - Map Course:</b> You will see this button if you are the owner or editor of the course to complete the course to program mapping.</li>
-                        <li class="my-2"><b>Button - Ask to map course:</b> You will see this button if you are not the owner or editor of the course, so you can email the course owner to ask them to map their course to this program.</li>
                     </ul>
                     
                     <div class="row mb-2">
                         <div class="col">
-                            <button type="button" class="btn btn-primary btn-sm col-2 mt-2 float-right" data-toggle="modal" data-target="#createCourseModal" style="background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i>New Course</button>
-                            <button type="button" class="btn btn-primary btn-sm col-2 mt-2 float-right" data-toggle="modal" data-target="#addCourseModal" style="margin-right: 10px; background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i>Existing Course</button>
+                            <button type="button" class="btn btn-primary btn-md col-2 mt-2 float-right" data-toggle="modal" data-target="#createCourseModal" style="background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i>New Course</button>
+                            <button type="button" class="btn btn-primary btn-md col-3 mt-2 float-right" data-toggle="modal" data-target="#addCourseModal" style="margin-right: 10px; background-color:#002145;color:white;"><i class="bi bi-plus pr-2"></i> Course From My Dashboard</button>
                         </div>
                     </div>
 
@@ -154,17 +149,6 @@
                                                                     Map Course
                                                                 </a>
                                                             @endif
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                Ask to Map Course
-                                                            </button>
-                                                        @endif
-                                                    @endforeach
-                                                    @foreach($programCourse->viewers as $viewer)
-                                                        @if($viewer->id == $user->id && $programCourse->pivot->map_status != 1)
-                                                            <!-- Show Only If the User is not the Owner and if they haven't previously notified the instructor -->
-                                                            <button type="button" class="btn btn-outline-primary btn-sm ml-2 float-right" data-toggle="modal" data-target="#emailInstructorToMapCourse{{$programCourse->course_id}}">
-                                                                Ask to Map Course
-                                                            </button>
                                                         @endif
                                                     @endforeach
                                                 @endif
@@ -280,34 +264,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Ask to Map Course Modal -->
-                                                <div class="modal fade" id="emailInstructorToMapCourse{{$programCourse->course_id}}" tabindex="-1" role="dialog" aria-labelledby="emailInstructorToMapCourse" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Email Course Instructor to Map this Course</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                            Are you sure you want to email {{$programCourse->owners[0]->name}} the instructor of {{$programCourse->course_code . ' ' . $programCourse->course_num}} to ask them to map their course to your program?
-                                                            </div>
-                                                            <form action="{{route('courses.emailCourseInstructor', $programCourse->course_id)}}" method="POST" class="float-right ml-2">
-                                                                @csrf
-                                                                {{method_field('GET')}}
-                                                                <input type="hidden" class="form-check-input " name="program_owner_id" value={{$user->id}}>
-                                                                <input type="hidden" class="form-check-input " name="course_owner_id" value={{$programCourse->owners[0]->id}}>
-                                                                <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
-                                                                <div class="modal-footer">
-                                                                    <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
-                                                                    <button style="width:100px" type="submit" class="btn btn-primary btn-sm">Yes, Email</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </td>                                        
                                         </tr>
                                         @endforeach
@@ -355,11 +311,10 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">* </span>Course
-                                                Number</label>
+                                            <label for="course_num" class="col-md-3 col-form-label text-md-right">Course Number</label>
             
                                             <div class="col-md-8">
-                                                <input id="course_num" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30" class="form-control @error('course_num') is-invalid @enderror" name="course_num" required autofocus>
+                                                <input id="course_num" type="text" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30" class="form-control @error('course_num') is-invalid @enderror" name="course_num" autofocus>
             
                                                 @error('course_num')
                                                 <span class="invalid-feedback" role="alert">
@@ -408,6 +363,15 @@
                                             <div class="col-md-2 float-right">
                                                 <select id="course_year" class="form-control @error('course_year') is-invalid @enderror"
                                                 name="course_year" required autofocus>
+                                                    <option value="2030">2030</option>
+                                                    <option value="2029">2029</option>
+                                                    <option value="2028">2028</option>
+                                                    <option value="2027">2027</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2024">2024</option>
+                                                    <option value="2023">2023</option>
+                                                    <option value="2022" selected>2022</option>
                                                     <option value="2021">2021</option>
                                                     <option value="2020">2020</option>
                                                     <option value="2019">2019</option>
@@ -451,6 +415,7 @@
                                                     <option value="O">online</option>
                                                     <option value="I">in-person</option>
                                                     <option value="B">hybrid</option>
+                                                    <option value="M">Multi-Access</option>
 
                                                 @error('delivery_modality')
                                                 <span class="invalid-feedback" role="alert">
@@ -463,7 +428,7 @@
 
                                         <!-- Passes Information for Ministry Standards -->
                                         <div class="form-group row">
-                                            <label for="standard_category_id" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Map this course against</label>
+                                            <label for="standard_category_id" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Map This Course Against</label>
                                             <div class="col-md-8">
                                                 <select class="form-control" name="standard_category_id" id="standard_category_id" required>
                                                     <option value="" disabled selected hidden>Please Choose...</option>
@@ -498,6 +463,24 @@
                                             </small>
                                             </div>
                                         </div>
+
+                                        <div class="form-group row">
+                                            <label for="email" class="col-md-3 col-form-label text-md-right">Assign Owner For Course</label>
+                                            <div class="col-md-8">
+                                                <input id="email" name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Enter email of the owner..." autocomplete="email">
+
+                                                <small id="helpBlock" class="form-text text-muted">
+                                                    (<b>Optional</b>) This is used to give ownership of this course to another person. If you would like to be the owner of this course then leave this field blank.
+                                                </small>
+
+                                                @error('email')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
                                         <!-- Passes 'program_id', type='assigned', and 'user_id' to be used by the CourseController store method -->
                                         <input type="hidden" class="form-check-input" name="program_id" value={{$program->program_id}}>
                                         <input type="hidden" class="form-check-input" name="type" value="assigned">
@@ -515,7 +498,7 @@
                     </div>
                     <!-- End Create Course Modal -->
 
-                    <!-- Add existing course Modal ( Drag and drop effect)-->
+                    <!-- Add existing course Modal -->
                     <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="createCourseModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document" style="width:1250px;">
                             <div class="modal-content">

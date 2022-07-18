@@ -23,7 +23,7 @@
                             <div class="modal-body">
 
                                 <div class="form-group row">
-                                    <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                    <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span> Course Code</label>
                                     <div class="col-md-8">
                                         <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$syllabus->course_code}}" name="course_code" required autofocus>
                                         @error('course_code')
@@ -38,9 +38,9 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                    <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span> Course Number</label>
                                     <div class="col-md-8">
-                                        <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$syllabus->course_num}}" required autofocus>
+                                        <input id="course_num" type="number" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$syllabus->course_num}}" required autofocus>
                                         @error('course_num')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -50,7 +50,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                    <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span> Course Title</label>
                                     <div class="col-md-8">
                                         <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$syllabus->course_title}} - Copy" required autofocus>
                                         @error('course_title')
@@ -143,10 +143,12 @@
             </div>
 
             <div class="card-body">
-                <h6 class="card-subtitle mb-4 lh-lg fs-6 ml-3 mt-2 mr-2">
-                    To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank"href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
-                </h6>
-                <hr class="w-auto text-secondary mb-4 ml-3 mr-3">
+                <div class="alert alert-primary d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
+                    <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                    <div>
+                        To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
+                    </div>
+                </div>               
                 
                 <form class="courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
                     @csrf
@@ -191,47 +193,45 @@
                         <div class="row mb-3">
                             <div class="col-3 ">
                                 <label for="courseCode"><span class="requiredField">* </span>Course Code</label>
-                                <input id = "courseCode" name = "courseCode" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->course_code : '' }}">
+                                <input id = "courseCode" pattern="[A-Za-z]+" minlength="1" name = "courseCode" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->course_code : '' }}">
                                 <div class="invalid-tooltip">
                                     Please enter the course code.
                                 </div>
                             </div>
                             <div class="col-2">
                                 <label for="courseNumber"><span class="requiredField">* </span>Course Number</label>
-                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="text" placeholder="E.g. 310" required value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
+                                <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
                                 <div class="invalid-tooltip">
                                     Please enter the course number.
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <label for="deliveryModality"><span class="requiredField">*</span> Mode of Delivery</label>
+                                <select id="deliveryModality" class="form-select" name="deliveryModality" required>
+                                    <option value="O" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'O') ? 'selected=true' : '') : ''}}>Online</option>
+                                    <option value="I" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'I') ? 'selected=true' : '') : ''}}>In-person</option>
+                                    <option value="B" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'B') ? 'selected=true' : '') : ''}}>Hybrid</option>
+                                    <option value="M" {{!empty($syllabus) ? (($syllabus->delivery_modality == 'M') ? 'selected=true' : '') : ''}}>Multi-Access</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please enter the course mode of delivery.
                                 </div>
                             </div>
                             <div id="courseCredit" class="col-2"></div>
                         </div>
                         <!-- Course Instructor, Course Semester, Course Year -->
                         <div class="row mb-3">
-                            <div class="col-5">
+                            <div class="col-4">
                                 <label for="courseInstructor"><span class="requiredField">* </span>Course Instructor</label>
                                 <input id = "courseInstructor" name = "courseInstructor" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required value="{{ !empty($syllabus) ? $syllabus->course_instructor : ''}}">
                                 <div class="invalid-tooltip">
                                     Please enter the course instructor.
                                 </div>
                             </div>
-                            <div class="col-3">
-                                <label for="courseSemester" class="form-label"><span class="requiredField">* </span>Course Term</label>
-                                <select id="courseSemester" class="form-select" name="courseSemester" required>
-                                    <option disabled selected value=""> -- Year -- </option>
-                                    <option value="W1" {{!empty($syllabus) ? (($syllabus->course_term == 'W1') ? 'selected=true' : '') : ''}}>Winter Term 1</option>
-                                    <option value="W2" {{!empty($syllabus) ? (($syllabus->course_term == 'W2') ? 'selected=true' : '') : ''}}>Winter Term 2</option>
-                                    <option value="S1" {{!empty($syllabus) ? (($syllabus->course_term == 'S1') ? 'selected=true' : '') : ''}}>Summer Term 1</option>
-                                    <option value="S2" {{!empty($syllabus) ? (($syllabus->course_term == 'S2') ? 'selected=true' : '') : ''}}>Summer Term 2</option>
-                                    <option value="O" {{!empty($syllabus) ? (($syllabus->course_term == 'O') ? 'selected=true' : '') : ''}}>Other</option>
-                                </select>
-                                <div class="invalid-tooltip">
-                                    Please enter the course semester.
-                                </div>
-                            </div>
                             <div class="col-2">
                                 <label for="courseYear"><span class="requiredField">* </span>Course Year</label>
                                 <select id="courseYear" class="form-select" name="courseYear" required>
-                                    <option disabled selected value=""> -- Term -- </option>
+                                    <option disabled selected value="">  -- Year -- </option>
                                     <option value="2021" {{!empty($syllabus) ? (($syllabus->course_year == '2021') ? 'selected=true' : '') : ''}}>2021</option>
                                     <option value="2022" {{!empty($syllabus) ? (($syllabus->course_year == '2022') ? 'selected=true' : '') : ''}}>2022</option>
                                     <option value="2023" {{!empty($syllabus) ? (($syllabus->course_year == '2023') ? 'selected=true' : '') : ''}}>2023</option>
@@ -247,6 +247,30 @@
                                     Please enter the course year.
                                 </div>
                             </div>
+
+                            <div class="col-3">
+                                <label for="courseSemester" class="form-label"><span class="requiredField">* </span>Course Term</label>
+                                <select id="courseSemester" class="form-select" name="courseSemester" required>
+                                    <option disabled selected value=""> -- Term --</option>
+                                    <option value="W1" {{!empty($syllabus) ? (($syllabus->course_term == 'W1') ? 'selected=true' : '') : ''}}>Winter Term 1</option>
+                                    <option value="W2" {{!empty($syllabus) ? (($syllabus->course_term == 'W2') ? 'selected=true' : '') : ''}}>Winter Term 2</option>
+                                    <option value="S1" {{!empty($syllabus) ? (($syllabus->course_term == 'S1') ? 'selected=true' : '') : ''}}>Summer Term 1</option>
+                                    <option value="S2" {{!empty($syllabus) ? (($syllabus->course_term == 'S2') ? 'selected=true' : '') : ''}}>Summer Term 2</option>
+                                    <option value="O" {{!empty($syllabus) ? (($syllabus->course_term != 'W1' && $syllabus->course_term != 'W2' && $syllabus->course_term != 'S1' && $syllabus->course_term != 'S2') ? 'selected=true' : '') : ''}}>Other</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please enter the course term.
+                                </div>
+                            </div>
+                            <div id="courseSemesterOther" class="col-3">
+                                @if (!empty($syllabus))
+                                    @if ($syllabus->course_term != 'W1' && $syllabus->course_term != 'W2' && $syllabus->course_term != 'S1' && $syllabus->course_term != 'S2')
+                                        <label class="form-label" for="courseSemesterOther">Other</label>
+                                        <input name="courseSemesterOther" type="text" class="form-control" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="49" value="{{$syllabus->course_term}}">
+                                    @endif
+                                @endif
+                            </div>
+
                         </div>
                         <!-- Course Location, Office Location -->
                         <div class="row mb-3">
@@ -388,37 +412,42 @@
                                 </button>                                  
                             </div>
                             <div class="col-auto">
-                                <button title="Add Column Left" type="button" class="addCol btn btn-secondary fs-5" data-side="left">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
-                                </button>
-                                <button title="Add Column Right" type="button" class="addCol btn btn-secondary fs-5" data-side="right">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line"></span>
-                                </button>
+                                <span title="Column Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="You have reached the maximum number of columns allowed">
+                                    <button title="Add Column Left" type="button" class="addCol btn btn-secondary fs-5" data-side="left">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
+                                    </button>
+
+                                    <button title="Add Column Right" type="button" class="addCol btn btn-secondary fs-5" data-side="right">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line"></span>
+                                    </button>
+                                </span>
+
                                 <button id="delCols" title="Delete Column(s)" type="button" class="btn btn-danger fs-5" >
                                     <i class="bi bi-trash-fill pr-1"></i>
                                     <span class="iconify-inline" data-icon="fluent:column-triple-20-filled"></span>                                        
                                 </button>                                
                             </div>
                             <div class="col-auto">
-                                <button title="Add Row Top" type="button" class="addRow btn btn-secondary fs-5" data-side="top">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
-                                </button>
-                                <button title="Add Row Bottom" type="button" class="addRow btn btn-secondary fs-5" data-side="bottom">
-                                    <i class="bi bi-plus pr-1"></i>
-                                    <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
-                                </button>
+                                <span title="Row Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="You have reached the maximum number of rows allowed">
+                                    <button title="Add Row Top" type="button" class="addRow btn btn-secondary fs-5" data-side="top">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
+                                    </button>                                
+                                    <button title="Add Row Bottom" type="button" class="addRow btn btn-secondary fs-5" data-side="bottom">
+                                        <i class="bi bi-plus pr-1"></i>
+                                        <span class="iconify-inline" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
+                                    </button>
+                                </span>
                             </div>
                         </div>
-                        <div>
 
                         <!-- div where course schedule table is created from scratch  -->
                         <div id="courseScheduleTblDiv">
                             @if (!empty($syllabus))
                                 @if ($courseScheduleTblRowsCount > 0)
-                                <table id="courseScheduleTbl" class="table align-middle reorder-rows-tbl">
+                                <table id="courseScheduleTbl" class="table table-light align-middle reorder-tbl-rows">
                                     <thead>
                                         <tr class="table-primary">
                                             <th></th>
@@ -434,7 +463,7 @@
                                         @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
                                             @if ($rowIndex != 0)
                                                 <tr>
-                                                    <td class="align-middle fs-5">∴</td>
+                                                    <td class="align-middle fs-5">↕</td>
                                                     @foreach ($row as $colIndex => $data)
                                                     <td>
                                                         <textarea name="courseScheduleTblRows[]" form="sylabusGenerator" type="text" class="form-control" spellcheck="true" placeholder="Data here ...">{{$data->val}}</textarea>
@@ -478,7 +507,7 @@
                         <!-- Course Passing Criteria -->
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="passingCriteria">Passing criteria</label>
+                                <label for="passingCriteria">Passing/Grading criteria</label>
                                 <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "passingCriteria" name = "passingCriteria" class ="form-control" type="date" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
                             </div>
                         </div>
@@ -505,7 +534,7 @@
                         <!-- Course Optional Resources -->
                         <div class="row mb-3 mt-4" >
                             <div class="col">
-                                <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
+                                <label class="fs-5 mb-3" for="optionalSyllabus"><b>Optional Statements: </b>The below are suggested syllabus sections to communicate various resources on campus.</label>
                                 <div class="optionalSyllabus form-check">
                                     <ul id="optionalSyllabus" class="text-start" style="list-style-type:none;">
                                     </ul>
@@ -518,12 +547,24 @@
 
             <div class="card-footer p-4">
                 <div style="display:flex; flex-flow:row nowrap; justify-content:flex-end;">
-                    <button type="submit" class="btn btn-primary col-2 btn-sm m-2" form="sylabusGenerator">Save</button>
-                    <button type="button" style="white-space:normal; word-wrap:break-word;" class="btn btn-primary col-2 btn-sm m-2 dropdown-toggle" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false" form="sylabusGenerator">Save and Download</button>
-                    <ul class="dropdown-menu" aria-labelledby="downloadBtn">
-                        <li><button type="submit" name="download" value="pdf" form="sylabusGenerator" style="all: unset"><i class="bi-file-pdf-fill text-danger"></i>PDF</button></li>
-                        <li><button type="submit" name="download" value="word" form="sylabusGenerator" style="all: unset"><i class="bi-file-earmark-word-fill text-primary"></i>Word</button></li>
-                    </ul>
+                    <button type="submit" class="btn btn-primary col-3 m-2" form="sylabusGenerator">Save</button>
+                    <div class="dropdown col-3">
+                        <button form="sylabusGenerator" class="btn btn-primary dropdown-toggle m-2 col" type="button" id="downloadBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                            Save & Download
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <li>
+                                <button type="submit" name="download" value="pdf" form="sylabusGenerator" class="dropdown-item" type="button">
+                                    <i class="bi-file-pdf-fill text-danger"></i> PDF
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" name="download" value="word" form="sylabusGenerator" class="dropdown-item" type="button">
+                                    <i class="bi-file-earmark-word-fill text-primary"></i> Word
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -621,6 +662,29 @@
 
 <script type="application/javascript">
     $(document).ready(function () {
+
+        $(function () {
+            $('[data-bs-toggle="popover"]').popover()
+        })
+
+        // event listener on select term dropdown
+        $('#courseSemester').on('change', function(event) { 
+            // insert a text input if user selects other
+            if ($('#courseSemester').val() == 'O') {
+                $('#courseSemesterOther').html(`
+                    <label class="form-label" for="courseSemesterOther">Other</label>
+                    <input class="form-control" type="text" name="courseSemesterOther" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="49">
+                    <div class="invalid-tooltip">
+                        Please specify the course term.
+                    </div>
+                `);
+            } else {
+                // remove html for other course term input
+                $('#courseSemesterOther').html('');
+            }
+        });
+
+
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 
             // prevent default submit procedure
@@ -638,13 +702,13 @@
                 // create <table> element
                 var tbl = document.createElement('table');
                 tbl.setAttribute('id', 'courseScheduleTbl');
-                tbl.setAttribute('class', 'table align-middle');
+                tbl.setAttribute('class', 'table align-middle reorder-tbl-rows table-light');
                 // create <thead> element
                 var tblHead = document.createElement('thead');
                 // create <tbody> element
                 var tblBody = document.createElement('tbody');
                 // iterate over rows 
-                for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
+                for (let rowIndex = 0; rowIndex < parseInt(numRows) + 1; rowIndex++) {
                     // create <row> element
                     var row = document.createElement('tr');
                     if (rowIndex === 0) row.setAttribute('class', 'table-primary');
@@ -681,7 +745,7 @@
                             if (colIndex == 0) {
                                 cell.setAttribute('class', 'align-middle fs-5 draggable');
                                 cell.addEventListener('mousedown', mouseDownHandler);
-                                cell.innerHTML = "∴";
+                                cell.innerHTML = "↕";
                             } else {
                                 // set input attributes for data cells
                                 inputCell.setAttribute('placeholder', 'Data here ...');                        
@@ -698,7 +762,7 @@
                         // create <td> element for row actions
                         var actionsCell = document.createElement('td');
                         // center row actions
-                        actionsCell.setAttribute('style', 'vertical-align:center;text-align:center');
+                        actionsCell.setAttribute('class', 'align-middle');
                         // create delete action icon
                         var delAction = document.createElement('i');
                         // style delete action icon
@@ -812,6 +876,12 @@
                                 break;
                         }
                     });
+                } else {
+                    // 
+                    var popover = bootstrap.Popover.getInstance(event.currentTarget.parentNode);
+                    popover.show();
+                    // hide popover after 3 seconds
+                    setTimeout(function() { popover.hide(); }, 3000);
                 }
             }
         });
@@ -934,7 +1004,7 @@
                                 if (colIndex == 0) {
                                     cell.setAttribute('class', 'align-middle fs-5 draggable');
                                     cell.addEventListener('mousedown', mouseDownHandler);
-                                    cell.innerHTML = "∴";
+                                    cell.innerHTML = "↕";
                                 } else { 
                                     // put inputCell in <td>
                                     cell.appendChild(inputCell.cloneNode());
@@ -968,7 +1038,7 @@
                                 if (colIndex == 0) {
                                     cell.setAttribute('class', 'align-middle fs-5 draggable');
                                     cell.addEventListener('mousedown', mouseDownHandler);
-                                    cell.innerHTML = "∴";
+                                    cell.innerHTML = "↕";
                                 } else { 
                                     // put inputCell in <td>
                                     cell.appendChild(inputCell.cloneNode());
@@ -993,6 +1063,11 @@
                         default:
                             let row = courseScheduleTbl.insertRow();                
                     }
+                } else {
+                    var popover = bootstrap.Popover.getInstance(event.currentTarget.parentNode);
+                    popover.show();
+                    // hide popover after 3 seconds
+                    setTimeout(function() { popover.hide(); }, 3000);
                 }
             }
         });
@@ -1120,6 +1195,7 @@
             var c_title_input = $('#courseTitle');
             var c_code_input = $('#courseCode');
             var c_num_input = $('#courseNumber');
+            var c_del_input = $('#deliveryModality');
             var c_year_input = $('#courseYear');
             var c_term_input = $('#courseSemester');
             var a_method_input = $('#learningAssessments');
@@ -1130,6 +1206,7 @@
             var c_title = decode_data['c_title'];
             var c_code = decode_data['c_code'];
             var c_num = decode_data['c_num'];
+            var c_del = decode_data['c_del'];
             var c_year = decode_data['c_year'];
             var c_term = decode_data['c_term'];
             var a_methods = decode_data['a_methods'];
@@ -1152,6 +1229,7 @@
             c_title_input.val(c_title);
             c_code_input.val(c_code);
             c_num_input.val(c_num);
+            c_del_input.val(c_del);
 
             c_year_input.val(c_year);
             c_term_input.val(c_term);

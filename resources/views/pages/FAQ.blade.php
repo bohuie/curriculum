@@ -19,7 +19,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader1">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion1" aria-expanded="false" aria-controls="collapseFAQAccordion1">
-                            Can I use this mapping website if I don’t have all course details?                        
+                            <h5>Can I use this mapping website if I don’t have all course details?</h5>                        
                         </button>
                     </h2>
                                                         
@@ -37,7 +37,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader2">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion2" aria-expanded="false" aria-controls="collapseFAQAccordion2">
-                            Can I view how different courses map to different program learning outcomes?                        
+                            <h5>Can I <b>view</b> how different courses map to different program learning outcomes?</h5>                        
                         </button>
                     </h2>
                                                         
@@ -55,7 +55,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader3">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion3" aria-expanded="false" aria-controls="collapseFAQAccordion3">
-                            How do I retrieve a course or program that I deleted in the past?                         
+                            <h5>Can I retrieve a course or program that I <b>deleted</b> in the past?</h5>                         
                         </button>
                     </h2>
                                                         
@@ -73,35 +73,38 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader4">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion4" aria-expanded="false" aria-controls="collapseFAQAccordion4">
-                            Can somebody help me use this tool?                
+                            <h5>I want to map a course or program, or generate a syllabus for my course. Can somebody <b>help</b> me use this tool?</h5>                
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
                     <div id="collapseFAQAccordion4" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader4" data-bs-parent="FAQAccordion4">
                         <div class="accordion-body lh-lg">
-                            <p>Yes, you may request support for course and program mapping from the Centre for Teaching and Learning or the Provost Office.</p>
+                            <p>
+                                Yes, you may request support for course and program mapping from the Centre for Teaching and Learning by emailing ctl.helpdesk@ubc.ca. If you are in UBC's Vancouver campus, you may contact Carrie Hunter (carrie.hunter@ubc.ca) at the Centre for Teaching, Learning and Technology.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div> 
+
 
             <div class="accordion" id="FAQAccordion5">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader5">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion5" aria-expanded="false" aria-controls="collapseFAQAccordion5">
-                            How do I generate a syllabus?                
+                            <h5>How do I <b>generate a syllabus</b>?</h5>                
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
                     <div id="collapseFAQAccordion5" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader5" data-bs-parent="FAQAccordion5">
                         <div class="accordion-body lh-lg">
-                            <p>The <a href="{{ url('/') }}" target="_BLANK">UBC Curriculum MAP</a> Syllabus Generator aims to assist faculty in preparing their syllabi. The generator follows the policies, guidelines and templates provided by the <a href="https://senate.ubc.ca/okanagan/curriculum/forms" target="_BLANK">UBC Okanagan</a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK">UBC Vancouver senates</a>.</p>
+                            <p>The <a href="{{ url('/') }}" target="_BLANK" rel="noopener noreferrer">UBC Curriculum MAP</a> Syllabus Generator aims to assist faculty in preparing their syllabi. The generator follows the policies, guidelines and templates provided by the <a href="https://senate.ubc.ca/okanagan/curriculum/forms" target="_BLANK" rel="noopener noreferrer">UBC Okanagan</a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">UBC Vancouver senates</a>.</p>
                             <p class="fw-bold">How do I use the Curriculum MAP Syllabus Generator?</p>
                             <ol>
-                                <li>Create a Curriculum MAP account by <a href="{{ route('register') }}" target="_BLANK">registering</a> with the site. After you register or if you already have an account, sign in to your Curriculum MAP account using the <a href="{{ route('login') }}" target="_BLANK">login</a> page.</li>
+                                <li>Create a Curriculum MAP account by <a href="{{ route('register') }}" target="_BLANK" rel="noopener noreferrer">registering</a> with the site. After you register or if you already have an account, sign in to your Curriculum MAP account using the <a href="{{ route('login') }}" target="_BLANK" rel="noopener noreferrer">login</a> page.</li>
                                 <li>Navigate to the syllabus generator by clicking on the `Syllabus Generator` tab on the navigation bar in the top right.</li>
                                 <br>
                                 <p style="font-size:small" ><b>Note</b>: The “import an existing course” button on the top of the syllabus generator allows users to import course information that has been inputted in the site already, for curriculum mapping purposes. These courses appear in the “my courses” section of the dashboard. Select the course you would like to import. </p>
@@ -109,13 +112,13 @@
                                 <li>Fill in the required course information marked with a <span class="requiredField">*</span>.</li>
                                 <li>Fill in all the other fields that are relevant to your course.
                                     <ol type="a">
-                                        <li>For Vancouver syllabi, some fields are required by <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK">Vancouver Senate policy V-130</a>. These fields are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
+                                        <li>For Vancouver syllabi, some fields are required by <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">Vancouver Senate policy V-130</a>. These fields are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
                             </ol>
                                 </li>
                                 <li>At the bottom of the page, select optional but recommended campus-specific resources you wish to include in your syllabus.</li>
                                 <li>To download your syllabus as a Word document, click the `Save and Download` button at the bottom of the page. Otherwise, click the `Save` button to save your progress/changes. This will not generate a Word document.</li>
                                 <li>Review the design and content of your generated syllabus Word document and update it accordingly.</li>
-                                <li>You can find your saved syllabi on your <a href="{{ route('home')}}" target="_BLANK">Curriculum MAP Dashboard</a> (Upon log in).  </li>
+                                <li>You can find your saved syllabi on your <a href="{{ route('home')}}" target="_BLANK" rel="noopener noreferrer">Curriculum MAP Dashboard</a> (Upon log in).  </li>
                                 <li>From your dashboard you can also share your syllabus with other users. To share your syllabus with others:
                                     <ol type="a">
                                         <li>Click the <i class="bi bi-person-plus-fill pr-1 pl-1"></i> button for your syllabus in the syllabus section of your dashboard.</li>
@@ -123,20 +126,18 @@
                                         <li>Click '<i class="bi bi-plus"></i> Collaborator' and 'Save Changes'</li>
                                         <br>
                                     </ol>
-                                    <p style="font-size:small"><b>Note</b>: Your collaborator must have registered on this site before you can add them</p>
                                 </li>
                             </ol>
                         </div>
                     </div>
                 </div>
             </div> 
-
             <div class="accordion" id="FAQAccordion6">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader6">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion6" aria-expanded="false" aria-controls="collapseFAQAccordion6">
-                            How do I create a program?                
+                            <h5>How do I <b>create</b> a program?</h5>                
                         </button>
                     </h2>
                                                         
@@ -178,7 +179,7 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader7">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion7" aria-expanded="false" aria-controls="collapseFAQAccordion7">
-                            How do I duplicate a course, program, or syllabus?                
+                            <h5>How do I <b>duplicate</b> a course, program, or syllabus?</h5>                
                         </button>
                     </h2>
                                                         
@@ -197,6 +198,118 @@
                 </div>
             </div>
 
+            <div class="accordion" id="FAQAccordion8">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader8">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion8" aria-expanded="false" aria-controls="collapseFAQAccordion8">
+                            <h5>How do I add <b>collaborators</b> to my course, program, or syllabus?</h5>         
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion8" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader8" data-bs-parent="FAQAccordion8">
+                        <div class="accordion-body lh-lg">
+                            <p>The collaborators feature allows an owner of a course, program or syllabus to share their work with other users. The owner can select from two types of collaborators, viewers and editors. A Viewer is restricted to only being able to view the summary information, whereas an editor can make changes and create new elements, but cannot add collaborators or delete the Course, Program, or Syllabus. An example of the collaborators feature would be to add a teaching assistant to your course or syllabus as a viewer, so they can access course information.</p>
+                            <p style="font-size:small" ><b>Note</b>: You must own the course, program, or syllabus in order to add collaborators.</p>
+                            <p class="fw-bold">From the dashboard</p>
+                            <ol>
+                                <li>Click on the <div class="collabIcon btn bg-transparent position-relative pr-2 pl-2" data-bs-placement="right" style="cursor: default;"><div><i class="bi bi-person-plus-fill"></i><span class="position-absolute top-0 start-85 translate-middle badge rounded-pill badge badge-dark">?</span></div></div> button under actions.</li>
+                                <li>Enter the collaborators email and select either viewer or editor.</li>
+                                <ol type="a">
+                                    <li><b>Viewers</b>: can view an overview of your program but cannot edit or delete your program or add/remove collaborators.</li>
+                                    <li><b>Editors</b>: have access to edit and view your program but cannot delete your program or add/remove collaborators.</li>
+                                </ol>
+                                <li>Click the <div id="exampleBtn" class="btn btn-primary" style="cursor: default;"><i class="bi bi-plus"></i> Collaborator</div> button, you will then see the collaborator appear in the table below.</li>
+                                <li>Finally click the <div class="btn btn-success m-1" style="cursor: default;">Save Changes</div> button to add your collaborators.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" id="FAQAccordion9">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader9">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion9" aria-expanded="false" aria-controls="collapseFAQAccordion4">
+                            <h5>I ran into an error message or bug. What do I do?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion9" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader9" data-bs-parent="FAQAccordion9">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                                Please let us know right away so we can fix it and support you by emailing  ctl.helpdesk@ubc.ca                            
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="accordion" id="FAQAccordion10">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader10">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion10" aria-expanded="false" aria-controls="collapseFAQAccordion10">
+                            <h5>Can non-UBC users create an account and use this web application?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion10" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader10" data-bs-parent="FAQAccordion10">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            While this tool was created to serve the UBC community, anyone can register and use the site. However, since information such as BC’s Ministry-related standards and UBC strategic plans are presented, not all users may benefit from every feature.                            
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="accordion" id="FAQAccordion11">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader11">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion11" aria-expanded="false" aria-controls="collapseFAQAccordion11">
+                            <h5>Where is my information stored?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion11" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader11" data-bs-parent="FAQAccordion11">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            The information gathered on the UBC Curriculum MAP website is collected under the authority of section 26(e) of the British Columbia <a href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96165_02">Freedom of Information and Protection of Privacy Act</a>.
+                            <br>
+                            <br>
+                            Information entered by website users will only be used for the intended purposes of allowing instructors and departments to make informed decisions about course/program design and enhance the overall student learning experience. Website users retain authorship of information entered, and as such have ownership and responsibility for content. Specific permission for access to content may be sought for the purpose of evaluating and improving the UBC Curriculum MAP tool. Any data entered into the UBC Curriculum MAP website is stored on secure UBC Servers.
+                            <br>
+                            <br>
+                            UBC reserves the right to amend the website’s terms of use at any time and will notify registered users of changes. Use of this website is subject to UBC’s Information Systems Policy.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="accordion" id="FAQAccordion12">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader12">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion12" aria-expanded="false" aria-controls="collapseFAQAccordion12">
+                            <h5>Can I collaborate with someone outside my organization?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion12" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader12" data-bs-parent="FAQAccordion12">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            Yes, the “collaboration” feature allows all users to collaborate with anybody via a valid email address.                              
+                        </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
         </div>
     </div>    
 </div>

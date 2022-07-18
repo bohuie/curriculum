@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => env('APP_ENV'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +52,13 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL'),
+
+    'login_url' => env('LOGIN_URL'),
+
+    'login_url' => env('LOGIN_URL'),
+
+    'register_url' => env('REGI_URL'),
 
     'asset_url' => env('ASSET_URL', null),
 

@@ -44,7 +44,9 @@
                 </tbody>
             </table>
             <p><b>Campus:</b> @if ($syllabus->campus == 'V') Vancouver @else Okanagan @endif</p>
-            <p><b>Instructor:</b> {{$syllabus->course_instructor}}</p>
+            <p><b>Faculty:</b> {{$syllabus->faculty}}</p>
+            <p><b>Department:</b> {{$syllabus->department}}</p>
+            <p><b>Instructor(s):</b> {{$syllabusInstructors}}</p>
             <p><b>Office Location
                 <span>
                     <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['officeLocation']}}"></i>
@@ -53,6 +55,19 @@
                 {{$vancouverSyllabus->office_location}}
             </p>
             <p><b>Duration:</b> {{$syllabus->course_term}} {{$syllabus->course_year}}</p>
+            @switch($syllabus->delivery_modality)
+                @case('M')
+                    <p><b>Delivery Modality:</b> Multi-Access</p>
+                    @break
+                @case('I')
+                    <p><b>Delivery Modality:</b> In-Person</p>
+                    @break
+                @case('B')
+                    <p><b>Delivery Modality:</b> Hybrid</p>
+                    @break
+                @default
+                    <p><b>Delivery Modality:</b> Online</p>
+            @endswitch
             <p><b>Class Location:</b> {{$syllabus->course_location}}</p>
             <p><b>Class Days:</b> {{$syllabus->class_meeting_days}}</p>
             <p><b>Class Hours:</b> {{$syllabus->class_start_time}} - {{$syllabus->class_end_time}}</p>
@@ -77,7 +92,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->course_prereqs}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Course prerequisite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->course_prereqs) as $index => $coursePreReq)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$coursePreReq}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!-- course corequisites -->
         <div class="mb-4">
@@ -92,7 +122,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->course_coreqs}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Course corequisite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->course_coreqs) as $index => $courseCoReq)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$courseCoReq}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!-- course contacts -->
         <div class="mb-4">
@@ -107,7 +152,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->contacts}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->contacts) as $index => $contact)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$contact}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!-- course instructor biographical statement -->
         <div class="mb-4">
@@ -133,7 +193,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->other_instructional_staff}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Other Instructional Staff</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->other_instructional_staff) as $index => $staff)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$staff}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!-- course structure -->
         <div class="mb-4">
@@ -170,30 +245,32 @@
 
                 @if (!empty($syllabus))
                     @if ($myCourseScheduleTbl['rows']->count() > 0)
-                    <table id="courseScheduleTbl" class="table table-responsive">
-                        <tbody>
-                            @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
-                                <!-- table header -->
-                                @if ($rowIndex == 0)
-                                    <tr class="table-primary fw-bold">
-                                        @foreach ($row as $headerIndex => $header)
-                                        <td>
-                                            {{$header->val}}
-                                        </td>
-                                        @endforeach
-                                    </tr>
-                                @else
-                                    <tr>
-                                        @foreach ($row as $colIndex => $data)
-                                        <td>
-                                            {{$data->val}}
-                                        </td>
-                                        @endforeach
-                                    </tr>
-                                @endif
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div>
+                        <table id="courseScheduleTbl" class="table \" style="width:100%">
+                            <tbody>
+                                @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
+                                    <!-- table header -->
+                                    @if ($rowIndex == 0)
+                                        <tr class="table-primary fw-bold">
+                                            @foreach ($row as $headerIndex => $header)
+                                            <td>
+                                                {{$header->val}}
+                                            </td>
+                                            @endforeach
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            @foreach ($row as $colIndex => $data)
+                                            <td>
+                                                {{$data->val}}
+                                            </td>
+                                            @endforeach
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                     @endif
                 @endif
             </div>
@@ -212,7 +289,22 @@
                 </h6>
             </div>
             <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
-            <p>{{$syllabus->learning_outcomes}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Learning Outcome</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_outcomes) as $index => $learningOutcome)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningOutcome}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!--  learning activities -->
         <div class="mb-4">
@@ -227,8 +319,23 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_activities}}</p>
-        </div>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Teaching and Learning Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_activities) as $index => $learningActivity)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningActivity}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>  
+        </div>                                  
         <!--  learning materials -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
@@ -242,7 +349,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_materials}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Learning Material</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_materials) as $index => $learningMaterials)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningMaterials}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!--  assessments of learning -->
         <div class="mb-4">
@@ -257,12 +379,59 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learningAssessments}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Learning Assessment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_assessments) as $index => $learningAssessments)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningAssessments}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
+        <!--  course alignment table -->
+        @if ($courseAlignment)
+            <div class="mb-4">
+                <div class="vSyllabusHeader">
+                    <h6>
+                        COURSE ALIGNMENT
+                    </h6>
+                </div>
+                <table class="table table-light table-bordered" >
+                    <thead>
+                        <tr class="table-primary">
+                            <th class="w-50">Course Learning Outcome</th>
+                            <th>Student Assessment Method</th>
+                            <th>Teaching and Learning Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($courseAlignment as $clo)
+                            <tr>
+                                <td scope="row">
+                                    <b>{{$clo->clo_shortphrase}}</b><br>
+                                    {{$clo->l_outcome}}
+                                </td>
+                                <td>{{$clo->assessmentMethods->implode('a_method', ', ')}}</td>
+                                <td>{{$clo->learningActivities->implode('l_activity', ', ')}}</td>
+                            </tr>   
+                        @endforeach                 
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
         <!--  passing criteria -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
-                <h6>PASSING CRITERIA</h6>
+                <h6>PASSING/GRADING CRITERIA</h6>
             </div>
             <p>{{$syllabus->passing_criteria}}</p>
         </div>
@@ -302,7 +471,7 @@
             </div>
             <p>UBC provides resources to support student learning and to maintain healthy lifestyles but recognizes that sometimes crises arise and so there are additional resources to access including those for survivors of sexual violence. UBC values respect for the person and ideas of all members of the academic community. Harassment and discrimination are not tolerated nor is suppression of academic freedom. UBC provides appropriate accommodation for students with disabilities and for religious observances. UBC values academic honesty and students are expected to acknowledge the ideas generated by others and to uphold the highest academic standards in all of their actions.
                 
-            Details of the policies and how to access support are available on the <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_blank">UBC Senate website</a>.</p>
+            Details of the policies and how to access support are available on the <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_blank" rel="noopener noreferrer">UBC Senate website</a>.</p>
         </div>
         <!-- other course policies -->
         <div class="mb-4">
@@ -344,11 +513,19 @@
                         @break
 
                         @case('disability')
-                        <p><a href="https://students.ubc.ca/about-student-services/centre-for-accessibility" target="_blank">Centre for Accessibility</a></p>
+                        <p><a href="https://students.ubc.ca/about-student-services/centre-for-accessibility" target="_blank" rel="noopener noreferrer">Centre for Accessibility</a></p>
                         @break
 
                         @case('copyright')
                         <p>All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</p>
+                        @break
+
+                        @case('concession')
+                        <p>In accordance with <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">UBC Policy V135</a>, academic concessions are generally granted when students are facing an unexpected situation or circumstance that prevents them from completing graded work or exams. Students may request an academic concession for unanticipated changes in personal responsibilities that create a conflict, medical circumstances, or compassionate grounds.
+                        <br>
+                        <br>
+                        In accordance with <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">UBC Policy V135</a>, Section 10, students’ requests for academic concession should be made as early as reasonably possible, in writing to their instructor or academic advising office or equivalent in accordance with the procedures for <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">Policy V135</a> and those set out by the student’s faculty/school. The requests should clearly state the grounds for the concession and the anticipated duration of the conflict and or hindrance to academic work. In some situations, this self-declaration is sufficient, but the submission of supporting documentation may be required along with, or following, the self-declaration.
+                        </p>
                         @break
 
                     @endswitch
@@ -359,10 +536,28 @@
     </div>
     <!-- footer -->
     <div class="card-footer p-4">
-        <form method="POST" action="{{ action('SyllabusController@syllabusToWordDoc', $syllabus->id) }}">
-            @csrf        
-            <button type="submit" class="btn btn-primary col-2 btn-sm m-2 float-right">Download <i class="bi bi-download"></i></button>
-        </form>
+            <button class="btn btn-primary dropdown-toggle m-2 col-4 float-right" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Download
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li>
+                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'pdf']) }}">
+                    @csrf        
+                        <button type="submit" name="download" value="pdf" class="dropdown-item" type="button">
+                            <i class="bi-file-pdf-fill text-danger"></i> PDF
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'word']) }}">
+                    @csrf        
+                        <button type="submit" name="download" value="word" class="dropdown-item" type="button">
+                            <i class="bi-file-earmark-word-fill text-primary"></i> Word
+                        </button>
+                    </form>
+                </li>
+            </ul>
+            
     </div>
 </div>
 

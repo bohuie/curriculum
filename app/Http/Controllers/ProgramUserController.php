@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifyNewProgramUserMail;
 use App\Models\ProgramUser;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Mail\NotifyProgramAdminMail;
+use App\Mail\NotifyProgramOwnerMail;
 use App\Models\Program;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
+use SebastianBergmann\Environment\Console;
 
 class ProgramUserController extends Controller
 {
@@ -28,6 +32,7 @@ class ProgramUserController extends Controller
     public function index()
     {
         //
+        return redirect()->back();
     }
 
     /**
@@ -104,15 +109,81 @@ class ProgramUserController extends Controller
                                 break;
                             }
                             if($programUser->save()){
-                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $program->department, $currentUser->name));                            
+                                // update courses 'updated_at' field
+                                $program = Program::find($request->input('program_id'));
+                                $program->touch();
+
+                                // get users name for last_modified_user
+                                $currUser = User::find(Auth::id());
+                                $program->last_modified_user = $currUser->name;
+                                $program->save();
+
+                                // email user to be added
+                                Mail::to($user->email)->send(new NotifyProgramAdminMail($program->program, $currentUser->name));
+                                // email the owner letting them know they have added a new collaborator
+                                Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $user->name));                           
                             } else {
-                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program_code . ' ' . $program->program_num);
+                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to program ' . $program->program);
                             }
                         } else {
-                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on program ' . $program->program_code . ' ' . $program->program_num);
+                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on program ' . $program->program);
                         }
                     } else {
-                        $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
+                        $name = explode('@', $newCollab);
+                        $newUser = new User;
+                        $newUser->name = $name[0];
+                        $newUser->email = $newCollab;
+                        $newUser->has_temp = 1;
+                        // generate random password
+                        $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                        $pass = array(); 
+                        $combLen = strlen($comb) - 1; 
+                        for ($i = 0; $i < 8; $i++) {
+                            $n = rand(0, $combLen);
+                            $pass[] = $comb[$n];
+                        }
+                        // store random password
+                        $newUser->password = Hash::make(implode($pass));
+                        $newUser->email_verified_at = Carbon::now();
+                        $newUser->save();
+
+                        // get their given permission level
+                        $permission = $newPermissions[$index];
+                        // create a new collaborator
+                        $programUser = ProgramUser::updateOrCreate(
+                            ['program_id' => $program->program_id, 'user_id' => $newUser->id],
+                        );
+                        $programUser = ProgramUser::where([['program_id', '=', $programUser->program_id], ['user_id', '=', $programUser->user_id]])->first();
+
+                        // set this program user permission level
+                        switch ($permission) {
+                            case 'edit':
+                                $programUser->permission = 2;
+                            break;
+                            case 'view':
+                                $programUser->permission = 3;
+                            break;
+                        }
+                        if($programUser->save()){
+                            // update courses 'updated_at' field
+                            $program = Program::find($request->input('program_id'));
+                            $program->touch();
+
+                            // get users name for last_modified_user
+                            $currUser = User::find(Auth::id());
+                            $program->last_modified_user = $currUser->name;
+                            $program->save();
+
+                            // email user to be added
+                            //TODO: SEND EMAIL TO NEW USER WITH THEIR PASSWORD 
+                            Mail::to($newUser->email)->send(new NotifyNewProgramUserMail($program->program, $currentUser->name, implode($pass), $newUser->email));
+                            // email the owner letting them know they have added a new collaborator
+                            Mail::to($currentUser->email)->send(new NotifyProgramOwnerMail($program->program, $newUser->name));                           
+                        } else {
+                            $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to program ' . $program->program);
+                        }
+
+                        // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
                 }
             }
@@ -123,7 +194,7 @@ class ProgramUserController extends Controller
 
         // if no errors or warnings, flash a success message
         if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
-            $request->session()->flash('success', 'Successfully updated collaborators on program ' . $program->program_code . ' ' . $program->program_num);
+            $request->session()->flash('success', 'Successfully updated collaborators on program ' . $program->program);
         }
 
         // return to the previous page
@@ -191,5 +262,38 @@ class ProgramUserController extends Controller
         if ($currentUserPermission == 1 ) {
             $programUser->delete();
         }
+    }
+
+    public function leave(Request $request) {
+        $program = Program::find($request->input('program_id'));
+        $programUser = ProgramUser::where('user_id', $request->input('programCollaboratorId'))->where('program_id', $request->input('program_id'))->first();
+        if ($programUser->delete()) {
+            $request->session()->flash('success', 'Successfully left ' .$program->program);
+        } else {
+            $request->session()->flash('error', 'Failed to leave the program');
+        }
+        return redirect()->back();
+    }
+
+    public function transferOwnership(Request $request) {
+        $program = Program::find($request->input('program_id'));
+        $oldProgramOwner = ProgramUser::where('user_id', $request->input('oldOwnerId'))->where('program_id', $request->input('program_id'))->first();
+        $newProgramOwner = ProgramUser::where('user_id', $request->input('newOwnerId'))->where('program_id', $request->input('program_id'))->first();
+
+        //transfer ownership and set old owner to be an editor
+        $newProgramOwner->permission = 1;
+        $oldProgramOwner->permission = 2;
+
+        if ($newProgramOwner->save()) {
+            if ($oldProgramOwner->save()) {
+                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$program->program. ' program.');
+            } else {
+                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
+            }
+        } else {
+            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$program->program. ' program');
+        }
+        
+        return redirect()->back();
     }
 }

@@ -11,7 +11,7 @@ class PLOCategory extends Model
 
     protected $primaryKey = 'plo_category_id';
     
-     protected $fillable = ['program_id','plo_category','program_id'];
+     protected $fillable = ['program_id','plo_category'];
 
     public function plos()
     {

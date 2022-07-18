@@ -2,9 +2,10 @@
 
 # You have been invited to collaborate on a program
 
-{{$user_name}} has invited you to collaborate on the program: {{$program_title}} from the Department of {{$program_dept}}
+{{$user_name}} has invited you to collaborate on the program: {{$program_title}}
 
-@component('mail::button', ['url' => env('LOGIN_URL')])
+@component('mail::button', ['url' => config('app.login_url')])
+
 Log In and See Program
 @endcomponent
 

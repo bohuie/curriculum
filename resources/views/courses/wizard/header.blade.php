@@ -9,107 +9,101 @@
                     Online
                     @break
                 @case('B')
-                    Blended
+                    Hybrid
                     @break
+                @case('M')
+                    Multi-Access
+                @break
                 @default
                     In-person
             @endswitch
             </h5>
         </div>
-        @if (!$isEditor && !$isViewer) 
-            <div class="col">
-                <div class="row my-2">
-                    <div class="col">
-                    <button type="button" style="width:200px" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#duplicateCourse" >Duplicate Course</button>
+        <div class="col">
+        @if (!$isViewer)
+            <div class="row my-2">
+                <div class="col">
+                <button type="button" style="width:200px" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#duplicateCourse" >Duplicate Course</button>
+                    <!-- Duplicate Course Confirmation Modal -->
+                    <div class="modal fade" id="duplicateCourse" tabindex="-1" role="dialog" aria-labelledby="duplicateCourse" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="duplicateCourse">Duplicate Course</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ route('courses.duplicate', $course->course_id) }}" method="GET">
+                                    @csrf
+                                    {{method_field('GET')}}
+                                    
+                                    <div class="modal-body">
 
-                        <!-- Duplicate Course Confirmation Modal -->
-                        <div class="modal fade" id="duplicateCourse" tabindex="-1" role="dialog" aria-labelledby="duplicateCourse" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="duplicateCourse">Duplicate Course</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-
-                                    <form action="{{ route('courses.duplicate', $course->course_id) }}" method="GET">
-                                        @csrf
-                                        {{method_field('GET')}}
-                                        
-                                        <div class="modal-body">
-                                            <div class="form-group row">
-                                                <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
-
-                                                <div class="col-md-8">
-                                                    <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$course->course_code}}" name="course_code" required autofocus>
-
-                                                    @error('course_code')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                    @enderror
-                                                    <small id="helpBlock" class="form-text text-muted">
-                                                        Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
-                                                    </small>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
-
-                                                    <div class="col-md-8">
-                                                        <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" required autofocus>
-
-                                                        @error('course_num')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
-
-                                                    <div class="col-md-8">
-                                                        <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}} - Copy" required autofocus>
-
-                                                        @error('course_title')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label for="course_section" class="col-md-3 col-form-label text-md-right">Course Section</label>
-
-                                                    <div class="col-md-4">
-                                                        <input id="course_section" type="text" class="form-control @error('course_section') is-invalid @enderror" name="course_section" autofocus value= {{$course->section}}>
-
-                                                        @error('course_section')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-
+                                        <div class="form-group row">
+                                            <label for="course_code" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Code</label>
+                                            <div class="col-md-8">
+                                                <input id="course_code" type="text" pattern="[A-Za-z]+" minlength="1" maxlength="4" class="form-control @error('course_code') is-invalid @enderror" value="{{$course->course_code}}" name="course_code" required autofocus>
+                                                @error('course_code')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                                <small id="helpBlock" class="form-text text-muted">
+                                                    Maximum of Four letter course code e.g. SUST, ASL, COSC etc.
+                                                </small>
                                             </div>
                                         </div>
 
-                                        <div class="modal-footer">
-                                            <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
-                                            <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
+                                        <div class="form-group row">
+                                            <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Number</label>
+                                            <div class="col-md-8">
+                                                <input id="course_num" type="number" max="699" min="100" pattern="[0-9]*" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" required autofocus>
+                                                @error('course_num')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
                                         </div>
 
-                                    </form>
-                                </div>
+                                        <div class="form-group row">
+                                            <label for="course_title" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Course Title</label>
+                                            <div class="col-md-8">
+                                                <input id="course_title" type="text" class="form-control @error('course_title') is-invalid @enderror" name="course_title" value="{{$course->course_title}} - Copy" required autofocus>
+                                                @error('course_title')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label for="course_section" class="col-md-3 col-form-label text-md-right">Course Section</label>
+                                            <div class="col-md-4">
+                                                <input id="course_section" type="text" class="form-control @error('course_section') is-invalid @enderror" name="course_section" autofocus value= {{$course->section}}>
+                                                @error('course_section')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="modal-footer">
+                                        <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                        <button style="width:80px" type="submit" class="btn btn-success btn-sm">Duplicate</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        @endif
+        @if (!$isEditor && !$isViewer) 
                 <div class="row">
                     <div class="col">
                         <!-- Edit button -->
@@ -151,11 +145,10 @@
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="course_num" class="col-md-3 col-form-label text-md-right"><span class="requiredField">* </span>Course
-                                                    Number</label>
+                                                <label for="course_num" class="col-md-3 col-form-label text-md-right">Course Number</label>
 
                                                 <div class="col-md-8">
-                                                    <input id="course_num" type="text" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" required autofocus>
+                                                    <input id="course_num" type="text" class="form-control @error('course_num') is-invalid @enderror" name="course_num" value="{{$course->course_num}}" autofocus>
 
                                                     @error('course_num')
                                                     <span class="invalid-feedback" role="alert">
@@ -180,7 +173,7 @@
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="course_semester" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Year and Semester</label>
+                                                <label for="course_semester" class="col-md-3 col-form-label text-md-right"><span class="requiredField">*</span>Term and Year</label>
 
                                                 <div class="col-md-3">
                                                     <select id="course_semester" class="form-control @error('course_semester') is-invalid @enderror"
@@ -201,6 +194,14 @@
                                                 <div class="col-md-2 float-right">
                                                     <select id="course_year" class="form-control @error('course_year') is-invalid @enderror"
                                                     name="course_year" required autofocus>
+                                                        <option @if($course->year === 2030) selected @endif value="2030">2030</option>
+                                                        <option @if($course->year === 2029) selected @endif value="2029">2029</option>
+                                                        <option @if($course->year === 2028) selected @endif value="2028">2028</option>
+                                                        <option @if($course->year === 2027) selected @endif value="2027">2027</option>
+                                                        <option @if($course->year === 2026) selected @endif value="2026">2026</option>
+                                                        <option @if($course->year === 2025) selected @endif value="2025">2025</option>
+                                                        <option @if($course->year === 2024) selected @endif value="2024">2024</option>
+                                                        <option @if($course->year === 2023) selected @endif value="2023">2023</option>
                                                         <option @if($course->year === 2022) selected @endif value="2022">2022</option>
                                                         <option @if($course->year === 2021) selected @endif value="2021">2021</option>
                                                         <option @if($course->year === 2020) selected @endif value="2020">2020</option>
@@ -244,6 +245,7 @@
                                                         <option @if($course->delivery_modality === 'O') selected @endif value="O">Online</option>
                                                         <option @if($course->delivery_modality === 'I') selected @endif value="I">In-person</option>
                                                         <option @if($course->delivery_modality === 'B') selected @endif value="B">Hybrid</option>
+                                                        <option @if($course->delivery_modality === 'M') selected @endif value="M">Multi-Access</option>
 
                                                     @error('delivery_modality')
                                                     <span class="invalid-feedback" role="alert">

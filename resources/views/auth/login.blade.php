@@ -8,14 +8,22 @@
                 <div class="card-header">{{ __('Login') }}</div>
 
                 <div class="card-body">
+                    <div id="prompt" style="display: none;">
+                        <div class="alert alert-primary d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
+                            <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                            <div>
+                                While this tool was created to serve the UBC community, anyone can register and use the site. However, since information such as Ministry-related standards and UBC strategic plans are presented, not all users may benefit from every feature.
+                            </div>
+                        </div>
+                    </div>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
                         <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('UBC E-Mail Address') }}</label>
+                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                <input id="email" type="email" onchange="notifyNonUBCUser()" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -79,3 +87,38 @@
 
 @endsection
 
+<script>
+    window.addEventListener('load', function() {
+        const email = document.getElementById('email');
+        var input = email.value;
+        if (input.includes("@")) {
+            // get user email domain 
+            var domainArr = input.split('@');
+            var domainStr = domainArr[domainArr.length - 1];
+            setPrompt(domainStr);
+        }
+    });
+
+    // display a message to the user if they are not using a UBC email address
+    function notifyNonUBCUser(e) {
+        const email = document.getElementById('email');
+        var input = email.value;
+
+        if (input.includes("@")) {
+            // get user email domain 
+            var domainArr = input.split('@');
+            var domainStr = domainArr[domainArr.length - 1];
+            setPrompt(domainStr);
+        }
+    }
+
+    function setPrompt(domainStr) {
+        const ubcDomains = ['ubc.ca', 'mail.ubc.ca', 'alumni.ubc.ca', 'student.ubc.ca'];
+        // check if user domain == one of UBS's domains
+        if (ubcDomains.includes(domainStr.toLowerCase())) {
+            $('#prompt').fadeOut("slow");
+        }else {
+            $('#prompt').fadeIn("slow");
+        }
+    }
+</script>

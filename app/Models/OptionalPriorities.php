@@ -23,4 +23,7 @@ class OptionalPriorities extends Model
     public function courses(){
         return $this->belongsToMany(Course::class, 'course_optional_priorities', 'op_id', 'course_id');
     }
+    public function optionalPrioritySubdescription(){
+        return $this->hasOne(optionalPrioritySubdescription::class, 'op_subdesc', 'op_subdesc');
+    }
 }

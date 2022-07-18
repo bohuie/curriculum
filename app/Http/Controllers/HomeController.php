@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssessmentMethod;
+use App\Models\Campus;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\CourseOptionalPriorities;
@@ -12,6 +13,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\CourseUser;
+use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\LearningActivity;
 use App\Models\LearningOutcome;
 use App\Models\OptionalPriorities;
@@ -21,6 +24,8 @@ use App\Models\ProgramUser;
 use App\Models\OutcomeMap;
 use App\Models\ProgramLearningOutcome;
 use App\Models\Standard;
+use App\Models\StandardCategory;
+use App\Models\StandardsOutcomeMap;
 use Attribute;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +52,9 @@ class HomeController extends Controller
     {
         //Artisan::call('route:clear', []);
 
+        $campuses =  Campus::all();
+        $faculties =  Faculty::orderBy('faculty')->get();
+        $departments =  Department::orderBy('department')->get();
         // get the current authenticated user
         $user = User::find(Auth::id());
         // get my programs
@@ -163,7 +171,7 @@ class HomeController extends Controller
             } else {
                 $count = $count + 2;
             }
-            if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() >= $expectedProgramOutcomeMapCount) {
+            if (ProgramLearningOutcome::join('outcome_maps','program_learning_outcomes.pl_outcome_id','=','outcome_maps.pl_outcome_id')->join('learning_outcomes', 'outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->select('outcome_maps.map_scale_value','outcome_maps.pl_outcome_id','program_learning_outcomes.pl_outcome','outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome')->where('learning_outcomes.course_id','=',$courseId)->count() >= ($expectedProgramOutcomeMapCount == 1 ? $expectedProgramOutcomeMapCount : $expectedProgramOutcomeMapCount - 1)) {
                 $count++;
             } else {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Program Outcome Mapping (Step 5)</li>';
@@ -171,7 +179,7 @@ class HomeController extends Controller
             $course = Course::find($courseId);
             if ($course->standard_category_id == 0) {
                 $hasNoStandards = true;
-            } elseif ((Standard::join('standards_outcome_maps', 'standards.standard_id', '=', 'standards_outcome_maps.standard_id')->join('learning_outcomes', 'standards_outcome_maps.l_outcome_id', '=', 'learning_outcomes.l_outcome_id' )->join('standard_scales', 'standards_outcome_maps.standard_scale_id', '=', 'standard_scales.standard_scale_id')->select('standards_outcome_maps.standard_scale_id','standards_outcome_maps.standard_id','standards.s_outcome','standards_outcome_maps.l_outcome_id', 'learning_outcomes.l_outcome', 'standard_scales.abbreviation')->where('learning_outcomes.course_id','=',$courseId)->count()) == ( LearningOutcome::where('course_id', $courseId)->count() * Course::find($courseId)->standards->count())) {
+            } elseif (StandardsOutcomeMap::where('course_id', $courseId)->count() == StandardCategory::find($course->standard_category_id)->standards->count()) {
                 $count++;
             } else {
                 $progressBarMsg[$courseId]['statusMsg'] .= '<li>Standards (Step 6)</li>';
@@ -188,8 +196,9 @@ class HomeController extends Controller
             $progressBarMsg[$courseId]['statusMsg'] .= '</ol>';
         }
         // return dashboard view
-        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)
-        ->with('programUsers', $programUsers)->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg);
+        return view('pages.home')->with("myCourses",$myCourses)->with("myPrograms", $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)
+        ->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg)->with('campuses', $campuses)->with('faculties', $faculties)
+        ->with('departments', $departments);
     }
 
 

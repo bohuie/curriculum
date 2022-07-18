@@ -8,11 +8,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 use App\Mail\NotifyInstructorMail;
+use App\Mail\NotifyInstructorOwnerMail;
+use App\Mail\NotifyNewInstructorMail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class CourseUserController extends Controller
 {
@@ -108,7 +112,19 @@ class CourseUserController extends Controller
                             }
 
                             if($courseUser->save()){
-                                Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $user->name));
+                                // update courses 'updated_at' field
+                                $course = Course::find($courseId);
+                                $course->touch();
+
+                                // get users name for last_modified_user
+                                $currUser = User::find(Auth::id());
+                                $course->last_modified_user = $currUser->name;
+                                $course->save();
+
+                                // email user to be added
+                                Mail::to($user->email)->send(new NotifyInstructorMail($course->course_code, $course->course_num, $course->course_title, $currentUser->name));
+                                // email the owner letting them know they have added a new collaborator
+                                Mail::to($currentUser->email)->send(new NotifyInstructorOwnerMail($course->course_code, $course->course_num, $course->course_title, $user->name));
                             } else {
                                 $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to course ' . $course->course_code . ' ' . $course->course_num);
                             }
@@ -116,7 +132,60 @@ class CourseUserController extends Controller
                             $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on course ' . $course->course_code . ' ' . $course->course_num);
                         }
                     } else {
-                        $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
+                        $name = explode('@', $newCollab);
+                        $newUser = new User;
+                        $newUser->name = $name[0];
+                        $newUser->email = $newCollab;
+                        $newUser->has_temp = 1;
+                        // generate random password
+                        $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                        $pass = array(); 
+                        $combLen = strlen($comb) - 1; 
+                        for ($i = 0; $i < 8; $i++) {
+                            $n = rand(0, $combLen);
+                            $pass[] = $comb[$n];
+                        }
+                        // store random password
+                        $newUser->password = Hash::make(implode($pass));
+                        $newUser->email_verified_at = Carbon::now();
+                        $newUser->save();
+
+                        // get their given permission level
+                        $permission = $newPermissions[$index];
+                        // create a new collaborator
+                        $courseUser = CourseUser::updateOrCreate(
+                            ['course_id' => $course->course_id, 'user_id' => $newUser->id],
+                        );
+                        $courseUser = CourseUser::where([['course_id', '=', $courseUser->course_id], ['user_id', '=', $courseUser->user_id]])->first();
+
+                        // set this program user permission level
+                        switch ($permission) {
+                            case 'edit':
+                                $courseUser->permission = 2;
+                            break;
+                            case 'view':
+                                $courseUser->permission = 3;
+                            break;
+                        }
+                        if($courseUser->save()){
+                            // update courses 'updated_at' field
+                            $course = Course::find($courseId);
+                            $course->touch();
+
+                            // get users name for last_modified_user
+                            $currUser = User::find(Auth::id());
+                            $course->last_modified_user = $currUser->name;
+                            $course->save();
+
+                            // email user to be added
+                            // Sends email with password
+                            Mail::to($newUser->email)->send(new NotifyNewInstructorMail($course->course_code, $course->course_num !== null ? " " : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $newUser->email));
+                            // email the owner letting them know they have added a new collaborator
+                            Mail::to($currentUser->email)->send(new NotifyInstructorOwnerMail($course->course_code, $course->course_num, $course->course_title, $newUser->name));                         
+                        } else {
+                            $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to course ' . $course->course_title);
+                        }
+                        // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
                 }
             }
@@ -195,5 +264,38 @@ class CourseUserController extends Controller
         if ($currentUserPermission == 1 ) {
             $courseUser->delete();
         }
+    }
+
+    public function leave(Request $request) {
+        $course = Course::find($request->input('course_id'));
+        $courseUser = CourseUser::where('user_id', $request->input('courseCollaboratorId'))->where('course_id', $request->input('course_id'))->first();
+        if ($courseUser->delete()) {
+            $request->session()->flash('success', 'Successfully left ' .$course->course_title);
+        } else {
+            $request->session()->flash('error', 'Failed to leave the course');
+        }
+        return redirect()->back();
+    }
+
+    public function transferOwnership(Request $request) {
+        $course = Course::find($request->input('course_id'));
+        $oldCourseOwner = CourseUser::where('user_id', $request->input('oldOwnerId'))->where('course_id', $request->input('course_id'))->first();
+        $newCourseOwner = CourseUser::where('user_id', $request->input('newOwnerId'))->where('course_id', $request->input('course_id'))->first();
+
+        //transfer ownership and set old owner to be an editor
+        $newCourseOwner->permission = 1;
+        $oldCourseOwner->permission = 2;
+
+        if ($newCourseOwner->save()) {
+            if ($oldCourseOwner->save()) {
+                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$course->course_title. ' course.');
+            } else {
+                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$course->course_title. ' course');
+            }
+        } else {
+            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$course->course_title. ' course');
+        }
+        
+        return redirect()->back();
     }
 }

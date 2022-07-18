@@ -27,8 +27,23 @@
                 <h5 class="oSyllabusHeader text-decoration-none">{{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}}</h5>
             </div>
             <p><b>Campus:</b> @if ($syllabus->campus == 'V') Vancouver @else Okanagan @endif</p>
-            <p><b>Instructor:</b> {{$syllabus->course_instructor}}</p>
+            <p><b>Faculty:</b> {{$syllabus->faculty}}</p>
+            <p><b>Department:</b> {{$syllabus->department}}</p>
+            <p><b>Instructor(s):</b> {{$syllabusInstructors}}</p>
             <p><b>Duration:</b> {{$syllabus->course_term}} {{$syllabus->course_year}}</p>
+            @switch($syllabus->delivery_modality)
+                @case('M')
+                    <p><b>Delivery Modality:</b> Multi-Access</p>
+                    @break
+                @case('I')
+                    <p><b>Delivery Modality:</b> In-Person</p>
+                    @break
+                @case('B')
+                    <p><b>Delivery Modality:</b> Hybrid</p>
+                    @break
+                @default
+                    <p><b>Delivery Modality:</b> Online</p>
+            @endswitch
             <p><b>Class Location:</b> {{$syllabus->course_location}}</p>
             <p><b>Class Days:</b> {{$syllabus->class_meeting_days}}</p>
             <p><b>Class Hours:</b> {{$syllabus->class_start_time}} - {{$syllabus->class_end_time}}</p>
@@ -50,7 +65,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->other_instructional_staff}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Other Instructional Staff</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->other_instructional_staff) as $index => $staff)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$staff}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!-- course format -->
         <div class="mb-4">
@@ -84,7 +114,22 @@
                 </h6>
             </div>
             <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
-            <p>{{$syllabus->learning_outcomes}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Learning Outcome</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_outcomes) as $index => $learningOutcome)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningOutcome}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!--  learning activities -->
         <div class="mb-4">
@@ -96,7 +141,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_activities}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Teaching and Learning Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_activities) as $index => $learningActivity)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningActivity}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>  
         </div>
         <!--  assessments of learning -->
         <div class="mb-4">
@@ -108,8 +168,58 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learningAssessments}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Learning Assessment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_assessments) as $index => $learningAssessments)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningAssessments}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
+        <!--  course alignment table -->
+        @if ($courseAlignment)
+            <div class="mb-4">
+                <div>
+                    <h6 class="oSyllabusHeader">
+                        Course Alignment
+                        <span>
+                            <i class="bi bi-info-circle-fill text-dark"></i>
+                        </span>
+                    </h6>
+                </div>
+                <table class="table table-light table-bordered " >
+                    <thead>
+                        <tr class="table-primary">
+                            <th class="w-50">Course Learning Outcome</th>
+                            <th>Student Assessment Method</th>
+                            <th>Teaching and Learning Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($courseAlignment as $clo)
+                            <tr>
+                                <td scope="row">
+                                    <b>{{$clo->clo_shortphrase}}</b><br>
+                                    {{$clo->l_outcome}}
+                                </td>
+                                <td>{{$clo->assessmentMethods->implode('a_method', ', ')}}</td>
+                                <td>{{$clo->learningActivities->implode('l_activity', ', ')}}</td>
+                            </tr>   
+                        @endforeach                 
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
         <!--  course schedule table -->
         <div class="mb-4">
             <div>
@@ -184,7 +294,7 @@
         <!--  passing criteria -->
         <div class="mb-4">
             <div>
-                <h6 class="oSyllabusHeader">Passing Criteria</h6>
+                <h6 class="oSyllabusHeader">Passing/Grading Criteria</h6>
             </div>
             <p>{{$syllabus->passing_criteria}}</p>
         </div>
@@ -228,7 +338,7 @@
                         <p>The academic enterprise is founded on honesty, civility, and integrity.  As members of this enterprise, all students are expected to know, understand, and follow the codes of conduct regarding academic integrity.  At the most basic level, this means submitting only original work done by you and acknowledging all sources of information or ideas and attributing them to others as required.  This also means you should not cheat, copy, or mislead others about what is your work.  Violations of academic integrity (i.e., misconduct) lead to the breakdown of the academic enterprise, and therefore serious consequences arise and harsh sanctions are imposed.  For example, incidences of plagiarism or cheating usually result in a failing grade or mark of zero on the assignment or in the course.  Careful records are kept to monitor and prevent recidivism.
                         <br>
                         <br>    
-                        A more detailed description of academic integrity, including the University’s policies and procedures, may be found in the <a href="http://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,54,111,0" target="_blank">Academic Calendar</a></p>
+                        A more detailed description of academic integrity, including the University’s policies and procedures, may be found in the <a href="http://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,54,111,0" target="_blank" rel="noopener noreferrer">Academic Calendar</a></p>
                         @break
 
                         @case('finals')
@@ -297,10 +407,25 @@
     </div>
     <!-- footer -->
     <div class="card-footer p-4">
-        <form method="POST" action="{{ action('SyllabusController@syllabusToWordDoc', $syllabus->id) }}">
-            @csrf        
-            <button type="submit" class="btn btn-primary col-2 btn-sm m-2 float-right">Download <i class="bi bi-download"></i></button>
-        </form>
+        <button class="btn btn-primary dropdown-toggle m-2 col-4 float-right" type="button" data-bs-toggle="dropdown" aria-expanded="false">Download</button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li>
+                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'pdf']) }}">
+                    @csrf        
+                        <button type="submit" name="download" value="pdf" class="dropdown-item" type="button">
+                            <i class="bi-file-pdf-fill text-danger"></i> PDF
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'word']) }}">
+                    @csrf        
+                        <button type="submit" name="download" value="word" class="dropdown-item" type="button">
+                            <i class="bi-file-earmark-word-fill text-primary"></i> Word
+                        </button>
+                    </form>
+                </li>
+        </ul>    
     </div>
 </div>
 
