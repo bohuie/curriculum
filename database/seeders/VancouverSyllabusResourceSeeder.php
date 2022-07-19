@@ -46,17 +46,17 @@ class VancouverSyllabusResourceSeeder extends Seeder
 
         VancouverSyllabusResource::create([
             'id_name' => 'harass',
-            'title' => 'Harassment and Discrimination',
+            'title' => 'Freedom from Harassment and Discrimination',
         ]);
 
         VancouverSyllabusResource::create([
             'id_name' => 'religious',
-            'title' => 'Religious and Cultural Accommodation',
+            'title' => 'Religious, Spiritual and Cultural Accommodation',
         ]);
 
         VancouverSyllabusResource::create([
             'id_name' => 'honesty',
-            'title' => 'Academic Honesty and Standards',
+            'title' => 'Student Conduct and Discipline',
         ]);
         
     }

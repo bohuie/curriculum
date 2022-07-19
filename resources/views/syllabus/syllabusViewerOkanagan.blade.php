@@ -399,23 +399,6 @@
                         </p>
                         @break
 
-                        @case('appeal')
-                        <p class="text-center">UBC has rules and procedures in place to appeal Academic Standing as well as disciplinary action. 
-                        <br>
-                        <ul style=“list-style-type:square”>
-                            <li><a href="https://scs-senate-2021.sites.olt.ubc.ca/files/2021/08/Rules-and-Procedures-of-the-Okanagan-Senate-May-2019.pdf">Rules and Procedures of the Okanagan Senate (pdf)</a></li>
-                            <li><a href="https://scs-senate-2021.sites.olt.ubc.ca/files/2021/08/ok_senate_procedures.pdf">Academic Standing Appeal Procedures (pdf) </a></li>
-                            <li><a href="https://senate.ubc.ca/okanagan/rules/discipline/">Disciplinary Appeal Procedures</a></li>
-                            <li><a href="https://senate.ubc.ca/okanagan/rules/academic-standing-appeal-procedures/">Academic Standing Apppeal Procedures</a></li>
-                        </ul>
-                        </p>
-                        @break
-
-                        @case('dates')
-                        <p class="text-center">Important dates throughout the term for both the winter and summer sessions can be found at the
-                        <a href="https://senate.ubc.ca/okanagan/termdates/"> UBC Senate Website</a>.
-                        </p>
-                        @break
 
                     @endswitch
                 </div>
