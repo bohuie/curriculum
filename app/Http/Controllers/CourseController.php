@@ -802,4 +802,14 @@ class CourseController extends Controller
         }
         return redirect()->route('home');
     }
+
+    /*
+        Helper function to get this courses programs
+    */
+    public function getPrograms(Request $request, $courseId) {    
+        $course = Course::find($courseId);
+        return $course->programs;
+    }
 }
+
+

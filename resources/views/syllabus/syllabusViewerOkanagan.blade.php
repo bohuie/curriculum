@@ -27,7 +27,9 @@
                 <h5 class="oSyllabusHeader text-decoration-none">{{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}}</h5>
             </div>
             <p><b>Campus:</b> @if ($syllabus->campus == 'V') Vancouver @else Okanagan @endif</p>
-            <p><b>Instructor:</b> {{$syllabus->course_instructor}}</p>
+            <p><b>Faculty:</b> {{$syllabus->faculty}}</p>
+            <p><b>Department:</b> {{$syllabus->department}}</p>
+            <p><b>Instructor(s):</b> {{$syllabusInstructors}}</p>
             <p><b>Duration:</b> {{$syllabus->course_term}} {{$syllabus->course_year}}</p>
             @switch($syllabus->delivery_modality)
                 @case('M')
@@ -63,7 +65,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->other_instructional_staff}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Other Instructional Staff</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->other_instructional_staff) as $index => $staff)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$staff}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!-- course format -->
         <div class="mb-4">
@@ -97,7 +114,22 @@
                 </h6>
             </div>
             <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
-            <p>{{$syllabus->learning_outcomes}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Learning Outcome</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_outcomes) as $index => $learningOutcome)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningOutcome}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
         <!--  learning activities -->
         <div class="mb-4">
@@ -109,7 +141,22 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_activities}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Teaching and Learning Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_activities) as $index => $learningActivity)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningActivity}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>  
         </div>
         <!--  assessments of learning -->
         <div class="mb-4">
@@ -121,8 +168,58 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learningAssessments}}</p>
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="width:5%"></th>
+                        <th>Learning Assessment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (explode(PHP_EOL, $syllabus->learning_assessments) as $index => $learningAssessments)
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{$learningAssessments}}</td>
+                        </tr>
+                    @endforeach                                               
+                </tbody>
+            </table>                                    
         </div>
+        <!--  course alignment table -->
+        @if ($courseAlignment)
+            <div class="mb-4">
+                <div>
+                    <h6 class="oSyllabusHeader">
+                        Course Alignment
+                        <span>
+                            <i class="bi bi-info-circle-fill text-dark"></i>
+                        </span>
+                    </h6>
+                </div>
+                <table class="table table-light table-bordered " >
+                    <thead>
+                        <tr class="table-primary">
+                            <th class="w-50">Course Learning Outcome</th>
+                            <th>Student Assessment Method</th>
+                            <th>Teaching and Learning Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($courseAlignment as $clo)
+                            <tr>
+                                <td scope="row">
+                                    <b>{{$clo->clo_shortphrase}}</b><br>
+                                    {{$clo->l_outcome}}
+                                </td>
+                                <td>{{$clo->assessmentMethods->implode('a_method', ', ')}}</td>
+                                <td>{{$clo->learningActivities->implode('l_activity', ', ')}}</td>
+                            </tr>   
+                        @endforeach                 
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
         <!--  course schedule table -->
         <div class="mb-4">
             <div>

@@ -143,10 +143,12 @@
             </div>
 
             <div class="card-body">
-                <h6 class="card-subtitle mb-4 lh-lg fs-6 ml-3 mt-2 mr-2">
-                    To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
-                </h6>
-                <hr class="w-auto text-secondary mb-4 ml-3 mr-3">
+                <div class="alert alert-primary d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
+                    <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                    <div>
+                        To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
+                    </div>
+                </div>               
                 
                 <form class="courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
                     @csrf

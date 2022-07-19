@@ -25,6 +25,9 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => true]);
 
+// Route to get what programs a course belongs to 
+Route::get('/course/{courseId}/programs', 'CourseController@getPrograms');
+
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
 
