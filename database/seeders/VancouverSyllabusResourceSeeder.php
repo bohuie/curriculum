@@ -38,6 +38,26 @@ class VancouverSyllabusResourceSeeder extends Seeder
             'id_name' => 'concession',
             'title' => 'Academic Concession',
         ]);
+
+        VancouverSyllabusResource::create([
+            'id_name' => 'support',
+            'title' => 'Student Health Resources',
+        ]);
+
+        VancouverSyllabusResource::create([
+            'id_name' => 'harass',
+            'title' => 'Harassment and Discrimination',
+        ]);
+
+        VancouverSyllabusResource::create([
+            'id_name' => 'religious',
+            'title' => 'Religious and Cultural Accommodation',
+        ]);
+
+        VancouverSyllabusResource::create([
+            'id_name' => 'honesty',
+            'title' => 'Academic Honesty and Standards',
+        ]);
         
     }
 }

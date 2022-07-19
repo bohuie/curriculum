@@ -26,13 +26,13 @@ class UserSeeder extends Seeder
         /* add you information here. Notice there is an ADMIN account and USER account. Make sure your email is different.*/
         $admin = User::create([
             'name' => 'Michael Admin',
-            'email' => 'michaelodermatt@outlook.com',
+            'email' => 'michael.admin@ubc.ca',
             'password' => Hash::make('password'), /*default local password is "password" */
         ]);
 
         $user = User::create([
-            'name' => 'Michael Users',
-            'email' => '---@gmail.com',
+            'name' => 'Michael Ogden',
+            'email' => 'michael.ogden@ubc.ca',
             'password' => Hash::make('password'), /*default local password is "password" */
         ]);
 
