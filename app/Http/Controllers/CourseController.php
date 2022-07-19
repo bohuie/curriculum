@@ -504,6 +504,7 @@ class CourseController extends Controller
 
     public function pdf(Request $request, $course_id)
     {  
+
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {

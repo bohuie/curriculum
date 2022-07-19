@@ -513,7 +513,14 @@
                         @break
 
                         @case('disability')
-                        <p><a href="https://students.ubc.ca/about-student-services/centre-for-accessibility" target="_blank" rel="noopener noreferrer">Centre for Accessibility</a></p>
+
+                        <p class="text-center">UBC provides appropriate accommodation for students with disabilities. <br>
+                        <ul style=“list-style-type:square”>
+                            <li><a href="https://students.ubc.ca/about-student-services/centre-for-accessibility" target="_blank" rel="noopener noreferrer">Centre for Accessibility</a></li>
+                            <li><a href="http://www.calendar.ubc.ca/vancouver/index.cfm?tree=3,34,0,0">Academic Calendar language concerning Accommodation for Students with Disabilities</a></li>
+                            <li><a href="https://universitycounsel.ubc.ca/policies/disability-accommodation-policy/">Joint Board and Senate Policy LR7: Disability Accommodation</a></li>
+                        </ul>
+                        </p>
                         @break
 
                         @case('copyright')
@@ -525,6 +532,47 @@
                         <br>
                         <br>
                         In accordance with <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">UBC Policy V135</a>, Section 10, students’ requests for academic concession should be made as early as reasonably possible, in writing to their instructor or academic advising office or equivalent in accordance with the procedures for <a href="https://senate.ubc.ca/sites/senate.ubc.ca/files/downloads/va_V-135.1_Academic-Concession_20200415.pdf">Policy V135</a> and those set out by the student’s faculty/school. The requests should clearly state the grounds for the concession and the anticipated duration of the conflict and or hindrance to academic work. In some situations, this self-declaration is sufficient, but the submission of supporting documentation may be required along with, or following, the self-declaration.
+                        </p>
+                        @break
+
+                        @case('support')
+                        <p class="text-center">UBC provides resources to support student learning and to maintain healthy lifestyles but recognizes that sometimes crises arise and so there are additional resources to access including those for survivors of sexual assault.
+                        <br>
+                        <ul style=“list-style-type:square”>
+                            <li><a href="https://students.ubc.ca/enrolment/academic-learning-resources">Central Resource to Support Student Learning</a></li>
+                            <li><a href="https://students.ubc.ca/health">Central Resource for Student Health </a>and <a href="https://students.ubc.ca/health/accessing-crisis-support-services">Crisis Support.</a></li>
+                            <li>Resources for the prevention of sexual violence and for support for survivors: <a href="https://svpro.ubc.ca/">UBC SVPRO </a>and <a href="https://www.amssasc.ca/">AMS SASC</a></li>
+                            <li><a href="http://www.calendar.ubc.ca/vancouver/">Academic Calendar language concerning seeking Academic Concessions</a> if academic work is disrupted by ill health, medical issues, on compassionate grounds or if conflicting responsibilities arise during a course</li>
+                        </ul>
+                        </p>
+                        @break
+
+                        @case('harass')
+                        <p class="text-center">UBC values respect for the person and ideas of all members of the academic community. Harassment and discrimination are not tolerated nor is suppression of academic freedom.
+                        <br>
+                        <ul style=“list-style-type:square”>
+                            <li><a href="http://www.calendar.ubc.ca/vancouver/index.cfm?tree=3,33,87,0,">Academic Calendar language concerning Freedom from Harrassment and Discrimination</a></li>
+                            <li><a href="https://universitycounsel.ubc.ca/policies/discrimination-policy/">Board of Governors Policy SC7: Discrimination</a></li>
+                            <li><a href="http://www.calendar.ubc.ca/vancouver/index.cfm?tree=3,33,0,0">Academic Calendar Language Concerning Academic Freedom</a></li>
+                        </ul>
+                        </p>
+                        @break
+
+                        @case('religious')
+                        <p class="text-center">UBC provides appropriate accommodation for students for religious, spiritual and cultural observances. <br>
+                        <ul style=“list-style-type:square”>
+                            <li><a href="http://www.calendar.ubc.ca/vancouver/">Academic Calendar language concerning Religious observances</a></li>
+                            <li><a href="https://senate.ubc.ca/religious-holidays-observances/">Religious Observances</a></li>
+                        </ul>
+                        </p>
+                        @break
+
+                        @case('honesty')
+                        <p class="text-center">UBC values academic honesty and students are expected to acknowledge the ideas generated by others and to uphold the highest academic standards in all of their actions <br>
+                        <ul style=“list-style-type:square”>
+                            <li><a href="http://www.calendar.ubc.ca/vancouver/index.cfm?tree=3,286,0,0#15620">Academic Calendar language concerning Academic Honesty and Standards</a></li>
+                            <li><a href="http://www.calendar.ubc.ca/vancouver/index.cfm?tree=3,54,0,0">Academic Calendar language concerning Student Conduct and Discipline</a></li>
+                        </ul>
                         </p>
                         @break
 
