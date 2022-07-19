@@ -532,7 +532,7 @@ class ProgramWizardController extends Controller
         $output = '';
 
         if (!count($namesStandards) < 1) {
-            $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses Aligned with Mapping Scales</th></tr>';
+            $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses</th></tr>';
             $i = 0;
             // for ($l = 0; $l < count($namesStandards); $l++) {
             foreach ($namesStandards as $standard) {
