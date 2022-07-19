@@ -412,11 +412,26 @@ class ProgramWizardController extends Controller
                                             ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
     }
 
+    public function resetKeys($array) {
+        $newArray = [];
+        // Reset Keys for High-charts
+        $i = 0;
+        foreach ($array as $a) {
+            $j = 0;
+            foreach ($a as $data) {
+                $newArray[$i][$j] = $data;
+                $j++;
+            }
+            $i++;
+        }
+        return $newArray;
+    }
+
     public function getMinistryStandards($program_id) {
         $program = Program::where('program_id', $program_id)->first();
         
         // Get all Standard Categories for courses in the program
-        if ($program->level == "Undergraduate") {
+        if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
             $standardCategory = StandardCategory::find(1);
         } elseif($program->level == "Masters") {
             $standardCategory = StandardCategory::find(2);
@@ -444,6 +459,7 @@ class ProgramWizardController extends Controller
         $standardMappingScalesIds[count($standardMappingScalesIds)] = 0;
         $standardMappingScalesColours = [];
         $freqOfMinistryStandardIds = [];          // used in a later step
+        $coursesOfMinistryStandardIds = [];
         for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
             $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
             $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
@@ -451,6 +467,7 @@ class ProgramWizardController extends Controller
         foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
             foreach ($standards as $standard) {
                 $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
+                $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
             }
         }
 
@@ -463,37 +480,84 @@ class ProgramWizardController extends Controller
                 foreach ($standards as $standard) {
                     $scale_id = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
                     $freqOfMinistryStandardIds[$scale_id][$standard->standard_id] += 1;
+                    array_push($coursesOfMinistryStandardIds[$scale_id][$standard->standard_id], $course->course_id);
                 }
             }
         }
-        // Reset Keys for High-charts
-        $frequencyOfMinistryStandardIds = [];
-        $i = 0;
-        foreach ($freqOfMinistryStandardIds as $freqOfMinistryStandardId) {
-            $j = 0;
-            foreach ($freqOfMinistryStandardId as $freq) {
-                $frequencyOfMinistryStandardIds[$i][$j] = $freq;
-                $j++;
-            }
-            $i++;
-        }
+        $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
+        $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
 
-        // $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales); 
+        $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours); 
 
-        return response()->json([$programCoursesFiltered, $namesStandards, $outputStandardOutcomeMaps, $standardsMappingScales, $standardMappingScalesColours, $frequencyOfMinistryStandardIds], 200);
+        return response()->json([$programCoursesFiltered, $namesStandards, $outputStandardOutcomeMaps, $standardsMappingScales, $standardMappingScalesColours, $frequencyOfMinistryStandardIds, $tableMS], 200);
     }
+    // // First Implementation
+    // public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours) {
+    //     $output = '';
 
-    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales) {
+    //     if (!count($namesStandards) < 1) {
+    //         $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Frequency</th></tr>';
+    //         $i = 0;
+    //         foreach ($namesStandards as $standard) {
+    //             $output .= '<tr><td>'. $standard .'</td><td>';
+    //             $j = 0;
+    //                 foreach ($standardsMappingScales as $standardsMappingScale) {
+    //                     $output .='<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-left"><div style="background-color:'. $standardMappingScalesColours[$j] .'; height: 12px; width: 12px; border-radius: 6px;"></div></div> <div class="col col-md-10 text-md-left" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+    //                     foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
+    //                         $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
+    //                         $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
+    //                         $output .= '<li>'. $code. ' ' . $num .'</li>';
+    //                     }
+    //                     $output .= '">'. $standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i];
+    //                     $output .='</div></div>';
+    //                     $j++;
+    //                 }
+    //             $output .= '</td></tr>';
+    //             $i++;
+    //         }
+    //         $output .= '</tbody></table>';
+    //     } else {
+    //         $output = '<div class="alert alert-warning wizard"><i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for the courses belonging to this program, or there are no courses matching the criteria.</div>';
+    //     }
+
+    //     return $output;
+    // }
+
+    // Second Implementation
+    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours) {
         $output = '';
 
         if (!count($namesStandards) < 1) {
-            $output .= '<table class="table table-light table-bordered"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Frequency</th></tr>';
+            $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses Aligned with Mapping Scales</th></tr>';
+            $i = 0;
             foreach ($namesStandards as $standard) {
                 $output .= '<tr><td>'. $standard .'</td><td>';
+                $j = 0;
                     foreach ($standardsMappingScales as $standardsMappingScale) {
-                        $output .='<p class="mx-1">'. $standardsMappingScale .': 0' .'</p>';
+                        $output .= '<table class="table table-light table-bordered table-sm"><tr><td>';
+
+                        $output .='<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-right"><div style="background-color:'. $standardMappingScalesColours[$j] .'; height: 12px; width: 12px; border-radius: 6px;"></div></div>';
+                        $output .= '<div class="col col-md-2 text-md-left">'.$standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i] .'</div>';
+
+                        $output .= '<div class="col col-md-8 text-md-left">';
+                        $k = 0;
+                        foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
+                            $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
+                            $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
+                            if ($k != 0) {
+                                $output .= ', '. $code. ' ' . $num;
+                            } else {
+                                $output .= ' '. $code. ' ' . $num;
+                            }
+                            $k++;
+                        }
+                        $output .='</div></div>';
+                        $j++;
+
+                        $output .= '</td></tr></table>';
                     }
                 $output .= '</td></tr>';
+                $i++;
             }
             $output .= '</tbody></table>';
         } else {
@@ -501,29 +565,7 @@ class ProgramWizardController extends Controller
         }
 
         return $output;
-        // if (!count($opFrequencies) < 1) {
-        //     $output .= '<table class="table table-light table-bordered"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Frequency</th></tr>';
-        //     // loop through categories and add them to the output
-        //     foreach($opFrequenciesSubcategories as $subcat_id => $opFrequenciesSubcategory) {
-        //         $output .= '<tr class="table-secondary"><td colspan="2"><b>'. $opFrequenciesSubcategory .'</b></td></tr>';
-        //         // loop through the optional priorities and add them to the output
-        //         foreach($opFrequencies as $op_id => $opFrequency) {
-        //             if ($subcat_id == $opFrequency['subcat_id']) {
-        //                 $output .= '<tr><td>'. $opFrequency['title'] .'</td><td class="text-center" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
-        //                 foreach($opFrequency['courses'] as $course) {
-        //                     $output .= '<li>'.$course.'</li>';
-        //                 }
-        //                 $output .= '">'. $opFrequency['freq'] .'</td></tr>';
-        //             }
-        //         }
-        //     }
-        //     $output .= '</tbody></table>';
-        // } else {
-        //     $output = '<div class="alert alert-warning wizard"><i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for the courses belonging to this program, or there are no courses matching the criteria.</div>';
-        // }
-        // return $output;
     }
-
     
 
     public function getOptionalPriorities($program_id) {

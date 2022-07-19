@@ -83,7 +83,7 @@ class ProgramController extends Controller
         $program = new Program;
         $program->program = $request->input('program');
 
-        if ($request->input('level') != "Undergraduate" && $request->input('level') != "Masters" && $request->input('level') != "Doctoral" && $request->input('level') != "Other") {
+        if ($request->input('level') != "Bachelors" && $request->input('level') != "Masters" && $request->input('level') != "Doctoral" && $request->input('level') != "Other") {
             $program->level = 'Other';
         } else {
             $program->level = $request->input('level');
@@ -159,7 +159,7 @@ class ProgramController extends Controller
 
         $program = Program::where('program_id', $program_id)->first();
         $program->program = $request->input('program');
-        if ($request->input('level') != "Undergraduate" && $request->input('level') != "Masters" && $request->input('level') != "Doctoral" && $request->input('level') != "Other") {
+        if ($request->input('level') != "Bachelors" && $request->input('level') != "Masters" && $request->input('level') != "Doctoral" && $request->input('level') != "Other") {
             $program->level = 'Other';
         } else {
             $program->level = $request->input('level');

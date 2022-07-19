@@ -380,6 +380,14 @@
                                                         </div>
                                                     </form>
                                                 @endif
+                                            
+                                            <div id='loading-div-ms'>
+                                                <h3 class="text-center">
+                                                    Loading ...
+                                                </h3>
+                                                <div class="loader" style="margin: auto;"></div>
+                                            </div>
+                                            
                                             <div class="container mt-0">
                                                 <div id="high-chart-ms"></div>
                                             </div>
@@ -982,7 +990,7 @@
                                 type: 'column'
                             },
                             title: {
-                                text: 'Alignment of Ministry Standards'
+                                text: 'Alignment with Ministry Standards'
                             },
                             xAxis: {
                                 title: {
@@ -1003,13 +1011,13 @@
                             series: seriesMS
                         });
 
-                        // var tableHTML = data[6];
-                        // // empty table before loading new data
-                        // $('#ms-table').empty();
-                        // // Append to table for all optional priority frequencies
-                        // $('#ms-table').append(tableHTML);
-                        // // Enables functionality of tool tips
-                        // $('[data-toggle="tooltip"]').tooltip({html:true});
+                        var tableHTML = data[6];
+                        // empty table before loading new data
+                        $('#ms-table').empty();
+                        // Append to table for all optional priority frequencies
+                        $('#ms-table').append(tableHTML);
+                        // Enables functionality of tool tips
+                        $('[data-toggle="tooltip"]').tooltip({html:true});
                     }
                     // display chart
                     $("#high-chart-ms").show();
@@ -1073,7 +1081,7 @@
                             },
                             
                             title: {
-                                text: 'Alignment of Ministry Standards'
+                                text: 'Alignment with Ministry Standards'
                             },
                             plotOptions: {
                                 series: {
@@ -1161,7 +1169,7 @@
                             },
                             
                             title: {
-                                text: 'Alignment of Ministry Standards'
+                                text: 'Alignment with Ministry Standards'
                             },
                             xAxis: {
                                 title: {
