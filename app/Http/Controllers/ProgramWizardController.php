@@ -446,13 +446,17 @@ class ProgramWizardController extends Controller
 
         // Get the names of the standards for the categories (x-axis)
         $namesStandards = [];
+        $descriptionsStandards = [];
         for($i = 0; $i < count($standards); $i++) {
             $namesStandards[$i] = $standards[$i]->s_shortphrase;
+            $descriptionsStandards[$i] = $standards[$i]->s_outcome;
         }
         
         // Get Standards Mapping Scales for high-chart
         $standardsMappingScales = StandardScale::where('scale_category_id', 1)->pluck('abbreviation')->toArray();
         $standardsMappingScales[count($standardsMappingScales)] = 'N/A';
+        $standardsMappingScalesTitles = StandardScale::where('scale_category_id', 1)->pluck('title')->toArray();
+        $standardsMappingScalesTitles[count($standardsMappingScales)] = StandardScale::find(0)->pluck('title')->first();
 
         // Get Standards Mapping Scale Colours for high-chart
         $standardMappingScalesIds = StandardScale::where('scale_category_id', 1)->pluck('standard_scale_id')->toArray();
@@ -487,7 +491,7 @@ class ProgramWizardController extends Controller
         $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
         $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
 
-        $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours); 
+        $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards); 
 
         return response()->json([$programCoursesFiltered, $namesStandards, $outputStandardOutcomeMaps, $standardsMappingScales, $standardMappingScalesColours, $frequencyOfMinistryStandardIds, $tableMS], 200);
     }
@@ -524,22 +528,23 @@ class ProgramWizardController extends Controller
     // }
 
     // Second Implementation
-    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours) {
+    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards) {
         $output = '';
 
         if (!count($namesStandards) < 1) {
-            $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses Aligned with Mapping Scales</th></tr>';
+            $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses</th></tr>';
             $i = 0;
+            // for ($l = 0; $l < count($namesStandards); $l++) {
             foreach ($namesStandards as $standard) {
-                $output .= '<tr><td>'. $standard .'</td><td>';
+                $output .= '<tr><td class="col col-md-5"><b>'. $standard .'</b> - ' . $descriptionsStandards[$i] . '</td><td>';
                 $j = 0;
-                    foreach ($standardsMappingScales as $standardsMappingScale) {
+                    foreach ($standardsMappingScalesTitles as $standardsMappingScale) {
                         $output .= '<table class="table table-light table-bordered table-sm"><tr><td>';
 
                         $output .='<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-right"><div style="background-color:'. $standardMappingScalesColours[$j] .'; height: 12px; width: 12px; border-radius: 6px;"></div></div>';
-                        $output .= '<div class="col col-md-2 text-md-left">'.$standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i] .'</div>';
+                        $output .= '<div class="col col-md-3 text-md-left">'.$standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i] .'</div>';
 
-                        $output .= '<div class="col col-md-8 text-md-left">';
+                        $output .= '<div class="col col-md-7 text-md-left">';
                         $k = 0;
                         foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
                             $code = Course::where('course_id', $course_id)->pluck('course_code')->first();

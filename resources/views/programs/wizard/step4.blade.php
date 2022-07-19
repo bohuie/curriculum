@@ -365,7 +365,7 @@
                                     <div class="tab-pane fade show active" id="nav-ministry-standards" role="tabpanel" aria-labelledby="nav-ministry-standards">
                                         <!-- Column Chart -->
                                         <div class="mt-3" id="ministry-standards-chart">
-                                            <p>This chart shows how many ministry standards are aligned with each courses belonging to this program</p>
+                                            <p>This chart shows how the ministry standards are aligned with each course belonging to this program</p>
                                                 @if (!(count($programCourses) < 1)) 
                                                     <form action="">
                                                         <div class=" mx-5 mt-2 text-center">
