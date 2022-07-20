@@ -81,7 +81,7 @@
                     <div id="collapseFAQAccordion4" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader4" data-bs-parent="FAQAccordion4">
                         <div class="accordion-body lh-lg">
                             <p>
-                                Yes, you may request support for course and program mapping from the Centre for Teaching and Learning by emailing ctl.helpdesk@ubc.ca. If you are in UBC's Vancouver campus, you may contact Carrie Hunter (carrie.hunter@ubc.ca) at the Centre for Teaching, Learning and Technology.
+                                Yes, you may request support for course and program mapping from the Centre for Teaching and Learning by emailing <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a>. If you are in UBC's Vancouver campus, you may contact Carrie Hunter (<a href="mailto:carrie.hunter@ubc.ca">carrie.hunter@ubc.ca</a>) at the Centre for Teaching, Learning and Technology.
                             </p>
                         </div>
                     </div>
@@ -116,12 +116,12 @@
                             </ol>
                                 </li>
                                 <li>At the bottom of the page, select optional but recommended campus-specific resources you wish to include in your syllabus.</li>
-                                <li>To download your syllabus as a Word document, click the `Save and Download` button at the bottom of the page. Otherwise, click the `Save` button to save your progress/changes. This will not generate a Word document.</li>
+                                <li>Syllabus can be downloaded as Word document and PDF. Click the Word or PDF Icon at the bottom of the screen and the syllabus will be downloaded in the respective format.</li>
                                 <li>Review the design and content of your generated syllabus Word document and update it accordingly.</li>
                                 <li>You can find your saved syllabi on your <a href="{{ route('home')}}" target="_BLANK" rel="noopener noreferrer">Curriculum MAP Dashboard</a> (Upon log in).  </li>
                                 <li>From your dashboard you can also share your syllabus with other users. To share your syllabus with others:
                                     <ol type="a">
-                                        <li>Click the <i class="bi bi-person-plus-fill pr-1 pl-1"></i> button for your syllabus in the syllabus section of your dashboard.</li>
+                                        <li>Click on the <i class="bi bi-gear-fill"></i> icon for the syllabus on your Dashboard. A drop down menu will appear and select Collaborators.</li>
                                         <li>In the pop-up window, input your collaborators email and select their role (Editor or Viewer).</li>
                                         <li>Click '<i class="bi bi-plus"></i> Collaborator' and 'Save Changes'</li>
                                         <br>
@@ -214,7 +214,7 @@
                             <p style="font-size:small" ><b>Note</b>: You must own the course, program, or syllabus in order to add collaborators.</p>
                             <p class="fw-bold">From the dashboard</p>
                             <ol>
-                                <li>Click on the <div class="collabIcon btn bg-transparent position-relative pr-2 pl-2" data-bs-placement="right" style="cursor: default;"><div><i class="bi bi-person-plus-fill"></i><span class="position-absolute top-0 start-85 translate-middle badge rounded-pill badge badge-dark">?</span></div></div> button under actions.</li>
+                                <li>Click on the <i class="bi bi-gear-fill"></i> icon for the syllabus on your Dashboard. A drop down menu will appear and select Collaborators. </li>
                                 <li>Enter the collaborators email and select either viewer or editor.</li>
                                 <ol type="a">
                                     <li><b>Viewers</b>: can view an overview of your program but cannot edit or delete your program or add/remove collaborators.</li>
@@ -241,7 +241,7 @@
                     <div id="collapseFAQAccordion9" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader9" data-bs-parent="FAQAccordion9">
                         <div class="accordion-body lh-lg">
                             <p>
-                                Please let us know right away so we can fix it and support you by emailing  ctl.helpdesk@ubc.ca                            
+                                Please let us know right away so we can fix it and support you by emailing <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a>.                            
                             </p>
                         </div>
                     </div>
