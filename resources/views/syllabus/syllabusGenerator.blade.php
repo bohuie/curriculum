@@ -1293,6 +1293,20 @@
                 selector: '.has-tooltip'
             }     
         );
+        
+        
+        //different statements for each campus
+        var vancouverOptionalListDesc = `
+            <p class="inputFieldDescription">
+                The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
+                <a href="https://senate.ubc.ca/policies-resources-support-student-success/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Vancouver senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+            </p>`;
+        
+        var okanaganOptionalListDesc = `
+            <p class="inputFieldDescription">
+                The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
+                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+            </p>`;
 
         // list of vancouver syllabus resources
         var vancouverOptionalList = `
@@ -1454,6 +1468,7 @@
             $('input.land').attr('value', '{{$vancouverSyllabusResources[0]->id_name}}');
 
             // add data specific to vancouver campus
+            $('#optionalSyllabusDesc').html(vancouverOptionalListDesc);
             $('#optionalSyllabus').html(vancouverOptionalList);
             $('#courseCredit').html(courseCredit);
             $('#officeLocation').html(officeLocation);
@@ -1476,6 +1491,7 @@
             $('input.land').attr('value', '{{$okanaganSyllabusResources[0]->id_name}}');
 
             // add data specific to okanagan campus
+            $('#optionalSyllabusDesc').html(okanaganOptionalListDesc);
             $('#optionalSyllabus').html(okanaganOptionalList);
             $('#courseFormat').html(courseFormat);
             $('#courseOverview').html(courseOverview);
