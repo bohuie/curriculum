@@ -490,7 +490,7 @@ class SyllabusController extends Controller
 
         // reset previous syllabi import settings
         $syllabus->course_id = null;
-        $syllabus->save();
+        
         SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
         // check if user set import settings and update them
         if ($importCourseSettings)
@@ -567,12 +567,13 @@ class SyllabusController extends Controller
                 }
             }
         }
-
+        
         switch ($campus) {
             case 'O':
                 // campus was not changed
                 if ($syllabus->getOriginal('campus') == 'O') {
                     // get the related Okanagan syllabus
+                    
                     $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
                     // update optional fields for okanagan syllabus
                     $okanaganSyllabus->course_format = $request->input('courseFormat');
