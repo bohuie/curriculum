@@ -461,6 +461,24 @@
                             </div>
                         </div>
                     @endif
+
+                    @if ($charts["Ministry Standards Chart"])
+                        <div class="panel-body">
+                            <div class="alert alert-info" role="alert" style="margin:0px">
+                                <p>This chart shows how the ministry standards are aligned with each course belonging to this program.</p>
+                            </div>
+                        </div>
+                        <img src={{$charts["Ministry Standards Chart"]}} width="600">
+                        <div class="panel-body mt-2">
+                            {!! $tableMS !!}
+                        </div>
+                    @else 
+                        <div class="panel-body">
+                            <div class="alert alert-warning" role="alert">
+                                There are no standards for the courses belonging to this program.                  
+                            </div>
+                        </div>
+                    @endif
                 @endif
             </div>  
         </div>

@@ -18,6 +18,9 @@ use App\Models\OutcomeMap;
 use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\ProgramUser;
+use App\Models\StandardCategory;
+use App\Models\StandardScale;
+use App\Models\StandardsOutcomeMap;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -405,6 +408,79 @@ class ProgramController extends Controller
             "colorByPoint" => true,
             ]
         );
+
+        // Code to generate ministry standards chart
+
+        // Get all Standard Categories for courses in the program
+        if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
+            $standardCategory = StandardCategory::find(1);
+        } elseif($program->level == "Masters") {
+            $standardCategory = StandardCategory::find(2);
+        } elseif($program->level == "Doctoral") {
+            $standardCategory = StandardCategory::find(3);
+        } else {
+            $standardCategory = StandardCategory::find(0);
+        }
+
+        // Get all Standards for courses in the program
+        $standards = $standardCategory->standards;
+
+        // Get the names of the standards for the categories (x-axis)
+        $namesStandards = [];
+        $descriptionsStandards = [];
+        for($i = 0; $i < count($standards); $i++) {
+            $namesStandards[$i] = $standards[$i]->s_shortphrase;
+            $descriptionsStandards[$i] = $standards[$i]->s_outcome;
+        }
+        
+        // Get Standards Mapping Scales for high-chart
+        $standardsMappingScales = StandardScale::where('scale_category_id', 1)->pluck('abbreviation')->toArray();
+        $standardsMappingScales[count($standardsMappingScales)] = 'N/A';
+        $standardsMappingScalesTitles = StandardScale::where('scale_category_id', 1)->pluck('title')->toArray();
+        $standardsMappingScalesTitles[count($standardsMappingScales)] = StandardScale::find(0)->pluck('title')->first();
+
+        // Get Standards Mapping Scale Colours for high-chart
+        $standardMappingScalesIds = StandardScale::where('scale_category_id', 1)->pluck('standard_scale_id')->toArray();
+        $standardMappingScalesIds[count($standardMappingScalesIds)] = 0;
+        $standardMappingScalesColours = [];
+        $freqOfMinistryStandardIds = [];          // used in a later step
+        $coursesOfMinistryStandardIds = [];
+        for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
+            $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
+            $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+        }
+        foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+            foreach ($standards as $standard) {
+                $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
+                $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
+            }
+        }
+
+        $programCoursesFiltered = $program->courses()->where('standard_category_id', $standardCategory->standard_category_id)->get();
+
+        $outputStandardOutcomeMaps = [];
+        foreach ($programCoursesFiltered as $course) {
+            // check that outcome map exists
+            if (StandardsOutcomeMap::where('course_id', $course->course_id)->exists()) {
+                foreach ($standards as $standard) {
+                    $scale_id = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
+                    $freqOfMinistryStandardIds[$scale_id][$standard->standard_id] += 1;
+                    array_push($coursesOfMinistryStandardIds[$scale_id][$standard->standard_id], $course->course_id);
+                }
+            }
+        }
+        $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
+        $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
+
+        $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards); 
+        
+        // create series array for highcharts 
+        $seriesMS = array();
+        for ($count = 0; $count < count($standardsMappingScales); $count++) {
+            array_push($seriesMS, array("name" => $standardsMappingScales[$count], "data" => $frequencyOfMinistryStandardIds[$count], "color" => $standardMappingScalesColours[$count]));
+        }
+        
+
         // TODO: refactor and clean up the code ABOVE to reduce its cognitive complexity. 
         // It was taken from ProgramWizardController.php which also needs to be refactored 
 
@@ -436,6 +512,16 @@ class ProgramController extends Controller
             $laTitles,
             $laData
         );
+        // get url of ministry standards cluster chart
+        $ministryStandardsClusterChartImgURL = $this->barChartPOST(
+            "ministryStandardsCluster-" . $program->program_id . ".jpeg",
+            "Alignment with Ministry Standards", 
+            "Ministry Standards Outcomes",
+            "# of Outcomes",
+            $namesStandards,
+            $seriesMS,
+            true
+        );
 
 
         $chartsBaseURL = config('app.url') . '/storage/charts/';
@@ -444,13 +530,15 @@ class ProgramController extends Controller
             return array(
                 "Program MAP Chart" => $chartsBaseURL . $plosToClosClusterChartImgURL,
                 "Assessment Methods Chart" => $chartsBaseURL . $assessmentMethodsChartImgUrl, 
-                "Learning Activities Chart" => $chartsBaseURL . $learningActivitiesChartImgUrl
+                "Learning Activities Chart" => $chartsBaseURL . $learningActivitiesChartImgUrl,
+                "Ministry Standards Chart" => $chartsBaseURL . $ministryStandardsClusterChartImgURL,
             );
         } else {
             return array(
                 "Program MAP Chart" => $chartsBasePath . $plosToClosClusterChartImgURL,
                 "Assessment Methods Chart" => $chartsBasePath . $assessmentMethodsChartImgUrl, 
-                "Learning Activities Chart" => $chartsBasePath . $learningActivitiesChartImgUrl
+                "Learning Activities Chart" => $chartsBasePath . $learningActivitiesChartImgUrl,
+                "Ministry Standards Chart" => $chartsBasePath . $ministryStandardsClusterChartImgURL,
             );
         }
     }
@@ -616,10 +704,75 @@ class ProgramController extends Controller
             $store = $this->replaceIdsWithAbv($store, $arr);
             $store = $this->assignColours($store);
 
+                    // Code to generate ministry standards chart
+
+            // Get all Standard Categories for courses in the program
+            if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
+                $standardCategory = StandardCategory::find(1);
+            } elseif($program->level == "Masters") {
+                $standardCategory = StandardCategory::find(2);
+            } elseif($program->level == "Doctoral") {
+                $standardCategory = StandardCategory::find(3);
+            } else {
+                $standardCategory = StandardCategory::find(0);
+            }
+
+            // Get all Standards for courses in the program
+            $standards = $standardCategory->standards;
+
+            // Get the names of the standards for the categories (x-axis)
+            $namesStandards = [];
+            $descriptionsStandards = [];
+            for($i = 0; $i < count($standards); $i++) {
+                $namesStandards[$i] = $standards[$i]->s_shortphrase;
+                $descriptionsStandards[$i] = $standards[$i]->s_outcome;
+            }
+
+            // Get Standards Mapping Scales for high-chart
+            $standardsMappingScales = StandardScale::where('scale_category_id', 1)->pluck('abbreviation')->toArray();
+            $standardsMappingScales[count($standardsMappingScales)] = 'N/A';
+            $standardsMappingScalesTitles = StandardScale::where('scale_category_id', 1)->pluck('title')->toArray();
+            $standardsMappingScalesTitles[count($standardsMappingScales)] = StandardScale::find(0)->pluck('title')->first();
+
+            // Get Standards Mapping Scale Colours for high-chart
+            $standardMappingScalesIds = StandardScale::where('scale_category_id', 1)->pluck('standard_scale_id')->toArray();
+            $standardMappingScalesIds[count($standardMappingScalesIds)] = 0;
+            $standardMappingScalesColours = [];
+            $freqOfMinistryStandardIds = [];          // used in a later step
+            $coursesOfMinistryStandardIds = [];
+            for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
+                $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
+                $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+            }
+            foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+                foreach ($standards as $standard) {
+                    $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
+                    $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
+                }
+            }
+
+            $programCoursesFiltered = $program->courses()->where('standard_category_id', $standardCategory->standard_category_id)->get();
+
+            $outputStandardOutcomeMaps = [];
+            foreach ($programCoursesFiltered as $course) {
+                // check that outcome map exists
+                if (StandardsOutcomeMap::where('course_id', $course->course_id)->exists()) {
+                    foreach ($standards as $standard) {
+                        $scale_id = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
+                        $freqOfMinistryStandardIds[$scale_id][$standard->standard_id] += 1;
+                        array_push($coursesOfMinistryStandardIds[$scale_id][$standard->standard_id], $course->course_id);
+                    }
+                }
+            }
+            $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
+            $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
+
+            $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards); 
+
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($program_id, '.pdf');
 
-            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store',));
+            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS'));
             // get the content of the pdf document
             $content = $pdf->output();
             // set name of pdf
@@ -1084,6 +1237,65 @@ class ProgramController extends Controller
             Log::error('Line - ' . $exception->getLine());
             Log::error($exception->getMessage());
         }
+    }
+
+    
+    public function resetKeys($array) {
+        $newArray = [];
+        // Reset Keys for High-charts
+        $i = 0;
+        foreach ($array as $a) {
+            $j = 0;
+            foreach ($a as $data) {
+                $newArray[$i][$j] = $data;
+                $j++;
+            }
+            $i++;
+        }
+        return $newArray;
+    }
+
+    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards) {
+        $output = '';
+
+        if (!count($namesStandards) < 1) {
+            $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses</th></tr>';
+            $i = 0;
+            foreach ($namesStandards as $standard) {
+                $output .= '<tr><td class="col col-md-5"><b>'. $standard .'</b> - ' . $descriptionsStandards[$i] . '</td><td>';
+                $j = 0;
+                    foreach ($standardsMappingScalesTitles as $standardsMappingScale) {
+                        $output .= '<table class="table table-light table-bordered table-sm"><tr><td>';
+
+                        $output .='<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-right"><div style="background-color:'. $standardMappingScalesColours[$j] .'; height: 12px; width: 12px; border-radius: 6px;"></div></div>';
+                        $output .= '<div class="col col-md-3 text-md-left">'.$standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i] .'</div>';
+
+                        $output .= '<div class="col col-md-7 text-md-left">';
+                        $k = 0;
+                        foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
+                            $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
+                            $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
+                            if ($k != 0) {
+                                $output .= ', '. $code. ' ' . $num;
+                            } else {
+                                $output .= ' '. $code. ' ' . $num;
+                            }
+                            $k++;
+                        }
+                        $output .='</div></div>';
+                        $j++;
+
+                        $output .= '</td></tr></table>';
+                    }
+                $output .= '</td></tr>';
+                $i++;
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output = '<div class="alert alert-warning wizard"><i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for the courses belonging to this program, or there are no courses matching the criteria.</div>';
+        }
+
+        return $output;
     }
 
     public function getCoursesOutcomes($coursesOutcomes, $programCourses) {

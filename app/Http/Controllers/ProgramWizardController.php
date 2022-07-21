@@ -495,46 +495,13 @@ class ProgramWizardController extends Controller
 
         return response()->json([$programCoursesFiltered, $namesStandards, $outputStandardOutcomeMaps, $standardsMappingScales, $standardMappingScalesColours, $frequencyOfMinistryStandardIds, $tableMS], 200);
     }
-    // // First Implementation
-    // public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScales, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours) {
-    //     $output = '';
 
-    //     if (!count($namesStandards) < 1) {
-    //         $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Frequency</th></tr>';
-    //         $i = 0;
-    //         foreach ($namesStandards as $standard) {
-    //             $output .= '<tr><td>'. $standard .'</td><td>';
-    //             $j = 0;
-    //                 foreach ($standardsMappingScales as $standardsMappingScale) {
-    //                     $output .='<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-left"><div style="background-color:'. $standardMappingScalesColours[$j] .'; height: 12px; width: 12px; border-radius: 6px;"></div></div> <div class="col col-md-10 text-md-left" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
-    //                     foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
-    //                         $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
-    //                         $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
-    //                         $output .= '<li>'. $code. ' ' . $num .'</li>';
-    //                     }
-    //                     $output .= '">'. $standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i];
-    //                     $output .='</div></div>';
-    //                     $j++;
-    //                 }
-    //             $output .= '</td></tr>';
-    //             $i++;
-    //         }
-    //         $output .= '</tbody></table>';
-    //     } else {
-    //         $output = '<div class="alert alert-warning wizard"><i class="bi bi-exclamation-circle-fill"></i>There are no ministry standards for the courses belonging to this program, or there are no courses matching the criteria.</div>';
-    //     }
-
-    //     return $output;
-    // }
-
-    // Second Implementation
     public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards) {
         $output = '';
 
         if (!count($namesStandards) < 1) {
             $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses</th></tr>';
             $i = 0;
-            // for ($l = 0; $l < count($namesStandards); $l++) {
             foreach ($namesStandards as $standard) {
                 $output .= '<tr><td class="col col-md-5"><b>'. $standard .'</b> - ' . $descriptionsStandards[$i] . '</td><td>';
                 $j = 0;
