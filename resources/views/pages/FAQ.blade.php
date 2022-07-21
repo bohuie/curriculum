@@ -116,7 +116,7 @@
                             </ol>
                                 </li>
                                 <li>At the bottom of the page, select optional but recommended campus-specific resources you wish to include in your syllabus.</li>
-                                <li>Syllabus can be downloaded as Word document and PDF. Click the Word or PDF Icon at the bottom of the screen and the syllabus will be downloaded in the respective format.</li>
+                                <li>Syllabus can be downloaded as Word document and PDF. Click the Word or PDF icon that can be found at both the top and bottom of the screen and the syllabus will be downloaded in the respective format.</li>
                                 <li>Review the design and content of your generated syllabus Word document and update it accordingly.</li>
                                 <li>You can find your saved syllabi on your <a href="{{ route('home')}}" target="_BLANK" rel="noopener noreferrer">Curriculum MAP Dashboard</a> (Upon log in).  </li>
                                 <li>From your dashboard you can also share your syllabus with other users. To share your syllabus with others:
