@@ -586,10 +586,13 @@
 
         <div class="col-12">
             <h5  class="fw-bold">Optional Statements</h5>
-            <p class="inputFieldDescription">
-                The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
-            </p>
+                @if(!empty($syllabus))
+                    <div id="optionalSyllabusDesc"></div>
+                @else
+                    <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
+                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+                    </p>
+                @endif
             <div class="form-check m-4">
                 <div class="row" id="optionalSyllabus"></div>
             </div>
@@ -1397,7 +1400,21 @@
             }     
         );
 
-        // list of vancouver syllabus resources
+       
+        //different statements for each campus
+        var vancouverOptionalListDesc = `
+            <p class="inputFieldDescription">
+                The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
+                <a href="https://senate.ubc.ca/policies-resources-support-student-success/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Vancouver senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+            </p>`;
+        
+        var okanaganOptionalListDesc = `
+            <p class="inputFieldDescription">
+                The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
+                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+            </p>`;
+
+         // list of vancouver syllabus resources
         var vancouverOptionalList = `
             @if (!isset($selectedVancouverSyllabusResourceIds)) 
                 @foreach($vancouverSyllabusResources as $index => $vSyllabusResource)
@@ -1529,6 +1546,7 @@
         // check if its value is 'V'
         if(campus.val() == 'V'){
             // add data specific to vancouver campus
+            $('#optionalSyllabusDesc').html(vancouverOptionalListDesc);
             $('#optionalSyllabus').html(vancouverOptionalList);
             $('#courseCredit').html(courseCredit);
             $('#officeLocation').html(officeLocation);
@@ -1557,6 +1575,7 @@
         else
         {
             // add data specific to okanagan campus
+            $('#optionalSyllabusDesc').html(okanaganOptionalListDesc);
             $('#optionalSyllabus').html(okanaganOptionalList);
             $('#courseFormat').html(courseFormat);
             $('#courseFormat').removeClass('m-0 p-0');

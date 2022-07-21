@@ -69,16 +69,6 @@ class OkanaganSyllabusResourceSeeder extends Seeder
             'title' => 'Safewalk',
         ]);
 
-        OkanaganSyllabusResource::create([
-            'id_name' => 'appeal',
-            'title' => 'Appeal Procedures',
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'dates',
-            'title' => 'Term Dates',
-        ]);
-
 
     }
 }
