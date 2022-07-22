@@ -212,7 +212,6 @@ class SyllabusController extends Controller
         }
         // set updated_at time
         $syllabus->updated_at = date('Y-m-d H:i:s');
-
         // get users name for last_modified_user
         $user = User::find(Auth::id());
         $syllabus->last_modified_user = $user->name;
@@ -243,54 +242,30 @@ class SyllabusController extends Controller
      */
     public function create($request)
     {        
-        // validate request
-        $request->validate([
-            'campus' => ['required'],
-            'courseTitle' => ['required'],
-            'courseCode' => ['required'],
-            'courseNumber' => ['required'],
-            'deliveryModality' => ['required'],
-            'courseInstructor' => ['required'],
-            'courseInstructorEmail' => ['required'],
-            'courseYear' => ['required'],
-            'courseSemester' => ['required'],
-        ]);
-        // get required fields common to both campuses
-        $campus = $request->input('campus');
-        $courseTitle = $request->input('courseTitle');
-        $courseCode = $request->input('courseCode');
-        $courseNumber = $request->input('courseNumber');
-        $deliveryModality = $request->input('deliveryModality');
-        $courseInstructors = $request->input('courseInstructor');
-        $courseInstructorEmails = $request->input('courseInstructorEmail');
-        $courseYear = $request->input('courseYear');
-        $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
-        // get faculty input or use null if it's not present 
-        $faculty = $request->input('faculty', null);        
-        $department = $request->input('department', null);  
-
         // get current user
         $user = User::where('id', Auth::id())->first();
-        
+        $campus = $request->input('campus');
         // create a new syllabus and set required data values
         $syllabus = new Syllabus;
         $syllabus->campus = $campus;
-        $syllabus->course_title = $courseTitle;
-        $syllabus->course_code = $courseCode;
-        $syllabus->course_num = $courseNumber;
-        $syllabus->delivery_modality = $deliveryModality;
-        $syllabus->course_instructor = $courseInstructors[0];
-        $syllabus->course_term = $courseSemester;
-        $syllabus->course_year = $courseYear;
-        $syllabus->faculty = $faculty;
-        $syllabus->department = $department;
+        $syllabus->course_title = $request->input('courseTitle');
+        $syllabus->course_code = $request->input('courseCode');
+        $syllabus->course_num = $request->input('courseNumber');
+        $syllabus->delivery_modality = $request->input('deliveryModality');
+        $syllabus->course_instructor = $request->input('courseInstructor')[0];
+        $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $$syllabus->course_term = $request->input('courseSemester');
+        $syllabus->course_year = $request->input('courseYear');
+        $courseInstructorEmails = $request->input('courseInstructorEmail');
+        $syllabus->save();
 
         // set optional syllabus fields common to both campuses 
-        $syllabus->course_location = $request->input('courseLocation');
-        $syllabus->other_instructional_staff = $request->input('otherCourseStaff');
-        $syllabus->class_start_time = $request->input('startTime');
-        $syllabus->class_end_time = $request->input('endTime');
-        if ($classMeetingDays = $request->input('schedule')) {
+        $syllabus->faculty = $request->input('faculty', null);
+        $syllabus->department = $request->input('department', null);
+        $syllabus->course_location = $request->input('courseLocation', null);
+        $syllabus->other_instructional_staff = $request->input('otherCourseStaff', null);
+        $syllabus->class_start_time = $request->input('startTime', null);
+        $syllabus->class_end_time = $request->input('endTime', null);
+        if ($classMeetingDays = $request->input('schedule', null)) {
             $classSchedule = "";
             foreach($classMeetingDays as $day) {
                 $classSchedule = ($classSchedule == "" ? $day : $classSchedule . '/' . $day);
@@ -298,17 +273,16 @@ class SyllabusController extends Controller
 
             $syllabus->class_meeting_days = $classSchedule;
         }        
-        $syllabus->learning_outcomes = $request->input('learningOutcome');
-        $syllabus->learning_assessments = $request->input('learningAssessments');
-        $syllabus->learning_activities = $request->input('learningActivities');
-        $syllabus->late_policy = $request->input('latePolicy');
-        $syllabus->missed_exam_policy = $request->input('missingExam');
-        $syllabus->missed_activity_policy = $request->input('missingActivity');
-        $syllabus->passing_criteria = $request->input('passingCriteria');
-        $syllabus->learning_materials = $request->input('learningMaterials');
-        $syllabus->learning_resources = $request->input('learningResources');
-        // save syllabus
-        $syllabus->save();
+        $syllabus->learning_outcomes = $request->input('learningOutcome', null);
+        $syllabus->learning_assessments = $request->input('learningAssessments', null);
+        $syllabus->learning_activities = $request->input('learningActivities', null);
+        $syllabus->late_policy = $request->input('latePolicy', null);
+        $syllabus->missed_exam_policy = $request->input('missingExam', null);
+        $syllabus->missed_activity_policy = $request->input('missingActivity', null);
+        $syllabus->passing_criteria = $request->input('passingCriteria', null);
+        $syllabus->learning_materials = $request->input('learningMaterials', null);
+        $syllabus->learning_resources = $request->input('learningResources', );
+
         $importCourseSettings = $request->input('import_course_settings', null); 
         if ($importCourseSettings)      
             $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
@@ -405,6 +379,8 @@ class SyllabusController extends Controller
                 }
             break;
         }
+        // save syllabus
+        $syllabus->save();
         // create a new syllabus user
         $syllabusUser = new SyllabusUser;
         // set relationship between syllabus and user
@@ -422,11 +398,15 @@ class SyllabusController extends Controller
      * @param Array specifying what information needs to be imported/linked from a course to a syllabus
      */
     private function createImportCourseSettings($syllabusId, $settings) {
+        $syllabus = Syllabus::find($syllabusId);
+        // reset previous syllabi import settings
+        $syllabus->course_id = null;
+        SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
+        // check if course alignment table was included
         if (array_key_exists("importCourseAlignment", $settings)) {
-            $syllabus = Syllabus::find($syllabusId);
             $syllabus->course_id = $settings["importCourseAlignment"];
-            $syllabus->save();
         }
+        // check if program outcome maps were included
         if (array_key_exists("programs", $settings)) {
             $programIds = array_keys($settings["programs"]);
             foreach($programIds as $programId) {
@@ -436,6 +416,7 @@ class SyllabusController extends Controller
                 $syllabiProgram->save();
             }
         } 
+        $syllabus->save();
     }
 
     
@@ -447,63 +428,35 @@ class SyllabusController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update($request, $syllabusId)
-    {
-        // validate request
-        $request->validate([
-            'campus' => ['required'],
-            'courseTitle' => ['required'],
-            'courseCode' => ['required'],
-            'courseNumber' => ['required'],
-            'deliveryModality' => ['required'],
-            'courseInstructor' => ['required'],
-            'courseInstructorEmail' => ['required'],
-            'courseYear' => ['required'],
-            'courseSemester' => ['required'],
-        ]);
-        
-        $campus = $request->input('campus');
-        $courseTitle = $request->input('courseTitle');
-        $courseCode = $request->input('courseCode');
-        $courseNumber = $request->input('courseNumber');
-        $deliveryModality = $request->input('deliveryModality');
-        $courseInstructors = $request->input('courseInstructor');
-        $courseInstructorEmails = $request->input('courseInstructorEmail');
-        $courseYear = $request->input('courseYear');
-        $request->input('courseSemester') == 'O' ? $courseSemester = $request->input('courseSemesterOther') : $courseSemester = $request->input('courseSemester');
-        // get faculty input or use null if it's not present 
-        $faculty = $request->input('faculty', null);        
-        $department = $request->input('department', null);  
-        $importCourseSettings = $request->input('import_course_settings', null);       
-
+    {       
         // get the syllabus, and start updating it
         $syllabus = Syllabus::find($syllabusId);
+        $campus = $request->input('campus');
         $syllabus->campus = $campus;
-        $syllabus->course_title = $courseTitle;
-        $syllabus->course_code = $courseCode;
-        $syllabus->course_num = $courseNumber;
-        $syllabus->delivery_modality = $deliveryModality;
+        $syllabus->course_title = $request->input('courseTitle');
+        $syllabus->course_code = $request->input('courseCode');
+        $syllabus->course_num = $request->input('courseNumber');
+        $syllabus->delivery_modality = $request->input('deliveryModality');
+        $courseInstructors = $request->input('courseInstructor');
+        $courseInstructorEmails = $request->input('courseInstructorEmail');
         $syllabus->course_instructor = $courseInstructors[0];
-        $syllabus->course_term = $courseSemester;
-        $syllabus->course_year = $courseYear;
-        $syllabus->faculty = $faculty;
-        $syllabus->department = $department;
+        $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $syllabus->course_term = $request->input('courseSemester');
+        $syllabus->course_year = $request->input('courseYear');
+        $importCourseSettings = $request->input('import_course_settings', null);     
 
-        // reset previous syllabi import settings
-        $syllabus->course_id = null;
-        
-        SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
         // check if user set import settings and update them
         if ($importCourseSettings)
             $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
 
         // update optional syllabus fields common to both campuses
-        $syllabus->course_location = $request->input('courseLocation');
-        $syllabus->other_instructional_staff = $request->input('otherCourseStaff');
-        $syllabus->office_hours = $request->input('officeHour');
-        $syllabus->class_start_time = $request->input('startTime');
-        $syllabus->class_end_time = $request->input('endTime');
-
-        if ($classMeetingDays = $request->input('schedule')) {
+        $syllabus->course_location = $request->input('courseLocation', null);
+        $syllabus->other_instructional_staff = $request->input('otherCourseStaff', null);
+        $syllabus->office_hours = $request->input('officeHour', null);
+        $syllabus->class_start_time = $request->input('startTime', null);
+        $syllabus->class_end_time = $request->input('endTime', null);
+        $syllabus->faculty = $request->input('faculty', null);
+        $syllabus->department = $request->input('department', null);
+        if ($classMeetingDays = $request->input('schedule', null)) {
             $classSchedule = "";
             foreach($classMeetingDays as $day) {
                 $classSchedule = ($classSchedule == "" ? $day : $classSchedule . '/' . $day);
@@ -513,15 +466,15 @@ class SyllabusController extends Controller
             $syllabus->class_meeting_days = null;
         }
 
-        $syllabus->learning_outcomes = $request->input('learningOutcome');
-        $syllabus->learning_assessments = $request->input('learningAssessments');
-        $syllabus->learning_activities = $request->input('learningActivities');
-        $syllabus->late_policy = $request->input('latePolicy');
-        $syllabus->missed_exam_policy = $request->input('missingExam');
-        $syllabus->missed_activity_policy = $request->input('missingActivity');
-        $syllabus->passing_criteria = $request->input('passingCriteria');
-        $syllabus->learning_materials = $request->input('learningMaterials');
-        $syllabus->learning_resources = $request->input('learningResources');
+        $syllabus->learning_outcomes = $request->input('learningOutcome', null);
+        $syllabus->learning_assessments = $request->input('learningAssessments', null);
+        $syllabus->learning_activities = $request->input('learningActivities', null);
+        $syllabus->late_policy = $request->input('latePolicy', null);
+        $syllabus->missed_exam_policy = $request->input('missingExam', null);
+        $syllabus->missed_activity_policy = $request->input('missingActivity', null);
+        $syllabus->passing_criteria = $request->input('passingCriteria', null);
+        $syllabus->learning_materials = $request->input('learningMaterials', null);
+        $syllabus->learning_resources = $request->input('learningResources', null);
 
         // delete all the previous syllabus instructor entries (TODO: optimize)
         SyllabusInstructor::where('syllabus_id', $syllabus->id)->delete();
@@ -690,8 +643,11 @@ class SyllabusController extends Controller
                         }
                     }
                 }
-            }
-            return $syllabus;
+            break;
+        }
+
+        $syllabus->save();
+        return $syllabus;
     }
 
     /**
