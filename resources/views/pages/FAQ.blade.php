@@ -108,13 +108,13 @@
                                 <li>Navigate to the syllabus generator by clicking on the `Syllabus Generator` tab on the navigation bar in the top right.</li>
                                 <br>
                                 <p style="font-size:small" ><b>Note</b>: The “import an existing course” button on the top of the syllabus generator allows users to import course information that has been inputted in the site already, for curriculum mapping purposes. These courses appear in the “my courses” section of the dashboard. Select the course you would like to import. </p>
-                                <li>Select your campus.</li>
-                                <li>Fill in the required course information marked with a <span class="requiredField">*</span>.</li>
-                                <li>Fill in all the other fields that are relevant to your course.
+                                <li>Fill in all other fields that are relevant to your course (or click the <i class="text-secondary bi bi-box-arrow-in-down-left"></i> icon to "Import" an existing course)
                                     <ol type="a">
+                                        <li>Required fields are marked with a <span class="requiredField">*</span>.</li>
                                         <li>For Vancouver syllabi, some fields are required by <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">Vancouver Senate policy V-130</a>. These fields are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
-                            </ol>
+                                    </ol>
                                 </li>
+                                <li>Select your campus.</li>
                                 <li>At the bottom of the page, select optional but recommended campus-specific resources you wish to include in your syllabus.</li>
                                 <li>Syllabus can be downloaded as Word document and PDF. Click the Word or PDF icon that can be found at both the top and bottom of the screen and the syllabus will be downloaded in the respective format.</li>
                                 <li>Review the design and content of your generated syllabus Word document and update it accordingly.</li>
