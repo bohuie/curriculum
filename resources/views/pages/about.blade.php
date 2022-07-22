@@ -53,7 +53,7 @@
             <div class="container">
                 <h1> Our Goals </h1>
                 <p class="lead">UBC Okanagan is committed to providing the highest quality of education to all students. This means ongoing work for continuous improvement and innovation of teaching and learning practices across disciplines.</p>
-                <p class="lead">This website aims to support this commitment by providing all instructors with a tool to ideate, create, and evaluate new or already existing courses and programs, using backward design. Engaging in this important exercise benefits students, instructors, and our overall communities. </p>
+                <p class="lead">This website aims to support this commitment by providing all instructors with a tool to ideate, create, and evaluate new or already existing courses and programs, using backward design and constructive alignment perspectives. Engaging in this important exercise benefits students, instructors, and our overall communities. </p>
                 <a href="https://provost.ok.ubc.ca/initiatives/quality-assurance-and-enhancement/" title="Quality Assurance and Enhancement site"  target="_blank" rel="noopener noreferrer" style="color: white;"><i class="bi bi-box-arrow-up-right"></i> Learn more about UBC Okanagan’s efforts towards quality assurance and enhancement</a>
             </div>
         </div>
