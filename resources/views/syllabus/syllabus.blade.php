@@ -1304,10 +1304,14 @@
                     return acc + ', ' + learningActivity['l_activity']
             }, '');
         // course alignment table row
+        cloShortphraseHTML = '';
+        // check if clo shortphrase is null
+        if (learningOutcome['clo_shortphrase'])
+            cloShortphraseHTML = `<b>${learningOutcome['clo_shortphrase']}</b><br>`
         row = `
                 <tr>
                     <td scope="row">
-                        <b>${learningOutcome["clo_shortphrase"]}</b><br>
+                        ${cloShortphraseHTML}
                         ${learningOutcome["l_outcome"]}
                     </td>
                     <td>${assessmentMethodsText}</td>
