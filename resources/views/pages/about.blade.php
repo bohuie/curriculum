@@ -151,7 +151,7 @@
                         <img class="team-img" src=" {{ asset('img/team/Michael-200x200.png') }}"/>
                         <figcaption style="text-align:center;">
                             <p class="lead" style="margin-bottom:0px;"><strong>Michael Ogden</strong></p>
-                            <p class="lead" style="margin-bottom:0px;">Centre for Teaching, Learning and Technology</p>
+                            <p class="lead" style="margin-bottom:0px;">Centre for Teaching and Learning</p>
                             <p class="lead"><i>Maintenance and Support Developer</i></p>
                         </figcaption>
                     </div>
