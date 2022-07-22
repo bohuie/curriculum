@@ -388,7 +388,7 @@
                 <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
                     Course Alignment                                     
                     <button id="removeCourseAlignment" type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
-                <input hidden name="import_course_settings[importCourseAlignment]" value="{{$syllabus->course_id}}">
+                    <input hidden name="import_course_settings[importCourseAlignment]" value="{{$syllabus->course_id}}">
 
                 </h5>            
                 <div class="col-12" id="courseAlignmentTable">

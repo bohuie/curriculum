@@ -253,8 +253,9 @@ class SyllabusController extends Controller
         $syllabus->course_num = $request->input('courseNumber');
         $syllabus->delivery_modality = $request->input('deliveryModality');
         $syllabus->course_instructor = $request->input('courseInstructor')[0];
-        $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $$syllabus->course_term = $request->input('courseSemester');
+        $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $syllabus->course_term = $request->input('courseSemester');
         $syllabus->course_year = $request->input('courseYear');
+        $courseInstructors = $request->input('courseInstructor');
         $courseInstructorEmails = $request->input('courseInstructorEmail');
         $syllabus->save();
 
@@ -447,6 +448,12 @@ class SyllabusController extends Controller
         // check if user set import settings and update them
         if ($importCourseSettings)
             $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
+        else {
+            // reset import course settings
+            $syllabus->course_id = null;
+            SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
+        }
+
 
         // update optional syllabus fields common to both campuses
         $syllabus->course_location = $request->input('courseLocation', null);
