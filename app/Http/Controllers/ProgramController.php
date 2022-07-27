@@ -826,6 +826,16 @@ class ProgramController extends Controller
      * @return String $url of spreadsheet file 
      */  
     public function spreadsheet(Request $request, $programId) {
+
+        $programContent = ProgramContent::where('program_id', $programId)->first();
+        $programContent->PLOs = $request->input('PLOs');
+        $programContent->mapping_scales = $request->input('mapping_scales');
+        $programContent->freq_dist_tables = $request->input('freq_dist_tables');
+        $programContent->CLOs_bar = $request->input('clos_bar');
+        $programContent->assessment_methods_bar = $request->input('assessment_methods_bar');
+        $programContent->learning_activities_bar = $request->input('learning_activities_bar');
+        $programContent->ministry_stds_bar = $request->input('ministry_stds_bar');
+
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
@@ -852,7 +862,9 @@ class ProgramController extends Controller
                 ],
             ];
             // create each sheet in summary
-            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
+            if(false){ 
+                $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles); 
+            }
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             
@@ -860,8 +872,10 @@ class ProgramController extends Controller
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet){
-                $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+            array_walk($columns, function ($letter, $index) use ( $plosSheet, $mapSheet, $mappingScalesSheet){
+                if(false){
+                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+                }
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
             });

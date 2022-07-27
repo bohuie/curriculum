@@ -1,11 +1,11 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
                 <!-- Select program content modal -->
                 @include('modals.downloadProgressModal', ['program' => $program])
-                <div class="modal" id="selectSummaryContent" tabindex="-1" aria-labelledby="selectSummaryContent" aria-hidden="true" data-bs-backdrop="static">
+                <div class="modal" id="setContentPDF" tabindex="-1" aria-labelledby="setContentPDFLabel" aria-hidden="true" data-bs-backdrop="static">
                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered ">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="selectSummaryContent">Download a Partial Program Summary</h5>
+                                <h5 class="modal-title" id="setContentPDFLabel">Download a Partial Program Summary</h5>
                                 
                                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                                     
@@ -94,6 +94,8 @@
                 </div>
                 <!-- End of select program content modal -->
                 <script type="application/javascript">
+                    
+                    
     $(document).ready(function () {
         var xhr;
         
@@ -111,10 +113,12 @@
             },
             beforeSend: (jqXHR, settings) => {
                 // show download modal
-                $('#setContent').modal('toggle');
                 $('#downloadProgressModal').modal('show');
+                $('#setContentPDF').modal('toggle');
             },  
             success: (data, textStatus, jqXHR) => {
+                
+                $('#setContentPDF').modal('toggle');
                 $('#downloadProgressModal').modal('hide');
                 // check if controller handled an error
                 if (data == -1) 
