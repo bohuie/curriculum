@@ -82,6 +82,18 @@
                 </tbody>
             </table>                                    
         </div>
+        <!-- course description -->
+        <div class="mb-4">
+            <div>
+                <h6 class="oSyllabusHeader">
+                    Course Description
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['okanaganCourseDescription']}}"></i>
+                    </span>
+                </h6>
+            </div>
+            <p>{{$okanaganSyllabus->course_description}}</p>
+        </div>
         <!-- course format -->
         <div class="mb-4">
             <div>

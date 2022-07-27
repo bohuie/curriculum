@@ -338,6 +338,8 @@
                         </div>
                         <!-- Course Instructor Biographical Statement -->
                         <div class="row" id="courseInstructorBio"></div>
+                        <!-- Course Description -->
+                        <div class="col-12"id="courseDesc"></div>
                         <!-- Course Prerequisites -->
                         <div class="row" id="coursePrereqs"></div>
                         <!-- Course Corequisites -->
@@ -1296,6 +1298,14 @@
         
         
         //different statements for each campus
+        var okanaganCourseDescription = `
+                <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label>
+                <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                    <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                    <div>Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar <i class="bi bi-box-arrow-up-right"></i></a>. For courses without a published description, please include a brief representative one.</div>
+                </div>
+                <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDesc" class ="form-control" type="date" form="sylabusGenerator">{{isset($okanaganSyllabus) ? $okanaganSyllabus->course_description : ''}}</textarea>`;
+                
         var vancouverOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
@@ -1484,6 +1494,8 @@
             // remove data specific to okanangan campus
             $('#courseFormat').empty();
             $('#courseOverview').empty();
+            $('#courseDesc').empty();
+            $('#courseDesc').empty();
         }
         else
         {
@@ -1493,6 +1505,7 @@
             // add data specific to okanagan campus
             $('#optionalSyllabusDesc').html(okanaganOptionalListDesc);
             $('#optionalSyllabus').html(okanaganOptionalList);
+            $('#courseDesc').html(okanaganCourseDescription);
             $('#courseFormat').html(courseFormat);
             $('#courseOverview').html(courseOverview);
             // remove data specific to vancouver campus

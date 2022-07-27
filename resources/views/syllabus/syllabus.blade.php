@@ -117,13 +117,15 @@
             </div>
         </div>
         
-        <div class="col-3">
+        <div class="col-6">
             <label for="courseNumber">Course Number<span class="requiredField"> *</span></label>
             <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
             <div class="invalid-tooltip">
                 Please enter the course number.
             </div>
         </div>
+        
+
 
         <div class="col-3">
             <label for="campus" class="form-label">Campus<span class="requiredField"> *</span></label>
@@ -340,6 +342,10 @@
 
         <!-- Course Instructor Biographical Statement -->
         <div class="col-12" id="courseInstructorBio"></div>
+        <!-- Course Description -->
+        <div class="col-12"id="courseDescription"></div>
+        <!-- Okanaga Course Description -->
+        <div class="col-12"id="courseDesc"></div>
         <!-- Course Prerequisites -->
         <div class="col-12" id="coursePrereqs"></div>
         <!-- Course Corequisites -->
@@ -1406,6 +1412,15 @@
 
        
         //different statements for each campus
+        var okanaganCourseDescription = `
+            
+                <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label>
+                <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
+                    <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
+                    <div>Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar <i class="bi bi-box-arrow-up-right"></i></a>. For courses without a published description, please include a brief representative one.</div>
+                </div>
+                <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDesc" class ="form-control" type="date" form="sylabusGenerator">{{isset($okanaganSyllabus) ? $okanaganSyllabus->course_description : ''}}</textarea>`;
+                
         var vancouverOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
@@ -1572,6 +1587,7 @@
             $('#courseFormat').empty();
             $('#courseFormat').addClass('m-0 p-0');
             $('#courseOverview').empty();
+            $('#courseDesc').empty();
             $('#courseOverview').addClass('m-0 p-0');
             // update faculty dropdown
             setFaculties('Vancouver');
@@ -1584,6 +1600,7 @@
             $('#courseFormat').html(courseFormat);
             $('#courseFormat').removeClass('m-0 p-0');
             $('#courseOverview').html(courseOverview);
+            $('#courseDesc').html(okanaganCourseDescription);
             $('#courseOverview').removeClass('m-0 p-0');
 
             // remove data specific to vancouver campus
