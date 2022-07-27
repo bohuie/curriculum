@@ -117,7 +117,7 @@
             </div>
         </div>
         
-        <div class="col-6">
+        <div class="col-3">
             <label for="courseNumber">Course Number<span class="requiredField"> *</span></label>
             <input id = "courseNumber" name = "courseNumber" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->course_num : '' }}">
             <div class="invalid-tooltip">
