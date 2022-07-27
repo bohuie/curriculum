@@ -44,6 +44,7 @@
             <!-- TEST CARD FOR NEW LAYOUT -->
             <div class="card">
                 <!-- Include download progress subview for PDF -->
+                @include('modals.setContent', ['program' => $program])
                 @include('modals.downloadProgressModal', ['program' => $program])
 
                 <h3 class="card-header wizard">
@@ -55,6 +56,7 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="downloadBtn">
                                     <li><a id="downloadPDFBtn" class="dropdown-item" data-route="{{route('programs.pdf', $program->program_id)}}"><i class="bi bi-file-pdf-fill text-danger"></i> PDF</a></li>
+                                    <li><button type="button" class="dropdown-item" data-toggle="modal" data-target="#selectSummaryContent"><i class="bi bi-file-pdf-fill text-danger"></i> Download Parts as PDF </button></li>
                                     <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel</a></li>
                                 </ul>
                                 

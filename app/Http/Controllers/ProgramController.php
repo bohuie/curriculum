@@ -18,6 +18,7 @@ use App\Models\OutcomeMap;
 use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\ProgramUser;
+use App\Models\ProgramContent;
 use App\Models\StandardCategory;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
@@ -626,6 +627,15 @@ class ProgramController extends Controller
             $user = User::where('id',Auth::id())->first();
             $program = Program::where('program_id', $program_id)->first();
 
+            $programContent = ProgramContent::where('program_id', $program_id)->first();
+            $programContent->PLOs = $request->input('PLOs');
+            $programContent->mapping_scales = $request->input('mapping_scales');
+            $programContent->freq_dist_tables = $request->input('freq_dist_tables');
+            $programContent->CLOs_bar = $request->input('clos_bar');
+            $programContent->assessment_methods_bar = $request->input('assessment_methods_bar');
+            $programContent->learning_activities_bar = $request->input('learning_activities_bar');
+            $programContent->ministry_stds_bar = $request->input('ministry_stds_bar');
+
             $coursesByLevels = $this->getCoursesByLevel($program_id);
             //progress bar
             $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
@@ -772,7 +782,7 @@ class ProgramController extends Controller
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($program_id, '.pdf');
 
-            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS'));
+            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent'));
             // get the content of the pdf document
             $content = $pdf->output();
             // set name of pdf

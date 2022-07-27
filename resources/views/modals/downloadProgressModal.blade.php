@@ -41,6 +41,8 @@
         $("#cancelDownloadBtn").click((e) =>
             abort(e.currentTarget)
         )
+        
+       
     });
 
     function download(trigger) {
