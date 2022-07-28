@@ -87,6 +87,7 @@
                             <div class="modal-footer">
                                 <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
                                 <button id="downloadPartialPDFBtn"  data-route="{{route('programs.pdf', $program->program_id)}}" type="submit" class="btn btn-primary">Submit</button>
+                                <input value="1" name="formFilled" id="formFilled" form ="setContentForm"hidden>
                             </div>
                         </form>
                         </div>

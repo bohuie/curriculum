@@ -628,12 +628,12 @@ class ProgramController extends Controller
 
             //set array of flags to determine what content to include in downloadSummary.blade.php
             $programContent = array();
-            if($request->input('PLOs')==null){
-
+    
+            if($request->input('formFilled')==null){
                 $programContent=[1,1,1,1,1,1,1];
 
             }else{
-
+                
                 $programContent[0] = $request->input('PLOs');
                 $programContent[1] = $request->input('mapping_scales');
                 $programContent[2] = $request->input('freq_dist_tables');
