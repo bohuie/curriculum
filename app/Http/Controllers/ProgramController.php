@@ -18,7 +18,6 @@ use App\Models\OutcomeMap;
 use App\Models\PLOCategory;
 use App\Models\ProgramLearningOutcome;
 use App\Models\ProgramUser;
-use App\Models\ProgramContent;
 use App\Models\StandardCategory;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
@@ -627,14 +626,23 @@ class ProgramController extends Controller
             $user = User::where('id',Auth::id())->first();
             $program = Program::where('program_id', $program_id)->first();
 
-            $programContent = ProgramContent::where('program_id', $program_id)->first();
-            $programContent->PLOs = $request->input('PLOs');
-            $programContent->mapping_scales = $request->input('mapping_scales');
-            $programContent->freq_dist_tables = $request->input('freq_dist_tables');
-            $programContent->CLOs_bar = $request->input('clos_bar');
-            $programContent->assessment_methods_bar = $request->input('assessment_methods_bar');
-            $programContent->learning_activities_bar = $request->input('learning_activities_bar');
-            $programContent->ministry_stds_bar = $request->input('ministry_stds_bar');
+            //set array of flags to determine what content to include in downloadSummary.blade.php
+            $programContent = array();
+            if($request->input('PLOs')==null){
+
+                $programContent=[1,1,1,1,1,1,1];
+
+            }else{
+
+                $programContent[0] = $request->input('PLOs');
+                $programContent[1] = $request->input('mapping_scales');
+                $programContent[2] = $request->input('freq_dist_tables');
+                $programContent[3] = $request->input('clos_bar');
+                $programContent[4] = $request->input('assessment_methods_bar');
+                $programContent[5] = $request->input('learning_activities_bar');
+                $programContent[6] = $request->input('ministry_stds_bar');
+
+            }
 
             $coursesByLevels = $this->getCoursesByLevel($program_id);
             //progress bar
@@ -827,15 +835,6 @@ class ProgramController extends Controller
      */  
     public function spreadsheet(Request $request, $programId) {
 
-        $programContent = ProgramContent::where('program_id', $programId)->first();
-        $programContent->PLOs = $request->input('PLOs');
-        $programContent->mapping_scales = $request->input('mapping_scales');
-        $programContent->freq_dist_tables = $request->input('freq_dist_tables');
-        $programContent->CLOs_bar = $request->input('clos_bar');
-        $programContent->assessment_methods_bar = $request->input('assessment_methods_bar');
-        $programContent->learning_activities_bar = $request->input('learning_activities_bar');
-        $programContent->ministry_stds_bar = $request->input('ministry_stds_bar');
-
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
@@ -862,9 +861,7 @@ class ProgramController extends Controller
                 ],
             ];
             // create each sheet in summary
-            if(false){ 
-                $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles); 
-            }
+            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles); 
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             
@@ -873,9 +870,7 @@ class ProgramController extends Controller
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
             array_walk($columns, function ($letter, $index) use ( $plosSheet, $mapSheet, $mappingScalesSheet){
-                if(false){
-                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
-                }
+                $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
             });
@@ -911,7 +906,7 @@ class ProgramController extends Controller
     * @param int $programId
     * @param array $charts: array of urls to charts indexed by their sheet name
     */
-   private function makeChartSheets($spreadsheet, $programId, $charts) {
+    private function makeChartSheets($spreadsheet, $programId, $charts) {
         try {
             $program = Program::find($programId);
             
