@@ -17,7 +17,8 @@ class CreateSyllabiProgramsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('syllabus_id');
             $table->unsignedBigInteger('program_id');
-            $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('cascade')->onUpdate('cascade');   
+            $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('cascade')->onUpdate('cascade'); 
+            $table->foreign('syllabus_id')->references('id')->on('syllabi')->onDelete('cascade')->onUpdate('cascade');   
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateSyllabiProgramsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('syllabi_import_settings');
+        Schema::dropIfExists('syllabi_programs');
     }
 }

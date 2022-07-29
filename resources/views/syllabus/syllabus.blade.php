@@ -419,6 +419,23 @@
             <div class="p-0 m-0" id="courseAlignment"></div>    
         @endif
 
+        @if (isset($outcomeMaps))
+            <div class="p-0 m-0" id="outcomeMapsDiv">  
+                @foreach ($outcomeMaps as $programId => $outcomeMap)
+                    <div class="p-0 m-0" id="outcomeMapsDiv"> 
+                        <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
+                            {{$outcomeMap["program"]->program}}                 
+                            <button type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                        </h5>            
+                    </div>
+                    
+                @endforeach
+            </div>  
+        @else 
+            <div class="p-0 m-0" id="outcomeMapsDiv"></div>    
+        @endif
+
+
         <!-- course schedule table -->
         <div class="col mb-3">
             <label for="courseSchedule">
@@ -1282,7 +1299,227 @@
                 courseAlignmentHTML = getCourseAlignmentHTML(course_id, data['course_alignment']);
                 $('#courseAlignment').append(courseAlignmentHTML);
             }
+            if (data.hasOwnProperty('programs')) {
+                $('#outcomeMapsDiv').empty();
+                programs = data['programs'];
+                for (programId in programs) {
+                    closForOutcomeMaps = data['closForOutcomeMaps'];
+                    programOutcomeMapHTML = getProgramOutcomeMapSectionHTML(closForOutcomeMaps, programs[programId]);
+                    $('#outcomeMapsDiv').append(programOutcomeMapHTML);
+                }
+            }
+
         });
+    }
+
+    function getProgramOutcomeMapSectionHTML(clos, program) {
+        headerHTML = `
+            <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
+                ${program['programTitle']}                                    
+                <button id="" type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                <input hidden name="import_course_settings[programs][]" value="${program['programId']}">
+            </h5>
+        `;
+        mappingScalesHTML = getMappingScalesHTML(program['mappingScales']);
+        // return early without outcome map if no mapping scale has been set for this program
+        // if (program['mappingScales'].length < 1) 
+        //     return `<div class="mb-4">${headerHTML + mappingScalesHTML}</div>`;
+
+        
+        outcomeMapHTML = getProgramOutcomeMapHTML(program['programLearningOutcomes'], program['categories'], program['uncategorizedPlos'], clos, program['outcomeMap']);
+
+        return `<div class="mb-4">${headerHTML + mappingScalesHTML + outcomeMapHTML}</div>`;
+    }
+
+    function getProgramOutcomeMapHTML(plos, categories, uncategorizedPLOs, clos, outcomeMap) {
+        categoryHeaderCells = ``;
+        categorizedPLOCells = ``;
+        categorizedOutcomeMapCells = [];
+        categories.forEach((category, categoryIndex) => {
+            if (category['plos'].length > 0) {
+                th = `
+                    <th class="table-active w-auto" colspan="${category['plos'].length}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${category['plo_category']}</th>            
+                `;
+                categoryHeaderCells += th;
+                category['plos'].forEach((plo, index) => {
+
+                    if (plo['plo_shortphrase']) {
+                        td = `
+                        <td style="height:0; text-align: left;">
+                            ${plo['plo_shortphrase']}
+                        </td>`;
+                    } else {
+                        td = `
+                        <td style="height:0; text-align: left;">
+                            ${plo['pl_outcome']}
+                        </td>`;
+                    }
+
+                    clos.forEach((clo, index) => {
+                        if (!categorizedOutcomeMapCells[clo['l_outcome_id']])
+                            categorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+                        if (outcomeMap.length < 1) 
+                            categorizedOutcomeMapCells[clo['l_outcome_id']] += '<td></td>'
+                        else {
+                            mappingScale = outcomeMap[plo['pl_outcome_id']][clo['l_outcome_id']];
+                            mapTd = `<td class="text-center align-middle" style="background-color:${mappingScale['colour']}">${mappingScale['abbreviation']}</td>`
+                            categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                        }                            
+                    });
+                    
+                    categorizedPLOCells += td;
+                })
+            }
+        });
+
+        uncategorizedHeaderCells = ``;
+        uncategorizedPLOCells = ``;
+        uncategorizedOutcomeMapCells = [];
+        if (Object.keys(uncategorizedPLOs).length > 0) {
+            uncategorizedHeaderCells = `
+                <th class="table-active w-auto text-center" colspan="${Object.keys(uncategorizedPLOs).length}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Uncategorized PLOs</th>
+            `;
+            for ([key, plo] of Object.entries(uncategorizedPLOs)) {
+                if (plo['plo_shortphrase']) {
+                    td = `
+                    <td style="height:0; text-align: left;">
+                        ${plo['plo_shortphrase']}
+                    </td>`;
+                } else {
+                    td = `
+                    <td style="height:0; text-align: left;">
+                        ${plo['pl_outcome']}
+                    </td>`;
+                }
+                uncategorizedPLOCells += td;
+                // TODO: loop over clos, check if this plo has been mapped
+                clos.forEach((clo, index) => {
+                    if (!uncategorizedOutcomeMapCells[clo['l_outcome_id']])
+                        uncategorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+                    if (outcomeMap.length < 1) 
+                        uncategorizedOutcomeMapCells[clo['l_outcome_id']] += '<td></td>'
+                    else {
+                        mappingScale = outcomeMap[plo['pl_outcome_id']][clo['l_outcome_id']];
+                        mapTd = `<td class="text-center align-middle" style="background-color:${mappingScale['colour']}">${mappingScale['abbreviation']}</td>`
+                        uncategorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                    }
+                });
+            }
+        }
+
+        outcomeMapTableCategoriesRowHTML = `
+            <tr>
+                <th></th>
+                ${categoryHeaderCells}
+                ${uncategorizedHeaderCells}
+            </tr>
+        `;
+
+        outcomeMapTablePLOsRowHTML = `
+            <tr>
+                <td></td>
+                ${categorizedPLOCells}
+                ${uncategorizedPLOCells}
+            </tr>
+        `;
+        emptyRow = '';
+
+
+        outcomeMapTableBodyHTML = ``;
+        clos.forEach((clo, index) => {
+            if (clo['clo_shortphrase'])
+                cloCellText = clo["clo_shortphrase"];
+            else 
+                cloCellText = clo["l_outcome"];
+
+            if (!categorizedOutcomeMapCells[clo['l_outcome_id']])
+                categorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+            if (!uncategorizedOutcomeMapCells[clo['l_outcome_id']])
+                uncategorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+            tr = `
+                <tr>
+                    <td class="w-auto"> 
+                        ${cloCellText}
+                    </td>
+                    ${categorizedOutcomeMapCells[clo['l_outcome_id']]}
+                    ${uncategorizedOutcomeMapCells[clo['l_outcome_id']]}
+
+                </tr>
+            `;
+
+            outcomeMapTableBodyHTML += tr;
+
+        });
+
+        outcomeMapTableHTML = `
+        <div class="col-12">
+            <div style="overflow: auto;">
+                <table class="table table-bordered table-light">
+                    <thead>
+                        <tr class="table-primary">
+                            <th colspan="1" class="w-auto">CLO</th>
+                            <th colspan="${plos.length}">Program Learning Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${outcomeMapTableCategoriesRowHTML}
+                        ${outcomeMapTablePLOsRowHTML}
+                        ${outcomeMapTableBodyHTML}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        `;
+        return outcomeMapTableHTML;
+    }
+
+    function getMappingScalesHTML(mappingScales) {
+        if (mappingScales.length > 0) {
+            mappingScalesTableBodyHTML = ``;
+            mappingScales.forEach((mappingScale, index) => {
+                row = `
+                    <tr>
+                        <td>
+                            <div style="background-color:${mappingScale['colour']};height: 10px; width: 10px;"></div>
+                            ${mappingScale['title']}<br>
+                            (${mappingScale['abbreviation']})
+                        </td>
+                        <td>
+                            ${mappingScale['description']}
+                        </td>
+                    </tr>
+                `;
+                mappingScalesTableBodyHTML += row;
+            });
+            mappingScalesTableHTML = `
+                <div class="col-12">
+                    <table class="table table-bordered table-light">
+                        <thead>
+                            <tr class="table-primary">
+                                <th colspan="2">Mapping Scale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mappingScalesTableBodyHTML}
+                        </tbody>
+                    </table>
+                </div>
+            `; 
+            return mappingScalesTableHTML;
+        } else {
+            noMappingScalesHTML = `
+                <div class="col-12">
+                    <div class="alert alert-warning wizard">
+                        <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
+                    </div>
+                </div>`;
+            return noMappingScalesHTML;
+        }
+
     }
 
     function getCourseAlignmentHTML(courseId, courseAlignment) {

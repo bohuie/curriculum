@@ -9,6 +9,8 @@ use App\Models\Course;
 use App\Models\CourseSchedule;
 use App\Models\Department;
 use App\Models\Faculty;
+use App\Models\MappingScale;
+use App\Models\Program;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Element\Table;
 use Illuminate\Support\Facades\Log;
@@ -88,23 +90,24 @@ class SyllabusController extends Controller
                     $clo->assessmentMethods;
                     $clo->learningActivities;
                 }
+                $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id)->pluck('program_id')->toArray(); 
+                if (count($syllabusProgramIds) > 0)
+                    $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $importCourse->course_id);   
             }
-            $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id);            
-            
             // show view based on user permission
             switch ($userPermission) {
                 // owner
                 case 1:
-                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment));
+                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
 
                 break;
                 case 2:
                     // editor
-                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment));
+                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
                 break;
                 // viewer
                 case 3:
-                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment));
+                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
 
                 break;
                 // return view to create a syllabus as default
@@ -135,7 +138,7 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment']);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
             break;
             case 'V':
                 // get data specific to vancouver campus
@@ -143,7 +146,7 @@ class SyllabusController extends Controller
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment']);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
             break;
                 
         }
@@ -166,7 +169,7 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment']);
+                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
             break;
             case 'V':
                 // get data specific to vancouver campus
@@ -174,7 +177,7 @@ class SyllabusController extends Controller
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment']);        
+                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('outcomeMaps', $data['outcomeMaps']);        
         }
     }
 
@@ -409,7 +412,7 @@ class SyllabusController extends Controller
         }
         // check if program outcome maps were included
         if (array_key_exists("programs", $settings)) {
-            $programIds = array_keys($settings["programs"]);
+            $programIds = $settings["programs"];
             foreach($programIds as $programId) {
                 $syllabiProgram = new SyllabusProgram;
                 $syllabiProgram->syllabus_id = $syllabusId;
@@ -687,6 +690,28 @@ class SyllabusController extends Controller
         return redirect()->route('home');
     }
 
+    /*
+        * Helper function to get outcome maps
+        * @param Array of programIds
+        * @return 2D array[$clos][plos] = $mappingScales
+    */
+
+    private function getOutcomeMaps($programIds, $courseId) {
+        $programsOutcomeMaps = array();
+        foreach ($programIds as $programId) {
+            $program = Program::find($programId);
+            $programsOutcomeMaps[$programId]["program"] = $program;
+            foreach ($program->programLearningOutcomes as $programLearningOutcome) {
+                $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $courseId);
+                foreach($outcomeMaps as $outcomeMap){
+                    $programsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+                } 
+
+            }
+        }
+        return $programsOutcomeMaps;
+    }
+
     
 
     // get existing course information
@@ -733,15 +758,48 @@ class SyllabusController extends Controller
                 $clo->learningActivities;
             }
         }
-        // check if program outcome maps were requested
-        $course->programs->each(function ($program, $key) use ($importCourseSettings) {
+        // check which program outcome maps were requested
+        $data['closForOutcomeMaps'] = null;
+        foreach ($course->programs as $program) {
             if (in_array($program->program_id, $importCourseSettings)) {
-                Log::debug('give me ' . $program->program);
+                if (!isset($data['closForOutcomeMaps'])) {
+                    $data['closForOutcomeMaps'] = $course->learningOutcomes;
+                }
+                $data['programs'][$program->program_id]['programId'] = $program->program_id;
+                $data['programs'][$program->program_id]['programTitle'] = $program->program;
+                $data['programs'][$program->program_id]['programLearningOutcomes'] = $program->programLearningOutcomes;
+                $data['programs'][$program->program_id]['categories'] = $program->ploCategories;
+                foreach ($data['programs'][$program->program_id]['categories'] as $category) {
+                    $category->plos;
+                }
+                $uncategorizedPlos = $program->programLearningOutcomes->where('plo_category_id', null);
+                $data['programs'][$program->program_id]['uncategorizedPlosCount'] = $uncategorizedPlos->count();
+                $data['programs'][$program->program_id]['uncategorizedPlos'] = $uncategorizedPlos;
+                $data['programs'][$program->program_id]['outcomeMap'] = $uncategorizedPlos;
+                $data['programs'][$program->program_id]['mappingScales'] = $program->mappingScaleLevels;
+                $data['programs'][$program->program_id]['outcomeMap'] = $this->getProgramOutcomeMap($program->program_id, $course->course_id);
             }
-        });
-
+        }
         $data = json_encode($data);
+
         return $data;
+    }
+
+    /**
+     * Create program outcome map data structure
+     * @param 
+     * @return 2-D array[$ploId][$cloId] = MappingScale
+     */
+    public function getProgramOutcomeMap($programId, $courseId) {
+        $program = Program::find($programId);
+        $programOutcomeMap = array();
+        foreach ($program->programLearningOutcomes as $programLearningOutcome) {
+            $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $courseId);
+            foreach($outcomeMaps as $outcomeMap) {
+                $programOutcomeMap[$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+            } 
+        }
+        return $programOutcomeMap;
     }
 
     /**
