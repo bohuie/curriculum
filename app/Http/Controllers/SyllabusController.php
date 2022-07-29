@@ -771,6 +771,7 @@ class SyllabusController extends Controller
                 if($courseDescription = $okanaganSyllabus->course_description){
                     $templateProcessor->cloneBlock('NocourseDescription');
                     $templateProcessor->setValue('courseDescription', $courseDescription);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NocourseDescription',0);
                 }
