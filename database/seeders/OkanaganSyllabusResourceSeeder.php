@@ -69,6 +69,11 @@ class OkanaganSyllabusResourceSeeder extends Seeder
             'title' => 'Safewalk',
         ]);
 
+        OkanaganSyllabusResource::create([
+            'id_name' => 'ombud',
+            'title' => 'Office of the Ombudperson',
+        ]);
+
 
     }
 }
