@@ -82,6 +82,18 @@
                 </tbody>
             </table>                                    
         </div>
+        <!-- course description -->
+        <div class="mb-4">
+            <div>
+                <h6 class="oSyllabusHeader">
+                    Course Description
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['okanaganCourseDescription']}}"></i>
+                    </span>
+                </h6>
+            </div>
+            <p>{{$okanaganSyllabus->course_description}}</p>
+        </div>
         <!-- course format -->
         <div class="mb-4">
             <div>
@@ -356,10 +368,10 @@
                         @break
 
                         @case('disability')
-                        <p>The Disability Resource Centre ensures educational equity for students with disabilities and chronic medical conditions. If you are disabled, have an injury or illness and require academic accommodations to meet the course objectives, please contact Earllene Roberts, the Manager for the Disability Resource Centre located in the University Centre building (UNC 214).
+                        <p>The Disability Resource Centre ensures educational equity for students with disabilities and chronic medical conditions. If you are disabled, have an injury or illness and require academic accommodations to meet the course objectives, please contact Earllene Roberts, the Diversity Advisor for the Disability Resource Centre located in the University Centre building (UNC 215).
                         <br>
                         <br>
-                        <b>UNC 214</b> 	250.807.9263
+                        <b>UNC 215</b> 	250.807.9263
                         email: <a href="earllene.roberts@ubc.ca">earllene.roberts@ubc.ca</a>
                         Web: <a href="www.students.ok.ubc.ca/drc">www.students.ok.ubc.ca/drc</a></p>
                         @break
@@ -375,12 +387,20 @@
                         @break
 
                         @case('health')
-                        <p>At UBC Okanagan health services to students are provided by Health and Wellness.  Nurses, physicians and counsellors provide health care and counselling related to physical health, emotional/mental health and sexual/reproductive health concerns. As well, health promotion, education and research activities are provided to the campus community.  If you require assistance with your health, please contact Health and Wellness for more information or to book an appointment.
-                        <br>
+                        <p>At UBC Okanagan health services to students are provided by Student Wellness.  Nurses, physicians and counsellors provide health care and counselling related to physical health, emotional/mental health and sexual/reproductive health concerns. As well, health promotion, education and research activities are provided to the campus community.  If you require assistance with your health, please contact Student Wellness for more information or to book an appointment.<br>
                         <br>
                         <b>UNC 337</b> 	250.807.9270
                         email: <a href="healthwellness.okanagan@ubc.ca">healthwellness.okanagan@ubc.ca</a>
                         Web: <a href="www.students.ok.ubc.ca/health-wellness">www.students.ok.ubc.ca/health-wellness</a>
+                        </p>
+                        @break
+
+                        @case('ombud')
+                        <p class="text-center">The Office of the Ombudsperson for Students is an independent, confidential and impartial resource to ensure students are treated fairly. The Ombuds Office helps students navigate campus-related fairness concerns. They work with UBC community members individually and at the systemic level to ensure students are treated fairly and can learn, work and live in a fair, equitable and respectful environment. Ombuds helps students gain clarity on UBC policies and procedures, explore options, identify next steps, recommend resources, plan strategies and receive objective feedback to promote constructive problem solving. If you require assistance, please feel free to reach out for more information or to arrange an appointment.
+                        <br>
+                        <b>UNC 328</b> 	250.807.9818
+                        email: <a href="ombuds.office.ok@ubc.ca ">ombuds.office.ok@ubc.ca </a>
+                        Web: <a href="www.ombudsoffice.ubc.ca">www.ombudsoffice.ubc.ca</a>
                         </p>
                         @break
 
