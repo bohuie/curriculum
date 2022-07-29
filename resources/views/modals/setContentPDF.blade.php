@@ -1,13 +1,14 @@
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
                 <!-- Select program content modal -->
-                @include('modals.downloadProgressModal', ['program' => $program])
+                
                 <div class="modal" id="setContentPDF" tabindex="-1" aria-labelledby="setContentPDFLabel" aria-hidden="true" data-bs-backdrop="static">
                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered ">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="setContentPDFLabel">Download a Partial Program Summary</h5>
                                 
-                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     
                               
                             </div>
@@ -85,7 +86,7 @@
                             </div>
                             
                             <div class="modal-footer">
-                                <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                                <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                                 <button id="downloadPartialPDFBtn"  data-route="{{route('programs.pdf', $program->program_id)}}" type="submit" class="btn btn-primary">Submit</button>
                                 <input value="1" name="formFilled" id="formFilled" form ="setContentForm"hidden>
                             </div>
@@ -114,12 +115,12 @@
             },
             beforeSend: (jqXHR, settings) => {
                 // show download modal
-                $('#downloadProgressModal').modal('show');
                 $('#setContentPDF').modal('toggle');
+                $('#downloadProgressModal').modal('show');
+                
             },  
             success: (data, textStatus, jqXHR) => {
                 
-                $('#setContentPDF').modal('toggle');
                 $('#downloadProgressModal').modal('hide');
                 // check if controller handled an error
                 if (data == -1) 
