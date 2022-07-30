@@ -40,7 +40,7 @@ define("INPUT_TIPS", array(
     "latePolicy" => "State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?",
     "missedActivityPolicy" => "In accordance with policy on Grading Practices, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight the marks from a missed test onto later assessments?",
     "courseDescription" => "As in the Academic Calendar or, for courses without a published description, include a brief representative one.", 
-    "okanaganCourseDescription" => "Course descriptions are provided in the UBCO Okanagan Academic Calendar. For courses without a published description, please include a brief representative one.", 
+    "okanaganCourseDescription" => 'Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar <i class="bi bi-box-arrow-up-right"></i></a>. For courses without a published description, please include a brief representative one.', 
     "coursePrereqs" => "Is there a course that students must have passed before taking this course?",
     "courseCoreqs" => "Is there a course that students must take concurrently (if not before)?",
     "courseContacts" => "Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?", 
@@ -79,6 +79,7 @@ class SyllabusController extends Controller
         $departments =  Department::orderBy('department')->get();
         
         $courseAlignment = null;
+        $outcomeMaps = null;
         if ($syllabusId != null) {
             $syllabus = Syllabus::find($syllabusId);
             // get this users permission level 
@@ -340,7 +341,7 @@ class SyllabusController extends Controller
                 // set optional syllabus fields for Okangan campus
                 $okanaganSyllabus->course_format = $request->input('courseFormat');
                 $okanaganSyllabus->course_overview = $request->input('courseOverview');
-                $okanaganSyllabus->course_description = $request->input('courseDesc');
+                // $okanaganSyllabus->course_description = $request->input('courseDesc');
                 
                 // save okanagan syllabus record
                 $okanaganSyllabus->save();
@@ -544,7 +545,7 @@ class SyllabusController extends Controller
                     // update optional fields for okanagan syllabus
                     $okanaganSyllabus->course_format = $request->input('courseFormat');
                     $okanaganSyllabus->course_overview = $request->input('courseOverview');
-                    $okanaganSyllabus->course_description = $request->input('courseDesc');
+                    // $okanaganSyllabus->course_description = $request->input('courseDesc');
                     // save okanagan syllabus
                     $okanaganSyllabus->save();
                     // check if a list of okanagan syllabus resources to include was provided
@@ -705,10 +706,11 @@ class SyllabusController extends Controller
         foreach ($programIds as $programId) {
             $program = Program::find($programId);
             $programsOutcomeMaps[$programId]["program"] = $program;
+            $programsOutcomeMaps[$programId]["clos"] = Course::find($courseId)->learningOutcomes;
             foreach ($program->programLearningOutcomes as $programLearningOutcome) {
                 $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $courseId);
                 foreach($outcomeMaps as $outcomeMap){
-                    $programsOutcomeMaps[$programId][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+                    $programsOutcomeMaps[$programId]["outcomeMap"][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
                 } 
 
             }
