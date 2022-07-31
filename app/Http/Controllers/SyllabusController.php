@@ -1463,7 +1463,8 @@ class SyllabusController extends Controller
         // add a new row and cell to table for each learning outcome and its alignment
         foreach ($importCourse->learningOutcomes as $rowIndex => $clo) {
             $courseAlignmentTable->addRow();
-            $courseAlignmentTable->addCell()->addText($clo->l_outcome);
+            isset($clo->clo_shortphrase) ? $shortphrase = $clo->clo_shortphrase . ': ' : $shortphrase = '';
+            $courseAlignmentTable->addCell()->addText($shortphrase . $clo->l_outcome);
             $courseAlignmentTable->addCell()->addText($clo->assessmentMethods->implode('a_method', ', '));
             $courseAlignmentTable->addCell()->addText($clo->learningActivities->implode('l_activity', ', '));
         }
