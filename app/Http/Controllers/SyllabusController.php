@@ -1566,16 +1566,36 @@ class SyllabusController extends Controller
             else 
                 $outcomeMapTbl->addCell()->addText($clo->l_outcome);
 
-            foreach ($program->programLearningOutcomes as $plo) {
-                if (!array_key_exists($plo->pl_outcome_id, $outcomeMap))
-                    $outcomeMapTbl->addCell();
-                else  
-                    if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$plo->pl_outcome_id]))
+            foreach ($program->ploCategories as $category) {
+                if ($category->plos->count() > 0) {
+                    foreach ($category->plos as $plo) {
+                        if (!array_key_exists($plo->pl_outcome_id, $outcomeMap))
+                            $outcomeMapTbl->addCell();
+                        else  {
+                            if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$plo->pl_outcome_id]))
+                                $outcomeMapTbl->addCell();
+                            else {
+                                $mappingScale = $outcomeMap[$plo->pl_outcome_id][$clo->l_outcome_id];
+                                $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
+                foreach ($program->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO) {
+                    if (!array_key_exists($uncategorizedPLO->pl_outcome_id, $outcomeMap))
                         $outcomeMapTbl->addCell();
                     else {
-                        $mappingScale = $outcomeMap[$plo->pl_outcome_id][$clo->l_outcome_id];
-                        $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                        if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$uncategorizedPLO->pl_outcome_id]))
+                            $outcomeMapTbl->addCell();
+                        else {
+                            $mappingScale = $outcomeMap[$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id];
+                            $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                        }
                     }
+                }
             }
         }     
         $docTemplate->setComplexBlock('outcomeMap-' . strval($index), $outcomeMapTbl);
