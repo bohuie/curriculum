@@ -973,7 +973,7 @@ class ProgramController extends Controller
                 $sheet->setCellValue('K'.strval(($index * 8) + 2), $standards);
                 $sheet->mergeCells('K'.strval(($index * 8) + 2).':P'.strval(($index * 8) + 2).'');
                 $sheet->getStyle('K'.strval(($index * 8) + 2).'')->applyFromArray($styles["secondaryHeading"]);
-                $sheet->setCellValue('K'.strval(($index * 8) + 3), $outputMS[5][$index]);
+                $sheet->setCellValue('K'.strval(($index * 8) + 3), strip_tags(preg_replace('~[\r\n\t]+~', '', $outputMS[5][$index])));
                 $sheet->mergeCells('K'.strval(($index * 8) + 3).':P'.strval(($index * 8) + 9).'');
                 $sheet->getStyle('K'.strval(($index * 8) + 3).'')->applyFromArray($styles["text"]);
 
@@ -988,6 +988,7 @@ class ProgramController extends Controller
                     $k = 0;
                     $output = '';
                     $sheet->mergeCells('S'.strval((3 + $count + ($index * 8))).':Z'.strval((3 + $count + ($index * 8))).'');
+                    $sheet->getStyle('S'.strval( 3 + $count + ($index * 8)))->applyFromArray($styles["text"]);
                     foreach ($outputMS[3][$indexMS][$index] as $indexCourse => $courseId) {
                         $code = Course::where('course_id', $courseId)->pluck('course_code')->first();
                         $num = Course::where('course_id', $courseId)->pluck('course_num')->first();
