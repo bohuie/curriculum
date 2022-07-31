@@ -528,13 +528,29 @@
                                                     @foreach ($outcomeMap['program']->ploCategories as $category)
                                                         @if ($category->plos->count() > 0)
                                                             @foreach ($category->plos as $plo)
-                                                                <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                                @if (!array_key_exists($plo->pl_outcome_id, $outcomeMap['outcomeMap']))
+                                                                    <td></td>
+                                                                @else 
+                                                                    @if (!array_key_exists($clo->l_outcome_id, $outcomeMap['outcomeMap'][$plo->pl_outcome_id]))
+                                                                        <td></td>
+                                                                    @else 
+                                                                        <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                                    @endif
+                                                                @endif
                                                             @endforeach
                                                         @endif
                                                     @endforeach
                                                     @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
                                                         @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
-                                                            <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                            @if (!array_key_exists($uncategorizedPLO->pl_outcome_id, $outcomeMap['outcomeMap']))
+                                                                <td></td>
+                                                            @else 
+                                                                @if (!array_key_exists($clo->l_outcome_id, $outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id]))
+                                                                    <td></td>
+                                                                @else 
+                                                                    <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                                @endif
+                                                            @endif
                                                         @endforeach
                                                     @endif                                
                                                 </tr>

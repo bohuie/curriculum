@@ -1567,8 +1567,15 @@ class SyllabusController extends Controller
                 $outcomeMapTbl->addCell()->addText($clo->l_outcome);
 
             foreach ($program->programLearningOutcomes as $plo) {
-                $mappingScale = $outcomeMap[$plo->pl_outcome_id][$clo->l_outcome_id];
-                $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                if (!array_key_exists($plo->pl_outcome_id, $outcomeMap))
+                    $outcomeMapTbl->addCell();
+                else  
+                    if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$plo->pl_outcome_id]))
+                        $outcomeMapTbl->addCell();
+                    else {
+                        $mappingScale = $outcomeMap[$plo->pl_outcome_id][$clo->l_outcome_id];
+                        $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                    }
             }
         }     
         $docTemplate->setComplexBlock('outcomeMap-' . strval($index), $outcomeMapTbl);
