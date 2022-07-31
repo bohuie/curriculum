@@ -436,11 +436,9 @@
                     </h6>
                 </div>
                 @if ($outcomeMap['program']->mappingScaleLevels->count() < 1)
-                    <div class="col-12">
                         <div class="alert alert-warning wizard">
                             <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
                         </div>
-                    </div>
                 @else 
                     <table class="table table-bordered table-light">
                         <thead>

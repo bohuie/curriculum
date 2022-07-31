@@ -28,7 +28,7 @@
                         <tbody>
                             <tr>
                                 <th scope="row">
-                                    <input value = {{$course->course_id}} class="form-check-input" type="radio" name="importCourseId" form = "sylabusGenerator" style="margin-left: 0px" @if ($index == 0) checked @endif>
+                                    <input name="import_course_settings[courseId]" value={{$course->course_id}} class="form-check-input importCourseId" type="radio" form = "sylabusGenerator" style="margin-left: 0px" @if ($index == 0) checked @endif>
                                 </th>
                                 <td>{{$course->course_title}}</td>
                                 <td>{{$course->course_code}} {{$course->course_num}}</td>
@@ -117,7 +117,7 @@
     function fillImportSettingsModal() {
         importProgramsSection = $('#importProgramsSection')
         importProgramsSection.empty();
-        courseId = $('input[name="importCourseId"]:checked').val();
+        courseId = $('.importCourseId:checked').val();
         $.ajax({
             type: "GET",
             url: `/course/${courseId}/programs`,

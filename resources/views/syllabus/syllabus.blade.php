@@ -1369,7 +1369,7 @@
 
     // Import course info into using GET AJAX call
     function importCourseInfo() {
-        var course_id = $('input[name="importCourseId"]:checked').val();
+        var course_id = $('.importCourseId:checked').val();
         // get user specified course componenets to import
         var importCourseSettings = $('#importCourseSettingsForm').serializeArray();
 

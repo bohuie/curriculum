@@ -87,10 +87,12 @@ class SyllabusController extends Controller
             // check for user settings
             if (isset($syllabus->course_id)) {
                 $importCourse = Course::find($syllabus->course_id);
-                $courseAlignment = $importCourse->learningOutcomes;
-                foreach ($courseAlignment as $clo) {
-                    $clo->assessmentMethods;
-                    $clo->learningActivities;
+                if ($syllabus->include_alignment) {
+                    $courseAlignment = $importCourse->learningOutcomes;
+                    foreach ($courseAlignment as $clo) {
+                        $clo->assessmentMethods;
+                        $clo->learningActivities;
+                    }
                 }
                 $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id)->pluck('program_id')->toArray(); 
                 if (count($syllabusProgramIds) > 0)
@@ -409,13 +411,16 @@ class SyllabusController extends Controller
         $syllabus = Syllabus::find($syllabusId);
         // reset previous syllabi import settings
         $syllabus->course_id = null;
+        $syllabus->include_alignment = 0;
         SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
         // check if course alignment table was included
         if (array_key_exists("importCourseAlignment", $settings)) {
-            $syllabus->course_id = $settings["importCourseAlignment"];
+            $syllabus->course_id = $settings["courseId"];
+            $syllabus->include_alignment = 1;
         }
         // check if program outcome maps were included
         if (array_key_exists("programs", $settings)) {
+            $syllabus->course_id = $settings['courseId'];
             $programIds = $settings["programs"];
             foreach($programIds as $programId) {
                 $syllabiProgram = new SyllabusProgram;
@@ -819,6 +824,7 @@ class SyllabusController extends Controller
         $syllabus = Syllabus::find($syllabusId);
         $tableStyle = array('borderSize'=> 8, 'borderColor' => 'DCDCDC', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50, 'cellMargin' => Converter::cmToTwip(0.25));
         $tableHeaderRowStyle = array('bgColor' => 'c6e0f5', 'borderBottomColor' => '000000');
+        $secondaryTableHeaderRowStyle = array('bgColor' => 'dfe0e1', 'borderBottomColor' => '000000');
         $tableHeaderFontStyle = array('bold' => true);
 
         switch ($syllabus->campus) {
@@ -1402,29 +1408,17 @@ class SyllabusController extends Controller
         }
 
         if ($syllabus->course_id) {
-            $templateProcessor->cloneBlock('NoCourseAlignmentTbl');
-            $importCourse = Course::find($syllabus->course_id);
-            $courseAlignmentTable = new Table($tableStyle);
-            // add a header row to the table
-            $courseAlignmentTable->addRow();
-            // add header cells
-            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Course Learning Outcome', $tableHeaderFontStyle);
-            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Student Assessment Method', $tableHeaderFontStyle);
-            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Teaching and Learning Activity', $tableHeaderFontStyle);
+            if ($syllabus->include_alignment)
+                $this->addAlignmentToWordDoc($syllabus->id, $templateProcessor, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle));
+            else 
+                $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
 
-            // add a new row and cell to table for each learning outcome and its alignment
-            foreach ($importCourse->learningOutcomes as $rowIndex => $clo) {
-                $courseAlignmentTable->addRow();
-                $courseAlignmentTable->addCell()->addText($clo->l_outcome);
-                $courseAlignmentTable->addCell()->addText($clo->assessmentMethods->implode('a_method', ', '));
-                $courseAlignmentTable->addCell()->addText($clo->learningActivities->implode('l_activity', ', '));
-            }
-            // add course schedule table to word doc
-            $templateProcessor->setComplexBlock('courseAlignmentTbl', $courseAlignmentTable);
-
-        } else {
-            $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
-        }
+            $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabusId)->pluck('program_id')->toArray(); 
+            if (count($syllabusProgramIds) > 0) 
+                $this->addOutcomeMapsToWordDoc($syllabusProgramIds, $templateProcessor, $syllabus->course_id, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle, 'secondaryTableHeaderRowStyle' => $secondaryTableHeaderRowStyle));
+            else 
+                $templateProcessor->cloneBlock('NoOutcomeMaps', 0);
+        } 
 
         // set document name
         $fileName = 'syllabus';   
@@ -1454,6 +1448,132 @@ class SyllabusController extends Controller
 
         return response()->download($fileName . $wordFileExt)->deleteFileAfterSend(true);
     }
+
+    private function addAlignmentToWordDoc($syllabusId, $docTemplate, $styles) {
+        $docTemplate->cloneBlock('NoCourseAlignmentTbl');
+        $syllabus = Syllabus::find($syllabusId);
+        $importCourse = Course::find($syllabus->course_id);
+        $courseAlignmentTable = new Table($styles['tableStyle']);
+        // add a header row to the table
+        $courseAlignmentTable->addRow();
+        // add header cells
+        $courseAlignmentTable->addCell(null, $styles['tableHeaderRowStyle'])->addText('Course Learning Outcome', $styles['tableHeaderFontStyle']);
+        $courseAlignmentTable->addCell(null, $styles['tableHeaderRowStyle'])->addText('Student Assessment Method', $styles['tableHeaderFontStyle']);
+        $courseAlignmentTable->addCell(null, $styles['tableHeaderRowStyle'])->addText('Teaching and Learning Activity', $styles['tableHeaderFontStyle']);
+        // add a new row and cell to table for each learning outcome and its alignment
+        foreach ($importCourse->learningOutcomes as $rowIndex => $clo) {
+            $courseAlignmentTable->addRow();
+            $courseAlignmentTable->addCell()->addText($clo->l_outcome);
+            $courseAlignmentTable->addCell()->addText($clo->assessmentMethods->implode('a_method', ', '));
+            $courseAlignmentTable->addCell()->addText($clo->learningActivities->implode('l_activity', ', '));
+        }
+        // add course schedule table to word doc
+        $docTemplate->setComplexBlock('courseAlignmentTbl', $courseAlignmentTable); 
+    }
+
+    private function addOutcomeMapsToWordDoc($syllabusProgramIds, $docTemplate, $courseId, $styles) {
+        $docTemplate->cloneBlock('NoOutcomeMaps');
+        $course = Course::find($courseId);
+        $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $course->course_id);
+        foreach (array_values($outcomeMaps) as $index => $outcomeMap) {
+            // limit of 5 outcome maps
+            if ($index > 4) 
+                break;
+            $docTemplate->setValue('programtitle-' . strval($index), strtoupper($outcomeMap['program']->program));
+            $this->addMappingScaleTblToWordDoc($outcomeMap['program']->mappingScaleLevels, $docTemplate, $index, $styles);
+            if (isset($outcomeMap['outcomeMap']))
+                $this->addOutcomeMapTblToWordDoc($outcomeMap['program'], $course->learningOutcomes, $outcomeMap['outcomeMap'], $docTemplate, $index, $styles);
+            else 
+                $docTemplate->setValue('outcomeMap-' . strval($index), '');
+        }
+        // remove remaining template tags in word doc
+        while ($index < 5) {
+            $docTemplate->setValue('programtitle-' . strval($index), '');
+            $docTemplate->setValue('mappingScale-' . strval($index), '');
+            $docTemplate->setValue('outcomeMap-' . strval($index), '');
+            $index++;
+        }
+    }
+
+    private function addMappingScaleTblToWordDoc($mappingScales, $docTemplate, $index, $styles) {
+        $mappingScalesTbl = new Table($styles['tableStyle']);
+        // add a header row to the table
+        $mappingScalesTbl->addRow();
+        // add header cells
+        $mappingScaleheaderCell = $mappingScalesTbl->addCell(null, $styles['tableHeaderRowStyle']);
+        $mappingScaleheaderCell->getStyle()->setGridSpan(3);
+        $mappingScaleheaderCell->addText('Mapping Scale', $styles['tableHeaderFontStyle']);
+
+        // add a new row and cell to table for each learning outcome and its alignment
+        foreach ($mappingScales as $mappingScaleLevel) {
+            $mappingScalesTbl->addRow();
+            $mappingScalesTbl->addCell(null, array('bgColor' => substr($mappingScaleLevel->colour, 1)));
+            $mappingScalesTbl->addCell()->addText($mappingScaleLevel->title . ' (' . $mappingScaleLevel->abbreviation . ')');
+            $mappingScalesTbl->addCell()->addText($mappingScaleLevel->description);
+            array('bgColor' => 'c6e0f5', 'borderBottomColor' => '000000');
+        }
+        $docTemplate->setComplexBlock('mappingScale-' . strval($index), $mappingScalesTbl);
+    }
+
+    private function addOutcomeMapTblToWordDoc($program, $clos, $outcomeMap, $docTemplate, $index, $styles) {
+        $outcomeMapTbl = new Table($styles['tableStyle']);
+        // add a header row to the table
+        $outcomeMapTbl->addRow();
+        // add header cells
+        $outcomeMapTbl->addCell(null, $styles['tableHeaderRowStyle'])->addText('CLO', $styles['tableHeaderFontStyle']);
+        $plosHeaderCell = $outcomeMapTbl->addCell(null, $styles['tableHeaderRowStyle']);
+        $plosHeaderCell->getStyle()->setGridSpan($program->programLearningOutcomes->count());
+        $plosHeaderCell->addText('Program Learning Outcome', $styles['tableHeaderFontStyle']);
+        
+        $outcomeMapTbl->addRow();
+        $outcomeMapTbl->addCell();
+        foreach ($program->ploCategories as $category) {
+            if ($category->plos->count() > 0) {
+                $categoryHeaderCell = $outcomeMapTbl->addCell(null, $styles['secondaryTableHeaderRowStyle']);
+                $categoryHeaderCell->getStyle()->setGridSpan($category->plos->count());
+                $categoryHeaderCell->addText($category->plo_category, $styles['tableHeaderFontStyle']);
+            }
+        }
+        if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
+            $unCategorizedHeaderCell = $outcomeMapTbl->addCell(null, $styles['secondaryTableHeaderRowStyle']);
+            $unCategorizedHeaderCell->getStyle()->setGridSpan($program->programLearningOutcomes->where('plo_category_id', null)->count());
+            $unCategorizedHeaderCell->addText('Uncategorized', $styles['tableHeaderFontStyle']);
+        }
+        $outcomeMapTbl->addRow();
+        $outcomeMapTbl->addCell();
+        foreach ($program->ploCategories as $category) {
+            if ($category->plos->count() > 0) {
+                foreach ($category->plos as $plo) {
+                    if (isset($plo->plo_shortphrase)) 
+                        $outcomeMapTbl->addCell()->addText($plo->plo_shortphrase);
+                    else 
+                        $outcomeMapTbl->addCell()->addText($plo->pl_outcome);
+                }
+            }
+        }
+        if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
+            foreach ($program->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO) {
+                if (isset($uncategorizedPLO->plo_shortphrase)) 
+                    $outcomeMapTbl->addCell()->addText($uncategorizedPLO->plo_shortphrase);
+                else 
+                    $outcomeMapTbl->addCell()->addText($uncategorizedPLO->pl_outcome);
+            }
+        }   
+        foreach ($clos as $clo) {
+            $outcomeMapTbl->addRow();
+            if (isset($clo->clo_shortphrase)) 
+                $outcomeMapTbl->addCell()->addText($clo->clo_shortphrase);
+            else 
+                $outcomeMapTbl->addCell()->addText($clo->l_outcome);
+
+            foreach ($program->programLearningOutcomes as $plo) {
+                $mappingScale = $outcomeMap[$plo->pl_outcome_id][$clo->l_outcome_id];
+                $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+            }
+        }     
+        $docTemplate->setComplexBlock('outcomeMap-' . strval($index), $outcomeMapTbl);
+    }
+
 
     public function duplicate(Request $request, $syllabusId) {
 
