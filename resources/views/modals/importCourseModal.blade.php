@@ -28,7 +28,11 @@
                         <tbody>
                             <tr>
                                 <th scope="row">
-                                    <input name="import_course_settings[courseId]" value={{$course->course_id}} class="form-check-input importCourseId" type="radio" form = "sylabusGenerator" style="margin-left: 0px" @if ($index == 0) checked @endif>
+                                    @if (!empty($syllabus) && isset($syllabus->course_id))
+                                        <input name="import_course_settings[courseId]" value={{$course->course_id}} class="form-check-input importCourseId" type="radio" form = "sylabusGenerator" style="margin-left: 0px" @if($course->course_id == $syllabus->course_id) checked @endif>
+                                    @else 
+                                        <input name="import_course_settings[courseId]" value={{$course->course_id}} class="form-check-input importCourseId" type="radio" form = "sylabusGenerator" style="margin-left: 0px" @if ($index == 0) checked @endif>
+                                    @endif
                                 </th>
                                 <td>{{$course->course_title}}</td>
                                 <td>{{$course->course_code}} {{$course->course_num}}</td>

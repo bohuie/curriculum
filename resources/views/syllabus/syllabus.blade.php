@@ -2,7 +2,7 @@
 
 @section('content')
 
-@include('modals.importCourseModal', ['myCourses' => $myCourses])
+@include('modals.importCourseModal', ['myCourses' => $myCourses, 'syllabus' => $syllabus])
 
 @include('modals.courseSchedule')
 
