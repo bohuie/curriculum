@@ -1552,14 +1552,19 @@
                     if (outcomeMap.length < 1) 
                         uncategorizedOutcomeMapCells[clo['l_outcome_id']] += '<td></td>'
                     else {
-                        mappingScale = outcomeMap[plo['pl_outcome_id']][clo['l_outcome_id']];
-                        if (mappingScale) {
-                            mapTd = `<td class="text-center align-middle" style="background-color:${mappingScale['colour']}">${mappingScale['abbreviation']}</td>`;
-                            categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
-                        } else {
+                        if (!(plo['pl_outcome_id'] in outcomeMap)) {
                             mapTd = `<td></td>`;
                             categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
-                        }                   
+                        } else {
+                            if (!(clo['l_outcome_id'] in outcomeMap[plo['pl_outcome_id']])) {
+                                mapTd = `<td></td>`;
+                                categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                            } else {
+                                mappingScale = outcomeMap[plo['pl_outcome_id']][clo['l_outcome_id']];
+                                mapTd = `<td class="text-center align-middle" style="background-color:${mappingScale['colour']}">${mappingScale['abbreviation']}</td>`;
+                                categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                            }
+                        }
                     }
                 });
             }
