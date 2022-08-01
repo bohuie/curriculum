@@ -898,6 +898,10 @@ class ProgramController extends Controller
                 $imageDrawing->setPath($chartUrl); 
                 $imageDrawing->setCoordinates('A1');
                 $imageDrawing->setWorksheet($sheet);
+                // Add ministry standards table to Ministry standards sheet
+                if ($chartName == 'Ministry Standards Chart') {
+                    $this->makeMinistryStandardsSheet($sheet, $programId);
+                }
             }
 
         } catch (Throwable $exception) {
@@ -909,6 +913,185 @@ class ProgramController extends Controller
             Log::error($exception->getMessage());
             return -1;
         } 
+    }
+
+        /**
+     * Private helper function to create the learning outcomes sheet in the program summary spreadsheet
+     * @param Spreadsheet $spreadsheet
+     * @param int $programId
+     * @param Array $primaryHeaderStyleArr is the style to use for primary headings
+     * @return Worksheet
+     */
+    private function makeMinistryStandardsSheet($sheet, $programId) { 
+        try {
+            $program = Program::find($programId);
+            $outputMS = $this->getMinistryStandards($programId);
+            $styles = [
+                "primaryHeading" => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'C6E0F5'], 
+                    ],
+                ], 
+                "secondaryHeading" => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'ced4da'], 
+                    ],
+                ],
+                "textBold" => [
+                    'font' => [
+                        'bold' => true, 
+                    ],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
+                        'wrapText' => true,
+                    ],
+                ],
+                "text" => [
+                    'font' => [
+                        'bold' => false, 
+                    ],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
+                        'wrapText' => true,
+                    ],
+                ],
+            ];
+            $sheet->setCellValue('K1', 'Ministry Standards');
+            $sheet->mergeCells('K1:P1'); 
+            $sheet->setCellValue('Q1', 'Courses');
+            $sheet->mergeCells('Q1:Z1');
+            $sheet->getStyle('K1')->applyFromArray($styles["primaryHeading"]);
+            $sheet->getStyle('Q1')->applyFromArray($styles["primaryHeading"]);
+            foreach ($outputMS[0] as $index => $standards) {
+                // add standards and descriptions
+                $sheet->setCellValue('K'.strval(($index * 8) + 2), $standards);
+                $sheet->mergeCells('K'.strval(($index * 8) + 2).':P'.strval(($index * 8) + 2).'');
+                $sheet->getStyle('K'.strval(($index * 8) + 2).'')->applyFromArray($styles["secondaryHeading"]);
+                $sheet->setCellValue('K'.strval(($index * 8) + 3), strip_tags(preg_replace('~[\r\n\t]+~', '', $outputMS[5][$index])));
+                $sheet->mergeCells('K'.strval(($index * 8) + 3).':P'.strval(($index * 8) + 9).'');
+                $sheet->getStyle('K'.strval(($index * 8) + 3).'')->applyFromArray($styles["text"]);
+
+                $count = 0;
+                foreach ($outputMS[1] as $indexMS => $titleMS) {
+                    // add mapping scale titles
+                    $sheet->mergeCells('Q'.strval((($index * 8) + 2)).':Z'.strval((($index * 8) + 2)).'');
+                    $sheet->getStyle('Q'.strval(($index * 8) + 2).'')->applyFromArray($styles["secondaryHeading"]);
+                    $sheet->setCellValue('Q'.strval( 3 + $count + ($index * 8)), ($titleMS. ': '. $outputMS[2][$indexMS][$index]));
+                    $sheet->getStyle('Q'.strval( 3 + $count + ($index * 8)))->applyFromArray($styles["textBold"]);
+                    $sheet->mergeCells('Q'.strval((3 + $count + ($index * 8))).':R'.strval((3 + $count + ($index * 8))).'');
+                    $k = 0;
+                    $output = '';
+                    $sheet->mergeCells('S'.strval((3 + $count + ($index * 8))).':Z'.strval((3 + $count + ($index * 8))).'');
+                    $sheet->getStyle('S'.strval( 3 + $count + ($index * 8)))->applyFromArray($styles["text"]);
+                    foreach ($outputMS[3][$indexMS][$index] as $indexCourse => $courseId) {
+                        $code = Course::where('course_id', $courseId)->pluck('course_code')->first();
+                        $num = Course::where('course_id', $courseId)->pluck('course_num')->first();
+                        if ($k != 0) {
+                            $output .= ', '. $code. ' ' . $num;
+                        } else {
+                            $output .= ' '. $code. ' ' . $num;
+                        }
+                        $k++;
+                    }
+                    $sheet->setCellValue('S'.strval( 3 + $count + ($index * 8)), ($output));
+                    $count++;
+                }
+                // style remaining cells
+                $remainingCells = 8 - count($outputMS[1]); 
+                if ($remainingCells > 0) {
+                    for ($i = 1; $i < $remainingCells; $i++) {
+                        $sheet->mergeCells('Q'.strval((($index * 8) + 2) + ($i + count($outputMS[1]))).':R'.strval((($index * 8) + 2) + ($i + count($outputMS[1]))));
+                        $sheet->mergeCells('S'.strval((($index * 8) + 2) + ($i + count($outputMS[1]))).':Z'.strval((($index * 8) + 2) + ($i + count($outputMS[1]))));
+                    }
+                }
+            }
+    
+            return $sheet; 
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
+            Log::error($message . ' ...\n');
+            Log::error('Code - ' . $exception->getCode());
+            Log::error('File - ' . $exception->getFile());
+            Log::error('Line - ' . $exception->getLine());
+            Log::error($exception->getMessage());
+            
+            return $exception;
+        }
+    }
+
+    public function getMinistryStandards($program_id) {
+        $program = Program::where('program_id', $program_id)->first();
+        
+        // Get all Standard Categories for courses in the program
+        if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
+            $standardCategory = StandardCategory::find(1);
+        } elseif($program->level == "Masters") {
+            $standardCategory = StandardCategory::find(2);
+        } elseif($program->level == "Doctoral") {
+            $standardCategory = StandardCategory::find(3);
+        } else {
+            $standardCategory = StandardCategory::find(0);
+        }
+
+        // Get all Standards for courses in the program
+        $standards = $standardCategory->standards;
+
+        // Get the names of the standards for the categories (x-axis)
+        $namesStandards = [];
+        $descriptionsStandards = [];
+        for($i = 0; $i < count($standards); $i++) {
+            $namesStandards[$i] = $standards[$i]->s_shortphrase;
+            $descriptionsStandards[$i] = $standards[$i]->s_outcome;
+        }
+        
+        // Get Standards Mapping Scales for high-chart
+        $standardsMappingScales = StandardScale::where('scale_category_id', 1)->pluck('abbreviation')->toArray();
+        $standardsMappingScales[count($standardsMappingScales)] = 'N/A';
+        $standardsMappingScalesTitles = StandardScale::where('scale_category_id', 1)->pluck('title')->toArray();
+        $standardsMappingScalesTitles[count($standardsMappingScales)] = StandardScale::find(0)->pluck('title')->first();
+
+        // Get Standards Mapping Scale Colours for high-chart
+        $standardMappingScalesIds = StandardScale::where('scale_category_id', 1)->pluck('standard_scale_id')->toArray();
+        $standardMappingScalesIds[count($standardMappingScalesIds)] = 0;
+        $standardMappingScalesColours = [];
+        $freqOfMinistryStandardIds = [];          // used in a later step
+        $coursesOfMinistryStandardIds = [];
+        for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
+            $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
+            $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+        }
+        foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+            foreach ($standards as $standard) {
+                $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
+                $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
+            }
+        }
+
+        $programCoursesFiltered = $program->courses()->where('standard_category_id', $standardCategory->standard_category_id)->get();
+
+        $outputStandardOutcomeMaps = [];
+        foreach ($programCoursesFiltered as $course) {
+            // check that outcome map exists
+            if (StandardsOutcomeMap::where('course_id', $course->course_id)->exists()) {
+                foreach ($standards as $standard) {
+                    $scale_id = StandardsOutcomeMap::where('course_id', $course->course_id)->where('standard_id', $standard->standard_id)->value('standard_scale_id');
+                    $freqOfMinistryStandardIds[$scale_id][$standard->standard_id] += 1;
+                    array_push($coursesOfMinistryStandardIds[$scale_id][$standard->standard_id], $course->course_id);
+                }
+            }
+        }
+        $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
+        $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
+        $standardsMappingScalesTitles = $this->resetKeysSingle($standardsMappingScalesTitles);
+
+        return [$namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards];
     }
 
     /**
@@ -1239,6 +1422,16 @@ class ProgramController extends Controller
         }
     }
 
+    public function resetKeysSingle($array) {
+        $newArray = [];
+        // Reset Keys for High-charts
+        $i = 0;
+        foreach ($array as $a) {
+            $newArray[$i] = $a;
+            $i++;
+        }
+        return $newArray;
+    }
     
     public function resetKeys($array) {
         $newArray = [];

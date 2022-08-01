@@ -492,7 +492,7 @@ class ProgramWizardController extends Controller
         $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
 
         $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards); 
-
+        
         return response()->json([$programCoursesFiltered, $namesStandards, $outputStandardOutcomeMaps, $standardsMappingScales, $standardMappingScalesColours, $frequencyOfMinistryStandardIds, $tableMS], 200);
     }
 
