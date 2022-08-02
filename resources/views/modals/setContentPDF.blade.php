@@ -26,10 +26,34 @@
                                         </thead>
                                         <tr>
                                             <td>
-                                                Program Learning Outcomes
+                                                PLOs to CLOs Bar Chart
                                             </td>
                                             <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="PLOs" id="PLOs" form ="setContentForm" style="margin-left: 38px">
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="clos_bar" id="yes_clos_bar" form ="setContentForm" style="margin-left: 38px">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Assessment Methods Bar Chart
+                                            </td>
+                                            <td>
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="assessment_methods_bar" id="yes_assessment_methods_bar" form ="setContentForm" style="margin-left: 38px">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Learning Activities Bar Chart
+                                            </td>
+                                            <td>
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="learning_activities_bar" id="yes_learning_activities_bar" form ="setContentForm" style="margin-left: 38px">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Ministry Standards Bar Chart
+                                            </td>
+                                            <td>
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="ministry_stds_bar" id="yes_ministry_stds_bar" form ="setContentForm" style="margin-left: 38px">
                                             </td>
                                         </tr>
                                         <tr>
@@ -50,41 +74,23 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                CLO Bar Charts
+                                                Program Learning Outcomes
                                             </td>
                                             <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="clos_bar" id="yes_clos_bar" form ="setContentForm" style="margin-left: 38px">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Assessment Methods Bar Charts
-                                            </td>
-                                            <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="assessment_methods_bar" id="yes_assessment_methods_bar" form ="setContentForm" style="margin-left: 38px">
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="PLOs" id="PLOs" form ="setContentForm" style="margin-left: 38px">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                Learning Activities Bar Charts
+                                                Mapping Scales
                                             </td>
                                             <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="learning_activities_bar" id="yes_learning_activities_bar" form ="setContentForm" style="margin-left: 38px">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Ministry Standards Bar Charts
-                                            </td>
-                                            <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="ministry_stds_bar" id="yes_ministry_stds_bar" form ="setContentForm" style="margin-left: 38px">
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="mapping_scales" id="yes_mapping_scales" form ="setContentForm" style="margin-left: 38px">
                                             </td>
                                         </tr>
                                     </table>
-                                    </div>
-                            
+                                </div>
                             </div>
-                            
                             <div class="modal-footer">
                                 <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                                 <button id="downloadPartialPDFBtn"  data-route="{{route('programs.pdf', $program->program_id)}}" type="submit" class="btn btn-primary">Submit</button>
