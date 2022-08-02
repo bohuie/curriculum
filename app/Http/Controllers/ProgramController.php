@@ -647,6 +647,24 @@ class ProgramController extends Controller
             $user = User::where('id',Auth::id())->first();
             $program = Program::where('program_id', $program_id)->first();
 
+            //set array of flags to determine what content to include in downloadSummary.blade.php
+            $programContent = array();
+    
+            if($request->input('formFilled')==null){
+                $programContent=[1,1,1,1,1,1,1];
+
+            }else{
+                
+                $programContent[0] = $request->input('PLOs');
+                $programContent[1] = $request->input('mapping_scales');
+                $programContent[2] = $request->input('freq_dist_tables');
+                $programContent[3] = $request->input('clos_bar');
+                $programContent[4] = $request->input('assessment_methods_bar');
+                $programContent[5] = $request->input('learning_activities_bar');
+                $programContent[6] = $request->input('ministry_stds_bar');
+
+            }
+
             $coursesByLevels = $this->getCoursesByLevel($program_id);
             //progress bar
             $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
@@ -798,7 +816,7 @@ class ProgramController extends Controller
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($program_id, '.pdf');
 
-            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS'));
+            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent'));
             // get the content of the pdf document
             $content = $pdf->output();
             // set name of pdf
@@ -842,6 +860,7 @@ class ProgramController extends Controller
      * @return String $url of spreadsheet file 
      */  
     public function spreadsheet(Request $request, $programId) {
+
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
@@ -868,7 +887,7 @@ class ProgramController extends Controller
                 ],
             ];
             // create each sheet in summary
-            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
+            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles); 
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             
@@ -876,7 +895,7 @@ class ProgramController extends Controller
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet){
+            array_walk($columns, function ($letter, $index) use ( $plosSheet, $mapSheet, $mappingScalesSheet){
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -913,7 +932,7 @@ class ProgramController extends Controller
     * @param int $programId
     * @param array $charts: array of urls to charts indexed by their sheet name
     */
-   private function makeChartSheets($spreadsheet, $programId, $charts) {
+    private function makeChartSheets($spreadsheet, $programId, $charts) {
         try {
             $program = Program::find($programId);
             

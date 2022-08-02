@@ -64,6 +64,9 @@
             <p><b>Department:</b> {{$program->department}}</p>
             <p><b>Level:</b> {{$program->level}}</p>
         </div>
+        
+        @if($programContent[0]==1) <!-- programContent[0] = PLO flag -->
+
         <!-- Start of PLOs -->
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Program Learning Outcomes</h4></div>
@@ -128,7 +131,9 @@
             @endif
         </div>
         <!-- End of PLOs -->
+        @endif
 
+        @if($programContent[1]==1) <!-- programContent[1] = Mapping Scales -->
         <!-- Mapping Scales -->
 
         <div class="panel panel-default">
@@ -181,7 +186,9 @@
             @endif
         </div>
         <!--End Mapping Scales-->
+        @endif
 
+        @if($programContent[2]==1) <!-- programContent[2] = Frequency Distribution Tables flag -->
         <!-- START of frequency distribution tables -->
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Curriculum MAP: Frequency Distribution Tables</h4></div>
@@ -401,8 +408,10 @@
             </div>  
         </div>
         <!-- END of frequency distribution tables -->
+        @endif
         
         <!-- START of Bar Charts -->
+        @if($programContent[3]==1 || $programContent[4]==1 || $programContent[5]==1 || $programContent[6]==1 )
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Curriculum MAP: Bar Charts</h4></div>
                 @if($program->courses->count() < 1 )
@@ -424,64 +433,69 @@
                         </div>
                     </div>
                 @else
+                    @if($programContent[3]==1) <!-- programContent[3] = CLO Bar Chart flag -->
                     <div class="panel-body">
                         <div class="alert alert-info" role="alert" style="margin:0px">
                             <p>This chart shows how many course learning outcomes (CLOs) are aligned to each program learning outcome (PLO).</p>
                         </div>
                     </div>
                     <img src={{$charts["Program MAP Chart"]}} width="600">
-
-                    @if ($charts["Assessment Methods Chart"])
-                        <div class="panel-body">
-                            <div class="alert alert-info" role="alert" style="margin:0px">
-                                <p>This chart shows the frequencies of the assessment methods for courses belonging to this program.</p>
-                            </div>
-                        </div>
-                        <img src={{$charts["Assessment Methods Chart"]}} width="600">
-                    @else 
-                        <div class="panel-body">
-                            <div class="alert alert-warning" role="alert">
-                                There are no assessment methods for the courses belonging to this program.                  
-                            </div>
-                        </div>
                     @endif
-
-
-                    @if ($charts["Learning Activities Chart"])
-                        <div class="panel-body">
-                            <div class="alert alert-info" role="alert" style="margin:0px">
-                                <p>This chart shows the frequencies of the learning activities for courses belonging to this program.</p>
+                    @if($programContent[4]==1) <!-- programContent[0] = Assessment Methods Chart flag -->
+                        @if ($charts["Assessment Methods Chart"])
+                            <div class="panel-body">
+                                <div class="alert alert-info" role="alert" style="margin:0px">
+                                    <p>This chart shows the frequencies of the assessment methods for courses belonging to this program.</p>
+                                </div>
                             </div>
-                        </div>
-                        <img src={{$charts["Learning Activities Chart"]}} width="600">
-                    @else 
-                        <div class="panel-body">
-                            <div class="alert alert-warning" role="alert">
-                                There are no learning activities for the courses belonging to this program.                  
+                            <img src={{$charts["Assessment Methods Chart"]}} width="600">
+                        @else 
+                            <div class="panel-body">
+                                <div class="alert alert-warning" role="alert">
+                                    There are no assessment methods for the courses belonging to this program.                  
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     @endif
-
-                    @if ($charts["Ministry Standards Chart"])
-                        <div class="panel-body">
-                            <div class="alert alert-info" role="alert" style="margin:0px">
-                                <p>This chart shows how the ministry standards are aligned with each course belonging to this program.</p>
+                    @if($programContent[5]==1) <!-- programContent[5] = Learning Activities Chart flag -->
+                        @if ($charts["Learning Activities Chart"])
+                            <div class="panel-body">
+                                <div class="alert alert-info" role="alert" style="margin:0px">
+                                    <p>This chart shows the frequencies of the learning activities for courses belonging to this program.</p>
+                                </div>
                             </div>
-                        </div>
-                        <img src={{$charts["Ministry Standards Chart"]}} width="600">
-                        <div class="panel-body mt-2">
-                            {!! $tableMS !!}
-                        </div>
-                    @else 
-                        <div class="panel-body">
-                            <div class="alert alert-warning" role="alert">
-                                There are no standards for the courses belonging to this program.                  
+                            <img src={{$charts["Learning Activities Chart"]}} width="600">
+                        @else 
+                            <div class="panel-body">
+                                <div class="alert alert-warning" role="alert">
+                                    There are no learning activities for the courses belonging to this program.                  
+                                </div>
                             </div>
-                        </div>
+                        @endif
+                    @endif
+                    @if($programContent[6]==1) <!-- programContent[6] = Ministry Standards Chart flag -->
+                        @if ($charts["Ministry Standards Chart"])
+                            <div class="panel-body">
+                                <div class="alert alert-info" role="alert" style="margin:0px">
+                                    <p>This chart shows how the ministry standards are aligned with each course belonging to this program.</p>
+                                </div>
+                            </div>
+                            <img src={{$charts["Ministry Standards Chart"]}} width="600">
+                            <div class="panel-body mt-2">
+                                {!! $tableMS !!}
+                            </div>
+                        @else 
+                            <div class="panel-body">
+                                <div class="alert alert-warning" role="alert">
+                                    There are no standards for the courses belonging to this program.                  
+                                </div>
+                            </div>
+                        @endif
                     @endif
                 @endif
             </div>  
         </div>
+        @endif
         <!-- END of frequency distribution tables -->
     </body>
 </html>
