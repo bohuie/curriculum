@@ -721,7 +721,7 @@
         <!-- Course Learning Materials -->
         <div class="col-12">
             <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningMaterials']}}</p>
+            <p class="inputFieldDescription">{{!! $inputFieldDescriptions['learningMaterials'] !!}}</p> 
             <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000"
                 id="learningMaterials" name="learningMaterials" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
