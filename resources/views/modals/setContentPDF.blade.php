@@ -58,14 +58,6 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                Mapping Scales
-                                            </td>
-                                            <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="mapping_scales" id="yes_mapping_scales" form ="setContentForm" style="margin-left: 38px">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
                                                 Frequency Distribution Tables
                                             </td>
                                             <td>
