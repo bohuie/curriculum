@@ -2,7 +2,7 @@
 
 @section('content')
 
-@include('modals.importCourseModal', ['myCourses' => $myCourses])
+@include('modals.importCourseModal', ['myCourses' => $myCourses, 'syllabus' => $syllabus])
 
 @include('modals.courseSchedule')
 
@@ -330,7 +330,7 @@
             <div id="formatStaff" class="collapsibleNotes btn-primary rounded-3"
                 style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
-                    on a newline for the best formatting
+                    on a new line for the best formatting
                     results.</span>
             </div>
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="1000" id="otherCourseStaff"
@@ -364,7 +364,7 @@
             <p class="inputFieldDescription">{{$inputFieldDescriptions['learningOutcomes']}}</p>
             <p class="inputFieldDescription"><i>Upon successful completion of this course, students will be able to ...</i></p>
             <div id="formatCLOs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
             </div>                                            
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="17500" id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="E.g. Define ... &#10;E.g. Classify ..." name = "learningOutcome" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_outcomes : ''}}</textarea>
         </div>
@@ -374,7 +374,7 @@
             <span class="requiredBySenate"></span>
             <p class="inputFieldDescription">{{$inputFieldDescriptions['learningAssessments']}}</p>
             <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
             </div>                                            
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="E.g. Presentation, 25%, Dec 1, ... &#10;E.g. Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_assessments : ''}}</textarea>
         </div>
@@ -384,7 +384,7 @@
             <span class="requiredBySenate"></span>
             <p class="inputFieldDescription">{{$inputFieldDescriptions['learningActivities']}}</p>
             <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
             </div>                                            
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
         </div>
@@ -424,6 +424,155 @@
         @else 
             <div class="p-0 m-0" id="courseAlignment"></div>    
         @endif
+
+        @if (isset($outcomeMaps))
+            <div class="p-0 m-0" id="outcomeMapsDiv">  
+                @foreach ($outcomeMaps as $programId => $outcomeMap)
+                    <div class="p-0 m-0" id="outcomeMapsDiv"> 
+                        <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
+                            {{$outcomeMap["program"]->program}}                 
+                            <button type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                            <input hidden name="import_course_settings[programs][]" value="{{$programId}}">
+                        </h5>  
+
+                        @if ($outcomeMap['program']->mappingScaleLevels->count() < 1)
+                            <div class="col-12">
+                                <div class="alert alert-warning wizard">
+                                    <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
+                                </div>
+                            </div>
+                        @else 
+                            <div class="col-12">
+                                <table class="table table-bordered table-light">
+                                    <thead>
+                                        <tr class="table-primary">
+                                            <th colspan="2">Mapping Scale</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($outcomeMap['program']->mappingScaleLevels as $mappingScale)
+                                            <tr>
+                                                <td>
+                                                <div style="background-color:{{$mappingScale->colour}};height: 10px; width: 10px;"></div>
+                                                    {{$mappingScale->title}}<br>
+                                                    ({{$mappingScale->abbreviation}})
+                                                </td>
+                                                <td>
+                                                    {{$mappingScale->description}}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+
+                        @if (isset($outcomeMap['outcomeMap']) > 0)
+                            <div class="col-12">
+                                <div style="overflow: auto;">
+                                    <table class="table table-bordered table-light">
+                                        <thead>
+                                            <tr class="table-primary">
+                                                <th colspan="1" class="w-auto">CLO</th>
+                                                <th colspan="{{$outcomeMap['program']->programLearningOutcomes->count()}}">Program Learning Outcome</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th></th>
+                                                @foreach ($outcomeMap['program']->ploCategories as $category)
+                                                    @if ($category->plos->count() > 0)
+                                                        <th class="table-active w-auto" colspan="{{$category->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$category->plo_category}}</th>  
+                                                    @endif          
+                                                @endforeach
+                                                @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                                    <th class="table-active w-auto text-center" colspan="{{$outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Uncategorized PLOs</th>
+                                                @endif
+                                            </tr> 
+                                            <tr>
+                                                <td></td>
+                                                @foreach ($outcomeMap['program']->ploCategories as $category)
+                                                    @if ($category->plos->count() > 0)
+                                                        @foreach ($category->plos as $plo)
+                                                            <td style="height:0; text-align: left;">
+                                                                @if ($plo->plo_shortphrase)
+                                                                    {{$plo->plo_shortphrase}}
+                                                                @else 
+                                                                    {{$plo->pl_outcome}}
+                                                                @endif
+                                                            </td>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
+                                                @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                                    @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
+                                                        <td style="height:0; text-align: left;">
+                                                            @if ($uncategorizedPLO->plo_shortphrase)
+                                                                {{$uncategorizedPLO->plo_shortphrase}}
+                                                            @else 
+                                                                {{$uncategorizedPLO->pl_outcome}}
+                                                            @endif
+                                                        </td>
+                                                    @endforeach
+                                                @endif
+                                            </tr>
+                                            @foreach ($outcomeMap['clos'] as $clo) 
+                                                <tr>
+                                                    <td class="w-auto"> 
+                                                        @if (isset($clo->clo_shortphrase))
+                                                            {{$clo->clo_shortphrase}}
+                                                        @else 
+                                                            {{$clo->l_outcome}}
+                                                        @endif
+                                                    </td>
+                                                    @foreach ($outcomeMap['program']->ploCategories as $category)
+                                                        @if ($category->plos->count() > 0)
+                                                            @foreach ($category->plos as $plo)
+                                                                @if (!array_key_exists($plo->pl_outcome_id, $outcomeMap['outcomeMap']))
+                                                                    <td></td>
+                                                                @else 
+                                                                    @if (!array_key_exists($clo->l_outcome_id, $outcomeMap['outcomeMap'][$plo->pl_outcome_id]))
+                                                                        <td></td>
+                                                                    @else 
+                                                                        <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                                    @endif
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    @endforeach
+                                                    @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                                        @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
+                                                            @if (!array_key_exists($uncategorizedPLO->pl_outcome_id, $outcomeMap['outcomeMap']))
+                                                                <td></td>
+                                                            @else 
+                                                                @if (!array_key_exists($clo->l_outcome_id, $outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id]))
+                                                                    <td></td>
+                                                                @else 
+                                                                    <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                                @endif
+                                                            @endif
+                                                        @endforeach
+                                                    @endif                                
+                                                </tr>
+                                            @endforeach 
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @else 
+                            <div class="col-12">
+                                <div class="alert alert-warning wizard">
+                                    <i class="bi bi-exclamation-circle-fill"></i>Course learning outcomes have not been mapped to program learning outcomes for this program.                 
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>  
+        @else 
+            <div class="p-0 m-0" id="outcomeMapsDiv"></div>    
+        @endif
+
 
         <!-- course schedule table -->
         <div class="col mb-3">
@@ -1236,7 +1385,7 @@
 
     // Import course info into using GET AJAX call
     function importCourseInfo() {
-        var course_id = $('input[name="importCourseId"]:checked').val();
+        var course_id = $('.importCourseId:checked').val();
         // get user specified course componenets to import
         var importCourseSettings = $('#importCourseSettingsForm').serializeArray();
 
@@ -1288,7 +1437,250 @@
                 courseAlignmentHTML = getCourseAlignmentHTML(course_id, data['course_alignment']);
                 $('#courseAlignment').append(courseAlignmentHTML);
             }
+            if (data.hasOwnProperty('programs')) {
+                $('#outcomeMapsDiv').empty();
+                programs = data['programs'];
+                for (programId in programs) {
+                    closForOutcomeMaps = data['closForOutcomeMaps'];
+                    programOutcomeMapHTML = getProgramOutcomeMapSectionHTML(closForOutcomeMaps, programs[programId]);
+                    $('#outcomeMapsDiv').append(programOutcomeMapHTML);
+                }
+            }
+
         });
+    }
+
+    function getProgramOutcomeMapSectionHTML(clos, program) {
+        headerHTML = `
+            <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
+                ${program['programTitle']}                                    
+                <button id="" type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                <input hidden name="import_course_settings[programs][]" value="${program['programId']}">
+            </h5>
+        `;
+        mappingScalesHTML = getMappingScalesHTML(program['mappingScales']);
+        // return early without outcome map if no mapping scale has been set for this program
+        // if (program['mappingScales'].length < 1) 
+        //     return `<div class="mb-4">${headerHTML + mappingScalesHTML}</div>`;
+
+        
+        outcomeMapHTML = getProgramOutcomeMapHTML(program['programLearningOutcomes'], program['categories'], program['uncategorizedPlos'], clos, program['outcomeMap']);
+
+        return `<div class="mb-4">${headerHTML + mappingScalesHTML + outcomeMapHTML}</div>`;
+    }
+
+    function getProgramOutcomeMapHTML(plos, categories, uncategorizedPLOs, clos, outcomeMap) {
+        if (outcomeMap.length == 0)
+            return `    
+                <div class="col-12">
+                    <div class="alert alert-warning wizard">
+                        <i class="bi bi-exclamation-circle-fill"></i>Course learning outcomes have not been mapped to program learning outcomes for this program.                 
+                    </div>
+                </div>`;
+        
+        categoryHeaderCells = ``;
+        categorizedPLOCells = ``;
+        categorizedOutcomeMapCells = [];
+        categories.forEach((category, categoryIndex) => {
+            if (category['plos'].length > 0) {
+                th = `
+                    <th class="table-active w-auto" colspan="${category['plos'].length}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${category['plo_category']}</th>            
+                `;
+                categoryHeaderCells += th;
+                category['plos'].forEach((plo, index) => {
+
+                    if (plo['plo_shortphrase']) {
+                        td = `
+                        <td style="height:0; text-align: left;">
+                            ${plo['plo_shortphrase']}
+                        </td>`;
+                    } else {
+                        td = `
+                        <td style="height:0; text-align: left;">
+                            ${plo['pl_outcome']}
+                        </td>`;
+                    }
+
+                    clos.forEach((clo, index) => {
+                        if (!categorizedOutcomeMapCells[clo['l_outcome_id']])
+                            categorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+                        if (outcomeMap.length < 1) 
+                            categorizedOutcomeMapCells[clo['l_outcome_id']] += '<td></td>'
+                        else {
+                            mappingScale = outcomeMap[plo['pl_outcome_id']][clo['l_outcome_id']];
+                            if (mappingScale) {
+                                mapTd = `<td class="text-center align-middle" style="background-color:${mappingScale['colour']}">${mappingScale['abbreviation']}</td>`;
+                                categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                            } else {
+                                mapTd = `<td></td>`;
+                                categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                            }
+                        }                            
+                    });
+                    
+                    categorizedPLOCells += td;
+                })
+            }
+        });
+
+        uncategorizedHeaderCells = ``;
+        uncategorizedPLOCells = ``;
+        uncategorizedOutcomeMapCells = [];
+        if (Object.keys(uncategorizedPLOs).length > 0) {
+            uncategorizedHeaderCells = `
+                <th class="table-active w-auto text-center" colspan="${Object.keys(uncategorizedPLOs).length}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Uncategorized PLOs</th>
+            `;
+            for ([key, plo] of Object.entries(uncategorizedPLOs)) {
+                if (plo['plo_shortphrase']) {
+                    td = `
+                    <td style="height:0; text-align: left;">
+                        ${plo['plo_shortphrase']}
+                    </td>`;
+                } else {
+                    td = `
+                    <td style="height:0; text-align: left;">
+                        ${plo['pl_outcome']}
+                    </td>`;
+                }
+                uncategorizedPLOCells += td;
+                // TODO: loop over clos, check if this plo has been mapped
+                clos.forEach((clo, index) => {
+                    if (!uncategorizedOutcomeMapCells[clo['l_outcome_id']])
+                        uncategorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+                    if (outcomeMap.length < 1) 
+                        uncategorizedOutcomeMapCells[clo['l_outcome_id']] += '<td></td>'
+                    else {
+                        if (!(plo['pl_outcome_id'] in outcomeMap)) {
+                            mapTd = `<td></td>`;
+                            categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                        } else {
+                            if (!(clo['l_outcome_id'] in outcomeMap[plo['pl_outcome_id']])) {
+                                mapTd = `<td></td>`;
+                                categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                            } else {
+                                mappingScale = outcomeMap[plo['pl_outcome_id']][clo['l_outcome_id']];
+                                mapTd = `<td class="text-center align-middle" style="background-color:${mappingScale['colour']}">${mappingScale['abbreviation']}</td>`;
+                                categorizedOutcomeMapCells[clo['l_outcome_id']] += mapTd;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        outcomeMapTableCategoriesRowHTML = `
+            <tr>
+                <th></th>
+                ${categoryHeaderCells}
+                ${uncategorizedHeaderCells}
+            </tr>
+        `;
+
+        outcomeMapTablePLOsRowHTML = `
+            <tr>
+                <td></td>
+                ${categorizedPLOCells}
+                ${uncategorizedPLOCells}
+            </tr>
+        `;
+        emptyRow = '';
+
+
+        outcomeMapTableBodyHTML = ``;
+        clos.forEach((clo, index) => {
+            if (clo['clo_shortphrase'])
+                cloCellText = clo["clo_shortphrase"];
+            else 
+                cloCellText = clo["l_outcome"];
+
+            if (!categorizedOutcomeMapCells[clo['l_outcome_id']])
+                categorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+            if (!uncategorizedOutcomeMapCells[clo['l_outcome_id']])
+                uncategorizedOutcomeMapCells[clo['l_outcome_id']] = '';
+
+            tr = `
+                <tr>
+                    <td class="w-auto"> 
+                        ${cloCellText}
+                    </td>
+                    ${categorizedOutcomeMapCells[clo['l_outcome_id']]}
+                    ${uncategorizedOutcomeMapCells[clo['l_outcome_id']]}
+
+                </tr>
+            `;
+
+            outcomeMapTableBodyHTML += tr;
+
+        });
+
+        outcomeMapTableHTML = `
+        <div class="col-12">
+            <div style="overflow: auto;">
+                <table class="table table-bordered table-light">
+                    <thead>
+                        <tr class="table-primary">
+                            <th colspan="1" class="w-auto">CLO</th>
+                            <th colspan="${plos.length}">Program Learning Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${outcomeMapTableCategoriesRowHTML}
+                        ${outcomeMapTablePLOsRowHTML}
+                        ${outcomeMapTableBodyHTML}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        `;
+        return outcomeMapTableHTML;
+    }
+
+    function getMappingScalesHTML(mappingScales) {
+        if (mappingScales.length > 0) {
+            mappingScalesTableBodyHTML = ``;
+            mappingScales.forEach((mappingScale, index) => {
+                row = `
+                    <tr>
+                        <td>
+                            <div style="background-color:${mappingScale['colour']};height: 10px; width: 10px;"></div>
+                            ${mappingScale['title']}<br>
+                            (${mappingScale['abbreviation']})
+                        </td>
+                        <td>
+                            ${mappingScale['description']}
+                        </td>
+                    </tr>
+                `;
+                mappingScalesTableBodyHTML += row;
+            });
+            mappingScalesTableHTML = `
+                <div class="col-12">
+                    <table class="table table-bordered table-light">
+                        <thead>
+                            <tr class="table-primary">
+                                <th colspan="2">Mapping Scale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mappingScalesTableBodyHTML}
+                        </tbody>
+                    </table>
+                </div>
+            `; 
+            return mappingScalesTableHTML;
+        } else {
+            noMappingScalesHTML = `
+                <div class="col-12">
+                    <div class="alert alert-warning wizard">
+                        <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
+                    </div>
+                </div>`;
+            return noMappingScalesHTML;
+        }
+
     }
 
     function getCourseAlignmentHTML(courseId, courseAlignment) {
@@ -1415,10 +1807,7 @@
         var okanaganCourseDescription = `
             
                 <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label>
-                <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
-                    <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
-                    <div>Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar <i class="bi bi-box-arrow-up-right"></i></a>. For courses without a published description, please include a brief representative one.</div>
-                </div>
+                <p class="inputFieldDescription">{!! $inputFieldDescriptions['okanaganCourseDescription'] !!}</p>
                 <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDesc" class ="form-control" type="date" form="sylabusGenerator">{{isset($okanaganSyllabus) ? $okanaganSyllabus->course_description : ''}}</textarea>`;
                 
         var vancouverOptionalListDesc = `
@@ -1502,7 +1891,7 @@
             <span class="requiredBySenate"></span>
             <p class="inputFieldDescription">{{$inputFieldDescriptions['courseContacts']}}</p>
             <div id="formatContacts" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
             </div>                                            
             <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="courseContacts" data-formatnoteid="formatContacts" name = "courseContacts" placeholder="E.g. Professor, Jane Doe, jane.doe@ubc.ca, +1 234 567 8900, ... &#10;Teaching Assistant, John Doe, john.doe@ubc.ca, ..."class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_contacts : ''}}</textarea>
             `;
@@ -1512,7 +1901,7 @@
                 <span class="requiredBySenate"></span>
                 <p class="inputFieldDescription">{{$inputFieldDescriptions['coursePrereqs']}}</p>
                 <div id="formatPrereqs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
                 </div>                                            
                 <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="coursePrereqs" data-formatnoteid="formatPrereqs"name = "coursePrereqs" placeholder="E.g. CPSC 210 or EECE 210 or CPEN 221 &#10;E.g. CPSC 121 or MATH 220"class ="form-control" type="text" form="sylabusGenerator" >{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_prereqs : ''}}</textarea>
             `;
@@ -1522,7 +1911,7 @@
                 <span class="requiredBySenate"></span>
                 <p class="inputFieldDescription">{{$inputFieldDescriptions['courseCoreqs']}}</p>
                 <div id="formatCoreqs"class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false" >
-                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a newline for the best formatting results.</span>                                        
+                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
                 </div>                                            
                 <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id = "courseCoreqs" data-formatnoteid="formatCoreqs"placeholder="E.g. CPSC 107 or CPSC 110 &#10;E.g. CPSC 210" name = "courseCoreqs" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_coreqs : ''}}</textarea>
             `;

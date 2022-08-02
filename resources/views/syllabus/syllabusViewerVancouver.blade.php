@@ -397,7 +397,7 @@
             </table>                                    
         </div>
         <!--  course alignment table -->
-        @if ($courseAlignment)
+        @if (isset($courseAlignment))
             <div class="mb-4">
                 <div class="vSyllabusHeader">
                     <h6>
@@ -426,6 +426,119 @@
                     </tbody>
                 </table>
             </div>
+        @endif
+
+        @if (isset($outcomeMaps))
+            @foreach ($outcomeMaps as $programId => $outcomeMap)
+                <div class="vSyllabusHeader mt-4 mb-4">
+                    <h6>
+                        {{strtoupper($outcomeMap["program"]->program)}}
+                    </h6>
+                </div>
+                @if ($outcomeMap['program']->mappingScaleLevels->count() < 1)
+                        <div class="alert alert-warning wizard">
+                            <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
+                        </div>
+                @else 
+                    <table class="table table-bordered table-light">
+                        <thead>
+                            <tr class="table-primary">
+                                <th colspan="2">Mapping Scale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($outcomeMap['program']->mappingScaleLevels as $mappingScale)
+                                <tr>
+                                    <td>
+                                        <div style="background-color:{{$mappingScale->colour}};height: 10px; width: 10px;"></div>
+                                        {{$mappingScale->title}}<br>
+                                        ({{$mappingScale->abbreviation}})
+                                    </td>
+                                    <td>
+                                        {{$mappingScale->description}}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+
+                @if (isset($outcomeMap['outcomeMap']) > 0)
+                    <div style="overflow: auto;">
+                        <table class="table table-bordered table-light">
+                            <thead>
+                                <tr class="table-primary">
+                                    <th colspan="1" class="w-auto">CLO</th>
+                                    <th colspan="{{$outcomeMap['program']->programLearningOutcomes->count()}}">Program Learning Outcome</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th></th>
+                                    @foreach ($outcomeMap['program']->ploCategories as $category)
+                                        @if ($category->plos->count() > 0)
+                                            <th class="table-active w-auto" colspan="{{$category->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$category->plo_category}}</th>  
+                                        @endif          
+                                    @endforeach
+                                    @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                        <th class="table-active w-auto text-center" colspan="{{$outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Uncategorized PLOs</th>
+                                    @endif
+                                </tr> 
+                                <tr>
+                                    <td></td>
+                                    @foreach ($outcomeMap['program']->ploCategories as $category)
+                                        @if ($category->plos->count() > 0)
+                                            @foreach ($category->plos as $plo)
+                                                <td style="height:0; text-align: left;">
+                                                    @if ($plo->plo_shortphrase)
+                                                        {{$plo->plo_shortphrase}}
+                                                    @else 
+                                                        {{$plo->pl_outcome}}
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+                                    @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                        @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
+                                            <td style="height:0; text-align: left;">
+                                                @if ($uncategorizedPLO->plo_shortphrase)
+                                                    {{$uncategorizedPLO->plo_shortphrase}}
+                                                @else 
+                                                    {{$uncategorizedPLO->pl_outcome}}
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                    @endif
+                                </tr>
+                                @foreach ($outcomeMap['clos'] as $clo) 
+                                    <tr>
+                                        <td class="w-auto"> 
+                                            @if (isset($clo->clo_shortphrase))
+                                                {{$clo->clo_shortphrase}}
+                                            @else 
+                                                {{$clo->l_outcome}}
+                                            @endif
+                                        </td>
+                                        @foreach ($outcomeMap['program']->ploCategories as $category)
+                                            @if ($category->plos->count() > 0)
+                                                @foreach ($category->plos as $plo)
+                                                    <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                @endforeach
+                                            @endif
+                                        @endforeach
+                                        @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                            @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
+                                                <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                            @endforeach
+                                        @endif                                
+                                    </tr>
+                                @endforeach 
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            @endforeach
         @endif
 
         <!--  passing criteria -->

@@ -9,6 +9,8 @@ use App\Models\Course;
 use App\Models\CourseSchedule;
 use App\Models\Department;
 use App\Models\Faculty;
+use App\Models\MappingScale;
+use App\Models\Program;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Element\Table;
 use Illuminate\Support\Facades\Log;
@@ -38,7 +40,7 @@ define("INPUT_TIPS", array(
     "latePolicy" => "State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?",
     "missedActivityPolicy" => "In accordance with policy on Grading Practices, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight the marks from a missed test onto later assessments?",
     "courseDescription" => "As in the Academic Calendar or, for courses without a published description, include a brief representative one.", 
-    "okanaganCourseDescription" => "Course descriptions are provided in the UBCO Okanagan Academic Calendar. For courses without a published description, please include a brief representative one.", 
+    "okanaganCourseDescription" => 'Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar <i class="bi bi-box-arrow-up-right"></i></a>. For courses without a published description, please include a brief representative one.', 
     "coursePrereqs" => "Is there a course that students must have passed before taking this course?",
     "courseCoreqs" => "Is there a course that students must take concurrently (if not before)?",
     "courseContacts" => "Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?", 
@@ -77,6 +79,7 @@ class SyllabusController extends Controller
         $departments =  Department::orderBy('department')->get();
         
         $courseAlignment = null;
+        $outcomeMaps = null;
         if ($syllabusId != null) {
             $syllabus = Syllabus::find($syllabusId);
             // get this users permission level 
@@ -84,28 +87,31 @@ class SyllabusController extends Controller
             // check for user settings
             if (isset($syllabus->course_id)) {
                 $importCourse = Course::find($syllabus->course_id);
-                $courseAlignment = $importCourse->learningOutcomes;
-                foreach ($courseAlignment as $clo) {
-                    $clo->assessmentMethods;
-                    $clo->learningActivities;
+                if ($syllabus->include_alignment) {
+                    $courseAlignment = $importCourse->learningOutcomes;
+                    foreach ($courseAlignment as $clo) {
+                        $clo->assessmentMethods;
+                        $clo->learningActivities;
+                    }
                 }
+                $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id)->pluck('program_id')->toArray(); 
+                if (count($syllabusProgramIds) > 0)
+                    $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $importCourse->course_id);   
             }
-            $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id);            
-            
             // show view based on user permission
             switch ($userPermission) {
                 // owner
                 case 1:
-                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment));
+                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
 
                 break;
                 case 2:
                     // editor
-                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment));
+                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
                 break;
                 // viewer
                 case 3:
-                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment));
+                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
 
                 break;
                 // return view to create a syllabus as default
@@ -136,7 +142,7 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment']);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
             break;
             case 'V':
                 // get data specific to vancouver campus
@@ -144,7 +150,7 @@ class SyllabusController extends Controller
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment']);
+                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
             break;
                 
         }
@@ -167,7 +173,7 @@ class SyllabusController extends Controller
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment']);
+                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
             break;
             case 'V':
                 // get data specific to vancouver campus
@@ -175,7 +181,7 @@ class SyllabusController extends Controller
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment']);        
+                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('outcomeMaps', $data['outcomeMaps']);        
         }
     }
 
@@ -337,7 +343,7 @@ class SyllabusController extends Controller
                 // set optional syllabus fields for Okangan campus
                 $okanaganSyllabus->course_format = $request->input('courseFormat');
                 $okanaganSyllabus->course_overview = $request->input('courseOverview');
-                $okanaganSyllabus->course_description = $request->input('courseDesc');
+                // $okanaganSyllabus->course_description = $request->input('courseDesc');
                 
                 // save okanagan syllabus record
                 $okanaganSyllabus->save();
@@ -405,14 +411,17 @@ class SyllabusController extends Controller
         $syllabus = Syllabus::find($syllabusId);
         // reset previous syllabi import settings
         $syllabus->course_id = null;
+        $syllabus->include_alignment = 0;
         SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
         // check if course alignment table was included
         if (array_key_exists("importCourseAlignment", $settings)) {
-            $syllabus->course_id = $settings["importCourseAlignment"];
+            $syllabus->course_id = $settings["courseId"];
+            $syllabus->include_alignment = 1;
         }
         // check if program outcome maps were included
         if (array_key_exists("programs", $settings)) {
-            $programIds = array_keys($settings["programs"]);
+            $syllabus->course_id = $settings['courseId'];
+            $programIds = $settings["programs"];
             foreach($programIds as $programId) {
                 $syllabiProgram = new SyllabusProgram;
                 $syllabiProgram->syllabus_id = $syllabusId;
@@ -541,7 +550,7 @@ class SyllabusController extends Controller
                     // update optional fields for okanagan syllabus
                     $okanaganSyllabus->course_format = $request->input('courseFormat');
                     $okanaganSyllabus->course_overview = $request->input('courseOverview');
-                    $okanaganSyllabus->course_description = $request->input('courseDesc');
+                    // $okanaganSyllabus->course_description = $request->input('courseDesc');
                     // save okanagan syllabus
                     $okanaganSyllabus->save();
                     // check if a list of okanagan syllabus resources to include was provided
@@ -691,6 +700,29 @@ class SyllabusController extends Controller
         return redirect()->route('home');
     }
 
+    /*
+        * Helper function to get outcome maps
+        * @param Array of programIds
+        * @return 2D array[$clos][plos] = $mappingScales
+    */
+
+    private function getOutcomeMaps($programIds, $courseId) {
+        $programsOutcomeMaps = array();
+        foreach ($programIds as $programId) {
+            $program = Program::find($programId);
+            $programsOutcomeMaps[$programId]["program"] = $program;
+            $programsOutcomeMaps[$programId]["clos"] = Course::find($courseId)->learningOutcomes;
+            foreach ($program->programLearningOutcomes as $programLearningOutcome) {
+                $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $courseId);
+                foreach($outcomeMaps as $outcomeMap){
+                    $programsOutcomeMaps[$programId]["outcomeMap"][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+                } 
+
+            }
+        }
+        return $programsOutcomeMaps;
+    }
+
     
 
     // get existing course information
@@ -737,15 +769,48 @@ class SyllabusController extends Controller
                 $clo->learningActivities;
             }
         }
-        // check if program outcome maps were requested
-        $course->programs->each(function ($program, $key) use ($importCourseSettings) {
+        // check which program outcome maps were requested
+        $data['closForOutcomeMaps'] = null;
+        foreach ($course->programs as $program) {
             if (in_array($program->program_id, $importCourseSettings)) {
-                Log::debug('give me ' . $program->program);
+                if (!isset($data['closForOutcomeMaps'])) {
+                    $data['closForOutcomeMaps'] = $course->learningOutcomes;
+                }
+                $data['programs'][$program->program_id]['programId'] = $program->program_id;
+                $data['programs'][$program->program_id]['programTitle'] = $program->program;
+                $data['programs'][$program->program_id]['programLearningOutcomes'] = $program->programLearningOutcomes;
+                $data['programs'][$program->program_id]['categories'] = $program->ploCategories;
+                foreach ($data['programs'][$program->program_id]['categories'] as $category) {
+                    $category->plos;
+                }
+                $uncategorizedPlos = $program->programLearningOutcomes->where('plo_category_id', null);
+                $data['programs'][$program->program_id]['uncategorizedPlosCount'] = $uncategorizedPlos->count();
+                $data['programs'][$program->program_id]['uncategorizedPlos'] = $uncategorizedPlos;
+                $data['programs'][$program->program_id]['outcomeMap'] = $uncategorizedPlos;
+                $data['programs'][$program->program_id]['mappingScales'] = $program->mappingScaleLevels;
+                $data['programs'][$program->program_id]['outcomeMap'] = $this->getProgramOutcomeMap($program->program_id, $course->course_id);
             }
-        });
-
+        }
         $data = json_encode($data);
+
         return $data;
+    }
+
+    /**
+     * Create program outcome map data structure
+     * @param 
+     * @return 2-D array[$ploId][$cloId] = MappingScale
+     */
+    public function getProgramOutcomeMap($programId, $courseId) {
+        $program = Program::find($programId);
+        $programOutcomeMap = array();
+        foreach ($program->programLearningOutcomes as $programLearningOutcome) {
+            $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $courseId);
+            foreach($outcomeMaps as $outcomeMap) {
+                $programOutcomeMap[$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+            } 
+        }
+        return $programOutcomeMap;
     }
 
     /**
@@ -759,6 +824,7 @@ class SyllabusController extends Controller
         $syllabus = Syllabus::find($syllabusId);
         $tableStyle = array('borderSize'=> 8, 'borderColor' => 'DCDCDC', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50, 'cellMargin' => Converter::cmToTwip(0.25));
         $tableHeaderRowStyle = array('bgColor' => 'c6e0f5', 'borderBottomColor' => '000000');
+        $secondaryTableHeaderRowStyle = array('bgColor' => 'dfe0e1', 'borderBottomColor' => '000000');
         $tableHeaderFontStyle = array('bold' => true);
 
         switch ($syllabus->campus) {
@@ -1342,29 +1408,17 @@ class SyllabusController extends Controller
         }
 
         if ($syllabus->course_id) {
-            $templateProcessor->cloneBlock('NoCourseAlignmentTbl');
-            $importCourse = Course::find($syllabus->course_id);
-            $courseAlignmentTable = new Table($tableStyle);
-            // add a header row to the table
-            $courseAlignmentTable->addRow();
-            // add header cells
-            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Course Learning Outcome', $tableHeaderFontStyle);
-            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Student Assessment Method', $tableHeaderFontStyle);
-            $courseAlignmentTable->addCell(null, $tableHeaderRowStyle)->addText('Teaching and Learning Activity', $tableHeaderFontStyle);
+            if ($syllabus->include_alignment)
+                $this->addAlignmentToWordDoc($syllabus->id, $templateProcessor, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle));
+            else 
+                $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
 
-            // add a new row and cell to table for each learning outcome and its alignment
-            foreach ($importCourse->learningOutcomes as $rowIndex => $clo) {
-                $courseAlignmentTable->addRow();
-                $courseAlignmentTable->addCell()->addText($clo->l_outcome);
-                $courseAlignmentTable->addCell()->addText($clo->assessmentMethods->implode('a_method', ', '));
-                $courseAlignmentTable->addCell()->addText($clo->learningActivities->implode('l_activity', ', '));
-            }
-            // add course schedule table to word doc
-            $templateProcessor->setComplexBlock('courseAlignmentTbl', $courseAlignmentTable);
-
-        } else {
-            $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
-        }
+            $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabusId)->pluck('program_id')->toArray(); 
+            if (count($syllabusProgramIds) > 0) 
+                $this->addOutcomeMapsToWordDoc($syllabusProgramIds, $templateProcessor, $syllabus->course_id, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle, 'secondaryTableHeaderRowStyle' => $secondaryTableHeaderRowStyle));
+            else 
+                $templateProcessor->cloneBlock('NoOutcomeMaps', 0);
+        } 
 
         // set document name
         $fileName = 'syllabus';   
@@ -1394,6 +1448,160 @@ class SyllabusController extends Controller
 
         return response()->download($fileName . $wordFileExt)->deleteFileAfterSend(true);
     }
+
+    private function addAlignmentToWordDoc($syllabusId, $docTemplate, $styles) {
+        $docTemplate->cloneBlock('NoCourseAlignmentTbl');
+        $syllabus = Syllabus::find($syllabusId);
+        $importCourse = Course::find($syllabus->course_id);
+        $courseAlignmentTable = new Table($styles['tableStyle']);
+        // add a header row to the table
+        $courseAlignmentTable->addRow();
+        // add header cells
+        $courseAlignmentTable->addCell(null, $styles['tableHeaderRowStyle'])->addText('Course Learning Outcome', $styles['tableHeaderFontStyle']);
+        $courseAlignmentTable->addCell(null, $styles['tableHeaderRowStyle'])->addText('Student Assessment Method', $styles['tableHeaderFontStyle']);
+        $courseAlignmentTable->addCell(null, $styles['tableHeaderRowStyle'])->addText('Teaching and Learning Activity', $styles['tableHeaderFontStyle']);
+        // add a new row and cell to table for each learning outcome and its alignment
+        foreach ($importCourse->learningOutcomes as $rowIndex => $clo) {
+            $courseAlignmentTable->addRow();
+            isset($clo->clo_shortphrase) ? $shortphrase = $clo->clo_shortphrase . ': ' : $shortphrase = '';
+            $courseAlignmentTable->addCell()->addText($shortphrase . $clo->l_outcome);
+            $courseAlignmentTable->addCell()->addText($clo->assessmentMethods->implode('a_method', ', '));
+            $courseAlignmentTable->addCell()->addText($clo->learningActivities->implode('l_activity', ', '));
+        }
+        // add course schedule table to word doc
+        $docTemplate->setComplexBlock('courseAlignmentTbl', $courseAlignmentTable); 
+    }
+
+    private function addOutcomeMapsToWordDoc($syllabusProgramIds, $docTemplate, $courseId, $styles) {
+        $docTemplate->cloneBlock('NoOutcomeMaps');
+        $course = Course::find($courseId);
+        $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $course->course_id);
+        foreach (array_values($outcomeMaps) as $index => $outcomeMap) {
+            // limit of 5 outcome maps
+            if ($index > 4) 
+                break;
+            $docTemplate->setValue('programtitle-' . strval($index), strtoupper($outcomeMap['program']->program));
+            $this->addMappingScaleTblToWordDoc($outcomeMap['program']->mappingScaleLevels, $docTemplate, $index, $styles);
+            if (isset($outcomeMap['outcomeMap']))
+                $this->addOutcomeMapTblToWordDoc($outcomeMap['program'], $course->learningOutcomes, $outcomeMap['outcomeMap'], $docTemplate, $index, $styles);
+            else 
+                $docTemplate->setValue('outcomeMap-' . strval($index), '');
+        }
+        // remove remaining template tags in word doc
+        while ($index < 5) {
+            $docTemplate->setValue('programtitle-' . strval($index), '');
+            $docTemplate->setValue('mappingScale-' . strval($index), '');
+            $docTemplate->setValue('outcomeMap-' . strval($index), '');
+            $index++;
+        }
+    }
+
+    private function addMappingScaleTblToWordDoc($mappingScales, $docTemplate, $index, $styles) {
+        $mappingScalesTbl = new Table($styles['tableStyle']);
+        // add a header row to the table
+        $mappingScalesTbl->addRow();
+        // add header cells
+        $mappingScaleheaderCell = $mappingScalesTbl->addCell(null, $styles['tableHeaderRowStyle']);
+        $mappingScaleheaderCell->getStyle()->setGridSpan(3);
+        $mappingScaleheaderCell->addText('Mapping Scale', $styles['tableHeaderFontStyle']);
+
+        // add a new row and cell to table for each learning outcome and its alignment
+        foreach ($mappingScales as $mappingScaleLevel) {
+            $mappingScalesTbl->addRow();
+            $mappingScalesTbl->addCell(null, array('bgColor' => substr($mappingScaleLevel->colour, 1)));
+            $mappingScalesTbl->addCell()->addText($mappingScaleLevel->title . ' (' . $mappingScaleLevel->abbreviation . ')');
+            $mappingScalesTbl->addCell()->addText($mappingScaleLevel->description);
+            array('bgColor' => 'c6e0f5', 'borderBottomColor' => '000000');
+        }
+        $docTemplate->setComplexBlock('mappingScale-' . strval($index), $mappingScalesTbl);
+    }
+
+    private function addOutcomeMapTblToWordDoc($program, $clos, $outcomeMap, $docTemplate, $index, $styles) {
+        $outcomeMapTbl = new Table($styles['tableStyle']);
+        // add a header row to the table
+        $outcomeMapTbl->addRow();
+        // add header cells
+        $outcomeMapTbl->addCell(null, $styles['tableHeaderRowStyle'])->addText('CLO', $styles['tableHeaderFontStyle']);
+        $plosHeaderCell = $outcomeMapTbl->addCell(null, $styles['tableHeaderRowStyle']);
+        $plosHeaderCell->getStyle()->setGridSpan($program->programLearningOutcomes->count());
+        $plosHeaderCell->addText('Program Learning Outcome', $styles['tableHeaderFontStyle']);
+        
+        $outcomeMapTbl->addRow();
+        $outcomeMapTbl->addCell();
+        foreach ($program->ploCategories as $category) {
+            if ($category->plos->count() > 0) {
+                $categoryHeaderCell = $outcomeMapTbl->addCell(null, $styles['secondaryTableHeaderRowStyle']);
+                $categoryHeaderCell->getStyle()->setGridSpan($category->plos->count());
+                $categoryHeaderCell->addText($category->plo_category, $styles['tableHeaderFontStyle']);
+            }
+        }
+        if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
+            $unCategorizedHeaderCell = $outcomeMapTbl->addCell(null, $styles['secondaryTableHeaderRowStyle']);
+            $unCategorizedHeaderCell->getStyle()->setGridSpan($program->programLearningOutcomes->where('plo_category_id', null)->count());
+            $unCategorizedHeaderCell->addText('Uncategorized', $styles['tableHeaderFontStyle']);
+        }
+        $outcomeMapTbl->addRow();
+        $outcomeMapTbl->addCell();
+        foreach ($program->ploCategories as $category) {
+            if ($category->plos->count() > 0) {
+                foreach ($category->plos as $plo) {
+                    if (isset($plo->plo_shortphrase)) 
+                        $outcomeMapTbl->addCell()->addText($plo->plo_shortphrase);
+                    else 
+                        $outcomeMapTbl->addCell()->addText($plo->pl_outcome);
+                }
+            }
+        }
+        if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
+            foreach ($program->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO) {
+                if (isset($uncategorizedPLO->plo_shortphrase)) 
+                    $outcomeMapTbl->addCell()->addText($uncategorizedPLO->plo_shortphrase);
+                else 
+                    $outcomeMapTbl->addCell()->addText($uncategorizedPLO->pl_outcome);
+            }
+        }   
+        foreach ($clos as $clo) {
+            $outcomeMapTbl->addRow();
+            if (isset($clo->clo_shortphrase)) 
+                $outcomeMapTbl->addCell()->addText($clo->clo_shortphrase);
+            else 
+                $outcomeMapTbl->addCell()->addText($clo->l_outcome);
+
+            foreach ($program->ploCategories as $category) {
+                if ($category->plos->count() > 0) {
+                    foreach ($category->plos as $plo) {
+                        if (!array_key_exists($plo->pl_outcome_id, $outcomeMap))
+                            $outcomeMapTbl->addCell();
+                        else  {
+                            if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$plo->pl_outcome_id]))
+                                $outcomeMapTbl->addCell();
+                            else {
+                                $mappingScale = $outcomeMap[$plo->pl_outcome_id][$clo->l_outcome_id];
+                                $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
+                foreach ($program->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO) {
+                    if (!array_key_exists($uncategorizedPLO->pl_outcome_id, $outcomeMap))
+                        $outcomeMapTbl->addCell();
+                    else {
+                        if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$uncategorizedPLO->pl_outcome_id]))
+                            $outcomeMapTbl->addCell();
+                        else {
+                            $mappingScale = $outcomeMap[$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id];
+                            $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                        }
+                    }
+                }
+            }
+        }     
+        $docTemplate->setComplexBlock('outcomeMap-' . strval($index), $outcomeMapTbl);
+    }
+
 
     public function duplicate(Request $request, $syllabusId) {
 

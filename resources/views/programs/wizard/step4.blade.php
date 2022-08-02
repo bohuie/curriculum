@@ -235,6 +235,9 @@
                                                         </div>
                                                     </div>
                                                 </form>
+                                            @else 
+                                                <input class="form-check-input" type="radio" name="chart_select" id="Cluster" checked hidden>
+                                                <input class="form-check-input" type="radio" name="chart_select" id="Stacked" hidden>
                                             @endif
                                             <div class="container mt-0">
                                                 <div id="high-chart"></div>
@@ -379,6 +382,9 @@
                                                             </div>
                                                         </div>
                                                     </form>
+                                                @else 
+                                                    <input class="form-check-input" type="radio" name="chart_select-ms" id="Cluster-ms" checked hidden>
+                                                    <input class="form-check-input" type="radio" name="chart_select-ms" id="Stacked-ms" hidden>
                                                 @endif
                                             
                                             <div id='loading-div-ms'>

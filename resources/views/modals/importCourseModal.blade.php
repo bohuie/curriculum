@@ -28,7 +28,11 @@
                         <tbody>
                             <tr>
                                 <th scope="row">
-                                    <input value = {{$course->course_id}} class="form-check-input" type="radio" name="importCourseId" form = "sylabusGenerator" style="margin-left: 0px" @if ($index == 0) checked @endif>
+                                    @if (!empty($syllabus) && isset($syllabus->course_id))
+                                        <input name="import_course_settings[courseId]" value={{$course->course_id}} class="form-check-input importCourseId" type="radio" form = "sylabusGenerator" style="margin-left: 0px" @if($course->course_id == $syllabus->course_id) checked @endif>
+                                    @else 
+                                        <input name="import_course_settings[courseId]" value={{$course->course_id}} class="form-check-input importCourseId" type="radio" form = "sylabusGenerator" style="margin-left: 0px" @if ($index == 0) checked @endif>
+                                    @endif
                                 </th>
                                 <td>{{$course->course_title}}</td>
                                 <td>{{$course->course_code}} {{$course->course_num}}</td>
@@ -115,7 +119,9 @@
 
 <script>
     function fillImportSettingsModal() {
-        courseId = $('input[name="importCourseId"]:checked').val();
+        importProgramsSection = $('#importProgramsSection')
+        importProgramsSection.empty();
+        courseId = $('.importCourseId:checked').val();
         $.ajax({
             type: "GET",
             url: `/course/${courseId}/programs`,
@@ -124,25 +130,19 @@
             },
         }).done(function(data) {
             if (data.length > 0) {
-                importProgramsSection = $('#importProgramsSection')
-                importProgramsSection.empty();
                 title = `
                     <div class="mt-3">
-                        <b class="m-2">Outcome Maps - CLOs to PLOs</b>
-                            <div class="alert alert-secondary" role="alert" style="text-align:justify">
-                                This feature is currently under development. Stay tuned.  
-                            </div>
+                        <b class="m-2">Course Alignment to Program</b>
                     </div>`;
                 importProgramsSection.append(title);
-                /*data.forEach(function(program) {
+                data.forEach(function(program) {
                     option = `
                         <div class="form-check m-2">
                             <input id="${program["program"]}" class="form-check-input" type="checkbox" checked value="${program["program"]}" name="${program["program_id"]}">
                             <label class="form-check-label" for="${program["program"]}">${program["program"]}</label>
                         </div>`;
                     importProgramsSection.append(option);
-                })*/
-
+                });
             }
         });
     }
