@@ -480,9 +480,9 @@
                         <p>The Disability Resource Centre ensures educational equity for students with disabilities and chronic medical conditions. If you are disabled, have an injury or illness and require academic accommodations to meet the course objectives, please contact Earllene Roberts, the Diversity Advisor for the Disability Resource Centre located in the University Centre building (UNC 215).
                         <br>
                         <br>
-                        <b>UNC 215</b> 	250.807.9263
-                        email: <a href="earllene.roberts@ubc.ca">earllene.roberts@ubc.ca</a>
-                        Web: <a href="www.students.ok.ubc.ca/drc">www.students.ok.ubc.ca/drc</a></p>
+                        <b>UNC 215</b> 	250.807.8053
+                        email: <a href="drc.questions@ubc.ca">drc.questions@ubc.ca</a>
+                        Web: <a href="http://www.students.ok.ubc.ca/academic-success/disability-resources/">http://www.students.ok.ubc.ca/academic-success/disability-resources/</a></p>
                         @break
 
                         @case('equity')
@@ -515,6 +515,11 @@
 
                         @case('student')
                         <p>The Student Learning Hub (LIB 237) is your go-to resource for free math, science, writing, and language learning support. The Hub welcomes undergraduate students from all disciplines and year levels to access a range of supports that include tutoring in math, sciences, languages, and writing, as well as help with study skills and learning strategies. For more information, please visit the Hub’s website (<a href="https://students.ok.ubc.ca/student-learning-hub/">https://students.ok.ubc.ca/student-learning-hub/</a>) or call 250-807-9185.</p>
+                        <br>
+                        <br>
+                        <b>LIB 237</b> 	250.807.8491
+                        email: <a href="learning.hub@ubc.ca">learning.hub@ubc.ca</a>
+                        Web: <a href="http://www.students.ok.ubc.ca/academic-success/learning-hub/">http://www.students.ok.ubc.ca/academic-success/learning-hub/</a></p>
                         @break
 
                         @case('copyright')
