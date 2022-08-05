@@ -6,7 +6,7 @@
                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered ">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="setContentPDFLabel">Download a Partial Program Summary</h5>
+                                <h5 class="modal-title" id="setContentPDFLabel">Select Content to Include in Program Summary</h5>
                                 
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     
@@ -24,6 +24,30 @@
                                                 <th>Include</th>
                                             </tr>
                                         </thead>
+                                        <tr>
+                                            <td>
+                                                Program Learning Outcomes
+                                            </td>
+                                            <td>
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="PLOs" id="PLOs" form ="setContentForm" style="margin-left: 38px">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Mapping Scales
+                                            </td>
+                                            <td>
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="mapping_scales" id="yes_mapping_scales" form ="setContentForm" style="margin-left: 38px">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Frequency Distribution Tables
+                                            </td>
+                                            <td>
+                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="freq_dist_tables" id="yes_freq_dist_tables" form ="setContentForm" style="margin-left: 38px">
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <td>
                                                 PLOs to CLOs Bar Chart
@@ -54,30 +78,6 @@
                                             </td>
                                             <td>
                                                 <input value="1" class="form-check-input" checked="checked" type="checkbox" name="ministry_stds_bar" id="yes_ministry_stds_bar" form ="setContentForm" style="margin-left: 38px">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Frequency Distribution Tables
-                                            </td>
-                                            <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="freq_dist_tables" id="yes_freq_dist_tables" form ="setContentForm" style="margin-left: 38px">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Program Learning Outcomes
-                                            </td>
-                                            <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="PLOs" id="PLOs" form ="setContentForm" style="margin-left: 38px">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Mapping Scales
-                                            </td>
-                                            <td>
-                                                <input value="1" class="form-check-input" checked="checked" type="checkbox" name="mapping_scales" id="yes_mapping_scales" form ="setContentForm" style="margin-left: 38px">
                                             </td>
                                         </tr>
                                     </table>
