@@ -13,6 +13,24 @@
             <div style="width: 100%;">
                 <h1 style="text-align:center;">FAQ</h1>
             </div>
+            
+            <div class="accordion" id="FAQAccordion13">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader13">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion13" aria-expanded="false" aria-controls="collapseFAQAccordion13">
+                            <h5>Which web browser is recommended?</h5>                        
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion13" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader13" data-bs-parent="FAQAccordion13">
+                        <div class="accordion-body lh-lg">
+                            <p>Google Chrome and Mozilla Firefox are strongly recommended. This tool is not optimized for use with other web browsers and may perform unexpectedly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
 
             <div class="accordion" id="FAQAccordion1">
                 <div class="accordion-item mb-2">
