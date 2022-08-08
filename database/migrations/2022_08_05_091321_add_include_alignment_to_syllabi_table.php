@@ -14,7 +14,7 @@ class AddIncludeAlignmentToSyllabiTable extends Migration
     public function up()
     {
         Schema::table('syllabi', function (Blueprint $table) {
-            $table->unsignedTinyInteger('include_alignment')->after('course_id')->nullable();
+            $table->boolean('include_alignment')->after('course_id')->nullable();
             
         });
     }
