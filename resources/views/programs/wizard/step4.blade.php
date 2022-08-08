@@ -56,7 +56,7 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="downloadBtn">
                                     <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#setContentPDF"><i class="bi bi-file-pdf-fill text-danger"></i> PDF </button></li>
-                                    <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel (Function Temporarily Disabled)</a></li>
+                                    <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel </a></li>
                                 </ul>
                                 
                             </div>
