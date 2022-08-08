@@ -35,12 +35,10 @@
         $("#downloadPDFBtn").click((e) =>
             download(e.currentTarget)
         );
-        //disabled excel download button
-        /*
+        
         $("#downloadExcelBtn").click((e) =>
             download(e.currentTarget)
         );
-        */
         $("#cancelDownloadBtn").click((e) =>
             abort(e.currentTarget)
         )
