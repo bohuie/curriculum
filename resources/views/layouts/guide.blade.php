@@ -499,6 +499,8 @@
             <img class="img center my-3" src="{{asset('/img/guide/TeachingandLearningActivities.PNG')}}" onclick="onClick(this)">
 
             <br>
+            <p class="help-p my-3 center" style="font-size:18px;">Not sure how to teach/embed career-related outcomes? Request a workshop from The Career Development Team for your classroom (<a href="https://students.ok.ubc.ca/career-experience/faculty-workshops/">click here</a>).</p>
+            <br>
             <div class="row">
                 <div class="col"><button class="btn btn-primary float-left w-100" onclick="setSAM()" style="color: white;"><i class="bi bi-arrow-left mr-2"></i> Student Assessment Methods (Step 2)</button></div>
                 <div class="col"><button class="btn btn-primary float-right w-100" onclick="setCourseAlignment()" style="color: white;">Course Alignment (Step 4) <i class="bi bi-arrow-right mr-2"></i></button></div>

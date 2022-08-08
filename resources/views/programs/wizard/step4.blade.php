@@ -44,6 +44,7 @@
             <!-- TEST CARD FOR NEW LAYOUT -->
             <div class="card">
                 <!-- Include download progress subview for PDF -->
+                @include('modals.confirmDownloadModal', ['program' => $program])
                 @include('modals.setContentPDF', ['program' => $program])
                 @include('modals.downloadProgressModal', ['program' => $program])
 
@@ -56,7 +57,7 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="downloadBtn">
                                     <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#setContentPDF"><i class="bi bi-file-pdf-fill text-danger"></i> PDF </button></li>
-                                    <li><a id="downloadExcelBtn" class="dropdown-item" data-route="{{route('programs.spreadsheet', $program->program_id)}}"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel </a></li>
+                                    <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel (Chrome and Firefox Only)</button></li>
                                 </ul>
                                 
                             </div>
@@ -66,7 +67,7 @@
                             Program Overview
                         </div>
 
-                        <div class="col text-right">
+                        <div class="col text-right"> 
                             <button id="programOverviewHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>
                             </button>
