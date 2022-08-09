@@ -510,6 +510,8 @@ class CourseWizardController extends Controller
         $numStandards = Standard::where('standard_category_id', $course->standard_category_id)->count();
         // get the total number of program outcome maps possible for a course
         $coursePrograms = $course->programs;
+        $tempProgram=new Program;
+        $tempProgram->program_id=1;
         $expectedProgramOutcomeMapCount = 0;
         foreach ($coursePrograms as $program) {
             // multiple number of CLOs by num of PLOs
@@ -593,7 +595,7 @@ class CourseWizardController extends Controller
         }
 
 
-        return view('courses.wizard.step7')->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)
+        return view('courses.wizard.step7')->with('program',$tempProgram)->with('course', $course)->with('outcomeActivities', $outcomeActivities)->with('outcomeAssessments', $outcomeAssessments)->with('user', $user)->with('oAct', $oActCount)
         ->with('oAss', $oAssCount)->with('outcomeMapsCount', $outcomeMapsCount)->with('courseProgramsOutcomeMaps', $courseProgramsOutcomeMaps)->with('assessmentMethodsTotal', $assessmentMethodsTotal)
         ->with('standardsOutcomeMap', $standardsOutcomeMap)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('courseUsers', $courseUsers)->with('optionalSubcategories', $optionalSubcategories)
         ->with('standardsOutcomeMapCount', $standardsOutcomeMapCount)->with('standard_categories', $standard_categories)->with('expectedStandardOutcomeMapCount', $expectedStandardOutcomeMapCount)
