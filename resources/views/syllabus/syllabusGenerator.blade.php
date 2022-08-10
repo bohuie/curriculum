@@ -392,7 +392,6 @@
                                 <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
                             </div>
                         </div>
-
                         <!-- course schedule table -->
                         <div class="row">
                             <div class="col mb-3">
@@ -530,6 +529,19 @@
                                 <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000" id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
                             </div>
                         </div>
+                        <!-- Creative Commons License and Copyright -->
+                        
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="creativeCommons">Creative Commons</label>
+                                <input type="radio" name="copyright" value="1" />
+                                <input type="radio" name="copyright" value="0" />
+                                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
+                                <div class="invalid-tooltip">
+                                    Please enter the title of a Creative Commons License
+                                </div>
+                            </div>
+                        </div>
                         <!-- Course Overview -->
                         <div class="row" id="learningAnalytics"></div>
 
@@ -542,7 +554,7 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>                 
+                        </div> 
                     </div>                                    
                 </form>
             </div>
@@ -661,6 +673,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script type="application/javascript">
     $(document).ready(function () {
@@ -1298,6 +1312,18 @@
         
         
         //different statements for each campus
+        var creativeCommons = `
+                        <div class="row mb-3">
+                            <div class="col-10">
+                                <label for="courseTitle" class="form-label"><span class="requiredField">* </span>Course Title</label>
+                                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text" placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
+                                <div class="invalid-tooltip">
+                                    Please enter the course title.
+                                </div>
+                            </div>
+                        </div>
+                        `;
+
         var okanaganCourseDescription = `
                 <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label>
                 <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">

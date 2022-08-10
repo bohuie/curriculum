@@ -264,6 +264,14 @@ class SyllabusController extends Controller
         $syllabus->course_year = $request->input('courseYear');
         $courseInstructors = $request->input('courseInstructor');
         $courseInstructorEmails = $request->input('courseInstructorEmail');
+        if ($request->input("copyright")==1){
+            $syllabus->cc_license=null;
+            $syllabus->copyright=true;
+        }else{
+        $syllabus->cc_license=$request->input("creativeCommons");
+        $syllabus->copyright=false;
+        }
+        
         $syllabus->save();
 
         // set optional syllabus fields common to both campuses 
@@ -455,7 +463,16 @@ class SyllabusController extends Controller
         $syllabus->course_instructor = $courseInstructors[0];
         $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $syllabus->course_term = $request->input('courseSemester');
         $syllabus->course_year = $request->input('courseYear');
-        $importCourseSettings = $request->input('import_course_settings', null);     
+        $importCourseSettings = $request->input('import_course_settings', null);
+        //Creative Commons or Copyright
+        if ($request->input("copyright")==1){
+            $syllabus->cc_license=null;
+            $syllabus->copyright=true;
+        }else{
+        $syllabus->cc_license=$request->input("creativeCommons");
+        $syllabus->copyright=false;
+        }  
+        
 
         // check if user set import settings and update them
         if ($importCourseSettings)
@@ -1005,6 +1022,7 @@ class SyllabusController extends Controller
                 }else{
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
                 }
+                
                 
                 $allOkanaganSyllabusResources = OkanaganSyllabusResource::all();
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();

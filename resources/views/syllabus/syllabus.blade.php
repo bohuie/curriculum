@@ -735,6 +735,43 @@
                 id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
         </div>
+        
+        
+        <!-- Creative Commons -->
+        <div class="col-12">
+        
+        <label for="creativeCommons"><h5 class="fw-bold">Copyright and Creative Commons</h5></label>
+                <br>    
+                    @if(!empty($syllabus))
+                        @if($syllabus->copyright)
+                        <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"checked/>
+                        @else
+                        <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
+                        @endif
+                        <label>Include a Copyright Statement</label>
+                        <br>
+                        @if($syllabus->copyright)
+                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
+                        <label>Include a Creative Commons License</label>
+                        <div id="creativeCommonsInput" class="col-6"></div>
+                        @else
+                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                        <label>Include a Creative Commons License</label>
+                        <div id="creativeCommonsInput" class="col-6"> 
+                            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
+                        </div>
+                        @endif
+                    @else
+                        <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
+                        <label>Include a Copyright Statement</label>
+                        <br>
+                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
+                        <label>Include a Creative Commons License</label>
+                        <div id="creativeCommonsInput" class="col-6"></div>
+                    @endif
+        </div>
+
+        
 
         <!-- learning analytics -->
         <div class="col-12" id="learningAnalytics"></div>
@@ -864,7 +901,16 @@
             }
         });
 
+        //event listeners for Creative Commons License Input
+        $('#yesCopyright').on('click', function(event) {
+            $('#creativeCommonsInput').html(``);
+        });
 
+        $('#noCopyright').on('click', function(event) {
+            $('#creativeCommonsInput').html(`
+                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
+                `);
+        });
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 
             // prevent default submit procedure
