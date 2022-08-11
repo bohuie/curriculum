@@ -739,10 +739,17 @@
         
         <!-- Creative Commons -->
         <div class="col-12">
-        
         <label for="creativeCommons"><h5 class="fw-bold">Copyright and Creative Commons</h5></label>
-                <br>    
+        <p class="inputFieldDescription">{!! $inputFieldDescriptions['creativeCommons'] !!}</p>    
                     @if(!empty($syllabus))
+                        @if($syllabus->copyright==null)
+                        <input type="radio" id="noneCopyright" name="copyright" value="2" style="margin-right: 8px;" form="sylabusGenerator" checked/>
+                        <label>None</label>
+                        @else
+                        <input type="radio" id="noneCopyright" name="copyright" value="2" style="margin-right: 8px" form="sylabusGenerator" />
+                        <label>None</label>
+                        @endif
+                        <br>
                         @if($syllabus->copyright)
                         <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"checked/>
                         @else
@@ -762,6 +769,9 @@
                         </div>
                         @endif
                     @else
+                        <input type="radio" id="noneCopyright" name="copyright" value="2" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                        <label>None</label>
+                        <br>
                         <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
                         <label>Include a Copyright Statement</label>
                         <br>
@@ -770,8 +780,6 @@
                         <div id="creativeCommonsInput" class="col-6"></div>
                     @endif
         </div>
-
-        
 
         <!-- learning analytics -->
         <div class="col-12" id="learningAnalytics"></div>

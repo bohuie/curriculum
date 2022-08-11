@@ -51,6 +51,7 @@ define("INPUT_TIPS", array(
     "learningResources" => "Include information on any resources to support student learning that are supported by the academic unit responsible for the course.",
     "learningAnalytics" => "If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?",
     "officeLocation" => "Building & Room Number",
+    "creativeCommons" => 'Include a copyright statement or include a Creative Commons license of your choosing. Visit the <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">Creative Commons Website <i class="bi bi-box-arrow-up-right"></i></a> for options and more information.',
 ));
 
 
@@ -465,13 +466,16 @@ class SyllabusController extends Controller
         $syllabus->course_year = $request->input('courseYear');
         $importCourseSettings = $request->input('import_course_settings', null);
         //Creative Commons or Copyright
-        if ($request->input("copyright")==1){
+        if($request->input("copyright")==null){
             $syllabus->cc_license=null;
-            $syllabus->copyright=true;
-        }else{
-        $syllabus->cc_license=$request->input("creativeCommons");
-        $syllabus->copyright=false;
-        }  
+            $syllabus->copyright=null;
+            }elseif($request->input("copyright")==1){
+                $syllabus->cc_license=null;
+                $syllabus->copyright=true;
+            }else{
+                $syllabus->cc_license=$request->input("creativeCommons");
+                $syllabus->copyright=false;
+            }  
         
 
         // check if user set import settings and update them
@@ -1021,8 +1025,7 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('learningMaterials',$learningMaterials);
                 }else{
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
-                }
-                
+                } 
                 
                 $allOkanaganSyllabusResources = OkanaganSyllabusResource::all();
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
@@ -1327,6 +1330,22 @@ class SyllabusController extends Controller
                 }  
 
             break;
+        }
+
+        //include creative commons or copyright
+        if($creativeCommons = $syllabus->cc_license){
+            Log::Debug($creativeCommons);
+            $templateProcessor->cloneBlock('NoCreativeCommons');
+            $templateProcessor->setValue('creativeCommons',$creativeCommons);
+            $templateProcessor->setValue('name',$syllabus->course_instructor);
+        }else{
+            $templateProcessor->cloneBlock('NoCreativeCommons',0);
+        }
+
+        if($syllabus->copyright){
+            $templateProcessor->cloneBlock('NoCopyright');
+        }else{
+            $templateProcessor->cloneBlock('NoCopyright',0);
         }
 
         // add required form fields common to both campuses to template
