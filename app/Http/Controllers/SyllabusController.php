@@ -1443,11 +1443,11 @@ class SyllabusController extends Controller
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
             $templateProcessor->setValue('courseScheduleTbl', '');
         }
-
+        // Michael Debugging Outcome Maps
         if ($syllabus->course_id) {
             if ($syllabus->include_alignment)
                 $this->addAlignmentToWordDoc($syllabus->id, $templateProcessor, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle));
-            else 
+            else
                 $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
 
             $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabusId)->pluck('program_id')->toArray(); 
@@ -1455,7 +1455,10 @@ class SyllabusController extends Controller
                 $this->addOutcomeMapsToWordDoc($syllabusProgramIds, $templateProcessor, $syllabus->course_id, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle, 'secondaryTableHeaderRowStyle' => $secondaryTableHeaderRowStyle));
             else 
                 $templateProcessor->cloneBlock('NoOutcomeMaps', 0);
-        } 
+        } else {
+            $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
+            $templateProcessor->cloneBlock('NoOutcomeMaps', 0);
+        }
 
         // set document name
         $fileName = 'syllabus';   
