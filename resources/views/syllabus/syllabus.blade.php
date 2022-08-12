@@ -736,8 +736,8 @@
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
         </div>
         
+        <!-- Creative Commons
         
-        <!-- Creative Commons -->
         <div class="col-12">
         <label for="creativeCommons"><h5 class="fw-bold">Copyright and Creative Commons</h5></label>
         <p class="inputFieldDescription">{!! $inputFieldDescriptions['creativeCommons'] !!}</p>    
@@ -780,7 +780,7 @@
                         <div id="creativeCommonsInput" class="col-6"></div>
                     @endif
         </div>
-
+            -->
         <!-- learning analytics -->
         <div class="col-12" id="learningAnalytics"></div>
 
