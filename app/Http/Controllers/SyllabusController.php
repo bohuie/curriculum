@@ -1431,11 +1431,28 @@ class SyllabusController extends Controller
 
                 }
                 // include vancouver course learning resources in template
+                /*
                 if($learningResources =  $syllabus->learning_resources){
                     $templateProcessor->cloneBlock('NoCourseLearningResources');
                     $templateProcessor->setValue('courseLearningResources', $learningResources);
                 }else{
                     $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
+                }
+                */
+
+                if($learningResources = $syllabus->learning_resources){
+                    $templateProcessor->cloneBlock('NoCourseLearningResources');
+                    $LRArr = explode("\n", $learningResources);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $LRTable = new Table($tableStyle1);
+    
+                    foreach($LRArr as $index => $courseLR){
+                        $LRTable->addRow();
+                        $LRTable->addCell()->addText($courseLR);
+                    }
+                    $templateProcessor->setComplexBlock('courseLearningResources', $LRTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoCourseLearningResources',0);
                 }
                 
                 /*
@@ -1463,12 +1480,30 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
                 }
 
+                /*
                 if ($learningAnalytics =  $vancouverSyllabus->learning_analytics) {
                     $templateProcessor->cloneBlock('NoLearningAnalytics');
                     $templateProcessor->setValue('learningAnalytics', $learningAnalytics);
                 } else {
                     $templateProcessor->cloneBlock('NoLearningAnalytics', 0);
                 }
+                */
+
+                if($learningAnalytics = $vancouverSyllabus->learning_analytics){
+                    $templateProcessor->cloneBlock('NoLearningAnalytics');
+                    $LEAArr = explode("\n", $learningAnalytics);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $LEATable = new Table($tableStyle1);
+        
+                    foreach($LEAArr as $index => $courseLEA){
+                        $LEATable->addRow();
+                        $LEATable->addCell()->addText($courseLEA);
+                    }
+                    $templateProcessor->setComplexBlock('learningAnalytics', $LEATable);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningAnalytics',0);
+                }
+                
 
                 $allVancouverSyllabusResources = VancouverSyllabusResource::all();
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
