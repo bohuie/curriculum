@@ -856,7 +856,7 @@ class SyllabusController extends Controller
                 $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
 
                 // add data to the okanagan syllabus template
-                Log::Debug($okanaganSyllabus->course_description);
+                /*
                 if($courseDescriptionOK = $okanaganSyllabus->course_description){
                     $templateProcessor->cloneBlock('NocourseDescription');
                     $templateProcessor->setValue('courseDescriptionOK', $courseDescriptionOK);
@@ -864,20 +864,73 @@ class SyllabusController extends Controller
                 }else{
                     $templateProcessor->cloneBlock('NocourseDescription',0);
                 }
+                */
+                if($courseDescriptionOK = $okanaganSyllabus->course_description){
+                    $templateProcessor->cloneBlock('NocourseDescription');
+                    // split learning activities string on newline char
+                    $CDArr = explode("\n", $courseDescriptionOK);
+                    // create a table for learning activities (workaround for no list option)
+                    $tableStyle1 = array('borderSize'=> 0, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $CDTable = new Table($tableStyle1);
+        
+                    // add a new row and cell to table for each learning activity
+                    foreach($CDArr as $index => $courseDesc){
+                        $CDTable->addRow();
+                        $CDTable->addCell()->addText($courseDesc);
+                    }
+                    // add learning activities table to word doc
+                    $templateProcessor->setComplexBlock('courseDescriptionOK', $CDTable);
+                }else{
+                    $templateProcessor->cloneBlock('NocourseDescription',0);
+                }
 
+                
+                /*
                 if($courseFormat = $okanaganSyllabus->course_format){
                     $templateProcessor->cloneBlock('NocourseFormat');
                     $templateProcessor->setValue('courseFormat', $courseFormat);
                 }else{
                     $templateProcessor->cloneBlock('NocourseFormat',0);
                 }
-        
+                */
+
+                if($courseFormat = $okanaganSyllabus->course_format){
+                    $templateProcessor->cloneBlock('NocourseFormat');
+                    $CFArr = explode("\n", $courseFormat);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $CFTable = new Table($tableStyle1);
+    
+                    foreach($CFArr as $index => $courseForm){
+                        $CFTable->addRow();
+                        $CFTable->addCell()->addText($courseForm);
+                    }
+                    $templateProcessor->setComplexBlock('courseFormat', $CFTable);
+                }else{
+                    $templateProcessor->cloneBlock('NocourseFormat',0);
+                }
+                
+                /*
                 if($courseOverview = $okanaganSyllabus->course_overview){
                     $templateProcessor->cloneBlock('NocourseOverview');
                     $templateProcessor->setValue('courseOverview',$courseOverview);
                 }else{
                     // tell template processor to not include 'NocourseOverview block
                     $templateProcessor->cloneBlock('NocourseOverview', 0);
+                }
+                */
+                if($courseOverview = $okanaganSyllabus->course_overview){
+                    $templateProcessor->cloneBlock('NocourseOverview');
+                    $COArr = explode("\n", $courseOverview);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $COTable = new Table($tableStyle1);
+    
+                    foreach($COArr as $index => $courseOV){
+                        $COTable->addRow();
+                        $COTable->addCell()->addText($courseOV);
+                    }
+                    $templateProcessor->setComplexBlock('courseOverview', $COTable);
+                }else{
+                    $templateProcessor->cloneBlock('NocourseOverview',0);
                 }
 
                 // tell template processor to include learning activities if user completed the field(s)
@@ -1015,20 +1068,52 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningAssessments',0);
                 }
                 // include vancouver course learning resources in template
-                Log::Debug($syllabus->learning_resources);
+                /*
                 if($learningResources = $syllabus->learning_resources){
                     $templateProcessor->cloneBlock('NoCourseLearningResources');
                     $templateProcessor->setValue('courseLearningResources', $learningResources);
                 }else{
                     $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
                 }
-        
+                */
+
+                if($learningResources = $syllabus->learning_resources){
+                    $templateProcessor->cloneBlock('NoCourseLearningResources');
+                    $LRArr = explode("\n", $learningResources);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $LRTable = new Table($tableStyle1);
+    
+                    foreach($LRArr as $index => $courseLR){
+                        $LRTable->addRow();
+                        $LRTable->addCell()->addText($courseLR);
+                    }
+                    $templateProcessor->setComplexBlock('courseLearningResources', $LRTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoCourseLearningResources',0);
+                }
+                /*
                 if($learningMaterials = $syllabus->learning_materials){
                     $templateProcessor->cloneBlock('NoLearningMaterials');
                     $templateProcessor->setValue('learningMaterials',$learningMaterials);
                 }else{
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
                 } 
+                */
+
+                if($learningMaterials = $syllabus->learning_materials){
+                    $templateProcessor->cloneBlock('NoLearningMaterials');
+                    $LMArr = explode("\n", $learningMaterials);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $LMTable = new Table($tableStyle1);
+    
+                    foreach($LMArr as $index => $courseLM){
+                        $LMTable->addRow();
+                        $LMTable->addCell()->addText($courseLM);
+                    }
+                    $templateProcessor->setComplexBlock('learningMaterials', $LMTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningMaterials',0);
+                }
                 
                 $allOkanaganSyllabusResources = OkanaganSyllabusResource::all();
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
@@ -1062,11 +1147,28 @@ class SyllabusController extends Controller
                 }
 
                 // include vancouver course description in template
+                /*
                 if($courseDescription = $vancouverSyllabus->course_description){
                     $templateProcessor->cloneBlock('NoCourseDescription');
                     $templateProcessor->setValue('courseDescription', $courseDescription);
                 }else{
                     $templateProcessor->cloneBlock('NoCourseDescription', 0);
+                }
+                */
+
+                if($courseDescription = $vancouverSyllabus->course_description){
+                    $templateProcessor->cloneBlock('NoCourseDescription');
+                    $CDVArr = explode("\n", $courseDescription);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $CDVTable = new Table($tableStyle1);
+        
+                    foreach($CDVArr as $index => $courseCDV){
+                        $CDVTable->addRow();
+                        $CDVTable->addCell()->addText($courseCDV);
+                    }
+                    $templateProcessor->setComplexBlock('courseDescription', $CDVTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoCourseDescription',0);
                 }
 
                 if($contacts = $vancouverSyllabus->course_contacts){
@@ -1133,19 +1235,52 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('corequisites', '');
                 }
 
+                /*
                 if($courseInstructorBio = $vancouverSyllabus->instructor_bio){
                     $templateProcessor->cloneBlock('NoInstructorBio');
                     $templateProcessor->setValue('instructorBio', $courseInstructorBio);
                 }else{
                     $templateProcessor->cloneBlock('NoInstructorBio', 0);
                 }
+                */
 
+                if($courseInstructorBio = $vancouverSyllabus->instructor_bio){
+                    $templateProcessor->cloneBlock('NoInstructorBio');
+                    $IBArr = explode("\n", $courseInstructorBio);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $IBTable = new Table($tableStyle1);
+        
+                    foreach($IBArr as $index => $courseIB){
+                        $IBTable->addRow();
+                        $IBTable->addCell()->addText($courseIB);
+                    }
+                    $templateProcessor->setComplexBlock('instructorBio', $IBTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoInstructorBio',0);
+                }
+
+                /*
                 if($courseStructure = $vancouverSyllabus->course_structure){
                     $templateProcessor->cloneBlock('NoCourseStructure', 0);
                     $templateProcessor->setValue('courseStructure', $courseStructure);
                 }else{
                     $templateProcessor->cloneBlock('NoCourseStructure');
                     $templateProcessor->setValue('courseStructure', '');
+                } */
+
+                if($courseStructure = $vancouverSyllabus->course_structure){
+                    $templateProcessor->cloneBlock('NoCourseStructure');
+                    $CSArr = explode("\n", $courseStructure);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $CSTable = new Table($tableStyle1);
+        
+                    foreach($CSArr as $index => $courseCS){
+                        $CSTable->addRow();
+                        $CSTable->addCell()->addText($courseCS);
+                    }
+                    $templateProcessor->setComplexBlock('courseStructure', $CSTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoCourseStructure',0);
                 }
 
                 if($courseSchedule = $vancouverSyllabus->course_schedule){
@@ -1302,7 +1437,8 @@ class SyllabusController extends Controller
                 }else{
                     $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
                 }
-        
+                
+                /*
                 if($learningMaterials =  $syllabus->learning_materials){
                     $templateProcessor->cloneBlock('NoLearningMaterials', 0);
                     $templateProcessor->setValue('learningMaterials',$learningMaterials);
@@ -1310,6 +1446,21 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningMaterials');
                     $templateProcessor->setValue('learningMaterials', '');
 
+                }*/
+
+                if($learningMaterials = $syllabus->learning_materials){
+                    $templateProcessor->cloneBlock('NoLearningMaterials');
+                    $LMArr = explode("\n", $learningMaterials);
+                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+                    $LMTable = new Table($tableStyle1);
+        
+                    foreach($LMArr as $index => $courseLM){
+                        $LMTable->addRow();
+                        $LMTable->addCell()->addText($courseLM);
+                    }
+                    $templateProcessor->setComplexBlock('learningMaterials', $LMTable);
+                }else{
+                    $templateProcessor->cloneBlock('NoLearningMaterials',0);
                 }
 
                 if ($learningAnalytics =  $vancouverSyllabus->learning_analytics) {
@@ -1337,7 +1488,6 @@ class SyllabusController extends Controller
 
         //include creative commons or copyright
         if($creativeCommons = $syllabus->cc_license){
-            Log::Debug($creativeCommons);
             $templateProcessor->cloneBlock('NoCreativeCommons');
             $templateProcessor->setValue('creativeCommons',$creativeCommons);
             $templateProcessor->setValue('name',$syllabus->course_instructor);
@@ -1388,34 +1538,108 @@ class SyllabusController extends Controller
             $templateProcessor->cloneBlock('NoDepartment', 0);
         }
 
-        
+        /*
         if($latePolicy = $syllabus->late_policy){
             $templateProcessor->cloneBlock('NolatePolicy');
             $templateProcessor->setValue('latePolicy',$latePolicy);
         }else{
             $templateProcessor->cloneBlock('NolatePolicy',0);
         }
+        */
 
+        if($latePolicy = $syllabus->late_policy){
+            $templateProcessor->cloneBlock('NolatePolicy');
+            $LPArr = explode("\n", $latePolicy);
+            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+            $LPTable = new Table($tableStyle1);
+
+            foreach($LPArr as $index => $courseLP){
+                $LPTable->addRow();
+                $LPTable->addCell()->addText($courseLP);
+            }
+            $templateProcessor->setComplexBlock('latePolicy', $LPTable);
+        }else{
+            $templateProcessor->cloneBlock('NolatePolicy',0);
+        }
+        
+        /*
         if($missingExam = $syllabus->missed_exam_policy){
             $templateProcessor->cloneBlock('NoMissingExam');
             $templateProcessor->setValue('missingExam',$missingExam);
         }else{
             $templateProcessor->cloneBlock('NoMissingExam',0);
         }
+        */
 
+        if($missingExam = $syllabus->missed_exam_policy){
+            $templateProcessor->cloneBlock('NoMissingExam');
+            $MEArr = explode("\n", $missingExam);
+            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+            $METable = new Table($tableStyle1);
+
+            foreach($MEArr as $index => $courseME){
+                $METable->addRow();
+                $METable->addCell()->addText($courseME);
+            }
+            $templateProcessor->setComplexBlock('missingExam', $METable);
+        }else{
+            $templateProcessor->cloneBlock('NoMissingExam',0);
+        }
+
+        /*
         if($missingActivity = $syllabus->missed_activity_policy){
             $templateProcessor->cloneBlock('NomissingActivity');
             $templateProcessor->setValue('missingActivity',$missingActivity);
         }else{
             $templateProcessor->cloneBlock('NomissingActivity',0);
         }
+        */
 
+        if($missingActivity = $syllabus->missed_activity_policy){
+            $templateProcessor->cloneBlock('NomissingActivity');
+            $MAArr = explode("\n", $missingActivity);
+            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+            $MATable = new Table($tableStyle1);
+
+            foreach($MAArr as $index => $courseMA){
+                $MATable->addRow();
+                $MATable->addCell()->addText($courseMA);
+            }
+            $templateProcessor->setComplexBlock('missingActivity', $MATable);
+        }else{
+            $templateProcessor->cloneBlock('NomissingActivity',0);
+        }
+
+        //troubleshooting newline solution
+        /*
         if($passingCriteria = $syllabus->passing_criteria){
             $templateProcessor->cloneBlock('NopassingCriteria');
             $templateProcessor->setValue('passingCriteria',$passingCriteria);
         }else{
             $templateProcessor->cloneBlock('NopassingCriteria',0);
         }
+        */
+
+        // tell template processor to include learning activities if user completed the field(s)
+        if($passingCriteria = $syllabus->passing_criteria){
+            $templateProcessor->cloneBlock('NopassingCriteria');
+            // split learning activities string on newline char
+            $passingCriteriaArr = explode("\n", $passingCriteria);
+            // create a table for learning activities (workaround for no list option)
+            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
+            $PCTable = new Table($tableStyle1);
+
+            // add a new row and cell to table for each learning activity
+            foreach($passingCriteriaArr as $index => $passingCriteria){
+                $PCTable->addRow();
+                $PCTable->addCell()->addText($passingCriteria);
+            }
+            // add learning activities table to word doc
+            $templateProcessor->setComplexBlock('passingCriteria', $PCTable);
+        }else{
+            $templateProcessor->cloneBlock('NopassingCriteria',0);
+        }
+
 
         // add course schedule table to word document
         $courseScheduleTblColsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('row', 0)->get()->count();
