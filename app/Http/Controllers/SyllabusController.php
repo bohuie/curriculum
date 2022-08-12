@@ -352,7 +352,7 @@ class SyllabusController extends Controller
                 // set optional syllabus fields for Okangan campus
                 $okanaganSyllabus->course_format = $request->input('courseFormat');
                 $okanaganSyllabus->course_overview = $request->input('courseOverview');
-                // $okanaganSyllabus->course_description = $request->input('courseDesc');
+                $okanaganSyllabus->course_description = $request->input('courseDesc');
                 
                 // save okanagan syllabus record
                 $okanaganSyllabus->save();
@@ -571,7 +571,7 @@ class SyllabusController extends Controller
                     // update optional fields for okanagan syllabus
                     $okanaganSyllabus->course_format = $request->input('courseFormat');
                     $okanaganSyllabus->course_overview = $request->input('courseOverview');
-                    // $okanaganSyllabus->course_description = $request->input('courseDesc');
+                    $okanaganSyllabus->course_description = $request->input('courseDesc');
                     // save okanagan syllabus
                     $okanaganSyllabus->save();
                     // check if a list of okanagan syllabus resources to include was provided
@@ -854,10 +854,12 @@ class SyllabusController extends Controller
                 $templateProcessor = new TemplateProcessor('word-template/UBC-O_default.docx');
                 // get data specific to the okanagan campus
                 $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
+
                 // add data to the okanagan syllabus template
-                if($courseDescription = $okanaganSyllabus->course_description){
+                Log::Debug($okanaganSyllabus->course_description);
+                if($courseDescriptionOK = $okanaganSyllabus->course_description){
                     $templateProcessor->cloneBlock('NocourseDescription');
-                    $templateProcessor->setValue('courseDescription', $courseDescription);
+                    $templateProcessor->setValue('courseDescriptionOK', $courseDescriptionOK);
                     
                 }else{
                     $templateProcessor->cloneBlock('NocourseDescription',0);
@@ -1013,6 +1015,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningAssessments',0);
                 }
                 // include vancouver course learning resources in template
+                Log::Debug($syllabus->learning_resources);
                 if($learningResources = $syllabus->learning_resources){
                     $templateProcessor->cloneBlock('NoCourseLearningResources');
                     $templateProcessor->setValue('courseLearningResources', $learningResources);
