@@ -1443,7 +1443,7 @@ class SyllabusController extends Controller
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
             $templateProcessor->setValue('courseScheduleTbl', '');
         }
-        // Michael Debugging Outcome Maps
+        //Outcome Maps
         if ($syllabus->course_id) {
             if ($syllabus->include_alignment)
                 $this->addAlignmentToWordDoc($syllabus->id, $templateProcessor, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle));
