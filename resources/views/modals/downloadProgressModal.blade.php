@@ -33,7 +33,7 @@
         var xhr;
 
         $("#downloadPDFBtn").click((e) =>
-            download(e.currentTarget)
+            downloadPDF(e.currentTarget)
         );
         $("#confirmDownloadBtn").click((e) =>
             downloadExcel(e.currentTarget)
@@ -44,9 +44,8 @@
         
     });
 
-    function download(trigger) {
+    function downloadPDF(trigger) {
         var route = $(trigger).data("route");
-        route = $("#downloadPartialPDFBtn").data("route");
         xhr = $.ajax({
             type: "GET",
             url: route,

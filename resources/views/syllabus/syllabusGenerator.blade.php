@@ -392,7 +392,6 @@
                                 <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
                             </div>
                         </div>
-
                         <!-- course schedule table -->
                         <div class="row">
                             <div class="col mb-3">
@@ -530,6 +529,43 @@
                                 <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000" id = "learningResources" name = "learningResources" class ="form-control" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
                             </div>
                         </div>
+                    <!-- Creative Commons -->
+                        <div class="col-12">
+                        
+                        <label for="creativeCommons"><h5 class="fw-bold">Copyright and Creative Commons</h5></label>
+                        <i class="bi bi-info-circle-fill" data-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['creativeCommons']}}"></i>
+                                <br>    
+                                    @if(!empty($syllabus))
+                                        @if($syllabus->copyright)
+                                        <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"checked/>
+                                        @else
+                                        <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        @endif
+                                        <label>Include a Copyright Statement</label>
+                                        <br>
+                                        @if($syllabus->copyright)
+                                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        <label>Include a Creative Commons License</label>
+                                        <div id="creativeCommonsInput" class="col-6"></div>
+                                        @else
+                                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                        <label>Include a Creative Commons License</label>
+                                        <div id="creativeCommonsInput" class="col-6"> 
+                                            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
+                                        </div>
+                                        @endif
+                                    @else
+                                        <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        <label>Include a Copyright Statement</label>
+                                        <br>
+                                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        <label>Include a Creative Commons License</label>
+                                        <div id="creativeCommonsInput" class="col-6"></div>
+                                    @endif
+                        </div>
+
+        
+
                         <!-- Course Overview -->
                         <div class="row" id="learningAnalytics"></div>
 
@@ -542,7 +578,7 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>                 
+                        </div> 
                     </div>                                    
                 </form>
             </div>
@@ -661,6 +697,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script type="application/javascript">
     $(document).ready(function () {
@@ -1298,6 +1336,18 @@
         
         
         //different statements for each campus
+        var creativeCommons = `
+                        <div class="row mb-3">
+                            <div class="col-10">
+                                <label for="courseTitle" class="form-label"><span class="requiredField">* </span>Course Title</label>
+                                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text" placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
+                                <div class="invalid-tooltip">
+                                    Please enter the course title.
+                                </div>
+                            </div>
+                        </div>
+                        `;
+
         var okanaganCourseDescription = `
                 <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label>
                 <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
@@ -1387,7 +1437,7 @@
 
         var courseDescription = `
             <div class="col mb-3">
-                <label for="courseDescription">Course Description</label>
+                <label for="courseDescription">Course Description </label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseDescription']}}"></i>
                 <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDescription" class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_description : ''}}</textarea>
             </div>

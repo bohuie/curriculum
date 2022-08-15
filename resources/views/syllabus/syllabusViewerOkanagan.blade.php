@@ -477,12 +477,12 @@
                         @break
 
                         @case('disability')
-                        <p>The Disability Resource Centre ensures educational equity for students with disabilities and chronic medical conditions. If you are disabled, have an injury or illness and require academic accommodations to meet the course objectives, please contact Earllene Roberts, the Diversity Advisor for the Disability Resource Centre located in the University Centre building (UNC 215).
+                        <p>The DRC facilitates disability-related accommodations and programming initiatives to remove barriers for students with disabilities and ongoing medical conditions. If you require academic accommodations to achieve the objectives of a course please contact the DRC at:
                         <br>
                         <br>
                         <b>UNC 215</b> 	250.807.8053
                         email: <a href="drc.questions@ubc.ca">drc.questions@ubc.ca</a>
-                        Web: <a href="http://www.students.ok.ubc.ca/academic-success/disability-resources/">http://www.students.ok.ubc.ca/academic-success/disability-resources/</a></p>
+                        Web: <a href="http://www.students.ok.ubc.ca/drc">http://www.students.ok.ubc.ca/drc</a></p>
                         @break
 
                         @case('equity')
@@ -514,16 +514,12 @@
                         @break
 
                         @case('student')
-                        <p>The Student Learning Hub (LIB 237) is your go-to resource for free math, science, writing, and language learning support. The Hub welcomes undergraduate students from all disciplines and year levels to access a range of supports that include tutoring in math, sciences, languages, and writing, as well as help with study skills and learning strategies. For more information, please visit the Hub’s website (<a href="https://students.ok.ubc.ca/student-learning-hub/">https://students.ok.ubc.ca/student-learning-hub/</a>) or call 250-807-9185.</p>
+                        <p>The Student Learning Hub (LIB 237) is your go-to resource for free math, science, writing, and language learning support. The Hub welcomes undergraduate students from all disciplines and year levels to access a range of supports that include tutoring in math, sciences, languages, and writing, as well as help with study skills and learning strategies. Students are encouraged to visit often and early to build the skills, strategies and behaviours that are essential to being a confident and independent learner. For more information, please visit the Hub’s website.</p>
                         <br>
                         <br>
                         <b>LIB 237</b> 	250.807.8491
                         email: <a href="learning.hub@ubc.ca">learning.hub@ubc.ca</a>
-                        Web: <a href="http://www.students.ok.ubc.ca/academic-success/learning-hub/">http://www.students.ok.ubc.ca/academic-success/learning-hub/</a></p>
-                        @break
-
-                        @case('copyright')
-                        <p>All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</p>
+                        Web: <a href="https://www.students.ok.ubc.ca/slh">https://www.students.ok.ubc.ca/slh</a></p>
                         @break
 
                         @case('safewalk')
