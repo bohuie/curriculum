@@ -692,14 +692,24 @@
         <div class="col-12">
             <label for="latePolicy"><h5 class="fw-bold">Late policy</h5></label>
             <p class="inputFieldDescription">{{$inputFieldDescriptions['latePolicy']}}</p>
-            <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="latePolicy"
+            <div id="formatLP" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+            <textarea data-formatnoteid="formatLP" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="latePolicy"
                 name="latePolicy" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->late_policy : ''}}</textarea>
         </div>
         <!-- Course Missing Exam -->
         <div class="col-12">
             <label for="missingExam"><h5 class="fw-bold">Missed exam policy</h5></label>
-            <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="missingExam"
+            <div id="formatME" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div> 
+            <textarea data-formatnoteid="formatME" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="missingExam"
                 name="missingExam" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_exam_policy : ''}}</textarea>
         </div>
@@ -707,14 +717,24 @@
         <div class="col-12">
             <label for="missingActivity"><h5 class="fw-bold">Missed Activity Policy</h5></label>
             <p class="inputFieldDescription">{{$inputFieldDescriptions['missedActivityPolicy']}}</p>
-            <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="missingActivity"
+            <div id="formatMAP" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+            <textarea data-formatnoteid="formatMAP" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="missingActivity"
                 name="missingActivity" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->missed_activity_policy : ''}}</textarea>
         </div>
         <!-- Course Passing Criteria -->
         <div class="col-12">
             <label for="passingCriteria"><h5 class="fw-bold">Passing/Grading criteria</h5></label>
-            <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="passingCriteria"
+            <div id="formatPC" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+            <textarea data-formatnoteid="formatPC" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="passingCriteria"
                 name="passingCriteria" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
         </div>
@@ -722,7 +742,12 @@
         <div class="col-12">
             <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label>
             <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningMaterials'] !!}</p> 
-            <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000"
+            <div id="formatLM" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+            <textarea data-formatnoteid="formatLM" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000"
                 id="learningMaterials" name="learningMaterials" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
         </div>
@@ -731,7 +756,12 @@
             <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
             <span class="requiredBySenate"></span>
             <p class="inputFieldDescription">{{$inputFieldDescriptions['learningResources']}}</p>
-            <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
+            <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div> 
+            <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
                 id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
         </div>
@@ -1862,8 +1892,15 @@
             
                 <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label>
                 <p class="inputFieldDescription">{!! $inputFieldDescriptions['okanaganCourseDescription'] !!}</p>
-                <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDesc" class ="form-control" type="date" form="sylabusGenerator">{{isset($okanaganSyllabus) ? $okanaganSyllabus->course_description : ''}}</textarea>`;
+                <div id="formatDesc" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each paragraph
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+                <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDesc" class ="form-control" type="date" data-formatnoteid="formatDesc" form="sylabusGenerator">{{isset($okanaganSyllabus) ? $okanaganSyllabus->course_description : ''}}</textarea>`;
                 
+
+        
         var vancouverOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
@@ -1972,7 +2009,12 @@
         var courseInstructorBio = `
             <label for="courseInstructorBio"><h5 class="fw-bold">Course Instructor Biographical Statement</h5></label>
             <p class="inputFieldDescription">{{$inputFieldDescriptions['instructorBioStatement']}}</p>
-            <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id = "courseInstructorBio" name = "courseInstructorBio" class ="form-control" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->instructor_bio : ''}}</textarea>
+            <div id="formatCIB" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each paragraph
+                    on a new line for the best formatting
+                    results.</span>
+                </div> 
+            <textarea data-formatnoteid="formatCIB" style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id = "courseInstructorBio" name = "courseInstructorBio" class ="form-control" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->instructor_bio : ''}}</textarea>
             
             `;     
         
@@ -1980,21 +2022,41 @@
                 <label for="courseStructure"><h5 class="fw-bold">Course Structure</h5></label>
                 <span class="requiredBySenate"></span>
                 <p class="inputFieldDescription">{{$inputFieldDescriptions['courseStructure']}}</p>
-                <textarea maxlength="7500" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseStructure" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_structure : ''}}</textarea>
+                <div id="formatCourseStructure" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+                <textarea data-formatnoteid="formatCourseStructure" maxlength="7500" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseStructure" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_structure : ''}}</textarea>
             `;
 
         var learningAnalytics = `
                 <label for="learningAnalytics"><h5 class="fw-bold">Learning Analytics</h5></label>
                 <p class="inputFieldDescription">{{$inputFieldDescriptions['learningAnalytics']}}</p>
-                <textarea style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
+                <div id="formatLAnal" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div> 
+                <textarea data-formatnoteid="formatLAnal" style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
             `;
         var courseFormat = `
                 <label for="courseFormat"><h5 class="fw-bold">Course Format</h5></label>
-                <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="7500" name = "courseFormat" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_format: ''}}</textarea>
+                <div id="formatFormat" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+                <textarea data-formatnoteid="formatFormat" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="7500" name = "courseFormat" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_format: ''}}</textarea>
             `;
         var courseOverview = `
                 <label for="courseOverview"><h5 class="fw-bold">Course Overview, Content and Objectives</h5></label>
-                <textarea style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="7500" name = "courseOverview" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_overview : ''}}</textarea>
+                <div id="formatOverview" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+                <textarea data-formatnoteid="formatOverview" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="7500" name = "courseOverview" class ="form-control" type="text" form="sylabusGenerator" spellcheck="true">{{ isset($okanaganSyllabus) ? $okanaganSyllabus->course_overview : ''}}</textarea>
             `;
 
         var requiredBySenateLabel = `

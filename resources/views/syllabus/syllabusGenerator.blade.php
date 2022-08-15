@@ -1437,7 +1437,7 @@
 
         var courseDescription = `
             <div class="col mb-3">
-                <label for="courseDescription">Course Description</label>
+                <label for="courseDescription">Course Description </label>
                 <i class="bi bi-info-circle-fill has-tooltip"  data-bs-placement="right" title="{{$inputFieldDescriptions['courseDescription']}}"></i>
                 <textarea maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  name = "courseDescription" class ="form-control" type="date" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->course_description : ''}}</textarea>
             </div>
