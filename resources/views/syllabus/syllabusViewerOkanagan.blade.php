@@ -477,7 +477,7 @@
                         @break
 
                         @case('disability')
-                        <p>The DRC facilitates disability-related accommodations and programming initiatives to remove barriers for students with disabilities and ongoing medical conditions. The DRC determines a student’s eligibility for accommodations in accordance with the university’s <a href="https://students.cms.ok.ubc.ca/wp-content/uploads/sites/90/2020/01/Disability-Accommodation-Policy_LR7.pdf">Policy LR7: Accommodations for Students with Disabilities</a>. Students must register with the DRC to receive accommodations and the process of registering may take 2-4 weeks as the process consists of providing medical documentation and meeting with an Accessibility Advisor.
+                        <p>The DRC facilitates disability-related accommodations and programming initiatives to remove barriers for students with disabilities and ongoing medical conditions. If you require academic accommodations to achieve the objectives of a course please contact the DRC at:
                         <br>
                         <br>
                         <b>UNC 215</b> 	250.807.8053
