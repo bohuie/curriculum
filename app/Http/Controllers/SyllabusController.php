@@ -855,80 +855,87 @@ class SyllabusController extends Controller
                 // get data specific to the okanagan campus
                 $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
 
-                // add data to the okanagan syllabus template
-                /*
+                //Course Description Okanagan
+
                 if($courseDescriptionOK = $okanaganSyllabus->course_description){
-                    $templateProcessor->cloneBlock('NocourseDescription');
-                    $templateProcessor->setValue('courseDescriptionOK', $courseDescriptionOK);
+                    $CDArr = explode("\n", $courseDescriptionOK);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($CDArr as $index => $courseDesc){
+                            $templateProcessor->cloneBlock('NocourseDescription');
+                            $templateProcessor->setValue('courseDescriptionOK'.$i, $courseDesc."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseDescriptionOK'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NocourseDescription');
+                        $templateProcessor->setValue('courseDescriptionOK0', str_replace("\n","</w:t><w:br/><w:t>",$courseDescriptionOK));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseDescriptionOK'.$i, '');
+                        }
+                    }
                     
                 }else{
                     $templateProcessor->cloneBlock('NocourseDescription',0);
                 }
-                */
-                if($courseDescriptionOK = $okanaganSyllabus->course_description){
-                    $templateProcessor->cloneBlock('NocourseDescription');
-                    // split learning activities string on newline char
-                    $CDArr = explode("\n", $courseDescriptionOK);
-                    // create a table for learning activities (workaround for no list option)
-                    $tableStyle1 = array('borderSize'=> 0, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $CDTable = new Table($tableStyle1);
-        
-                    // add a new row and cell to table for each learning activity
-                    foreach($CDArr as $index => $courseDesc){
-                        $CDTable->addRow();
-                        $CDTable->addCell()->addText($courseDesc);
-                    }
-                    // add learning activities table to word doc
-                    $templateProcessor->setComplexBlock('courseDescriptionOK', $CDTable);
-                }else{
-                    $templateProcessor->cloneBlock('NocourseDescription',0);
-                }
 
                 
-                /*
-                if($courseFormat = $okanaganSyllabus->course_format){
-                    $templateProcessor->cloneBlock('NocourseFormat');
-                    $templateProcessor->setValue('courseFormat', $courseFormat);
-                }else{
-                    $templateProcessor->cloneBlock('NocourseFormat',0);
-                }
-                */
+                //Course Format Okanagan
 
                 if($courseFormat = $okanaganSyllabus->course_format){
-                    $templateProcessor->cloneBlock('NocourseFormat');
                     $CFArr = explode("\n", $courseFormat);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $CFTable = new Table($tableStyle1);
-    
-                    foreach($CFArr as $index => $courseForm){
-                        $CFTable->addRow();
-                        $CFTable->addCell()->addText($courseForm);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($CFArr as $index => $courseForm){
+                            $templateProcessor->cloneBlock('NocourseFormat');
+                            $templateProcessor->setValue('courseFormat'.$i, $courseForm."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseFormat'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NocourseFormat');
+                        $templateProcessor->setValue('courseFormat0', str_replace("\n","</w:t><w:br/><w:t>",$courseFormat));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseFormat'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('courseFormat', $CFTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NocourseFormat',0);
                 }
                 
-                /*
+                //Course Overview Okanagan
+
                 if($courseOverview = $okanaganSyllabus->course_overview){
-                    $templateProcessor->cloneBlock('NocourseOverview');
-                    $templateProcessor->setValue('courseOverview',$courseOverview);
-                }else{
-                    // tell template processor to not include 'NocourseOverview block
-                    $templateProcessor->cloneBlock('NocourseOverview', 0);
-                }
-                */
-                if($courseOverview = $okanaganSyllabus->course_overview){
-                    $templateProcessor->cloneBlock('NocourseOverview');
                     $COArr = explode("\n", $courseOverview);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $COTable = new Table($tableStyle1);
-    
-                    foreach($COArr as $index => $courseOV){
-                        $COTable->addRow();
-                        $COTable->addCell()->addText($courseOV);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($COArr as $index => $courseOver){
+                            $templateProcessor->cloneBlock('NocourseOverview');
+                            $templateProcessor->setValue('courseOverview'.$i, $courseOver."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=30;$i++){
+                            $templateProcessor->setValue('courseOverview'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NocourseOverview');
+                        $templateProcessor->setValue('courseOverview0', str_replace("\n","</w:t><w:br/><w:t>",$courseOverview));
+                        $i++;
+                        for($i;$i<=30;$i++){
+                            $templateProcessor->setValue('courseOverview'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('courseOverview', $COTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NocourseOverview',0);
                 }
@@ -1033,8 +1040,8 @@ class SyllabusController extends Controller
                     $learningOutcomes = explode("\n", $learningOutcome);
                     // create a table for learning outcomes (workaround for no list option)
                     $learningOutcomesTable = new Table($tableStyle);
-                    $learningOutcomesTable->addRow();
-                    $learningOutcomesTable->addCell(10, $tableHeaderRowStyle);                    $learningOutcomesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Outcome', $tableHeaderFontStyle);
+                    //$learningOutcomesTable->addRow();
+                    //$learningOutcomesTable->addCell(10, $tableHeaderRowStyle);                    $learningOutcomesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Outcome', $tableHeaderFontStyle);
 
                     // add a new row and cell to table for each learning outcome
                     foreach($learningOutcomes as $index => $outcome) {
@@ -1067,50 +1074,60 @@ class SyllabusController extends Controller
                 }else{
                     $templateProcessor->cloneBlock('NoLearningAssessments',0);
                 }
-                // include vancouver course learning resources in template
-                /*
-                if($learningResources = $syllabus->learning_resources){
-                    $templateProcessor->cloneBlock('NoCourseLearningResources');
-                    $templateProcessor->setValue('courseLearningResources', $learningResources);
-                }else{
-                    $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
-                }
-                */
+                
+                //Learning Resources
 
                 if($learningResources = $syllabus->learning_resources){
-                    $templateProcessor->cloneBlock('NoCourseLearningResources');
                     $LRArr = explode("\n", $learningResources);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $LRTable = new Table($tableStyle1);
-    
-                    foreach($LRArr as $index => $courseLR){
-                        $LRTable->addRow();
-                        $LRTable->addCell()->addText($courseLR);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($LRArr as $index => $courseLR){
+                            $templateProcessor->cloneBlock('NocourseLearningResources');
+                            $templateProcessor->setValue('courseLearningResources'.$i, $courseLR."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseLearningResources'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NocourseLearningResources');
+                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n","</w:t><w:br/><w:t>",$learningResources));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseLearningResources'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('courseLearningResources', $LRTable);
+                    
                 }else{
-                    $templateProcessor->cloneBlock('NoCourseLearningResources',0);
+                    $templateProcessor->cloneBlock('NocourseLearningResources',0);
                 }
-                /*
-                if($learningMaterials = $syllabus->learning_materials){
-                    $templateProcessor->cloneBlock('NoLearningMaterials');
-                    $templateProcessor->setValue('learningMaterials',$learningMaterials);
-                }else{
-                    $templateProcessor->cloneBlock('NoLearningMaterials',0);
-                } 
-                */
+
+                
+                //Learning Materials
 
                 if($learningMaterials = $syllabus->learning_materials){
-                    $templateProcessor->cloneBlock('NoLearningMaterials');
                     $LMArr = explode("\n", $learningMaterials);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $LMTable = new Table($tableStyle1);
-    
-                    foreach($LMArr as $index => $courseLM){
-                        $LMTable->addRow();
-                        $LMTable->addCell()->addText($courseLM);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($LMArr as $index => $courseLM){
+                            $templateProcessor->cloneBlock('NoLearningMaterials');
+                            $templateProcessor->setValue('learningMaterials'.$i, $courseLM."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('learningMaterials'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoLearningMaterials');
+                        $templateProcessor->setValue('learningMaterials0', str_replace("\n","</w:t><w:br/><w:t>",$learningMaterials));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('learningMaterials'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('learningMaterials', $LMTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
                 }
@@ -1146,27 +1163,31 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoOfficeLocation', 0);
                 }
 
-                // include vancouver course description in template
-                /*
-                if($courseDescription = $vancouverSyllabus->course_description){
-                    $templateProcessor->cloneBlock('NoCourseDescription');
-                    $templateProcessor->setValue('courseDescription', $courseDescription);
-                }else{
-                    $templateProcessor->cloneBlock('NoCourseDescription', 0);
-                }
-                */
+                //Vancouver Course Description
+
 
                 if($courseDescription = $vancouverSyllabus->course_description){
-                    $templateProcessor->cloneBlock('NoCourseDescription');
                     $CDVArr = explode("\n", $courseDescription);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $CDVTable = new Table($tableStyle1);
-        
-                    foreach($CDVArr as $index => $courseCDV){
-                        $CDVTable->addRow();
-                        $CDVTable->addCell()->addText($courseCDV);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($CDVArr as $index => $courseCDV){
+                            $templateProcessor->cloneBlock('NoCourseDescription');
+                            $templateProcessor->setValue('courseDescription'.$i, $courseCDV."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseDescription'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoCourseDescription');
+                        $templateProcessor->setValue('courseDescription0', str_replace("\n","</w:t><w:br/><w:t>",$courseDescription));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseDescription'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('courseDescription', $CDVTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoCourseDescription',0);
                 }
@@ -1235,50 +1256,58 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('corequisites', '');
                 }
 
-                /*
-                if($courseInstructorBio = $vancouverSyllabus->instructor_bio){
-                    $templateProcessor->cloneBlock('NoInstructorBio');
-                    $templateProcessor->setValue('instructorBio', $courseInstructorBio);
-                }else{
-                    $templateProcessor->cloneBlock('NoInstructorBio', 0);
-                }
-                */
+                //Course Instructor Biographical Statement Vancouver
 
                 if($courseInstructorBio = $vancouverSyllabus->instructor_bio){
-                    $templateProcessor->cloneBlock('NoInstructorBio');
-                    $IBArr = explode("\n", $courseInstructorBio);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $IBTable = new Table($tableStyle1);
-        
-                    foreach($IBArr as $index => $courseIB){
-                        $IBTable->addRow();
-                        $IBTable->addCell()->addText($courseIB);
+                    $CIBArr = explode("\n", $courseInstructorBio);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($CIBArr as $index => $courseCIB){
+                            $templateProcessor->cloneBlock('NoInstructorBio');
+                            $templateProcessor->setValue('instructorBio'.$i, $courseCIB."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('instructorBio'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoInstructorBio');
+                        $templateProcessor->setValue('instructorBio0', str_replace("\n","</w:t><w:br/><w:t>",$courseInstructorBio));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('instructorBio'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('instructorBio', $IBTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoInstructorBio',0);
                 }
 
-                /*
-                if($courseStructure = $vancouverSyllabus->course_structure){
-                    $templateProcessor->cloneBlock('NoCourseStructure', 0);
-                    $templateProcessor->setValue('courseStructure', $courseStructure);
-                }else{
-                    $templateProcessor->cloneBlock('NoCourseStructure');
-                    $templateProcessor->setValue('courseStructure', '');
-                } */
+                //Course Structure Vancouver
 
                 if($courseStructure = $vancouverSyllabus->course_structure){
-                    $templateProcessor->cloneBlock('NoCourseStructure');
-                    $CSArr = explode("\n", $courseStructure);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $CSTable = new Table($tableStyle1);
-        
-                    foreach($CSArr as $index => $courseCS){
-                        $CSTable->addRow();
-                        $CSTable->addCell()->addText($courseCS);
+                    $CStructArr = explode("\n", $courseStructure);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($CStructArr as $index => $courseStruct){
+                            $templateProcessor->cloneBlock('NoCourseStructure');
+                            $templateProcessor->setValue('courseStructure'.$i, $courseStruct."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseStructure'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoCourseStructure');
+                        $templateProcessor->setValue('courseStructure0', str_replace("\n","</w:t><w:br/><w:t>",$courseStructure));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseStructure'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('courseStructure', $CSTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoCourseStructure',0);
                 }
@@ -1290,6 +1319,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoTopicsSchedule');
                     $templateProcessor->setValue('courseSchedule', '');
                 }
+                
 
                 // tell template processor to include learning activities if user completed the field(s)
                 if($learningActivities = $syllabus->learning_activities){
@@ -1298,8 +1328,8 @@ class SyllabusController extends Controller
                     $learningActivitiesArr = explode("\n", $learningActivities);
                     // create a table for learning activities (workaround for no list option)
                     $learningActivitiesTable = new Table($tableStyle);
-                    $learningActivitiesTable->addRow();
-                    $learningActivitiesTable->addCell(10, $tableHeaderRowStyle);                    $learningActivitiesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Activity', $tableHeaderFontStyle);
+                    //$learningActivitiesTable->addRow();
+                    //$learningActivitiesTable->addCell(10, $tableHeaderRowStyle);                    $learningActivitiesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Activity', $tableHeaderFontStyle);
                     // add a new row and cell to table for each learning activity
                     foreach($learningActivitiesArr as $index => $learningActivity){
                         $learningActivitiesTable->addRow();
@@ -1394,8 +1424,8 @@ class SyllabusController extends Controller
                     $learningOutcomes = explode("\n", $learningOutcome);
                     // create a table for learning outcomes (workaround for no list option)
                     $learningOutcomesTable = new Table($tableStyle);
-                    $learningOutcomesTable->addRow();
-                    $learningOutcomesTable->addCell(10, $tableHeaderRowStyle);                    $learningOutcomesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Outcome', $tableHeaderFontStyle);
+                    //$learningOutcomesTable->addRow();
+                    //$learningOutcomesTable->addCell(10, $tableHeaderRowStyle);                    $learningOutcomesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Outcome', $tableHeaderFontStyle);
                     // add a new row and cell to table for each learning outcome
                     foreach($learningOutcomes as $index => $outcome) {
                         $learningOutcomesTable->addRow();
@@ -1430,76 +1460,88 @@ class SyllabusController extends Controller
                     $templateProcessor->setValue('learningAssessments', '');
 
                 }
-                // include vancouver course learning resources in template
-                /*
-                if($learningResources =  $syllabus->learning_resources){
-                    $templateProcessor->cloneBlock('NoCourseLearningResources');
-                    $templateProcessor->setValue('courseLearningResources', $learningResources);
-                }else{
-                    $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
-                }
-                */
-
+               
+                //Vancouver Course Learning Resources
                 if($learningResources = $syllabus->learning_resources){
-                    $templateProcessor->cloneBlock('NoCourseLearningResources');
-                    $LRArr = explode("\n", $learningResources);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $LRTable = new Table($tableStyle1);
-    
-                    foreach($LRArr as $index => $courseLR){
-                        $LRTable->addRow();
-                        $LRTable->addCell()->addText($courseLR);
+                    $LRVArr = explode("\n", $learningResources);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($LRVArr as $index => $courseLRV){
+                            $templateProcessor->cloneBlock('NoCourseLearningResources');
+                            $templateProcessor->setValue('courseLearningResources'.$i, $courseLRV."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseLearningResources'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoCourseLearningResources');
+                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n","</w:t><w:br/><w:t>",$learningResources));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('courseLearningResources'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('courseLearningResources', $LRTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoCourseLearningResources',0);
                 }
                 
-                /*
-                if($learningMaterials =  $syllabus->learning_materials){
-                    $templateProcessor->cloneBlock('NoLearningMaterials', 0);
-                    $templateProcessor->setValue('learningMaterials',$learningMaterials);
-                }else{
-                    $templateProcessor->cloneBlock('NoLearningMaterials');
-                    $templateProcessor->setValue('learningMaterials', '');
-
-                }*/
+                //Learning Materials
 
                 if($learningMaterials = $syllabus->learning_materials){
-                    $templateProcessor->cloneBlock('NoLearningMaterials');
-                    $LMArr = explode("\n", $learningMaterials);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $LMTable = new Table($tableStyle1);
-        
-                    foreach($LMArr as $index => $courseLM){
-                        $LMTable->addRow();
-                        $LMTable->addCell()->addText($courseLM);
+                    $LMVArr = explode("\n", $learningMaterials);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($LMVArr as $index => $courseLMV){
+                            $templateProcessor->cloneBlock('NoLearningMaterials');
+                            $templateProcessor->setValue('learningMaterials'.$i, $courseLMV."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('learningMaterials'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoLearningMaterials');
+                        $templateProcessor->setValue('learningMaterials0', str_replace("\n","</w:t><w:br/><w:t>",$learningMaterials));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('learningMaterials'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('learningMaterials', $LMTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
                 }
 
-                /*
-                if ($learningAnalytics =  $vancouverSyllabus->learning_analytics) {
-                    $templateProcessor->cloneBlock('NoLearningAnalytics');
-                    $templateProcessor->setValue('learningAnalytics', $learningAnalytics);
-                } else {
-                    $templateProcessor->cloneBlock('NoLearningAnalytics', 0);
-                }
-                */
+                //Learning Analytics
+                //Currently not showing, $learningAnalytics=null every time
 
-                if($learningAnalytics = $vancouverSyllabus->learning_analytics){
-                    $templateProcessor->cloneBlock('NoLearningAnalytics');
-                    $LEAArr = explode("\n", $learningAnalytics);
-                    $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-                    $LEATable = new Table($tableStyle1);
-        
-                    foreach($LEAArr as $index => $courseLEA){
-                        $LEATable->addRow();
-                        $LEATable->addCell()->addText($courseLEA);
+                if($learningAnalytics = $syllabus->learning_analytics){
+                    
+                    $LAVArr = explode("\n", $learningAnalytics);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($LAVArr as $index => $courseLAV){
+                            $templateProcessor->cloneBlock('NoLearningAnalytics');
+                            $templateProcessor->setValue('learningAnalytics'.$i, $courseLAV."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('learningAnalytics'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoLearningAnalytics');
+                        $templateProcessor->setValue('learningAnalytics0', str_replace("\n","</w:t><w:br/><w:t>",$learningAnalytics));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('learningAnalytics'.$i, '');
+                        }
                     }
-                    $templateProcessor->setComplexBlock('learningAnalytics', $LEATable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoLearningAnalytics',0);
                 }
@@ -1573,104 +1615,114 @@ class SyllabusController extends Controller
             $templateProcessor->cloneBlock('NoDepartment', 0);
         }
 
-        /*
-        if($latePolicy = $syllabus->late_policy){
-            $templateProcessor->cloneBlock('NolatePolicy');
-            $templateProcessor->setValue('latePolicy',$latePolicy);
-        }else{
-            $templateProcessor->cloneBlock('NolatePolicy',0);
-        }
-        */
+       //Late Policy
 
         if($latePolicy = $syllabus->late_policy){
-            $templateProcessor->cloneBlock('NolatePolicy');
             $LPArr = explode("\n", $latePolicy);
-            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-            $LPTable = new Table($tableStyle1);
-
-            foreach($LPArr as $index => $courseLP){
-                $LPTable->addRow();
-                $LPTable->addCell()->addText($courseLP);
+            $i=0;
+            if($ext == 'pdf') {
+                foreach($LPArr as $index => $courseLP){
+                    $templateProcessor->cloneBlock('NolatePolicy');
+                    $templateProcessor->setValue('latePolicy'.$i, $courseLP."</w:t><w:br/><w:t>");
+                    $i++;
+                }
+                
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('latePolicy'.$i, '');
+                }
+            }else{
+                $templateProcessor->cloneBlock('NolatePolicy');
+                $templateProcessor->setValue('latePolicy0', str_replace("\n","</w:t><w:br/><w:t>",$latePolicy));
+                $i++;
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('latePolicy'.$i, '');
+                }
             }
-            $templateProcessor->setComplexBlock('latePolicy', $LPTable);
+            
         }else{
             $templateProcessor->cloneBlock('NolatePolicy',0);
         }
-        
-        /*
-        if($missingExam = $syllabus->missed_exam_policy){
-            $templateProcessor->cloneBlock('NoMissingExam');
-            $templateProcessor->setValue('missingExam',$missingExam);
-        }else{
-            $templateProcessor->cloneBlock('NoMissingExam',0);
-        }
-        */
 
+        //Missing Exam Policy
+       
         if($missingExam = $syllabus->missed_exam_policy){
-            $templateProcessor->cloneBlock('NoMissingExam');
             $MEArr = explode("\n", $missingExam);
-            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-            $METable = new Table($tableStyle1);
-
-            foreach($MEArr as $index => $courseME){
-                $METable->addRow();
-                $METable->addCell()->addText($courseME);
+            $i=0;
+            if($ext == 'pdf') {
+                foreach($MEArr as $index => $courseME){
+                    $templateProcessor->cloneBlock('NoMissingExam');
+                    $templateProcessor->setValue('missingExam'.$i, $courseME."</w:t><w:br/><w:t>");
+                    $i++;
+                }
+                
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('missingExam'.$i, '');
+                }
+            }else{
+                $templateProcessor->cloneBlock('NoMissingExam');
+                $templateProcessor->setValue('missingExam0', str_replace("\n","</w:t><w:br/><w:t>",$missingExam));
+                $i++;
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('missingExam'.$i, '');
+                }
             }
-            $templateProcessor->setComplexBlock('missingExam', $METable);
+            
         }else{
             $templateProcessor->cloneBlock('NoMissingExam',0);
         }
 
-        /*
-        if($missingActivity = $syllabus->missed_activity_policy){
-            $templateProcessor->cloneBlock('NomissingActivity');
-            $templateProcessor->setValue('missingActivity',$missingActivity);
-        }else{
-            $templateProcessor->cloneBlock('NomissingActivity',0);
-        }
-        */
+        //Missing Activity Policy 
 
         if($missingActivity = $syllabus->missed_activity_policy){
-            $templateProcessor->cloneBlock('NomissingActivity');
             $MAArr = explode("\n", $missingActivity);
-            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-            $MATable = new Table($tableStyle1);
-
-            foreach($MAArr as $index => $courseMA){
-                $MATable->addRow();
-                $MATable->addCell()->addText($courseMA);
+            $i=0;
+            if($ext == 'pdf') {
+                foreach($MAArr as $index => $courseMA){
+                    $templateProcessor->cloneBlock('NomissingActivity');
+                    $templateProcessor->setValue('missingActivity'.$i, $courseMA."</w:t><w:br/><w:t>");
+                    $i++;
+                }
+                
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('missingActivity'.$i, '');
+                }
+            }else{
+                $templateProcessor->cloneBlock('NomissingActivity');
+                $templateProcessor->setValue('missingActivity0', str_replace("\n","</w:t><w:br/><w:t>",$missingActivity));
+                $i++;
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('missingActivity'.$i, '');
+                }
             }
-            $templateProcessor->setComplexBlock('missingActivity', $MATable);
+            
         }else{
             $templateProcessor->cloneBlock('NomissingActivity',0);
         }
+    
+        //Passing Criteria
 
-        //troubleshooting newline solution
-        /*
         if($passingCriteria = $syllabus->passing_criteria){
-            $templateProcessor->cloneBlock('NopassingCriteria');
-            $templateProcessor->setValue('passingCriteria',$passingCriteria);
-        }else{
-            $templateProcessor->cloneBlock('NopassingCriteria',0);
-        }
-        */
-
-        // tell template processor to include learning activities if user completed the field(s)
-        if($passingCriteria = $syllabus->passing_criteria){
-            $templateProcessor->cloneBlock('NopassingCriteria');
-            // split learning activities string on newline char
-            $passingCriteriaArr = explode("\n", $passingCriteria);
-            // create a table for learning activities (workaround for no list option)
-            $tableStyle1 = array('borderSize'=> 8, 'borderColor' => 'FFFFFF', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50);
-            $PCTable = new Table($tableStyle1);
-
-            // add a new row and cell to table for each learning activity
-            foreach($passingCriteriaArr as $index => $passingCriteria){
-                $PCTable->addRow();
-                $PCTable->addCell()->addText($passingCriteria);
+            $PCArr = explode("\n", $passingCriteria);
+            $i=0;
+            if($ext == 'pdf') {
+                foreach($PCArr as $index => $coursePC){
+                    $templateProcessor->cloneBlock('NopassingCriteria');
+                    $templateProcessor->setValue('passingCriteria'.$i, $coursePC."</w:t><w:br/><w:t>");
+                    $i++;
+                }
+                
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('passingCriteria'.$i, '');
+                }
+            }else{
+                $templateProcessor->cloneBlock('NopassingCriteria');
+                $templateProcessor->setValue('passingCriteria0', str_replace("\n","</w:t><w:br/><w:t>",$passingCriteria));
+                $i++;
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('passingCriteria'.$i, '');
+                }
             }
-            // add learning activities table to word doc
-            $templateProcessor->setComplexBlock('passingCriteria', $PCTable);
+            
         }else{
             $templateProcessor->cloneBlock('NopassingCriteria',0);
         }
