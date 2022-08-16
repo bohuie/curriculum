@@ -30,7 +30,7 @@
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="pdf" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Save and download my syllabus as PDF" disabled>
+                    title="Save and download my syllabus as PDF">
                     <i class="text-danger bi-file-pdf-fill btn btn-light rounded-circle m-2"></i>
                     <p style="font-size:12px" class="text-muted m-0">PDF</p>
                 </button>
@@ -840,7 +840,7 @@
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="pdf" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Save and download my syllabus as PDF" disabled>
+                    title="Save and download my syllabus as PDF">
                     <i class="text-danger bi-file-pdf-fill btn btn-light rounded-circle m-2"></i>
                     <p style="font-size:12px" class="text-muted m-0">PDF</p>
                 </button>
