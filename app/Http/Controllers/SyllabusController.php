@@ -1156,12 +1156,9 @@ class SyllabusController extends Controller
                 // add required form fields specific to Vancouver campus to template
                 $templateProcessor->setValues(array('courseCredit' => $courseCredit,));
 
-                if($officeLocation = $vancouverSyllabus->office_location){
-                    $templateProcessor->cloneBlock('NoOfficeLocation');
-                    $templateProcessor->setValue('officeLocation', $officeLocation);
-                }else{
-                    $templateProcessor->cloneBlock('NoOfficeLocation', 0);
-                }
+                //removed if statement in attempt to solve bug
+                $templateProcessor->setValue('officeLocation', $vancouverSyllabus->office_location);
+                
 
                 //Vancouver Course Description
 
