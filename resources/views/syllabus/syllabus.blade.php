@@ -267,61 +267,68 @@
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="2500" spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
         </div>
 
-
+        <!-- Course Prerequisites -->
+        <div class="col-12" id="coursePrereqs"></div>
+        <!-- Course Corequisites -->
+        <div class="col-12" id="courseCoreqs"></div>
         <h5 class="col-12 fw-bold">Course Instructor(s)</h5>
 
-        @if (!empty($syllabus) && $syllabusInstructors->count() > 0)
-            @foreach ($syllabusInstructors as $syllabusInstructor)
-                <div class="instructor row g-3 align-items-end m-0 p-0">
-                    <div class="col-5">
-                        <label for="courseInstructor">Name<span class="requiredField"> *</span></label>
-                        <input name = "courseInstructor[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required value="{{$syllabusInstructor->name}}">
-                        <div class="invalid-tooltip">
-                        Please enter the course instructor.
-                        </div>
-                    </div>
-
-                    <div class="col-5">
-                        <label for="courseInstructorEmail">Email<span class="requiredField"> *</span></label>
-                        <input name = "courseInstructorEmail[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="email" placeholder="E.g. jane.doe@ubc.ca" value="{{$syllabusInstructor->email}}" required>
-                        <div class="invalid-tooltip">
-                            Please enter the instructors email.
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)"><i class="bi bi-trash-fill"></i> Delete</button>
-                    </div>
-                </div>
-            @endforeach 
-        @else 
-            <div class="instructor row g-3 align-items-end m-0 p-0">
-                <div class="col-5">
-                    <label for="courseInstructor">Name<span class="requiredField"> *</span></label>
-                    <input name = "courseInstructor[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required >
-                    <div class="invalid-tooltip">
-                    Please enter the course instructor.
-                    </div>
-                </div>
-
-                <div class="col-5">
-                    <label for="courseInstructorEmail">Email<span class="requiredField"> *</span></label>
-                    <input name = "courseInstructorEmail[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="email" placeholder="E.g. jane.doe@ubc.ca" required>
-                    <div class="invalid-tooltip">
-                        Please enter the instructors email.
-                    </div>
-                </div>
-
-                <div class="col-2">
-                    <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)">Delete</button>
+@if (!empty($syllabus) && $syllabusInstructors->count() > 0)
+    @foreach ($syllabusInstructors as $syllabusInstructor)
+        <div class="instructor row g-3 align-items-end m-0 p-0">
+            <div class="col-5">
+                <label for="courseInstructor">Name<span class="requiredField"> *</span></label>
+                <input name = "courseInstructor[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required value="{{$syllabusInstructor->name}}">
+                <div class="invalid-tooltip">
+                Please enter the course instructor.
                 </div>
             </div>
-        @endif
 
-        <a id="addInstructorBtn" class="link-primary col-2" onclick="addInstructor()" style="cursor:pointer"><i class="bi bi-plus"></i> Add instructor</a>
+            <div class="col-5">
+                <label for="courseInstructorEmail">Email<span class="requiredField"> *</span></label>
+                <input name = "courseInstructorEmail[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="email" placeholder="E.g. jane.doe@ubc.ca" value="{{$syllabusInstructor->email}}" required>
+                <div class="invalid-tooltip">
+                    Please enter the instructors email.
+                </div>
+            </div>
+
+            <div class="col-2">
+                <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)"><i class="bi bi-trash-fill"></i> Delete</button>
+            </div>
+        </div>
+    @endforeach 
+@else 
+    <div class="instructor row g-3 align-items-end m-0 p-0">
+        <div class="col-5">
+            <label for="courseInstructor">Name<span class="requiredField"> *</span></label>
+            <input name = "courseInstructor[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="text" placeholder="E.g. Dr. J. Doe" required >
+            <div class="invalid-tooltip">
+            Please enter the course instructor.
+            </div>
+        </div>
+
+        <div class="col-5">
+            <label for="courseInstructorEmail">Email<span class="requiredField"> *</span></label>
+            <input name = "courseInstructorEmail[]" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="75" class ="form-control" type="email" placeholder="E.g. jane.doe@ubc.ca" required>
+            <div class="invalid-tooltip">
+                Please enter the instructors email.
+            </div>
+        </div>
+
+        <div class="col-2">
+            <button type="button" class="btn btn-danger col" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete instructor" onclick="delInstructor(this)">Delete</button>
+        </div>
+    </div>
+@endif
+
+<a id="addInstructorBtn" class="link-primary col-2" onclick="addInstructor()" style="cursor:pointer"><i class="bi bi-plus"></i> Add instructor</a>
 
         <!-- Course Contacts -->
         <div id="courseContacts" class="col-12"></div>
+        <!-- Course Instructor Biographical Statement -->
+        <div class="col-12" id="courseInstructorBio"></div>
+        <!-- Course Description -->
+        <div class="col-12"id="courseDescription"></div>
 
         <div class="col-12">
             <label for="otherCourseStaff"><h5 class="fw-bold">Other Instructional Staff</h5></label>
@@ -340,23 +347,122 @@
                 spellcheck="true" style="height:125px;">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
         </div>
 
-        <!-- Course Instructor Biographical Statement -->
-        <div class="col-12" id="courseInstructorBio"></div>
-        <!-- Course Description -->
-        <div class="col-12"id="courseDescription"></div>
-        <!-- Okanaga Course Description -->
-        <div class="col-12"id="courseDesc"></div>
-        <!-- Course Prerequisites -->
-        <div class="col-12" id="coursePrereqs"></div>
-        <!-- Course Corequisites -->
-        <div class="col-12" id="courseCoreqs"></div>
         <!-- Course Structure -->
         <div class="col-12" id="courseStructure"></div>
-        <!-- Course Format -->
-        <div class="col-12" id="courseFormat"></div>
-        <!-- Course Overview -->
-        <div class="col-12" id="courseOverview"></div>
 
+        <!-- course schedule table -->
+        <div class="col mb-3">
+            <label for="courseSchedule">
+                <h5 class="fw-bold">Course Schedule</h5>
+            </label>
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Create Course Schedule Table">
+                <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount> 0) hidden @endif @endif id="createTableBtn" type="button" class="btn btn-light rounded-pill m-2" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal" style="font-color:#002145">
+                    <i class="bi bi-plus"></i>
+                    <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
+                </button>
+            </span>
+            <p class="inputFieldDescription">{{$inputFieldDescriptions['courseSchedule']}}</p>
+
+        </div>
+
+        <!-- course schedule toolbar -->
+        <div id="courseScheduleTblToolbar" class="row mb-1" @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount <= 0) hidden @endif @else hidden @endif>
+            <div class="col-12 text-center">
+                <span title="Row Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover"
+                    data-bs-placement="bottom" data-bs-content="You have reached the maximum number of rows allowed">
+                    <button type="button" class="col-2 addRow btn m-0 p-0" style="background:none;border:none" data-side="top" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add row on top">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD ROW TOP</p>
+                    </button>
+
+                    <button type="button" class="col-2 addRow btn m-0 p-0" style="background:none;border:none" data-side="bottom" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add row on bottom">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD ROW BOTTOM</p>
+                    </button>                    
+                </span>
+
+                <span title="Column Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover"
+                    data-bs-placement="bottom" data-bs-content="You have reached the maximum number of columns allowed">
+                    <button type="button" class="col-2 addCol btn m-0 p-0" style="background:none;border:none" data-side="left" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add column on left">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD COLUMN LEFT</p>
+                    </button>  
+
+                    <button type="button" class="col-2 addCol btn m-0 p-0" style="background:none;border:none" data-side="right" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add column on left">
+                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
+                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">ADD COLUMN RIGHT</p>
+                    </button>  
+                </span>
+
+                <button id="delCols" type="button" class="col-2 btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete column(s)">
+                    <i class="btn btn-light rounded-pill m-2 text-danger bi bi-trash-fill">
+                        <span class="iconify-inline ml-1" data-icon="fluent:column-triple-20-filled"></span>
+                    </i>
+                    <p style="font-size:12px" class="text-muted m-0">DELETE COLUMN(S)</p>
+                </button>
+
+                
+                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete Table" class="col-2">
+                    <button id="delTable" type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="modal" data-bs-target="#delCourseScheduleTbl">
+                        <i class="btn btn-danger rounded-pill m-2 bi bi-trash-fill">
+                            <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
+                        </i>
+                        <p style="font-size:12px" class="text-muted m-0">DELETE TABLE</p>
+                    </button>                    
+                </span>
+            </div>
+        </div>
+
+        <!-- div where course schedule table is created from scratch  -->
+        <div id="courseScheduleTblDiv">
+            @if (!empty($syllabus))
+                @if ($courseScheduleTblRowsCount > 0)
+                    <table id="courseScheduleTbl" class="table table-light align-middle reorder-tbl-rows">
+                        <thead>
+                            <tr class="table-primary">
+                                <th></th>
+                                @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
+                                <th>
+                                    <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text"
+                                        class="form-control" spellcheck="true"
+                                        placeholder="Column heading here ...">{{$header->val}}</textarea>
+                                </th>
+                                @endforeach
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
+                            @if ($rowIndex != 0)
+                            <tr>
+                                <td class="align-middle fs-5">↕</td>
+                                @foreach ($row as $colIndex => $data)
+                                <td>
+                                    <textarea name="courseScheduleTblRows[]" form="sylabusGenerator" type="text"
+                                        class="form-control" spellcheck="true"
+                                        placeholder="Data here ...">{{$data->val}}</textarea>
+                                </td>
+                                @endforeach
+                                <td class="align-middle">
+                                    <i class="bi bi-x-circle-fill text-danger fs-4 btn"
+                                        onclick="delCourseScheduleRow(this)"></i>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            @endif
+        </div>
 
         <div class="col-12">
             <label for="learningOutcome"><h5 class="fw-bold">Learning Outcomes</h5></label>
@@ -368,7 +474,30 @@
             </div>                                            
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="17500" id = "learningOutcome" data-formatnoteid="formatCLOs" placeholder="E.g. Define ... &#10;E.g. Classify ..." name = "learningOutcome" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_outcomes : ''}}</textarea>
         </div>
-
+        
+        <div class="col-12">
+            <label for="learningActivities"><h5 class="fw-bold">Learning Activities</h5></label>
+            <span class="requiredBySenate"></span>
+            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningActivities']}}</p>
+            <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
+            </div>                                            
+            <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
+        </div>
+        <!-- Course Learning Materials -->
+        <div class="col-12">
+            <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label>
+            <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningMaterials'] !!}</p> 
+            <div id="formatLM" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div>
+            <textarea data-formatnoteid="formatLM" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000"
+                id="learningMaterials" name="learningMaterials" class="form-control" type="date" form="sylabusGenerator"
+                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
+        </div>
+    
         <div class="col-12">
             <label for="learningAssessments"><h5 class="fw-bold">Assessments of Learning</h5></label>
             <span class="requiredBySenate"></span>
@@ -379,15 +508,17 @@
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id = "learningAssessments" data-formatnoteid="formatAssessments" placeholder="E.g. Presentation, 25%, Dec 1, ... &#10;E.g. Midterm Exam, 25%, Sept 31, ..." name = "learningAssessments" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_assessments : ''}}</textarea>
         </div>
 
-        <div class="col-12">
-            <label for="learningActivities"><h5 class="fw-bold">Learning Activities</h5></label>
-            <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningActivities']}}</p>
-            <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
-            </div>                                            
-            <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="52431" id = "learningActivities" data-formatnoteid="formatActivities" placeholder="E.g. Class participation consists of clicker questions, group discussions ... &#10;E.g. Students are expected to complete class pre-readings ..."name = "learningActivities" class ="form-control" type="date" style="height:125px;" form="sylabusGenerator" spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_activities : ''}}</textarea>
-        </div>
+       
+
+        <!-- Okanaga Course Description -->
+        <div class="col-12"id="courseDesc"></div>
+        <!-- Course Structure -->
+        <div class="col-12" id="courseStructure"></div>
+        <!-- Course Format -->
+        <div class="col-12" id="courseFormat"></div>
+        <!-- Course Overview -->
+        <div class="col-12" id="courseOverview"></div>
+
 
         @if (isset($courseAlignment))
             <div class="p-0 m-0" id="courseAlignment"> 
@@ -574,120 +705,6 @@
         @endif
 
 
-        <!-- course schedule table -->
-        <div class="col mb-3">
-            <label for="courseSchedule">
-                <h5 class="fw-bold">Course Schedule</h5>
-            </label>
-            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Create Course Schedule Table">
-                <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount> 0) hidden @endif @endif id="createTableBtn" type="button" class="btn btn-light rounded-pill m-2" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal" style="font-color:#002145">
-                    <i class="bi bi-plus"></i>
-                    <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
-                </button>
-            </span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['courseSchedule']}}</p>
-
-        </div>
-
-        <!-- course schedule toolbar -->
-        <div id="courseScheduleTblToolbar" class="row mb-1" @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount <= 0) hidden @endif @else hidden @endif>
-            <div class="col-12 text-center">
-                <span title="Row Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover"
-                    data-bs-placement="bottom" data-bs-content="You have reached the maximum number of rows allowed">
-                    <button type="button" class="col-2 addRow btn m-0 p-0" style="background:none;border:none" data-side="top" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add row on top">
-                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
-                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="270deg"></span>
-                        </i>
-                        <p style="font-size:12px" class="text-muted m-0">ADD ROW TOP</p>
-                    </button>
-
-                    <button type="button" class="col-2 addRow btn m-0 p-0" style="background:none;border:none" data-side="bottom" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add row on bottom">
-                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
-                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="90deg"></span>
-                        </i>
-                        <p style="font-size:12px" class="text-muted m-0">ADD ROW BOTTOM</p>
-                    </button>                    
-                </span>
-
-                <span title="Column Limit Reached!" data-bs-trigger="manual" data-bs-toggle="popover"
-                    data-bs-placement="bottom" data-bs-content="You have reached the maximum number of columns allowed">
-                    <button type="button" class="col-2 addCol btn m-0 p-0" style="background:none;border:none" data-side="left" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add column on left">
-                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
-                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line" data-rotate="180deg"></span>
-                        </i>
-                        <p style="font-size:12px" class="text-muted m-0">ADD COLUMN LEFT</p>
-                    </button>  
-
-                    <button type="button" class="col-2 addCol btn m-0 p-0" style="background:none;border:none" data-side="right" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add column on left">
-                        <i class="btn btn-light rounded-pill m-2 text-secondary bi bi-plus">
-                            <span class="iconify-inline ml-1" data-icon="clarity:view-columns-line"></span>
-                        </i>
-                        <p style="font-size:12px" class="text-muted m-0">ADD COLUMN RIGHT</p>
-                    </button>  
-                </span>
-
-                <button id="delCols" type="button" class="col-2 btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete column(s)">
-                    <i class="btn btn-light rounded-pill m-2 text-danger bi bi-trash-fill">
-                        <span class="iconify-inline ml-1" data-icon="fluent:column-triple-20-filled"></span>
-                    </i>
-                    <p style="font-size:12px" class="text-muted m-0">DELETE COLUMN(S)</p>
-                </button>
-
-                
-                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete Table" class="col-2">
-                    <button id="delTable" type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="modal" data-bs-target="#delCourseScheduleTbl">
-                        <i class="btn btn-danger rounded-pill m-2 bi bi-trash-fill">
-                            <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
-                        </i>
-                        <p style="font-size:12px" class="text-muted m-0">DELETE TABLE</p>
-                    </button>                    
-                </span>
-            </div>
-        </div>
-
-        <!-- div where course schedule table is created from scratch  -->
-        <div id="courseScheduleTblDiv">
-            @if (!empty($syllabus))
-                @if ($courseScheduleTblRowsCount > 0)
-                    <table id="courseScheduleTbl" class="table table-light align-middle reorder-tbl-rows">
-                        <thead>
-                            <tr class="table-primary">
-                                <th></th>
-                                @foreach ($myCourseScheduleTbl['rows'][0] as $headerIndex => $header)
-                                <th>
-                                    <textarea name="courseScheduleTblHeadings[]" form="sylabusGenerator" type="text"
-                                        class="form-control" spellcheck="true"
-                                        placeholder="Column heading here ...">{{$header->val}}</textarea>
-                                </th>
-                                @endforeach
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($myCourseScheduleTbl['rows'] as $rowIndex => $row)
-                            @if ($rowIndex != 0)
-                            <tr>
-                                <td class="align-middle fs-5">↕</td>
-                                @foreach ($row as $colIndex => $data)
-                                <td>
-                                    <textarea name="courseScheduleTblRows[]" form="sylabusGenerator" type="text"
-                                        class="form-control" spellcheck="true"
-                                        placeholder="Data here ...">{{$data->val}}</textarea>
-                                </td>
-                                @endforeach
-                                <td class="align-middle">
-                                    <i class="bi bi-x-circle-fill text-danger fs-4 btn"
-                                        onclick="delCourseScheduleRow(this)"></i>
-                                </td>
-                            </tr>
-                            @endif
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
-            @endif
-        </div>
-
         <!-- Late Policy -->
         <div class="col-12">
             <label for="latePolicy"><h5 class="fw-bold">Late policy</h5></label>
@@ -738,33 +755,6 @@
                 name="passingCriteria" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
         </div>
-        <!-- Course Learning Materials -->
-        <div class="col-12">
-            <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label>
-            <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningMaterials'] !!}</p> 
-            <div id="formatLM" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
-                    on a new line for the best formatting
-                    results.</span>
-                </div>
-            <textarea data-formatnoteid="formatLM" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000"
-                id="learningMaterials" name="learningMaterials" class="form-control" type="date" form="sylabusGenerator"
-                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
-        </div>
-        <!-- Course Learning Resources -->
-        <div class="col-12">
-            <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
-            <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningResources']}}</p>
-            <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
-                    on a new line for the best formatting
-                    results.</span>
-                </div> 
-            <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
-                id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
-                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
-        </div>
         
         <!-- Creative Commons
         
@@ -811,8 +801,6 @@
                     @endif
         </div>
             -->
-        <!-- learning analytics -->
-        <div class="col-12" id="learningAnalytics"></div>
 
         <div class="col-12">
             <h5  class="fw-bold">Optional Statements</h5>
@@ -827,6 +815,25 @@
                 <div class="row" id="optionalSyllabus"></div>
             </div>
         </div>
+
+         <!-- learning analytics -->
+         <div class="col-12" id="learningAnalytics"></div>
+
+         <!-- Course Learning Resources -->
+        <div class="col-12">
+            <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
+            <span class="requiredBySenate"></span>
+            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningResources']}}</p>
+            <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div> 
+            <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
+                id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
+                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
+        </div>
+
     </form>
 
     <div class="m-3">
