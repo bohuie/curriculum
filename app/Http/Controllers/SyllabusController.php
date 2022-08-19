@@ -947,8 +947,8 @@ class SyllabusController extends Controller
                     $learningActivitiesArr = explode("\n", $learningActivities);
                     // create a table for learning activities (workaround for no list option)
                     $learningActivitiesTable = new Table($tableStyle);
-                    $learningActivitiesTable->addRow();
-                    $learningActivitiesTable->addCell(10, $tableHeaderRowStyle);                    $learningActivitiesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Activity', $tableHeaderFontStyle);
+                    //$learningActivitiesTable->addRow();
+                   // $learningActivitiesTable->addCell(10, $tableHeaderRowStyle);                    $learningActivitiesTable->addCell(null, $tableHeaderRowStyle)->addText('Learning Activity', $tableHeaderFontStyle);
 
                     // add a new row and cell to table for each learning activity
                     foreach($learningActivitiesArr as $index => $learningActivity){
@@ -968,8 +968,8 @@ class SyllabusController extends Controller
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
                     // create a table for other course staff (workaround for no list option)
                     $otherCourseStaffTable = new Table($tableStyle);
-                    $otherCourseStaffTable->addRow();
-                    $otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other  Instructional Staff', $tableHeaderFontStyle);
+                    //$otherCourseStaffTable->addRow();
+                    //$otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other  Instructional Staff', $tableHeaderFontStyle);
 
                     // add a new row and cell to table for each course staff member
                     foreach($otherCourseStaffArr as $index => $courseStaffMember){
@@ -1347,8 +1347,8 @@ class SyllabusController extends Controller
                     $otherCourseStaffArr = explode("\n", $otherCourseStaff);
                     // create a table for other course staff (workaround for no list option)
                     $otherCourseStaffTable = new Table($tableStyle);
-                    $otherCourseStaffTable->addRow();
-                    $otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other Instructional Staff', $tableHeaderFontStyle);
+                    //$otherCourseStaffTable->addRow();
+                    //$otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other Instructional Staff', $tableHeaderFontStyle);
                     // add a new row and cell to table for each course staff member
                     foreach($otherCourseStaffArr as $index => $courseStaffMember){
                         $otherCourseStaffTable->addRow();
