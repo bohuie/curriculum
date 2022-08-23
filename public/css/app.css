@@ -142,7 +142,9 @@ dd {
 }
 
 blockquote {
-  margin: 0 0 1rem;
+  /*margin: 0 0 1rem; */
+  padding: 0 50px; margin-left: 0; border-left: 2px solid gray;
+
 }
 
 b,
