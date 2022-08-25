@@ -273,6 +273,13 @@ class SyllabusController extends Controller
         $syllabus->cc_license=$request->input("creativeCommons");
         $syllabus->copyright=false;
         }
+        //Land Acknowledgement
+        if($request->input("landAck")==null){
+            $syllabus->land_acknow=null;
+            }else{
+                $syllabus->land_acknow=true;
+        }
+    
         
         $syllabus->save();
 
@@ -477,7 +484,13 @@ class SyllabusController extends Controller
                 $syllabus->cc_license=$request->input("creativeCommons");
                 $syllabus->copyright=false;
             }  
-        
+        //Land Acknowledgement
+        if($request->input("landAck")==null){
+            $syllabus->land_acknow=null;
+            }else{
+                $syllabus->land_acknow=true;
+            }
+    
 
         // check if user set import settings and update them
         if ($importCourseSettings)
@@ -1517,7 +1530,7 @@ class SyllabusController extends Controller
                 //Learning Analytics
                 //Currently not showing, $learningAnalytics=null every time
 
-                if($learningAnalytics = $syllabus->learning_analytics){
+                if($learningAnalytics = $vancouverSyllabus->learning_analytics){
                     
                     $LAVArr = explode("\n", $learningAnalytics);
                     $i=0;
@@ -1575,6 +1588,16 @@ class SyllabusController extends Controller
         }else{
             $templateProcessor->cloneBlock('NoCopyright',0);
         }
+        
+        //Land Acknowledgement
+
+        if($syllabus->land_acknow){
+            $templateProcessor->cloneBlock('NoLand');
+        }else{
+            $templateProcessor->cloneBlock('NoLand',0);
+        }
+        
+
 
         // add required form fields common to both campuses to template
         $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseYear'=> $syllabus->course_year,));

@@ -260,13 +260,14 @@
                 </div>
             </div>
         </div>
-
+        <!-- Land Acknowledgement Statement -->
+        <div class="col-12" id="landAcknowledgement"></div>
+        
         <div class="col-12">
             <label for="officeHour">Office Hours</label>
             <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="2500" spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
         </div>
-
         <!-- Course Description Vancouver -->
         <div class="col-12"id="courseDescription"></div>
         <!-- Course Prerequisites -->
@@ -704,7 +705,9 @@
         @else 
             <div class="p-0 m-0" id="outcomeMapsDiv"></div>    
         @endif
-        
+        <!--learning resources vancouver -->
+        <div class="col-12" id="LRVancouver"></div>
+
         <!-- University Policies -->
         <div class="col-12" id="uniPolicy"></div>
         <br>
@@ -813,28 +816,19 @@
             -->
         <!-- learning analytics and learning resources vancouver -->
         <div class="col-12" id="LROkanagan"></div>
-
-        <div class="col-12">
-            <h5  class="fw-bold">Optional Statements</h5>
-                @if(!empty($syllabus))
-                    <div id="optionalSyllabusDesc"></div>
-                @else
-                    <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
-                    </p>
-                @endif
-            <div class="form-check m-4">
-                <div class="row" id="optionalSyllabus"></div>
-            </div>
+        
+        <!-- Optional Statements -->
+        <div class="col-12" id="optionalStatements">
         </div>
         
-         <!--learning resources vancouver -->
-         <div class="col-12" id="LRVancouver"></div>
+        <!-- learning analytics -->
+        <div class="col-12" id="learningAnalytics"></div>
 
-          <!-- learning analytics -->
-          <div class="col-12" id="learningAnalytics"></div>
+        <!-- Copyright Statement -->
+        <div class="col-12" id="crStatement"></div>
 
-        
+        <!-- Land Acknowledgement Statement -->
+        <div class="col-12" id="landAcknowledgement"></div>
 
     </form>
 
@@ -2099,14 +2093,62 @@
             <br><br>Details of the policies and how to access support are available on <a href="https://senate.ubc.ca/policies-resources-support-student-success/">the UBC Senate Website</a>.</blockquote>
             </div>
          `;
+
+         var crStatement = `
+            <label for="copyright"><h5 class="fw-bold">© Copyright</h5></label>
+            <br>
+            <div class="col-12">
+                <blockquote> All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</blockquote>
+                <div class="col-6">
+                    @if($syllabus->land_acknow)
+                        <input class="form-check-input " id="copyright" type="checkbox" name="copyright" value="1" checked>
+                    @else
+                        <input class="form-check-input " id="copyright" type="checkbox" name="copyright" value="1">
+                    @endif
+                    <label class="form-check-label mb-2" for="copyright">Include in Syllabus</label>   
+                </div>
+            </div>
+         `;
+
+         var landAcknowledgement = `
+            <label for="landAcknowledgement"><h5 class="fw-bold">Land Acknowledgement</h5></label>
+            <br>
+            <div class="col-12">
+                <blockquote> UBC’s Point Grey Campus is located on the traditional, ancestral, and unceded territory of the xwməθkwəy̓əm (Musqueam) people. The land it is situated on has always been a place of learning for the Musqueam people, who for millennia have passed on their culture, history, and traditions from one generation to the next on this site.</blockquote>
+                <div class="col-6">
+                    @if($syllabus->land_acknow)
+                        <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1" checked>
+                    @else
+                        <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1">
+                    @endif
+                    <label class="form-check-label mb-2" for="landAck">Include in Syllabus</label>   
+                </div>
+            </div>
+         `;
+
+         var optionalStatements =`
+
+         <h5  class="fw-bold">Optional Statements</h5>
+                @if(!empty($syllabus))
+                    <div id="optionalSyllabusDesc"></div>
+                @else
+                    <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
+                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+                    </p>
+                @endif
+            <div class="form-check m-4">
+                <div class="row" id="optionalSyllabus"></div>
+            </div>
+            `;
+         
         
         // get campus select element
         var campus = $('#campus');
         // check if its value is 'V'
         if(campus.val() == 'V'){
             // add data specific to vancouver campus
-            $('#optionalSyllabusDesc').html(vancouverOptionalListDesc);
-            $('#optionalSyllabus').html(vancouverOptionalList);
+            //$('#optionalSyllabusDesc').html(vancouverOptionalListDesc);
+            //$('#optionalSyllabus').html(vancouverOptionalList);
             $('#courseCredit').html(courseCredit);
             $('#officeLocation').html(officeLocation);
             $('#courseContacts').html(courseContacts);
@@ -2123,6 +2165,8 @@
             $('#learningAnalytics').html(learningAnalytics);
             $('#LRVancouver').html(LearningResources_LearningAnalytics);
             $('#uniPolicy').html(uniPolicyVan);
+            $('#crStatement').html(crStatement);
+            $('#landAcknowledgement').html(landAcknowledgement);
             $('.requiredBySenate').html(requiredBySenateLabel);
            
 
@@ -2133,12 +2177,14 @@
             $('#courseDesc').empty();
             $('#courseOverview').addClass('m-0 p-0');
             $('#LROkanagan').empty();
+            $('#optionalStatements').empty();
             // update faculty dropdown
             setFaculties('Vancouver');
         }   
         else
         {
             // add data specific to okanagan campus
+            $('#optionalStatements').html(optionalStatements);
             $('#optionalSyllabusDesc').html(okanaganOptionalListDesc);
             $('#optionalSyllabus').html(okanaganOptionalList);
             $('#courseFormat').html(courseFormat);
@@ -2166,6 +2212,8 @@
             $('.requiredBySenate').empty();
             $('#LRVancouver').empty();
             $('#uniPolicy').empty();
+            $('#crStatement').empty();
+            $('#landAcknowledgement').empty();
 
             // update faculty dropdown
             setFaculties('Okanagan');
