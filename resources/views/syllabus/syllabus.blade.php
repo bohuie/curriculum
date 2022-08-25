@@ -2100,7 +2100,7 @@
             <div class="col-12">
                 <blockquote> All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</blockquote>
                 <div class="col-6">
-                    @if($syllabus->land_acknow)
+                    @if($syllabus->copyright)
                         <input class="form-check-input " id="copyright" type="checkbox" name="copyright" value="1" checked>
                     @else
                         <input class="form-check-input " id="copyright" type="checkbox" name="copyright" value="1">
