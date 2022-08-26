@@ -2099,12 +2099,14 @@
             <div class="col-12">
                 <blockquote> All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</blockquote>
                 <div class="col-6">
+                @if(!empty($syllabus))
                     @if($syllabus->copyright)
                         <input class="form-check-input " id="copyright" type="checkbox" name="copyright" value="1" checked>
                     @else
                         <input class="form-check-input " id="copyright" type="checkbox" name="copyright" value="1">
                     @endif
                     <label class="form-check-label mb-2" for="copyright">Include in Syllabus</label>   
+                @endif
                 </div>
             </div>
          `;
@@ -2115,12 +2117,14 @@
             <div class="col-12">
                 <blockquote> UBC’s Point Grey Campus is located on the traditional, ancestral, and unceded territory of the xwməθkwəy̓əm (Musqueam) people. The land it is situated on has always been a place of learning for the Musqueam people, who for millennia have passed on their culture, history, and traditions from one generation to the next on this site.</blockquote>
                 <div class="col-6">
+                @if(!empty($syllabus))
                     @if($syllabus->land_acknow)
                         <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1" checked>
                     @else
                         <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1">
                     @endif
-                    <label class="form-check-label mb-2" for="landAck">Include in Syllabus</label>   
+                    <label class="form-check-label mb-2" for="landAck">Include in Syllabus</label>  
+                @endif 
                 </div>
             </div>
          `;
