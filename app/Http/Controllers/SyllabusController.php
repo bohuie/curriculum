@@ -1462,8 +1462,8 @@ class SyllabusController extends Controller
                     $assessmentMethods = explode("\n", $learningAssessments);
                     // create a table for learning outcomes (workaround for no list option)
                     $assessmentMethodsTable = new Table($tableStyle);
-                    $assessmentMethodsTable->addRow();
-                    $assessmentMethodsTable->addCell(10, $tableHeaderRowStyle);                    $assessmentMethodsTable->addCell(null, $tableHeaderRowStyle)->addText('Assessment Method', $tableHeaderFontStyle);
+                    //$assessmentMethodsTable->addRow();
+                    //$assessmentMethodsTable->addCell(10, $tableHeaderRowStyle);                    $assessmentMethodsTable->addCell(null, $tableHeaderRowStyle)->addText('Assessment Method', $tableHeaderFontStyle);
                     // add a new row and cell to table for each assessment method
                     foreach($assessmentMethods as $index => $assessmentMethod){
                         $assessmentMethodsTable->addRow();
