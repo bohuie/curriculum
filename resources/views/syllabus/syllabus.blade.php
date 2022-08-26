@@ -354,7 +354,7 @@
         <!-- course schedule table -->
         <div class="col mb-3">
             <label for="courseSchedule">
-                <h5 class="fw-bold">Course Schedule</h5>
+                <h5 class="fw-bold">Schedule of Topics</h5>
             </label>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="Create Course Schedule Table">
                 <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount> 0) hidden @endif @endif id="createTableBtn" type="button" class="btn btn-light rounded-pill m-2" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal" style="font-color:#002145">
@@ -768,6 +768,8 @@
                     spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
             </div>
             <br>
+             <!-- learning analytics -->
+            <div class="col-12" id="learningAnalytics"></div>
         </div>
         <!-- Creative Commons
         
@@ -814,15 +816,12 @@
                     @endif
         </div>
             -->
-        <!-- learning analytics and learning resources vancouver -->
+        <!-- learning analytics and learning resources OK -->
         <div class="col-12" id="LROkanagan"></div>
         
         <!-- Optional Statements -->
         <div class="col-12" id="optionalStatements">
         </div>
-        
-        <!-- learning analytics -->
-        <div class="col-12" id="learningAnalytics"></div>
 
         <!-- Copyright Statement -->
         <div class="col-12" id="crStatement"></div>
@@ -2050,7 +2049,7 @@
             `;
 
         var learningAnalytics = `
-                <label for="learningAnalytics"><h5 class="fw-bold">Learning Analytics</h5></label>
+                <label for="learningAnalytics"><h7 class="fw-bold">Learning Analytics</h7></label>
                 <p class="inputFieldDescription">{{$inputFieldDescriptions['learningAnalytics']}}</p>
                 <div id="formatLAnal" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry

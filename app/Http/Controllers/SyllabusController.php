@@ -871,7 +871,7 @@ class SyllabusController extends Controller
 
                 //Course Description Okanagan
 
-                if($courseDescriptionOK = $okanaganSyllabus->course_description){
+                if($courseDescriptionOK = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $okanaganSyllabus->course_description)){
                     $CDArr = explode("\n", $courseDescriptionOK);
                     $i=0;
                     if($ext == 'pdf') {
@@ -1075,8 +1075,8 @@ class SyllabusController extends Controller
                     $assessmentMethods = explode("\n", $learningAssessments);
                     // create a table for learning outcomes (workaround for no list option)
                     $assessmentMethodsTable = new Table($tableStyle);
-                    $assessmentMethodsTable->addRow();
-                    $assessmentMethodsTable->addCell(10, $tableHeaderRowStyle);                    $assessmentMethodsTable->addCell(null, $tableHeaderRowStyle)->addText('Assessment Methods', $tableHeaderFontStyle);
+                    //$assessmentMethodsTable->addRow();
+                    //$assessmentMethodsTable->addCell(10, $tableHeaderRowStyle);                    $assessmentMethodsTable->addCell(null, $tableHeaderRowStyle)->addText('Assessment Methods', $tableHeaderFontStyle);
                     // add a new row and cell to table for each assessment method
                     foreach($assessmentMethods as $index => $assessmentMethod){
                         $assessmentMethodsTable->addRow();
@@ -1209,8 +1209,8 @@ class SyllabusController extends Controller
                     $contactsArr = explode("\n", $contacts);
                     // create a table for contacts (workaround for no list option)
                     $contactsTable = new Table($tableStyle);
-                    $contactsTable->addRow();
-                    $contactsTable->addCell(10, $tableHeaderRowStyle);                    $contactsTable->addCell(null, $tableHeaderRowStyle)->addText('Contact', $tableHeaderFontStyle);
+                    //$contactsTable->addRow();
+                    //$contactsTable->addCell(10, $tableHeaderRowStyle);                    $contactsTable->addCell(null, $tableHeaderRowStyle)->addText('Contact', $tableHeaderFontStyle);
                     // add a new row and cell to table for each contact
                     foreach($contactsArr as $index => $contact){
                         $contactsTable->addRow();
@@ -1231,8 +1231,8 @@ class SyllabusController extends Controller
                     $coursePrereqsArr = explode("\n", $coursePrereqs);
                     // create a table for course prereqs (workaround for no list option)
                     $coursePrereqsTable = new Table($tableStyle);
-                    $coursePrereqsTable->addRow();
-                    $coursePrereqsTable->addCell(10, $tableHeaderRowStyle);                    $coursePrereqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Prerequisites', $tableHeaderFontStyle);
+                   // $coursePrereqsTable->addRow();
+                   // $coursePrereqsTable->addCell(10, $tableHeaderRowStyle);                    $coursePrereqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Prerequisites', $tableHeaderFontStyle);
                     // add a new row and cell to table for each prereq
                     foreach($coursePrereqsArr as $index => $prereq){
                         $coursePrereqsTable->addRow();
@@ -1252,8 +1252,8 @@ class SyllabusController extends Controller
                     $courseCoreqsArr = explode("\n", $courseCoreqs);
                     // create a table for course coreqs (workaround for no list option)
                     $courseCoreqsTable = new Table($tableStyle);
-                    $courseCoreqsTable->addRow();
-                    $courseCoreqsTable->addCell(10, $tableHeaderRowStyle);                    $courseCoreqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Corequisites', $tableHeaderFontStyle);
+                    //$courseCoreqsTable->addRow();
+                    //$courseCoreqsTable->addCell(10, $tableHeaderRowStyle);                    $courseCoreqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Corequisites', $tableHeaderFontStyle);
                     // add a new row and cell to table for each coreq
                     foreach($courseCoreqsArr as $index => $coreq){
                         $courseCoreqsTable->addRow();
@@ -1297,12 +1297,13 @@ class SyllabusController extends Controller
 
                 //Course Structure Vancouver
 
-                if($courseStructure = $vancouverSyllabus->course_structure){
+                if($courseStructure = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $vancouverSyllabus->course_structure)){
                     $CStructArr = explode("\n", $courseStructure);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($CStructArr as $index => $courseStruct){
                             $templateProcessor->cloneBlock('NoCourseStructure');
+                            $templateProcessor->cloneBlock('NoCourseStructureDesc',0);
                             $templateProcessor->setValue('courseStructure'.$i, $courseStruct."</w:t><w:br/><w:t>");
                             $i++;
                         }
@@ -1321,19 +1322,21 @@ class SyllabusController extends Controller
                     
                 }else{
                     $templateProcessor->cloneBlock('NoCourseStructure',0);
+                    $templateProcessor->cloneBlock('NoCourseStructureDesc');
                 }
 
-                if($courseSchedule = $vancouverSyllabus->course_schedule){
-                    $templateProcessor->cloneBlock('NoTopicsSchedule', 0 );
+                if($courseSchedule = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $vancouverSyllabus->course_schedule)){
+                    $templateProcessor->cloneBlock('NoTopicsSchedule');
                     $templateProcessor->setValue('courseSchedule', $courseSchedule);
                 }else{
-                    $templateProcessor->cloneBlock('NoTopicsSchedule');
+                    $templateProcessor->cloneBlock('NoTopicsSchedule',0);
                     $templateProcessor->setValue('courseSchedule', '');
                 }
                 
 
-                // tell template processor to include learning activities if user completed the field(s)
-                if($learningActivities = $syllabus->learning_activities){
+
+                if($learningActivities = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_activities)){
+                    Log::Debug($learningActivities."bruh success");
                     $templateProcessor->cloneBlock('NoLearningActivities', 0);
                     // split learning activities string on newline char
                     $learningActivitiesArr = explode("\n", $learningActivities);
@@ -1350,6 +1353,8 @@ class SyllabusController extends Controller
                     // add learning activities table to word doc
                     $templateProcessor->setComplexBlock('learningActivities', $learningActivitiesTable);
                 }else{
+                    Log::Debug($learningActivities."bro failure");
+                    Log::Debug($syllabus->learning_activities."bruh");
                     $templateProcessor->cloneBlock('NoLearningActivities');
                     $templateProcessor->setValue('learningActivities', '');
 
@@ -1452,6 +1457,7 @@ class SyllabusController extends Controller
 
                 if($learningAssessments =  $syllabus->learning_assessments){
                     $templateProcessor->cloneBlock('NoLearningAssessments', 0);
+                    
                     // split assessment methods string on newline char
                     $assessmentMethods = explode("\n", $learningAssessments);
                     // create a table for learning outcomes (workaround for no list option)
@@ -1507,6 +1513,7 @@ class SyllabusController extends Controller
                     if($ext == 'pdf') {
                         foreach($LMVArr as $index => $courseLMV){
                             $templateProcessor->cloneBlock('NoLearningMaterials');
+                            $templateProcessor->cloneBlock('NoLearningMaterialsDesc',0);
                             $templateProcessor->setValue('learningMaterials'.$i, $courseLMV."</w:t><w:br/><w:t>");
                             $i++;
                         }
@@ -1516,6 +1523,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NoLearningMaterials');
+                        $templateProcessor->cloneBlock('NoLearningMaterialsDesc',0);
                         $templateProcessor->setValue('learningMaterials0', str_replace("\n","</w:t><w:br/><w:t>",$learningMaterials));
                         $i++;
                         for($i;$i<=20;$i++){
@@ -1525,6 +1533,7 @@ class SyllabusController extends Controller
                     
                 }else{
                     $templateProcessor->cloneBlock('NoLearningMaterials',0);
+                    $templateProcessor->cloneBlock('NoLearningMaterialsDesc');
                 }
 
                 //Learning Analytics
