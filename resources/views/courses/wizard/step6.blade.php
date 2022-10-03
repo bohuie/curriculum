@@ -14,7 +14,7 @@
             
             <div class="card">
                 <h3 class="card-header wizard" >
-                    Ministry Standards and Strategic Priorities
+                    BC Degree Standards and Strategic Priorities
                     <div style="float: right;">
                             <button id="standardsHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>
@@ -28,7 +28,7 @@
                 <div class="card-body">
                     <nav class="mt-2">
                         <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
-                            <button class="nav-link active" id="nav-standards-tab" data-bs-toggle="tab" data-bs-target="#nav-standards" type="button" role="tab" aria-controls="nav-standards" aria-selected="true">Ministry Standards</button>
+                            <button class="nav-link active" id="nav-standards-tab" data-bs-toggle="tab" data-bs-target="#nav-standards" type="button" role="tab" aria-controls="nav-standards" aria-selected="true">BC Degree Standards</button>
                             <button class="nav-link" id="nav-priorities-tab" data-bs-toggle="tab" data-bs-target="#nav-priorities" type="button" role="tab" aria-controls="nav-priorities" aria-selected="false">Strategic Priorities</button>
                         </div>
                     </nav>
@@ -47,7 +47,7 @@
                                     </div>
                                 </div>                            
 
-                                <!-- Ministry Standards mapping scale -->
+                                <!-- BC Degree Standards mapping scale -->
                                 <div class="container row">
                                     <div class="col">
                                         @if($course->standardScalesCategory->standardScales->count() > 0)

@@ -558,7 +558,7 @@
                             @if(count($standardOutcomeMap) < 1)
 
                                 <div class="alert alert-warning wizard">
-                                    <i class="bi bi-exclamation-circle-fill"></i>This course has not been mapped to the ministry standards yet. <a class="alert-link" href="{{route('courseWizard.step6', $course->course_id)}}">Map CLOs to Ministry Standards.</a>                 
+                                    <i class="bi bi-exclamation-circle-fill"></i>This course has not been mapped to the ministry standards yet. <a class="alert-link" href="{{route('courseWizard.step6', $course->course_id)}}">Map CLOs to BC Degree Standards.</a>                 
                                 </div>
 
                             @else
@@ -666,7 +666,7 @@
                     <div class="card-body mb-4">
                         @if (!$isViewer)
                         <a href="{{route('courseWizard.step6', $course->course_id)}}">
-                            <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> Ministry Standards Mapping</button>
+                            <button class="btn btn-sm btn-primary col-3 float-left"><i class="bi bi-arrow-left mr-2"></i> BC Degree Standards Mapping</button>
                         </a>
                         <a href="{{route('courses.submit', $course->course_id)}}">
                             <button class="btn btn-sm btn-success col-3 float-right">Finish <i class="bi bi-check2-circle ml-2 fs-6"></i></button>
