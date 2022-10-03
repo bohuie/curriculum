@@ -539,7 +539,7 @@
 
         <!-- Start of Standards Outcome Maps-->
         <div class="panel panel-default">
-            <div class="panel-heading"><h4>Ministry Standards Outcome Maps</h4></div>
+            <div class="panel-heading"><h4>BC Degree Standards Outcome Maps</h4></div>
             
             <!-- Start of list of standards -->
             @if ($course->standardCategory->standards->count() < 1)
@@ -615,12 +615,12 @@
                     </div>
             @else 
                     <div class="panel-body">
-                        <h5 class="font-weight:bold">Ministry Standards Map: {{$course->standardCategory->sc_name}}</h5>
+                        <h5 class="font-weight:bold">BC Degree Standards Map: {{$course->standardCategory->sc_name}}</h5>
                         <p>This chart shows the alignment of ministry standards to this course.</p>
                     </div>
                     <table class="table table-bordered table-sm table-condensed" style="width:100%;">
                         <tr class="info" style="font-size:14px">
-                            <th colspan="{{$course->standardOutcomes->count()}}">Ministry Standards</th>                                
+                            <th colspan="{{$course->standardOutcomes->count()}}">BC Degree Standards</th>                                
                         </tr>
                         <tr>
                             @for($i = 0; $i < $course->standardOutcomes->count(); $i++)
@@ -657,9 +657,9 @@
         </div>
         <!-- End of Standards Outcome Maps-->
 
-        <!-- Optional Alignment to UBC and Ministry Standards -->
+        <!-- Optional Alignment to UBC and BC Degree Standards -->
         <div class="panel panel-default">
-            <div class="panel-heading"><h4>Optional Alignment to UBC and Ministry Standards</h4></div>
+            <div class="panel-heading"><h4>Optional Alignment to UBC and BC Degree Standards</h4></div>
                 @if($course->optionalPriorities->count() < 1)
                     <div class="alert alert-warning text-center">
                         This course has not aligned with any UBC and Ministry Priorities.                    
