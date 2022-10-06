@@ -771,7 +771,7 @@
              <!-- learning analytics -->
             <div class="col-12" id="learningAnalytics"></div>
         </div>
-        <!-- Creative Commons
+        <!-- Creative Commons -->
         
         <div class="col-12">
         <label for="creativeCommons"><h5 class="fw-bold">Copyright and Creative Commons</h5></label>
@@ -815,7 +815,7 @@
                         <div id="creativeCommonsInput" class="col-6"></div>
                     @endif
         </div>
-            -->
+            
         <!-- learning analytics and learning resources OK -->
         <div class="col-12" id="LROkanagan"></div>
         
