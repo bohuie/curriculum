@@ -51,7 +51,7 @@ define("INPUT_TIPS", array(
     "learningResources" => "Include information on any resources to support student learning that are supported by the academic unit responsible for the course.",
     "learningAnalytics" => "If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?",
     "officeLocation" => "Building & Room Number",
-    "creativeCommons" => 'Include a copyright statement or include a Creative Commons license of your choosing. Visit the <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">Creative Commons Website <i class="bi bi-box-arrow-up-right"></i></a> for options and more information.',
+    "creativeCommons" => 'Include a copyright statement or include a Creative Commons Open Copyright license of your choosing. Visit the <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">Creative Commons Website <i class="bi bi-box-arrow-up-right"></i></a> for options and more information. Need help deciding? Try using the <a href="https://creativecommons.org/choose/" target="_blank" rel="noopener noreferrer">Creative Commons License Chooser <i class="bi bi-box-arrow-up-right"></i></a>.',
     "uniPolicy" => 'Hearing from each course instructor about University policies and values can help to emphasize their importance to students. To fulfil the policy, you need only to present the following paragraph with the link to the web page that provides details and links to specific policies and resources. You may wish to take the opportunity to relate the ideas to your own course as part of your students’ education. This policy is <b>always included</b> in a generated Vancouver syllabus.',
 ));
 
@@ -90,6 +90,7 @@ class SyllabusController extends Controller
             if (isset($syllabus->course_id)) {
                 $importCourse = Course::find($syllabus->course_id);
                 if ($syllabus->include_alignment) {
+                    Log::Debug("what aligned");
                     $courseAlignment = $importCourse->learningOutcomes;
                     foreach ($courseAlignment as $clo) {
                         $clo->assessmentMethods;
@@ -212,11 +213,13 @@ class SyllabusController extends Controller
         
         // if syllabus already exists, update it
         if ($syllabusId) {
+            
             // update syllabus
             $syllabus = $this->update($request, $syllabusId);
         // else create a new syllabus
         } else {
             // create a new syllabus
+            
             $syllabus = $this->create($request);
         }
         // set updated_at time
@@ -307,8 +310,8 @@ class SyllabusController extends Controller
         $syllabus->passing_criteria = $request->input('passingCriteria', null);
         $syllabus->learning_materials = $request->input('learningMaterials', null);
         $syllabus->learning_resources = $request->input('learningResources', );
-
         $importCourseSettings = $request->input('import_course_settings', null); 
+
         if ($importCourseSettings)      
             $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
 
@@ -490,10 +493,14 @@ class SyllabusController extends Controller
             }else{
                 $syllabus->land_acknow=true;
             }
-    
-
+       
+            Log::Debug($importCourseSettings);
+            Log::Debug("wazoooo");
         // check if user set import settings and update them
+
+            
         if ($importCourseSettings)
+            
             $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
         else {
             // reset import course settings

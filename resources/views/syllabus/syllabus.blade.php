@@ -527,7 +527,9 @@
                 <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
                     Course Alignment                                     
                     <button id="removeCourseAlignment" type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                    <input hidden name="import_course_settings[courseId]" value="{{$syllabus->course_id}}">
                     <input hidden name="import_course_settings[importCourseAlignment]" value="{{$syllabus->course_id}}">
+                    
 
                 </h5>            
                 <div class="col-12" id="courseAlignmentTable">
@@ -774,7 +776,7 @@
         <!-- Creative Commons -->
         
         <div class="col-12">
-        <label for="creativeCommons"><h5 class="fw-bold">Copyright and Creative Commons</h5></label>
+        <label for="creativeCommons"><h5 class="fw-bold">Copyright Statement</h5></label>
         <p class="inputFieldDescription">{!! $inputFieldDescriptions['creativeCommons'] !!}</p>    
                     @if(!empty($syllabus))
                         @if($syllabus->copyright==null)
@@ -787,21 +789,35 @@
                         <br>
                         @if($syllabus->copyright)
                         <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"checked/>
+                        <label>Include a Copyright Statement</label>
+                        <div id="copyrightEx">
+                            <blockquote> All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</blockquote>
+                        </div> 
                         @else
                         <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
-                        @endif
                         <label>Include a Copyright Statement</label>
-                        <br>
+                        
+                        <div id="copyrightEx"></div>
+                        @endif
+        
+                        
                         @if($syllabus->copyright)
                         <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
-                        <label>Include a Creative Commons License</label>
+                        <label>Include a Creative Commons Open Copyright License</label>
                         <div id="creativeCommonsInput" class="col-6"></div>
                         @else
                         <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator" checked/>
-                        <label>Include a Creative Commons License</label>
+                        <label>Include a Creative Commons Open Copyright License</label>
+                        <div> 
                         <div id="creativeCommonsInput" class="col-6"> 
+    
                             <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
+                       
+                            <!-- 
+                            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
+                        -->
                         </div>
+            </div>
                         @endif
                     @else
                         <input type="radio" id="noneCopyright" name="copyright" value="2" style="margin-right: 8px" form="sylabusGenerator" checked/>
@@ -809,9 +825,10 @@
                         <br>
                         <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
                         <label>Include a Copyright Statement</label>
+                        <div id="copyrightEx"></div>
                         <br>
                         <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
-                        <label>Include a Creative Commons License</label>
+                        <label>Include a Creative Commons Open Copyright License</label>
                         <div id="creativeCommonsInput" class="col-6"></div>
                     @endif
         </div>
@@ -820,15 +837,14 @@
         <div class="col-12" id="LROkanagan"></div>
         
         <!-- Optional Statements -->
-        <div class="col-12" id="optionalStatements">
-        </div>
+        <div class="col-12" id="optionalStatements"></div>
 
         <!-- Copyright Statement -->
         <div class="col-12" id="crStatement"></div>
+            
 
         <!-- Land Acknowledgement Statement -->
         <div class="col-12" id="landAcknowledgement"></div>
-
     </form>
 
     <div class="m-3">
@@ -942,14 +958,35 @@
         });
 
         //event listeners for Creative Commons License Input
+        $('#noneCopyright').on('click', function(event) {
+            //mankey
+            $('#copyrightEx').html(``);
+
+            $('#creativeCommonsInput').html(``);
+        });
+        
         $('#yesCopyright').on('click', function(event) {
+            //mankey
+            $('#copyrightEx').html(` 
+            <div>
+                <blockquote> All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</blockquote>
+            </div> 
+            `);
+
             $('#creativeCommonsInput').html(``);
         });
 
         $('#noCopyright').on('click', function(event) {
+
+        $('#copyrightEx').html(``);
+        $('#creativeCommonsInput').html(`
+                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
+                `);
+            /*
             $('#creativeCommonsInput').html(`
                 <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
                 `);
+            */
         });
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 
@@ -2168,7 +2205,7 @@
             $('#learningAnalytics').html(learningAnalytics);
             $('#LRVancouver').html(LearningResources_LearningAnalytics);
             $('#uniPolicy').html(uniPolicyVan);
-            $('#crStatement').html(crStatement);
+            //$('#crStatement').html(crStatement);
             $('#landAcknowledgement').html(landAcknowledgement);
             $('.requiredBySenate').html(requiredBySenateLabel);
            
