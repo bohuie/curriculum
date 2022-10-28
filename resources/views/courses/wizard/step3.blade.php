@@ -130,6 +130,8 @@
                             <li>
                             Not sure how to teach/embed career-related outcomes? Request a workshop from The Career Development Team for your classroom <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://students.ok.ubc.ca/career-experience/faculty-workshops/"><i class="bi bi-box-arrow-up-right"></i> here</a>.              
                             </li>
+                            <li>
+                            Embed <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://blogs.ubc.ca/teachingandwellbeing/files/2018/11/TLEF_Handout_October-2018.pdf"><i class="bi bi-box-arrow-up-right"></i>teaching practices</a>  that promote student wellbeing.</li>
                             </ul>
                             </div>
                         </div>

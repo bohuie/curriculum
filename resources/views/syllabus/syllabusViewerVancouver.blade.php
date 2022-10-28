@@ -79,9 +79,35 @@
                 {{$syllabus->office_hours}}
             </p>
         </div>
-        <!-- course prerequisites -->
+
+        <!-- Land Acknowledgement -->
+        @if($syllabus->land_acknow == 1)
         <div class="mb-4">
             <div class="vSyllabusHeader2">
+                <h6 class>LAND ACKNOWLEDGEMENT</h6>
+            </div>
+            <br>
+            <div class="col-12">
+                <blockquote> UBC’s Point Grey Campus is located on the traditional, ancestral, and unceded territory of the xwməθkwəy̓əm (Musqueam) people. The land it is situated on has always been a place of learning for the Musqueam people, who for millennia have passed on their culture, history, and traditions from one generation to the next on this site.</blockquote>
+            </div>
+        </div>
+        @endif
+
+        <!-- course description -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader">
+                <h6>COURSE DESCRIPTION
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['courseDescription']}}"></i>
+                    </span>
+                </h6>
+            </div>
+            <p>{{$vancouverSyllabus->course_description}}</p>
+        </div>
+
+        <!-- course prerequisites -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader">
                 <h6>
                     PREREQUISITES
                     <span>
@@ -96,11 +122,11 @@
                 <thead>
                     <tr class="table-primary">
                         <th style="width:5%"></th>
-                        <th>Course prerequisite</th>
+                        <th>Course Prerequisites</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (explode(PHP_EOL, $syllabus->course_prereqs) as $index => $coursePreReq)
+                    @foreach (explode(PHP_EOL, $vancouverSyllabus->course_prereqs) as $index => $coursePreReq)
                         <tr>
                             <td>{{$index + 1}}</td>
                             <td>{{$coursePreReq}}</td>
@@ -111,7 +137,7 @@
         </div>
         <!-- course corequisites -->
         <div class="mb-4">
-            <div class="vSyllabusHeader2">
+            <div class="vSyllabusHeader">
                 <h6>
                     COREQUISITES
                     <span>
@@ -130,7 +156,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (explode(PHP_EOL, $syllabus->course_coreqs) as $index => $courseCoReq)
+                    @foreach (explode(PHP_EOL, $vancouverSyllabus->course_coreqs) as $index => $courseCoReq)
                         <tr>
                             <td>{{$index + 1}}</td>
                             <td>{{$courseCoReq}}</td>
@@ -160,7 +186,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (explode(PHP_EOL, $syllabus->contacts) as $index => $contact)
+                    @foreach (explode(PHP_EOL, $vancouverSyllabus->course_contacts) as $index => $contact)
                         <tr>
                             <td>{{$index + 1}}</td>
                             <td>{{$contact}}</td>
@@ -427,184 +453,162 @@
                 </table>
             </div>
         @endif
-
+   
         @if (isset($outcomeMaps))
-            @foreach ($outcomeMaps as $programId => $outcomeMap)
-                <div class="vSyllabusHeader mt-4 mb-4">
+        <div class="vSyllabusHeader">
                     <h6>
-                        {{strtoupper($outcomeMap["program"]->program)}}
+                        PROGRAM ALIGNMENT
                     </h6>
                 </div>
-                @if ($outcomeMap['program']->mappingScaleLevels->count() < 1)
-                        <div class="alert alert-warning wizard">
-                            <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
-                        </div>
-                @else 
-                    <table class="table table-bordered table-light">
-                        <thead>
-                            <tr class="table-primary">
-                                <th colspan="2">Mapping Scale</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($outcomeMap['program']->mappingScaleLevels as $mappingScale)
-                                <tr>
-                                    <td>
-                                        <div style="background-color:{{$mappingScale->colour}};height: 10px; width: 10px;"></div>
-                                        {{$mappingScale->title}}<br>
-                                        ({{$mappingScale->abbreviation}})
-                                    </td>
-                                    <td>
-                                        {{$mappingScale->description}}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
+            <div class="p-0 m-0" id="outcomeMapsDiv">  
+                @foreach ($outcomeMaps as $programId => $outcomeMap)
+                    <div class="p-0 m-0" id="outcomeMapsDiv"> 
+                        <h5 class="fw-bold pt-4 mb-2 col-12 pt-4 mb-4 mt-2">
+                            {{$outcomeMap["program"]->program}}                 
+                            <button type="button" class="btn btn-danger float-right" onclick="removeSection(this)">Remove Section</button>
+                            <input hidden name="import_course_settings[programs][]" value="{{$programId}}">
+                        </h5>  
 
-                @if (isset($outcomeMap['outcomeMap']) > 0)
-                    <div style="overflow: auto;">
-                        <table class="table table-bordered table-light">
-                            <thead>
-                                <tr class="table-primary">
-                                    <th colspan="1" class="w-auto">CLO</th>
-                                    <th colspan="{{$outcomeMap['program']->programLearningOutcomes->count()}}">Program Learning Outcome</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th></th>
-                                    @foreach ($outcomeMap['program']->ploCategories as $category)
-                                        @if ($category->plos->count() > 0)
-                                            <th class="table-active w-auto" colspan="{{$category->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$category->plo_category}}</th>  
-                                        @endif          
-                                    @endforeach
-                                    @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
-                                        <th class="table-active w-auto text-center" colspan="{{$outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Uncategorized PLOs</th>
-                                    @endif
-                                </tr> 
-                                <tr>
-                                    <td></td>
-                                    @foreach ($outcomeMap['program']->ploCategories as $category)
-                                        @if ($category->plos->count() > 0)
-                                            @foreach ($category->plos as $plo)
-                                                <td style="height:0; text-align: left;">
-                                                    @if ($plo->plo_shortphrase)
-                                                        {{$plo->plo_shortphrase}}
-                                                    @else 
-                                                        {{$plo->pl_outcome}}
-                                                    @endif
+                        @if ($outcomeMap['program']->mappingScaleLevels->count() < 1)
+                            <div class="col-12">
+                                <div class="alert alert-warning wizard">
+                                    <i class="bi bi-exclamation-circle-fill"></i>A mapping scale has not been set for this program.                  
+                                </div>
+                            </div>
+                        @else 
+                            <div class="col-12">
+                                <table class="table table-bordered table-light">
+                                    <thead>
+                                        <tr class="table-primary">
+                                            <th colspan="2">Mapping Scale</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($outcomeMap['program']->mappingScaleLevels as $mappingScale)
+                                            <tr>
+                                                <td>
+                                                <div style="background-color:{{$mappingScale->colour}};height: 10px; width: 10px;"></div>
+                                                    {{$mappingScale->title}}<br>
+                                                    ({{$mappingScale->abbreviation}})
                                                 </td>
-                                            @endforeach
-                                        @endif
-                                    @endforeach
-                                    @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
-                                        @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
-                                            <td style="height:0; text-align: left;">
-                                                @if ($uncategorizedPLO->plo_shortphrase)
-                                                    {{$uncategorizedPLO->plo_shortphrase}}
-                                                @else 
-                                                    {{$uncategorizedPLO->pl_outcome}}
-                                                @endif
-                                            </td>
+                                                <td>
+                                                    {{$mappingScale->description}}
+                                                </td>
+                                            </tr>
                                         @endforeach
-                                    @endif
-                                </tr>
-                                @foreach ($outcomeMap['clos'] as $clo) 
-                                    <tr>
-                                        <td class="w-auto"> 
-                                            @if (isset($clo->clo_shortphrase))
-                                                {{$clo->clo_shortphrase}}
-                                            @else 
-                                                {{$clo->l_outcome}}
-                                            @endif
-                                        </td>
-                                        @foreach ($outcomeMap['program']->ploCategories as $category)
-                                            @if ($category->plos->count() > 0)
-                                                @foreach ($category->plos as $plo)
-                                                    <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
-                                                @endforeach
-                                            @endif
-                                        @endforeach
-                                        @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
-                                            @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
-                                                <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
-                                            @endforeach
-                                        @endif                                
-                                    </tr>
-                                @endforeach 
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-            @endforeach
-        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
 
-        <!--  passing criteria -->
+                        @if (isset($outcomeMap['outcomeMap']) > 0)
+                            <div class="col-12">
+                                <div style="overflow: auto;">
+                                    <table class="table table-bordered table-light">
+                                        <thead>
+                                            <tr class="table-primary">
+                                                <th colspan="1" class="w-auto">CLO</th>
+                                                <th colspan="{{$outcomeMap['program']->programLearningOutcomes->count()}}">Program Learning Outcome</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th></th>
+                                                @foreach ($outcomeMap['program']->ploCategories as $category)
+                                                    @if ($category->plos->count() > 0)
+                                                        <th class="table-active w-auto" colspan="{{$category->plos->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{$category->plo_category}}</th>  
+                                                    @endif          
+                                                @endforeach
+                                                @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                                    <th class="table-active w-auto text-center" colspan="{{$outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count()}}" style="min-width:5%; white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Uncategorized PLOs</th>
+                                                @endif
+                                            </tr> 
+                                            <tr>
+                                                <td></td>
+                                                @foreach ($outcomeMap['program']->ploCategories as $category)
+                                                    @if ($category->plos->count() > 0)
+                                                        @foreach ($category->plos as $plo)
+                                                            <td style="height:0; text-align: left;">
+                                                                @if ($plo->plo_shortphrase)
+                                                                    {{$plo->plo_shortphrase}}
+                                                                @else 
+                                                                    {{$plo->pl_outcome}}
+                                                                @endif
+                                                            </td>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
+                                                @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                                    @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
+                                                        <td style="height:0; text-align: left;">
+                                                            @if ($uncategorizedPLO->plo_shortphrase)
+                                                                {{$uncategorizedPLO->plo_shortphrase}}
+                                                            @else 
+                                                                {{$uncategorizedPLO->pl_outcome}}
+                                                            @endif
+                                                        </td>
+                                                    @endforeach
+                                                @endif
+                                            </tr>
+                                            @foreach ($outcomeMap['clos'] as $clo) 
+                                                <tr>
+                                                    <td class="w-auto"> 
+                                                        @if (isset($clo->clo_shortphrase))
+                                                            {{$clo->clo_shortphrase}}
+                                                        @else 
+                                                            {{$clo->l_outcome}}
+                                                        @endif
+                                                    </td>
+                                                    @foreach ($outcomeMap['program']->ploCategories as $category)
+                                                        @if ($category->plos->count() > 0)
+                                                            @foreach ($category->plos as $plo)
+                                                                @if (!array_key_exists($plo->pl_outcome_id, $outcomeMap['outcomeMap']))
+                                                                    <td></td>
+                                                                @else 
+                                                                    @if (!array_key_exists($clo->l_outcome_id, $outcomeMap['outcomeMap'][$plo->pl_outcome_id]))
+                                                                        <td></td>
+                                                                    @else 
+                                                                        <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$plo->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                                    @endif
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    @endforeach
+                                                    @if ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null)->count() > 0)
+                                                        @foreach ($outcomeMap['program']->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO)
+                                                            @if (!array_key_exists($uncategorizedPLO->pl_outcome_id, $outcomeMap['outcomeMap']))
+                                                                <td></td>
+                                                            @else 
+                                                                @if (!array_key_exists($clo->l_outcome_id, $outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id]))
+                                                                    <td></td>
+                                                                @else 
+                                                                    <td class="text-center align-middle" style="background-color:{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->colour}}">{{$outcomeMap['outcomeMap'][$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id]->abbreviation}}</td>
+                                                                @endif
+                                                            @endif
+                                                        @endforeach
+                                                    @endif                                
+                                                </tr>
+                                            @endforeach 
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @else 
+                            <div class="col-12">
+                                <div class="alert alert-warning wizard">
+                                    <i class="bi bi-exclamation-circle-fill"></i>Course learning outcomes have not been mapped to program learning outcomes for this program.                 
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>  
+        @else 
+            <div class="p-0 m-0" id="outcomeMapsDiv"></div>    
+        @endif
+        <!-- learning resources -->
         <div class="mb-4">
-            <div class="vSyllabusHeader">
-                <h6>PASSING/GRADING CRITERIA</h6>
-            </div>
-            <p>{{$syllabus->passing_criteria}}</p>
-        </div>
-        <!--  late policy -->
-        <div class="mb-4">
-            <div class="vSyllabusHeader">
-                <h6>LATE POLICY
-                    <span>
-                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
-                    </span>
-                </h6>
-            </div>
-            <p>{{$syllabus->late_policy}}</p>
-        </div>
-        <!--  missed exam policy -->
-        <div class="mb-4">
-            <div class="vSyllabusHeader">
-                <h6>MISSED EXAM POLICY</h6>
-            </div>
-            <p>{{$syllabus->missed_exam_policy}}</p>
-        </div>
-        <!--  missed activity policy -->
-        <div class="mb-4">
-            <div class="vSyllabusHeader">
-                <h6>MISSED ACTIVITY POLICY
-                    <span>
-                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
-                    </span>
-                </h6>
-            </div>
-            <p>{{$syllabus->missed_activity_policy}}</p>
-        </div>
-        <!--  university policies -->
-        <div class="mb-4">
-            <div class="vSyllabusHeader">
-                <h6>UNIVERSITY POLICIES</h6>
-            </div>
-            <p>UBC provides resources to support student learning and to maintain healthy lifestyles but recognizes that sometimes crises arise and so there are additional resources to access including those for survivors of sexual violence. UBC values respect for the person and ideas of all members of the academic community. Harassment and discrimination are not tolerated nor is suppression of academic freedom. UBC provides appropriate accommodation for students with disabilities and for religious observances. UBC values academic honesty and students are expected to acknowledge the ideas generated by others and to uphold the highest academic standards in all of their actions.
-                
-            Details of the policies and how to access support are available on the <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_blank" rel="noopener noreferrer">UBC Senate website</a>.</p>
-        </div>
-        <!-- other course policies -->
-        <div class="mb-4">
-            <div class="vSyllabusHeader mb-4">
-                <h6>OTHER COURSE POLICIES</h6>
-            </div>
-            <!-- learning analytics -->
-            <div class="mb-4">
-                <div class="vSyllabusHeader2">
-                    <h6>LEARNING ANALYTICS
-                        <span>
-                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningAnalytics']}}"></i>
-                        </span>
-                    </h6>
-                </div>
-                <p>{{$vancouverSyllabus->learning_analytics}}</p>
-            </div>
-            <!-- learning resources -->
-            <div class="mb-4">
-                <div class="vSyllabusHeader2">
+                <div class="vSyllabusHeader">
                     <h6>LEARNING RESOURCES
                         <span>
                             <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
@@ -689,6 +693,77 @@
                 </div>
                 @endif
             @endforeach
+        <!--  university policies -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader">
+                <h6>UNIVERSITY POLICIES</h6>
+            </div>
+            <p>UBC provides resources to support student learning and to maintain healthy lifestyles but recognizes that sometimes crises arise and so there are additional resources to access including those for survivors of sexual violence. UBC values respect for the person and ideas of all members of the academic community. Harassment and discrimination are not tolerated nor is suppression of academic freedom. UBC provides appropriate accommodation for students with disabilities and for religious observances. UBC values academic honesty and students are expected to acknowledge the ideas generated by others and to uphold the highest academic standards in all of their actions.
+                
+            Details of the policies and how to access support are available on the <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_blank" rel="noopener noreferrer">UBC Senate website</a>.</p>
+        </div>
+        <!-- other course policies -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader mb-4">
+                <h6>OTHER COURSE POLICIES</h6>
+            </div>
+            <!--  passing criteria -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader2">
+                <h6>PASSING/GRADING CRITERIA</h6>
+            </div>
+            <p>{{$syllabus->passing_criteria}}</p>
+        </div>
+        <!--  late policy -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader2">
+                <h6>LATE POLICY
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
+                    </span>
+                </h6>
+            </div>
+            <p>{{$syllabus->late_policy}}</p>
+        </div>
+        <!--  missed exam policy -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader2">
+                <h6>MISSED EXAM POLICY</h6>
+            </div>
+            <p>{{$syllabus->missed_exam_policy}}</p>
+        </div>
+        <!--  missed activity policy -->
+        <div class="mb-4">
+            <div class="vSyllabusHeader2">
+                <h6>MISSED ACTIVITY POLICY
+                    <span>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
+                    </span>
+                </h6>
+            </div>
+            <p>{{$syllabus->missed_activity_policy}}</p>
+        </div>
+            <!-- learning analytics -->
+            <div class="mb-4">
+                <div class="vSyllabusHeader2">
+                    <h6>LEARNING ANALYTICS
+                        <span>
+                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningAnalytics']}}"></i>
+                        </span>
+                    </h6>
+                </div>
+                <p>{{$vancouverSyllabus->learning_analytics}}</p>
+            </div>
+            <div class="mb-4">
+                @if($syllabus->copyright)
+                    <div class="vSyllabusHeader">
+                        <h6>COPYRIGHT STATEMENT</h6>
+                    </div>
+                    
+                    <p>All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</p>
+                @endif
+            </div>
+    
         </div>
     </div>
     <!-- footer -->

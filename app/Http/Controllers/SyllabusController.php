@@ -90,7 +90,7 @@ class SyllabusController extends Controller
             if (isset($syllabus->course_id)) {
                 $importCourse = Course::find($syllabus->course_id);
                 if ($syllabus->include_alignment) {
-                    Log::Debug("what aligned");
+                    
                     $courseAlignment = $importCourse->learningOutcomes;
                     foreach ($courseAlignment as $clo) {
                         $clo->assessmentMethods;
@@ -101,6 +101,13 @@ class SyllabusController extends Controller
                 if (count($syllabusProgramIds) > 0)
                     $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $importCourse->course_id);   
             }
+
+        // get  Vancouver Syllabus
+        $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id);
+
+        // get  Okanagan Syllabus
+        $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id);
+
             // show view based on user permission
             switch ($userPermission) {
                 // owner
@@ -114,7 +121,7 @@ class SyllabusController extends Controller
                 break;
                 // viewer
                 case 3:
-                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
+                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps, "vancouverSyllabus" => $vancouverSyllabus, "okanaganSyllabus" => $okanaganSyllabus));
 
                 break;
                 // return view to create a syllabus as default
@@ -184,7 +191,7 @@ class SyllabusController extends Controller
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('outcomeMaps', $data['outcomeMaps']);        
+                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);        
         }
     }
 
@@ -879,6 +886,7 @@ class SyllabusController extends Controller
                 //Course Description Okanagan
 
                 if($courseDescriptionOK = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $okanaganSyllabus->course_description)){
+                    
                     $CDArr = explode("\n", $courseDescriptionOK);
                     $i=0;
                     if($ext == 'pdf') {

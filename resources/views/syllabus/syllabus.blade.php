@@ -800,25 +800,142 @@
                         <div id="copyrightEx"></div>
                         @endif
         
-                        
-                        @if($syllabus->copyright)
-                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
-                        <label>Include a Creative Commons Open Copyright License</label>
-                        <div id="creativeCommonsInput" class="col-6"></div>
-                        @else
+                        @if($syllabus->campus == "O")
                         <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator" checked/>
                         <label>Include a Creative Commons Open Copyright License</label>
                         <div> 
-                        <div id="creativeCommonsInput" class="col-6"> 
-    
-                            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
-                       
-                            <!-- 
-                            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
-                        -->
+                        <div class="col-12">
+                            <br>
+                            <div id="creativeCommonsInput" class="col-12">
+                            <h6><strong><u>Select a Creative Commons License:</u></strong></h6>
+                            <br>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            @if($syllabus->cc_license == 'CC BY' || $syllabus->cc_license == NULL)
+                                                <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                            @else
+                                                <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY" style="margin-right: 8px" form="sylabusGenerator"/>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution: </strong>
+                                                <strong>CC BY </strong> 
+                                                <br>
+                                                This license lets others distribute, remix, adapt, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        <td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        @if($syllabus->cc_license == 'CC BY-SA')
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-SA" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                        @else
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-SA" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        @endif
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-ShareAlike: </strong>
+                                                <strong>CC BY-SA</strong>
+                                                <br>
+                                                This license lets others remix, adapt, and build upon your work even for commercial purposes, as long as they credit you and license their new creations under the identical terms. This license is often compared to “copyleft” free and open source software licenses. All new works based on yours will carry the same license, so any derivatives will also allow commercial use. This is the license used by Wikipedia, and is recommended for materials that would benefit from incorporating content from Wikipedia and similarly licensed projects.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        @if ($syllabus->cc_license == 'CC BY-ND')
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-ND" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                        @else
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-ND" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        @endif
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NoDerivs: </strong>
+                                                <strong>CC BY-ND</strong>
+                                                <br>
+                                                This license lets others reuse the work for any purpose, including commercially; however, it cannot be shared with others in adapted form, and credit must be provided to you.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nd/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        @if($syllabus->cc_license == 'CC BY-NC')
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                        @else
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        @endif
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NonCommercial: </strong>
+                                                <strong>CC BY-NC</strong>
+                                                <br>
+                                                This license lets others remix, adapt, and build upon your work non-commercially, and although their new works must also acknowledge you and be non-commercial, they don’t have to license their derivative works on the same terms.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-nc/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        @if($syllabus->cc_license == 'CC BY-NC-SA')
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-SA" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                        @else
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-SA" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        @endif
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NonCommercial: </strong>
+                                                <strong>CC BY-NC-SA</strong>
+                                                <br>
+                                                This license lets others remix, adapt, and build upon your work non-commercially, as long as they credit you and license their new creations under the identical terms.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        @if($syllabus->cc_license == 'CC BY-NC-ND')
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-ND" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                        @else
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-ND" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        @endif
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NonCommercial-NoDerivs: </strong>
+                                                <strong>CC BY-NC-ND</strong>
+                                                <br>
+                                                This license is the most restrictive of our six main licenses, only allowing others to download your works and share them with others as long as they credit you, but they can’t change them in any way or use them commercially.<br>
+                                                <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </div>
+                            
                         </div>
             </div>
-                        @endif
+            @endif
+                        
                     @else
                         <input type="radio" id="noneCopyright" name="copyright" value="2" style="margin-right: 8px" form="sylabusGenerator" checked/>
                         <label>None</label>
@@ -826,10 +943,111 @@
                         <input type="radio" id="yesCopyright" name="copyright" value="1" style="margin-right: 8px" form="sylabusGenerator"/>
                         <label>Include a Copyright Statement</label>
                         <div id="copyrightEx"></div>
-                        <br>
                         <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
-                        <label>Include a Creative Commons Open Copyright License</label>
-                        <div id="creativeCommonsInput" class="col-6"></div>
+                                <label>Include a Creative Commons Open Copyright License</label>
+                                <div class="col-12">
+                                <br>
+                                    <div id="creativeCommonsInput" class="col-12">
+                                    <!-- mankey
+
+                                    <h6><strong><u>Select a Creative Commons License:</u></strong></h6>
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                                                </td>
+                                                <td>
+                                                    <div class="col-12">
+                                                        <strong>Attribution: </strong>
+                                                        <strong>CC BY</strong>
+                                                        <br>
+                                                        This license lets others distribute, remix, adapt, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
+                                                        <br>
+                                                        <a href="https://creativecommons.org/licenses/by/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by/4.0/legalcode">View Legal Code</a>
+                                                    </div>
+                                                <td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-SA" style="margin-right: 8px" form="sylabusGenerator"/>
+                                                </td>
+                                                <td>
+                                                    <div class="col-12">
+                                                        <strong>Attribution-ShareAlike: </strong>
+                                                        <strong>CC BY-SA</strong>
+                                                        <br>
+                                                        This license lets others remix, adapt, and build upon your work even for commercial purposes, as long as they credit you and license their new creations under the identical terms. This license is often compared to “copyleft” free and open source software licenses. All new works based on yours will carry the same license, so any derivatives will also allow commercial use. This is the license used by Wikipedia, and is recommended for materials that would benefit from incorporating content from Wikipedia and similarly licensed projects.
+                                                        <br>
+                                                        <a href="https://creativecommons.org/licenses/by-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">View Legal Code</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-ND" style="margin-right: 8px" form="sylabusGenerator"/>
+                                                </td>
+                                                <td>
+                                                    <div class="col-12">
+                                                        <strong>Attribution-NoDerivs: </strong>
+                                                        <strong>CC BY-ND</strong>
+                                                        <br>
+                                                        This license lets others reuse the work for any purpose, including commercially; however, it cannot be shared with others in adapted form, and credit must be provided to you.
+                                                        <br>
+                                                        <a href="https://creativecommons.org/licenses/by-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nd/4.0/legalcode">View Legal Code</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC" style="margin-right: 8px" form="sylabusGenerator"/>
+                                                </td>
+                                                <td>
+                                                    <div class="col-12">
+                                                        <strong>Attribution-NonCommercial: </strong>
+                                                        <strong>CC BY-NC</strong>
+                                                        <br>
+                                                        This license lets others remix, adapt, and build upon your work non-commercially, and although their new works must also acknowledge you and be non-commercial, they don’t have to license their derivative works on the same terms.
+                                                        <br>
+                                                        <a href="https://creativecommons.org/licenses/by-nc/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc/4.0/legalcode">View Legal Code</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-SA" style="margin-right: 8px" form="sylabusGenerator"/>
+                                                </td>
+                                                <td>
+                                                    <div class="col-12">
+                                                        <strong>Attribution-NonCommercial: </strong>
+                                                        <strong>CC BY-NC-SA</strong>
+                                                        <br>
+                                                        This license lets others remix, adapt, and build upon your work non-commercially, as long as they credit you and license their new creations under the identical terms.
+                                                        <br>
+                                                        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode">View Legal Code</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-ND" style="margin-right: 8px" form="sylabusGenerator"/>
+                        
+                                                </td>
+                                                <td>
+                                                    <div class="col-12">
+                                                        <strong>Attribution-NonCommercial-NoDerivs: </strong>
+                                                        <strong>CC BY-NC-ND</strong>
+                                                        <br>
+                                                        This license is the most restrictive of our six main licenses, only allowing others to download your works and share them with others as long as they credit you, but they can’t change them in any way or use them commercially.
+                                                        <br>
+                                                        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode">View Legal Code</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                    -->
+                                        </div>
+                                </div>
+                
                     @endif
         </div>
             
@@ -961,7 +1179,6 @@
         $('#noneCopyright').on('click', function(event) {
             //mankey
             $('#copyrightEx').html(``);
-
             $('#creativeCommonsInput').html(``);
         });
         
@@ -972,22 +1189,122 @@
                 <blockquote> All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</blockquote>
             </div> 
             `);
-
             $('#creativeCommonsInput').html(``);
+
         });
 
         $('#noCopyright').on('click', function(event) {
 
-        $('#copyrightEx').html(``);
-        $('#creativeCommonsInput').html(`
-                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
-                `);
-            /*
-            $('#creativeCommonsInput').html(`
-                <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" id = "creativeCommons" name = "creativeCommons" class ="form-control" type="text" style="max-width:50%" placeholder="E.g. CC BY-SA" value="{{ !empty($syllabus) ? $syllabus->cc_license : '' }}">
-                `);
-            */
+            $('#creativeCommonsInput').html(
+            `
+                            <h6><strong><u>Select a Creative Commons License:</u></strong></h6>
+                            <br>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY" style="margin-right: 8px" form="sylabusGenerator"checked/>
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution: </strong>
+                                                <strong>CC BY</strong>
+                                                <br>
+                                                This license lets others distribute, remix, adapt, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        <td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-SA" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-ShareAlike: </strong>
+                                                <strong>CC BY-SA</strong>
+                                                <br>
+                                                This license lets others remix, adapt, and build upon your work even for commercial purposes, as long as they credit you and license their new creations under the identical terms. This license is often compared to “copyleft” free and open source software licenses. All new works based on yours will carry the same license, so any derivatives will also allow commercial use. This is the license used by Wikipedia, and is recommended for materials that would benefit from incorporating content from Wikipedia and similarly licensed projects.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-ND" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NoDerivs: </strong>
+                                                <strong>CC BY-ND</strong>
+                                                <br>
+                                                This license lets others reuse the work for any purpose, including commercially; however, it cannot be shared with others in adapted form, and credit must be provided to you.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nd/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NonCommercial: </strong>
+                                                <strong>CC BY-NC</strong>
+                                                <br>
+                                                This license lets others remix, adapt, and build upon your work non-commercially, and although their new works must also acknowledge you and be non-commercial, they don’t have to license their derivative works on the same terms.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-nc/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-SA" style="margin-right: 8px" form="sylabusGenerator"/>
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NonCommercial: </strong>
+                                                <strong>CC BY-NC-SA</strong>
+                                                <br>
+                                                This license lets others remix, adapt, and build upon your work non-commercially, as long as they credit you and license their new creations under the identical terms.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-ND" style="margin-right: 8px" form="sylabusGenerator"/>
+                
+                                        </td>
+                                        <td>
+                                            <div class="col-12">
+                                                <strong>Attribution-NonCommercial-NoDerivs: </strong>
+                                                <strong>CC BY-NC-ND</strong>
+                                                <br>
+                                                This license is the most restrictive of our six main licenses, only allowing others to download your works and share them with others as long as they credit you, but they can’t change them in any way or use them commercially.
+                                                <br>
+                                                <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode">View Legal Code</a>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                </table>
+                                 `);
+
+            $('#copyrightEx').html(``);
+            
         });
+        
+    
         // event listener on create course schedule submit form button
         $('#createCourseScheduleTblForm').on('submit', function(event) { 
             // prevent default submit procedure
