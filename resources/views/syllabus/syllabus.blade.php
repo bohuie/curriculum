@@ -347,7 +347,13 @@
                 name="otherCourseStaff" class="form-control " form="sylabusGenerator"
                 spellcheck="true" style="height:125px;">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
         </div>
-
+        <!-- Okanaga Course Description -->
+        <div class="col-12"id="courseDesc"></div>
+        <!-- Course Format -->
+        <div class="col-12" id="courseFormat"></div>
+        <!-- Course Overview -->
+        <div class="col-12" id="courseOverview"></div>
+        
         <!-- Course Structure -->
         <div class="col-12" id="courseStructure"></div>
 
@@ -499,6 +505,10 @@
                 id="learningMaterials" name="learningMaterials" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
         </div>
+
+        <!-- learning analytics and learning resources OK -->
+        <div class="col-12" id="LROkanagan"></div>
+        
     
         <div class="col-12">
             <label for="learningAssessments"><h5 class="fw-bold">Assessments of Learning</h5></label>
@@ -512,14 +522,9 @@
 
        
 
-        <!-- Okanaga Course Description -->
-        <div class="col-12"id="courseDesc"></div>
         <!-- Course Structure -->
         <div class="col-12" id="courseStructure"></div>
-        <!-- Course Format -->
-        <div class="col-12" id="courseFormat"></div>
-        <!-- Course Overview -->
-        <div class="col-12" id="courseOverview"></div>
+        
 
 
         @if (isset($courseAlignment))
@@ -773,11 +778,21 @@
              <!-- learning analytics -->
             <div class="col-12" id="learningAnalytics"></div>
         </div>
+        <!-- Optional Statements -->
+        <div class="col-12" id="optionalStatements"></div>
+
+        <!-- Copyright Statement -->
+        <div class="col-12" id="crStatement"></div>
+        
         <!-- Creative Commons -->
         
         <div class="col-12">
         <label for="creativeCommons"><h5 class="fw-bold">Copyright Statement</h5></label>
-        <p class="inputFieldDescription">{!! $inputFieldDescriptions['creativeCommons'] !!}</p>    
+            <p class="inputFieldDescription">
+                @if($syllabus->campus=="O")
+                    {!! $inputFieldDescriptions['creativeCommons'] !!}
+                @endif
+            </p>
                     @if(!empty($syllabus))
                         @if($syllabus->copyright==null)
                         <input type="radio" id="noneCopyright" name="copyright" value="2" style="margin-right: 8px;" form="sylabusGenerator" checked/>
@@ -1050,17 +1065,7 @@
                 
                     @endif
         </div>
-            
-        <!-- learning analytics and learning resources OK -->
-        <div class="col-12" id="LROkanagan"></div>
-        
-        <!-- Optional Statements -->
-        <div class="col-12" id="optionalStatements"></div>
-
-        <!-- Copyright Statement -->
-        <div class="col-12" id="crStatement"></div>
-            
-
+          
         <!-- Land Acknowledgement Statement -->
         <div class="col-12" id="landAcknowledgement"></div>
     </form>
