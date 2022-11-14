@@ -123,7 +123,7 @@
                                         <div class="row align-items-end m-2">
                                             <div class="col-6">
                                                 <label for="assessmentMethod" class="form-label fs-6"><b>Assessment Method</b></label>
-                                                <input id="assessmentMethod" class="form-control" list="assessmentMethodOptions" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" placeholder="Type to search..." required>
+                                                <input id="assessmentMethod" class="form-control" list="assessmentMethodOptions" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" placeholder="Type to search or add your own..." required>
                                                 <div class="invalid-tooltip">
                                                     Please provide an assessment method.
                                                 </div>                                            
