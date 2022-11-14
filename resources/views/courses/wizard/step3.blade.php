@@ -34,7 +34,7 @@
                                     <div class="row justify-content-between align-items-end m-2">
                                         <div class="col-10">
                                             <label for="learningActivity" class="form-label fs-6"><b>Learning Activity</b></label>
-                                            <input id="learningActivity" class="form-control" list="learningActivitiesOptions" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" placeholder="Type to search..." required>
+                                            <input id="learningActivity" class="form-control" list="learningActivitiesOptions" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="191" placeholder="Type to search or add your own..." required>
                                             <div class="invalid-tooltip">
                                                 Please provide a learning activity.
                                             </div>                                            
@@ -131,7 +131,7 @@
                             Not sure how to teach/embed career-related outcomes? Request a workshop from The Career Development Team for your classroom <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://students.ok.ubc.ca/career-experience/faculty-workshops/"><i class="bi bi-box-arrow-up-right"></i> here</a>.              
                             </li>
                             <li>
-                            Embed <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://blogs.ubc.ca/teachingandwellbeing/files/2018/11/TLEF_Handout_October-2018.pdf"><i class="bi bi-box-arrow-up-right"></i>teaching practices</a>  that promote student wellbeing.</li>
+                            Embed <a class="alert-link" target="_blank" rel="noopener noreferrer" href="https://blogs.ubc.ca/teachingandwellbeing/files/2018/11/TLEF_Handout_October-2018.pdf"><i class="bi bi-box-arrow-up-right"></i>teaching practices</a>  that promote student wellbeing.</li> 
                             </ul>
                             </div>
                         </div>
