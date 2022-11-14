@@ -498,7 +498,7 @@
                                 <table class="table table-light table-bordered table mb-4" >
                                     <tr class="table-primary">
                                         <th class="text-center">#</th>
-                                        <th>Ministry Standard</th>
+                                        <th>BC Degree Standard</th>
                                     </tr>
                                                 
                                     @foreach($course->standardOutcomes as $index => $standard_outcome)
@@ -565,7 +565,7 @@
                                 <div style="overflow: auto;">
                                     <table class="table table-light table-bordered table mb-4" >
                                         <tr class="table-primary">
-                                            <th colspan="{{$course->standardOutcomes->count()}}">Ministry Standard</th>
+                                            <th colspan="{{$course->standardOutcomes->count()}}">BC Degree Standard</th>
                                         </tr>
                                         <tr>
                                             @for($i = 0; $i < $course->standardOutcomes->count(); $i++)
