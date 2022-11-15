@@ -789,9 +789,11 @@
         <div class="col-12">
         <label for="creativeCommons"><h5 class="fw-bold">Copyright Statement</h5></label>
             <p class="inputFieldDescription">
+            @if(!empty($syllabus))
                 @if($syllabus->campus=="O")
                     {!! $inputFieldDescriptions['creativeCommons'] !!}
                 @endif
+            @endif
             </p>
                     @if(!empty($syllabus))
                         @if($syllabus->copyright==null)
@@ -815,6 +817,7 @@
                         <div id="copyrightEx"></div>
                         @endif
         
+                    @if(!empty($syllabus))
                         @if($syllabus->campus == "O")
                         <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator" checked/>
                         <label>Include a Creative Commons Open Copyright License</label>
@@ -950,6 +953,7 @@
                         </div>
             </div>
             @endif
+        @endif
                         
                     @else
                         <input type="radio" id="noneCopyright" name="copyright" value="2" style="margin-right: 8px" form="sylabusGenerator" checked/>
