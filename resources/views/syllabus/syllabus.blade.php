@@ -819,12 +819,18 @@
         
                     @if(!empty($syllabus))
                         @if($syllabus->campus == "O")
-                        <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                            @if($syllabus->copyright==1 || !isset($syllabus->cc_license))
+                                <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator"/>
+                            @else
+                                <input type="radio" id="noCopyright" name="copyright" value="0" style="margin-right: 8px" form="sylabusGenerator" checked/>
+                            @endif
                         <label>Include a Creative Commons Open Copyright License</label>
                         <div> 
                         <div class="col-12">
                             <br>
+                        
                             <div id="creativeCommonsInput" class="col-12">
+                        @if(isset($syllabus->cc_license))
                             <h6><strong><u>Select a Creative Commons License:</u></strong></h6>
                             <br>
                                 <table>
@@ -948,9 +954,11 @@
                                         </td>
                                     </tr>
                                 </table>
+                                @endif
                                 </div>
                             
                         </div>
+                        
             </div>
             @endif
         @endif
@@ -2494,7 +2502,7 @@
 
          var optionalStatements =`
 
-         <h5  class="fw-bold">Optional Statements</h5>
+         <h5  class="fw-bold">Resources to Support Student Success</h5>
                 @if(!empty($syllabus))
                     <div id="optionalSyllabusDesc"></div>
                 @else

@@ -1739,6 +1739,7 @@ class SyllabusController extends Controller
 
         $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabus->id)->get();
         $templateProcessor->setValue('courseInstructor', $syllabusInstructors->implode('name', ', '));
+        $templateProcessor->setValue('courseInstructorEmail', $syllabusInstructors->implode('email', ', '));
         
         switch ($syllabus->delivery_modality) {
             case "M" :
