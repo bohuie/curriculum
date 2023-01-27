@@ -1117,7 +1117,6 @@
             </div>
     
             @if (!empty($syllabus))
-                @include('modals.syllabusCollabsModal', ['syllabus' => $syllabus, 'user' => $user])
                 <div class="col-2" style="max-width:10%">
                     <span data-bs-toggle="modal" data-bs-target="#addSyllabusCollaboratorsModal{{$syllabus->id}}">
                         <button type="button" class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip"
