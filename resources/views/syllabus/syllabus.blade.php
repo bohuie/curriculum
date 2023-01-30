@@ -2494,7 +2494,10 @@
                         <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1">
                     @endif
                     <label class="form-check-label mb-2" for="landAck">Include in Syllabus</label>  
-                @endif 
+                @else
+                    <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1">
+                    <label class="form-check-label mb-2" for="landAck">Include in Syllabus</label>  
+                @endif
                 </div>
             </div>
          `;
