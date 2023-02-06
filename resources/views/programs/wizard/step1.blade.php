@@ -739,7 +739,7 @@
 
     function addPLO() {
         // prepend assessment method to the table
-        $('#addPLOTbl tbody').prepend(`
+        $('#addPLOTbl tbody').append(`
             <tr>
                 <td>
                     <textarea name="new_pl_outcome[]" class="form-control" form="savePLOChanges" required style="resize:none">${$('#pl_outcome').val()}</textarea>
