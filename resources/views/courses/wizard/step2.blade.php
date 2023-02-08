@@ -215,7 +215,7 @@
                                                     <td class="text-center">
                                                         <i class="bi bi-x-circle-fill text-danger fs-4 btn" onclick="deleteAssessmentMethod(this)"></i>
                                                     </td>
-                                                    <!-- <input type="hidden" name="a_method_id[]" value="{{$a_method->a_method_id}}" form="saveAssessmentMethodChanges"> -->
+                                                    
                                                 </tr>
                                                 @endforeach                                        
                                             </tbody>
