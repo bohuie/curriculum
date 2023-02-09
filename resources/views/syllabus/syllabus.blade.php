@@ -975,103 +975,6 @@
                                 <div class="col-12">
                                 <br>
                                     <div id="creativeCommonsInput" class="col-12">
-                                    <!-- mankey
-
-                                    <h6><strong><u>Select a Creative Commons License:</u></strong></h6>
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY" style="margin-right: 8px" form="sylabusGenerator" checked/>
-                                                </td>
-                                                <td>
-                                                    <div class="col-12">
-                                                        <strong>Attribution: </strong>
-                                                        <strong>CC BY</strong>
-                                                        <br>
-                                                        This license lets others distribute, remix, adapt, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
-                                                        <br>
-                                                        <a href="https://creativecommons.org/licenses/by/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by/4.0/legalcode">View Legal Code</a>
-                                                    </div>
-                                                <td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-SA" style="margin-right: 8px" form="sylabusGenerator"/>
-                                                </td>
-                                                <td>
-                                                    <div class="col-12">
-                                                        <strong>Attribution-ShareAlike: </strong>
-                                                        <strong>CC BY-SA</strong>
-                                                        <br>
-                                                        This license lets others remix, adapt, and build upon your work even for commercial purposes, as long as they credit you and license their new creations under the identical terms. This license is often compared to “copyleft” free and open source software licenses. All new works based on yours will carry the same license, so any derivatives will also allow commercial use. This is the license used by Wikipedia, and is recommended for materials that would benefit from incorporating content from Wikipedia and similarly licensed projects.
-                                                        <br>
-                                                        <a href="https://creativecommons.org/licenses/by-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">View Legal Code</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-ND" style="margin-right: 8px" form="sylabusGenerator"/>
-                                                </td>
-                                                <td>
-                                                    <div class="col-12">
-                                                        <strong>Attribution-NoDerivs: </strong>
-                                                        <strong>CC BY-ND</strong>
-                                                        <br>
-                                                        This license lets others reuse the work for any purpose, including commercially; however, it cannot be shared with others in adapted form, and credit must be provided to you.
-                                                        <br>
-                                                        <a href="https://creativecommons.org/licenses/by-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nd/4.0/legalcode">View Legal Code</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC" style="margin-right: 8px" form="sylabusGenerator"/>
-                                                </td>
-                                                <td>
-                                                    <div class="col-12">
-                                                        <strong>Attribution-NonCommercial: </strong>
-                                                        <strong>CC BY-NC</strong>
-                                                        <br>
-                                                        This license lets others remix, adapt, and build upon your work non-commercially, and although their new works must also acknowledge you and be non-commercial, they don’t have to license their derivative works on the same terms.
-                                                        <br>
-                                                        <a href="https://creativecommons.org/licenses/by-nc/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc/4.0/legalcode">View Legal Code</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-SA" style="margin-right: 8px" form="sylabusGenerator"/>
-                                                </td>
-                                                <td>
-                                                    <div class="col-12">
-                                                        <strong>Attribution-NonCommercial: </strong>
-                                                        <strong>CC BY-NC-SA</strong>
-                                                        <br>
-                                                        This license lets others remix, adapt, and build upon your work non-commercially, as long as they credit you and license their new creations under the identical terms.
-                                                        <br>
-                                                        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode">View Legal Code</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="creativeCommons" name="creativeCommons" value="CC BY-NC-ND" style="margin-right: 8px" form="sylabusGenerator"/>
-                        
-                                                </td>
-                                                <td>
-                                                    <div class="col-12">
-                                                        <strong>Attribution-NonCommercial-NoDerivs: </strong>
-                                                        <strong>CC BY-NC-ND</strong>
-                                                        <br>
-                                                        This license is the most restrictive of our six main licenses, only allowing others to download your works and share them with others as long as they credit you, but they can’t change them in any way or use them commercially.
-                                                        <br>
-                                                        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">View License Deed</a> | <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode">View Legal Code</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                    -->
                                         </div>
                                 </div>
                 
@@ -2481,11 +2384,32 @@
             </div>
          `;
 
-         var landAcknowledgement = `
+         var landAcknowledgementV = `
             <label for="landAcknowledgement"><h5 class="fw-bold">Land Acknowledgement</h5></label>
             <br>
             <div class="col-12">
                 <blockquote> UBC’s Point Grey Campus is located on the traditional, ancestral, and unceded territory of the xwməθkwəy̓əm (Musqueam) people. The land it is situated on has always been a place of learning for the Musqueam people, who for millennia have passed on their culture, history, and traditions from one generation to the next on this site.</blockquote>
+                <div class="col-6">
+                @if(!empty($syllabus))
+                    @if($syllabus->land_acknow)
+                        <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1" checked>
+                    @else
+                        <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1">
+                    @endif
+                    <label class="form-check-label mb-2" for="landAck">Include in Syllabus</label>  
+                @else
+                    <input class="form-check-input " id="landAck" type="checkbox" name="landAck" value="1">
+                    <label class="form-check-label mb-2" for="landAck">Include in Syllabus</label>  
+                @endif
+                </div>
+            </div>
+         `;
+
+         var landAcknowledgementO = `
+            <label for="landAcknowledgement"><h5 class="fw-bold">Land Acknowledgement</h5></label>
+            <br>
+            <div class="col-12">
+                <blockquote> We respectfully acknowledge the Syilx Okanagan Nation and their peoples, in whose traditional, ancestral, unceded territory UBC Okanagan is situated.</blockquote>
                 <div class="col-6">
                 @if(!empty($syllabus))
                     @if($syllabus->land_acknow)
@@ -2542,7 +2466,7 @@
             $('#LRVancouver').html(LearningResources_LearningAnalytics);
             $('#uniPolicy').html(uniPolicyVan);
             //$('#crStatement').html(crStatement);
-            $('#landAcknowledgement').html(landAcknowledgement);
+            $('#landAcknowledgement').html(landAcknowledgementV);
             $('.requiredBySenate').html(requiredBySenateLabel);
            
 
@@ -2589,7 +2513,7 @@
             $('#LRVancouver').empty();
             $('#uniPolicy').empty();
             $('#crStatement').empty();
-            $('#landAcknowledgement').empty();
+            $('#landAcknowledgement').html(landAcknowledgementO);
 
             // update faculty dropdown
             setFaculties('Okanagan');
