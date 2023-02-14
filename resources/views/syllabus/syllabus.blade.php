@@ -774,10 +774,31 @@
                     name="passingCriteria" class="form-control" type="date" form="sylabusGenerator"
                     spellcheck="true">{{ !empty($syllabus) ? $syllabus->passing_criteria : ''}}</textarea>
             </div>
+        
             <br>
              <!-- learning analytics -->
             <div class="col-12" id="learningAnalytics"></div>
         </div>
+
+        <!-- Additional Course-Specific Information-->
+        <div class="col-12">
+            <h5 class="fw-bold">Additional Course-Specific Information</h5></label>
+            <p class="inputFieldDescription">{{$inputFieldDescriptions['customResource']}}</p>
+                    <textarea data-formatnoteid="formatCS" style="height:25px;overflow:hidden;resize:none" oninput="validateMaxlength()" onpaste="validateMaxlength()" resize="none" maxlength="10000" id="customResourceTitle" 
+                    name="customResourceTitle" class="form-control" type="date" form="sylabusGenerator"
+                        spellcheck="true" placeholder="Title of Custom Section">{{ !empty($syllabus) ? $syllabus->custom_resource_title : ''}}</textarea>
+                    <br>
+                    <div id="formatCS" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                        on a new line for the best formatting
+                        results.</span>
+                    </div>
+                    <textarea data-formatnoteid="formatCS" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="10000" id="customResource" 
+                    name="customResource" class="form-control" type="date" form="sylabusGenerator"
+                        spellcheck="true" placeholder="Body Content of Custom Section">{{ !empty($syllabus) ? $syllabus->custom_resource : ''}}</textarea>
+        </div>
+        <br>
+
         <!-- Optional Statements -->
         <div class="col-12" id="optionalStatements"></div>
 

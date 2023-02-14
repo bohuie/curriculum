@@ -53,6 +53,7 @@ define("INPUT_TIPS", array(
     "officeLocation" => "Building & Room Number",
     "creativeCommons" => 'Include a copyright statement or include a Creative Commons Open Copyright license of your choosing. Visit the <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">Creative Commons Website <i class="bi bi-box-arrow-up-right"></i></a> for options and more information. Need help deciding? Try using the <a href="https://creativecommons.org/choose/" target="_blank" rel="noopener noreferrer">Creative Commons License Chooser <i class="bi bi-box-arrow-up-right"></i></a>.',
     "uniPolicy" => 'Hearing from each course instructor about University policies and values can help to emphasize their importance to students. To fulfil the policy, you need only to present the following paragraph with the link to the web page that provides details and links to specific policies and resources. You may wish to take the opportunity to relate the ideas to your own course as part of your students’ education. This policy is <b>always included</b> in a generated Vancouver syllabus.',
+    "customResource" => 'Include any additional information or resources that have not been provided.',
 ));
 
 
@@ -270,6 +271,8 @@ class SyllabusController extends Controller
         $syllabus->course_title = $request->input('courseTitle');
         $syllabus->course_code = $request->input('courseCode');
         $syllabus->course_num = $request->input('courseNumber');
+        $syllabus->custom_resource = $request->input('customResource');
+        $syllabus->custom_resource_title = $request->input('customResourceTitle');
         $syllabus->delivery_modality = $request->input('deliveryModality');
         $syllabus->course_instructor = $request->input('courseInstructor')[0];
         $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $syllabus->course_term = $request->input('courseSemester');
@@ -475,6 +478,8 @@ class SyllabusController extends Controller
         $syllabus->campus = $campus;
         $syllabus->course_title = $request->input('courseTitle');
         $syllabus->course_code = $request->input('courseCode');
+        $syllabus->custom_resource = $request->input('customResource');
+        $syllabus->custom_resource_title = $request->input('customResourceTitle');
         $syllabus->course_num = $request->input('courseNumber');
         $syllabus->delivery_modality = $request->input('deliveryModality');
         $courseInstructors = $request->input('courseInstructor');
@@ -1708,7 +1713,15 @@ class SyllabusController extends Controller
 
             break;
         }
+        //include Custom Resource
 
+        if(!empty($syllabus->custom_resource) && !empty($syllabus->custom_resource_title)){
+            $templateProcessor->cloneBlock('NoCustomResource');
+            $templateProcessor->setValue('custom_resource',$syllabus->custom_resource);
+            $templateProcessor->setValue('custom_resource_title',$syllabus->custom_resource_title);
+        }else{
+            $templateProcessor->cloneBlock('NoCustomResource',0);
+        }
         //include creative commons or copyright
         if($creativeCommons = $syllabus->cc_license){
             $templateProcessor->cloneBlock('NoCreativeCommons');
@@ -1888,10 +1901,11 @@ class SyllabusController extends Controller
         // add course schedule table to word document
         $courseScheduleTblColsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('row', 0)->get()->count();
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
-        if($courseScheduleTbl['rows']) {
+        if(count($courseScheduleTbl['rows'])>0) {
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
             $courseScheduleTable = new Table($tableStyle);
             // add a new row and cell to table for each learning activity
+        
             foreach ($courseScheduleTbl['rows'] as $rowIndex => $row) {
                 // add a row to the table
                 $courseScheduleTable->addRow();
@@ -1911,7 +1925,7 @@ class SyllabusController extends Controller
             $templateProcessor->setComplexBlock('courseScheduleTbl', $courseScheduleTable);
 
         } else {
-            $templateProcessor->cloneBlock('NoCourseScheduleTbl');
+            $templateProcessor->cloneBlock('NoCourseScheduleTbl',0);
             $templateProcessor->setValue('courseScheduleTbl', '');
         }
         //Outcome Maps
