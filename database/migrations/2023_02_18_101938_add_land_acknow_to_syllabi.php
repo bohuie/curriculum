@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIncludeAlignmentToSyllabiTable extends Migration
+class AddLandAcknowToSyllabi extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddIncludeAlignmentToSyllabiTable extends Migration
     public function up()
     {
         Schema::table('syllabi', function (Blueprint $table) {
-            $table->boolean('include_alignment')->after('course_id')->nullable();
+            $table->boolean('land_acknow')->after('copyright')->nullable();
             
         });
     }
@@ -27,7 +27,7 @@ class AddIncludeAlignmentToSyllabiTable extends Migration
     public function down()
     {
         Schema::table('syllabi', function (Blueprint $table) {
-            $table->dropColumn(['include_alignment']);
+            $table->dropColumn(['land_acknow']);
         });
     }
 }
