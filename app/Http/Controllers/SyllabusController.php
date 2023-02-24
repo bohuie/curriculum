@@ -1423,6 +1423,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NoCourseStructure');
+                        $templateProcessor->cloneBlock('NoCourseStructureDesc',0);
                         $templateProcessor->setValue('courseStructure0', str_replace("\n","</w:t><w:br/><w:t>",$courseStructure));
                         $i++;
                         for($i;$i<=20;$i++){
@@ -1713,15 +1714,37 @@ class SyllabusController extends Controller
 
             break;
         }
+    
         //include Custom Resource
-
         if(!empty($syllabus->custom_resource) && !empty($syllabus->custom_resource_title)){
-            $templateProcessor->cloneBlock('NoCustomResource');
-            $templateProcessor->setValue('custom_resource',$syllabus->custom_resource);
+            $CRArr = explode("\n", $syllabus->custom_resource);
+            $i=0;
+            if($ext == 'pdf') {
+                foreach($CRArr as $index => $courseCR){
+                    $templateProcessor->cloneBlock('NoCustomResource');
+                    $templateProcessor->setValue('custom_resource'.$i, $courseCR."</w:t><w:br/><w:t>");
+                    $i++;
+                }
+                
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('custom_resource'.$i, '');
+                }
+
+                
+            }else{
+                $templateProcessor->cloneBlock('NoCustomResource');
+                $templateProcessor->setValue('custom_resource0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->custom_resource));
+                $i++;
+                for($i;$i<=20;$i++){
+                    $templateProcessor->setValue('custom_resource'.$i, '');
+                }
+            }
             $templateProcessor->setValue('custom_resource_title',$syllabus->custom_resource_title);
+
         }else{
-            $templateProcessor->cloneBlock('NoCustomResource',0);
+            $templateProcessor->cloneBlock('NolatePolicy',0);
         }
+
         //include creative commons or copyright
         if($creativeCommons = $syllabus->cc_license){
             $templateProcessor->cloneBlock('NoCreativeCommons');
