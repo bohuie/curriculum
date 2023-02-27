@@ -506,8 +506,6 @@ class SyllabusController extends Controller
                 $syllabus->land_acknow=true;
             }
        
-            Log::Debug($importCourseSettings);
-            Log::Debug("wazoooo");
         // check if user set import settings and update them
 
             
@@ -1412,8 +1410,8 @@ class SyllabusController extends Controller
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($CStructArr as $index => $courseStruct){
-                            $templateProcessor->cloneBlock('NoCourseStructure');
                             $templateProcessor->cloneBlock('NoCourseStructureDesc',0);
+                            $templateProcessor->cloneBlock('NoCourseStructure');
                             $templateProcessor->setValue('courseStructure'.$i, $courseStruct."</w:t><w:br/><w:t>");
                             $i++;
                         }
@@ -1422,8 +1420,8 @@ class SyllabusController extends Controller
                             $templateProcessor->setValue('courseStructure'.$i, '');
                         }
                     }else{
-                        $templateProcessor->cloneBlock('NoCourseStructure');
                         $templateProcessor->cloneBlock('NoCourseStructureDesc',0);
+                        $templateProcessor->cloneBlock('NoCourseStructure');
                         $templateProcessor->setValue('courseStructure0', str_replace("\n","</w:t><w:br/><w:t>",$courseStructure));
                         $i++;
                         for($i;$i<=20;$i++){
@@ -1432,15 +1430,13 @@ class SyllabusController extends Controller
                     }
                     
                 }else{
-                    $templateProcessor->cloneBlock('NoCourseStructure',0);
                     $templateProcessor->cloneBlock('NoCourseStructureDesc');
+                    $templateProcessor->cloneBlock('NoCourseStructure',0);
                 }
 
                 if($courseSchedule = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $vancouverSyllabus->course_schedule)){
-                    $templateProcessor->cloneBlock('NoTopicsSchedule');
                     $templateProcessor->setValue('courseSchedule', $courseSchedule);
                 }else{
-                    $templateProcessor->cloneBlock('NoTopicsSchedule',0);
                     $templateProcessor->setValue('courseSchedule', '');
                 }
                 
@@ -1552,7 +1548,6 @@ class SyllabusController extends Controller
                 
 
                 if($learningOutcome = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_outcomes)){
-                    Log::Debug("we are here");
                     $LOutArr = explode("\n", $learningOutcome);
                     $i=0;
                     if($ext == 'pdf') {
@@ -1742,7 +1737,7 @@ class SyllabusController extends Controller
             $templateProcessor->setValue('custom_resource_title',$syllabus->custom_resource_title);
 
         }else{
-            $templateProcessor->cloneBlock('NolatePolicy',0);
+            $templateProcessor->cloneBlock('NoCustomResource',0);
         }
 
         //include creative commons or copyright
@@ -1925,6 +1920,7 @@ class SyllabusController extends Controller
         $courseScheduleTblColsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('row', 0)->get()->count();
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
         if(count($courseScheduleTbl['rows'])>0) {
+            $templateProcessor->cloneBlock('NoTopicsSchedule',0);
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
             $courseScheduleTable = new Table($tableStyle);
             // add a new row and cell to table for each learning activity
@@ -1948,6 +1944,7 @@ class SyllabusController extends Controller
             $templateProcessor->setComplexBlock('courseScheduleTbl', $courseScheduleTable);
 
         } else {
+            $templateProcessor->cloneBlock('NoTopicsSchedule');
             $templateProcessor->cloneBlock('NoCourseScheduleTbl',0);
             $templateProcessor->setValue('courseScheduleTbl', '');
         }
