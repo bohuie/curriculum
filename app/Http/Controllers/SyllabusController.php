@@ -1741,7 +1741,7 @@ class SyllabusController extends Controller
         }
 
         //include creative commons or copyright
-        if($creativeCommons = $syllabus->cc_license){
+        if($creativeCommons = $syllabus->cc_license && $syllabus->campus=='O'){
             $templateProcessor->cloneBlock('NoCreativeCommons');
             $templateProcessor->setValue('creativeCommons',$creativeCommons);
             $templateProcessor->setValue('name',$syllabus->course_instructor);
