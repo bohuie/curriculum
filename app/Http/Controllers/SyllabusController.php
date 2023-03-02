@@ -888,9 +888,9 @@ class SyllabusController extends Controller
 
                 //Course Description Okanagan
 
-                if($courseDescriptionOK = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $okanaganSyllabus->course_description)){
+                if($okanaganSyllabus->course_description){
                     
-                    $CDArr = explode("\n", $courseDescriptionOK);
+                    $CDArr = explode("\n", $okanaganSyllabus->course_description);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($CDArr as $index => $courseDesc){
@@ -918,8 +918,8 @@ class SyllabusController extends Controller
                 
                 //Course Format Okanagan
 
-                if($courseFormat = $okanaganSyllabus->course_format){
-                    $CFArr = explode("\n", $courseFormat);
+                if($okanaganSyllabus->course_format){
+                    $CFArr = explode("\n", $okanaganSyllabus->course_format);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($CFArr as $index => $courseForm){
@@ -933,7 +933,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NocourseFormat');
-                        $templateProcessor->setValue('courseFormat0', str_replace("\n","</w:t><w:br/><w:t>",$courseFormat));
+                        $templateProcessor->setValue('courseFormat0', str_replace("\n","</w:t><w:br/><w:t>",$okanaganSyllabus->course_format));
                         $i++;
                         for($i;$i<=20;$i++){
                             $templateProcessor->setValue('courseFormat'.$i, '');
@@ -946,8 +946,8 @@ class SyllabusController extends Controller
                 
                 //Course Overview Okanagan
 
-                if($courseOverview = $okanaganSyllabus->course_overview){
-                    $COArr = explode("\n", $courseOverview);
+                if($okanaganSyllabus->course_overview){
+                    $COArr = explode("\n", $okanaganSyllabus->course_overview);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($COArr as $index => $courseOver){
@@ -961,7 +961,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NocourseOverview');
-                        $templateProcessor->setValue('courseOverview0', str_replace("\n","</w:t><w:br/><w:t>",$courseOverview));
+                        $templateProcessor->setValue('courseOverview0', str_replace("\n","</w:t><w:br/><w:t>",$okanaganSyllabus->course_overview));
                         $i++;
                         for($i;$i<=30;$i++){
                             $templateProcessor->setValue('courseOverview'.$i, '');
@@ -996,8 +996,8 @@ class SyllabusController extends Controller
                 }
                 */
 
-                if($learningActivities = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_activities)){
-                    $LearnActArr = explode("\n", $learningActivities);
+                if($syllabus->learning_activities){
+                    $LearnActArr = explode("\n", $syllabus->learning_activities);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($LearnActArr as $index => $learnAct){
@@ -1011,7 +1011,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NoLearningActivities');
-                        $templateProcessor->setValue('learningActivities0', str_replace("\n","</w:t><w:br/><w:t>",$learningActivities));
+                        $templateProcessor->setValue('learningActivities0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_activities));
                         $i++;
                         for($i;$i<=20;$i++){
                             $templateProcessor->setValue('learningActivities'.$i, '');
@@ -1023,10 +1023,10 @@ class SyllabusController extends Controller
                 }
                 
                 // tell template processor to include other course staff if user completed the field(s)
-                if($otherCourseStaff = $syllabus->other_instructional_staff){
+                if($syllabus->other_instructional_staff){
                     $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
                     // split other course staff string on newline char
-                    $otherCourseStaffArr = explode("\n", $otherCourseStaff);
+                    $otherCourseStaffArr = explode("\n", $syllabus->other_instructional_staff);
                     // create a table for other course staff (workaround for no list option)
                     $otherCourseStaffTable = new Table($tableStyle);
                     //$otherCourseStaffTable->addRow();
@@ -1059,16 +1059,16 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoClassHours',0);
                 }
                 // tell template processor to include course schedule if user completed the field(s)
-                if ($schedule = $syllabus->class_meeting_days) {
+                if ($syllabus->class_meeting_days) {
                     $templateProcessor->cloneBlock('NoCourseDays');
-                    $templateProcessor->setValue('schedule', $schedule);
+                    $templateProcessor->setValue('schedule', $syllabus->class_meeting_days);
                 } else {
                     $templateProcessor->cloneBlock('NoCourseDays', 0);
                 }
                 // tell template processor to include office hours if user completed the field(s)
-                if ($officeHour = $syllabus->office_hours) {
+                if ($syllabus->office_hours) {
                     $templateProcessor->cloneBlock('NoOfficeHours');
-                    $templateProcessor->setValue('officeHour',$officeHour);
+                    $templateProcessor->setValue('officeHour',$syllabus->office_hours);
                 } else {
                     $templateProcessor->cloneBlock('NoOfficeHours', 0);
                 }
@@ -1116,8 +1116,8 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NolearningOutcomes',0);
                 }
                 */
-                if($learningOutcome = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_outcomes)){
-                    $LOutArr = explode("\n", $learningOutcome);
+                if($syllabus->learning_outcomes){
+                    $LOutArr = explode("\n", $syllabus->learning_outcomes);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($LOutArr as $index => $courseLOut){
@@ -1131,7 +1131,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NolearningOutcomes');
-                        $templateProcessor->setValue('learningOutcomes0', str_replace("\n","</w:t><w:br/><w:t>",$learningOutcome));
+                        $templateProcessor->setValue('learningOutcomes0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_outcomes));
                         $i++;
                         for($i;$i<=20;$i++){
                             $templateProcessor->setValue('learningOutcomes'.$i, '');
@@ -1141,38 +1141,10 @@ class SyllabusController extends Controller
                 }else{
                     $templateProcessor->cloneBlock('NolearningOutcomes',0);
                 }
-                /*
-                if($courseStructure = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->course_structure)){
-                    $CStructArr = explode("\n", $courseStructure);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($CStructArr as $index => $courseStruct){
-                            $templateProcessor->cloneBlock('NoCourseStructure');
-                            $templateProcessor->cloneBlock('NoCourseStructureDesc',0);
-                            $templateProcessor->setValue('courseStructure'.$i, $courseStruct."</w:t><w:br/><w:t>");
-                            $i++;
-                        }
-                        
-                        for($i;$i<=20;$i++){
-                            $templateProcessor->setValue('courseStructure'.$i, '');
-                        }
-                    }else{
-                        $templateProcessor->cloneBlock('NoCourseStructure');
-                        $templateProcessor->setValue('courseStructure0', str_replace("\n","</w:t><w:br/><w:t>",$courseStructure));
-                        $i++;
-                        for($i;$i<=20;$i++){
-                            $templateProcessor->setValue('courseStructure'.$i, '');
-                        }
-                    }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoCourseStructure',0);
-                    $templateProcessor->cloneBlock('NoCourseStructureDesc');
-                }
-                */
 
-                if($learningAssessments = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_assessments)){
-                    $LAssArr = explode("\n", $learningAssessments);
+
+                if($syllabus->learning_assessments){
+                    $LAssArr = explode("\n", $syllabus->learning_assessments);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($LAssArr as $index => $courseLAss){
@@ -1186,7 +1158,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NolearningAssessments');
-                        $templateProcessor->setValue('learningAssessments0', str_replace("\n","</w:t><w:br/><w:t>",$learningAssessments));
+                        $templateProcessor->setValue('learningAssessments0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_assessments));
                         $i++;
                         for($i;$i<=20;$i++){
                             $templateProcessor->setValue('learningAssessments'.$i, '');
@@ -1199,8 +1171,8 @@ class SyllabusController extends Controller
                 
                 //Learning Resources
 
-                if($learningResources = $syllabus->learning_resources){
-                    $LRArr = explode("\n", $learningResources);
+                if($syllabus->learning_resources){
+                    $LRArr = explode("\n", $syllabus->learning_resources);
                     $i=0;
                     if($ext == 'pdf') {
                         foreach($LRArr as $index => $courseLR){
@@ -1214,7 +1186,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NocourseLearningResources');
-                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n","</w:t><w:br/><w:t>",$learningResources));
+                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_resources));
                         $i++;
                         for($i;$i<=20;$i++){
                             $templateProcessor->setValue('courseLearningResources'.$i, '');
@@ -1404,8 +1376,8 @@ class SyllabusController extends Controller
                 }
 
                 //Course Structure Vancouver
-
-                if($courseStructure = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $vancouverSyllabus->course_structure)){
+        
+                if($courseStructure = $vancouverSyllabus->course_structure){
                     $CStructArr = explode("\n", $courseStructure);
                     $i=0;
                     if($ext == 'pdf') {
@@ -1434,14 +1406,14 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoCourseStructure',0);
                 }
 
-                if($courseSchedule = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $vancouverSyllabus->course_schedule)){
+                if($courseSchedule = $vancouverSyllabus->course_schedule){
                     $templateProcessor->setValue('courseSchedule', $courseSchedule);
                 }else{
                     $templateProcessor->setValue('courseSchedule', '');
                 }
                 
 
-                if($learningActivities = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_activities)){
+                if($learningActivities = $syllabus->learning_activities){
                     $LearnActArr = explode("\n", $learningActivities);
                     $i=0;
                     if($ext == 'pdf') {
@@ -1547,7 +1519,7 @@ class SyllabusController extends Controller
 
                 
 
-                if($learningOutcome = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_outcomes)){
+                if($learningOutcome = $syllabus->learning_outcomes){
                     $LOutArr = explode("\n", $learningOutcome);
                     $i=0;
                     if($ext == 'pdf') {
@@ -1576,7 +1548,7 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NolearningOutcomes',0);
                 }
 
-                if($learningAssessments = str_replace('&lt;/w:t&gt;&lt;w:br/&gt;&lt;w:t&gt;', '</w:t><w:br/><w:t>', $syllabus->learning_assessments)){
+                if($learningAssessments = $syllabus->learning_assessments){
                     $LAssArr = explode("\n", $learningAssessments);
                     $i=0;
                     if($ext == 'pdf') {
