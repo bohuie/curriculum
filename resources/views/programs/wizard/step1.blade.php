@@ -352,11 +352,11 @@
                                             @if ($plo->plo_category != NULL)
                                                 @if ($plo->plos->count() > 0)
                                                     <tr class="mt-5">
-                                                        <th class="text-left" colspan="3" style="background-color: #ebebeb;">{{$plo->plo_category}}</th>
+                                                        <th class="text-left" colspan="2" style="background-color: #ebebeb;">{{$plo->plo_category}}</th>
                                                     </tr>
                                                     <tr class="table-primary">
-                                                        <th class="text-left" colspan="2">Program Learning Outcome</th>
-                                                        <th class="text-center w-25" colspan="1">Actions</th>
+                                                        <th>Program Learning Outcome</th>
+                                                        <th class="text-center w-25">Actions</th>
                                                     </tr>
                                                 @else
                                                     <tr class="mt-5">
@@ -371,12 +371,18 @@
                                             @foreach($ploProgramCategories as $index => $ploCat)
                                                 @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                     <tr>
-                                                        <td class="text-center" style="width: 10%;">{{++$count}}</td>
+
                                                         <td>
-                                                            <span style="font-weight: bold;">{{$ploCat->plo_shortphrase}}</span><br>
+                                                            <span style="font-weight: bold;">
+                                                                @if($ploCat->plo_shortphrase!=NULL)
+                                                                    {{$ploCat->plo_shortphrase}}
+                                                                @else
+                                                                    Default Title: {{$defaultShortForms[$ploCat->pl_outcome_id]}}
+                                                                @endif
+                                                            </span><br>
                                                             {{$ploCat->pl_outcome}}
                                                         </td>
-                                                        <td class="text-center">
+                                                        <td class="text-center align-middle">
                                                             <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editPLO{{$ploCat->pl_outcome_id}}">
                                                                 Edit
                                                             </button>
@@ -484,18 +490,24 @@
                                                 <th class="text-left" colspan="3" style="background-color: #ebebeb;">Uncategorized PLOs</th>
                                             </tr>
                                             <tr class="table-primary">
-                                                <th class="text-left" colspan="2">Program Learning Outcome</th>
-                                                <th class="text-center" colspan="1">Actions</th>
+                                                <th>Program Learning Outcome</th>
+                                                <th class="text-center w-25">Actions</th>
                                             </tr>
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                             <tr>
-                                                <td class="text-center" style="width: 10%;">{{++$count}}</td>
+                                            
                                                 <td>
-                                                    <span style="font-weight: bold;">{{$unCatplo->plo_shortphrase}}</span><br>
+                                                    <span style="font-weight: bold;">
+                                                        @if($unCatplo->plo_shortphrase!=NULL)
+                                                            {{$unCatplo->plo_shortphrase}}
+                                                        @else
+                                                            Default Title: {{$defaultShortForms[$unCatplo->pl_outcome_id]}}
+                                                        @endif
+                                                    </span><br>
                                                     {{$unCatplo->pl_outcome}}
                                                 </td>
-                                                <td class="text-center">
+                                                <td class="text-center align-middle">
                                                     <button type="button" style="width:60px;" class="btn btn-secondary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editPLOunCat{{$unCatplo->pl_outcome_id}}">
                                                         Edit
                                                     </button>

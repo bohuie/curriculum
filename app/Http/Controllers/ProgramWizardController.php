@@ -93,14 +93,21 @@ class ProgramWizardController extends Controller
             }
         }
         
-        //dd($ploCategories);
+        $defaultShortForms=[];
+            $i=0;
+            foreach($plos as $plo){
+                
+                $alphabet = range('A', 'Z');
+                $defaultShortForms[$plo->pl_outcome_id]="PLO ".$alphabet[$i];
+                $i+=1;
+            }
         // get UnCategorized PLO's
         $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
 
         return view('programs.wizard.step1')->with('plos', $plos)->with('program', $program)->with('ploCategories', $ploCategories)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('ploProgramCategories', $ploProgramCategories)
-                                            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
+                                            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('defaultShortForms',$defaultShortForms);
     }
 
     public function step2($program_id, Request $request)

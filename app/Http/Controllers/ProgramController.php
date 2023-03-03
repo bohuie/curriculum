@@ -816,7 +816,35 @@ class ProgramController extends Controller
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($program_id, '.pdf');
 
-            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent'));
+
+            //Create Default Short Form for each PLO
+            /*
+            $defaultShortForms=[];
+
+            foreach($allPLO as $plo){
+
+                $longForm=$plo["pl_outcome"];
+
+                $words = explode(" ", $longForm);
+                $acronym = "";
+    
+                foreach ($words as $w) {
+                $acronym .= mb_substr($w, 0, 1);
+                }
+                $defaultShortForms[$plo["pl_outcome_id"]]=$acronym;
+    
+            }
+            */
+            $defaultShortForms=[];
+            $i=0;
+            foreach($allPLO as $plo){
+                
+                $alphabet = range('A', 'Z');
+                $defaultShortForms[$plo["pl_outcome_id"]]="PLO ".$alphabet[$i];
+                $i+=1;
+            }
+            
+            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent','defaultShortForms'));
             // get the content of the pdf document
             $content = $pdf->output();
             // set name of pdf
