@@ -2564,7 +2564,7 @@
             },
             xAxis: {
                 title: {
-                    text: 'Program Learning Outcomes',
+                    text: 'Program Learning Outcomes Bruh',
                     margin: 20,
                     style: {
                         fontWeight: 'bold',

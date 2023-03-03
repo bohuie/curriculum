@@ -410,6 +410,17 @@ class ProgramWizardController extends Controller
             $freqForMS[$index] = $freqOfMSId;
             $index++;
         }
+        
+        
+        $i=0;
+        foreach($plosInOrder as $plo){
+                $alphabet = range('A', 'Z');
+                if($plo==NULL){
+                    $plosInOrder[$i]="PLO ".$alphabet[$i];
+                }
+        $i+=1;
+        }
+        
 
         return view('programs.wizard.step4')->with('program', $program)
                                             ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
@@ -1883,15 +1894,20 @@ class ProgramWizardController extends Controller
             $output .= '</tr>
                         <tr>
                             <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>';
-
+            $alphabet = range('A', 'Z');
+            $i=0;
+            Log::Debug($plos);
             if (count($plos) < 7) {
                 //Categorized PLOs
+                
                 foreach($ploProgramCategories as $index => $plo) {
                     if ($plo->plo_category != NULL) {
                         if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
-                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.($index + 1).'</th>';
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.$alphabet[$i].'</th>';
+                            $i++;
                         } else {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
+                            $i++;
                         }
                     }
                 }
@@ -1901,9 +1917,11 @@ class ProgramWizardController extends Controller
                     if ($plo->plo_category == NULL) {
                         $uncatIndex++;
                         if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
-                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.( count($ploProgramCategories) + $uncatIndex).'</th>';
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO: '.$alphabet[$i].'</th>';
+                            $i++;
                         } else {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
+                            $i++;
                         }
                     }
                 }
