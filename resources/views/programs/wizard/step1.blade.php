@@ -371,7 +371,7 @@
                                             @foreach($ploProgramCategories as $index => $ploCat)
                                                 @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                     <tr>
-
+                                                        <!--
                                                         <td>
                                                             <span style="font-weight: bold;">
                                                                 @if($ploCat->plo_shortphrase!=NULL)
@@ -380,6 +380,12 @@
                                                                     Default Title: {{$defaultShortForms[$ploCat->pl_outcome_id]}}
                                                                 @endif
                                                             </span><br>
+                                                            {{$ploCat->pl_outcome}}
+                                                        </td>
+                                                         -->
+                                                         <td>
+                                                            <span style="font-weight: bold;">Title: {{$ploCat->plo_shortphrase}}</span><br>
+                                                            <span style="font-weight: bold;">Identifier: {{$defaultShortForms[$ploCat->pl_outcome_id]}}</span><br>
                                                             {{$ploCat->pl_outcome}}
                                                         </td>
                                                         <td class="text-center align-middle">
@@ -498,13 +504,8 @@
                                             <tr>
                                             
                                                 <td>
-                                                    <span style="font-weight: bold;">
-                                                        @if($unCatplo->plo_shortphrase!=NULL)
-                                                            {{$unCatplo->plo_shortphrase}}
-                                                        @else
-                                                            Default Title: {{$defaultShortForms[$unCatplo->pl_outcome_id]}}
-                                                        @endif
-                                                    </span><br>
+                                                    <span style="font-weight: bold;">Title: {{$unCatplo->plo_shortphrase}}</span><br>
+                                                    <span style="font-weight: bold;">Identifier: {{$defaultShortForms[$unCatplo->pl_outcome_id]}}</span><br>
                                                     {{$unCatplo->pl_outcome}}
                                                 </td>
                                                 <td class="text-center align-middle">

@@ -113,7 +113,7 @@
                                                     @if ($plo->plo_category != NULL)
                                                         @if ($plo->plos->count() > 0)
                                                             <tr class="table-secondary">
-                                                                <th class="text-left" colspan="2">{{$plo->plo_category}} 
+                                                                <th class="text-left">{{$plo->plo_category}} 
                                                                 <!-- @if ($numCatUsed > 3)    
                                                                     : (C - {{$catIndex + 1}})</th>
                                                                 @endif -->
@@ -123,10 +123,10 @@
                                                     @foreach($ploProgramCategories as $index => $ploCat)
                                                         @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                             <tr>
-                                                                <td class="text-left align-middle" style="width: 10%;">{{$index + 1}}</td>
+                                                                
                                                                 @if ($ploCat->plo_shortphrase == '' || $ploCat->plo_shortphrase == NULL)
                                                                     <td>
-                                                                        <span style="font-weight: bold;">PLO: {{$index + 1}}</span><br>
+                                                                        <span style="font-weight: bold;">Default Title: {{$defaultShortForms[$ploCat->pl_outcome_id]}}</span><br>
                                                                         {{$ploCat->pl_outcome}}
                                                                     </td>
                                                                 @else
@@ -142,15 +142,15 @@
                                                 <!--UnCategorized PLOs -->
                                                 @if($hasUncategorized)
                                                     <tr class="table-secondary">
-                                                        <th class="text-left" colspan="2">Uncategorized</th>
+                                                        <th class="text-left">Uncategorized</th>
                                                     </tr>
                                                 @endif
                                                 @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                                     <tr>
-                                                        <td class="text-left align-middle" style="width: 10%;">{{count($ploProgramCategories) + $unCatIndex + 1}}</td>
+                                                        
                                                         @if ($unCatplo->plo_shortphrase == '' || $unCatplo->plo_shortphrase == NULL)
                                                             <td>
-                                                                <span style="font-weight: bold;">PLO: {{count($ploProgramCategories) + $unCatIndex + 1}}</span><br>
+                                                                <span style="font-weight: bold;">Default Title: {{$defaultShortForms[$unCatplo->pl_outcome_id]}}</span><br>
                                                                 {{$unCatplo->pl_outcome}}
                                                             </td>
                                                         @else

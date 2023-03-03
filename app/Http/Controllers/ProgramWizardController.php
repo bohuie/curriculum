@@ -420,6 +420,15 @@ class ProgramWizardController extends Controller
                 }
         $i+=1;
         }
+
+        $defaultShortForms=[];
+            $i=0;
+            foreach($allPLO as $plo){
+                
+                $alphabet = range('A', 'Z');
+                $defaultShortForms[$plo["pl_outcome_id"]]="PLO ".$alphabet[$i];
+                $i+=1;
+        }
         
 
         return view('programs.wizard.step4')->with('program', $program)
@@ -427,7 +436,7 @@ class ProgramWizardController extends Controller
                                             ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
                                             ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
                                             ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses);
+                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)->with('defaultShortForms',$defaultShortForms);
     }
 
     public function resetKeys($array) {
