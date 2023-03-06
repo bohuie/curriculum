@@ -725,7 +725,7 @@
 
     function addPLOCategory() {
         // prepend plo category to the table
-        $('#addPLOCategoryTbl tbody').prepend(`
+        $('#addPLOCategoryTbl tbody').append(`
             <tr>
                 <td>
                     <input type="text" class="form-control" name="new_plo_categories[]" value="${$('#PLOCategory').val()}" placeholder="Eg. Communication Skills" form="savePLOCategoryChanges" required >
