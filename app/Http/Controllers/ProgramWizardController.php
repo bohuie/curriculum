@@ -92,7 +92,7 @@ class ProgramWizardController extends Controller
                 $hasUncategorized = true;
             }
         }
-        
+        //step 4 is innacurate, names are getting shifted
         $defaultShortForms=[];
             $i=0;
             foreach($plos as $plo){
