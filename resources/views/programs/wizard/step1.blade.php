@@ -371,7 +371,7 @@
                                             @foreach($ploProgramCategories as $index => $ploCat)
                                                 @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                     <tr>
-                                                        <td class="text-center" style="width: 10%;">{{++$count}}</td>
+                                                        <td class="text-center" style="width: 10%;">{{$defaultShortFormsIndex[$ploCat->pl_outcome_id]}}</td>
                                                         <td>
                                                             <span style="font-weight: bold;">{{$ploCat->plo_shortphrase}}</span><br>
                                                             {{$ploCat->pl_outcome}}
@@ -490,7 +490,7 @@
                                         @endif
                                         @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                             <tr>
-                                                <td class="text-center" style="width: 10%;">{{++$count}}</td>
+                                                <td class="text-center" style="width: 10%;">{{$defaultShortFormsIndex[$unCatplo->pl_outcome_id]}}</td>
                                                 <td>
                                                     <span style="font-weight: bold;">{{$unCatplo->plo_shortphrase}}</span><br>
                                                     {{$unCatplo->pl_outcome}}

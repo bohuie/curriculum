@@ -489,6 +489,14 @@ class ProgramController extends Controller
         // It was taken from ProgramWizardController.php which also needs to be refactored 
 
         // get url of plos to clos cluster chart
+
+        //setting default shorthands for PLOs so chart doesn't use index
+        for($i=0; $i<count($plosInOrder); $i++){
+            if($plosInOrder[$i]==NULL){
+                $plosInOrder[$i]="PLO #".($i+1);
+            }
+        }
+
         $plosToClosClusterChartImgURL = $this->barChartPOST(
             "plosToClosCluster-" . $program->program_id . ".jpeg",
             "Number of Course Outcomes per Program Learning Outcomes", 
@@ -816,7 +824,26 @@ class ProgramController extends Controller
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($program_id, '.pdf');
 
-            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent'));
+            //get defaultShortForms based on PLO Category, then Creation Order
+            $defaultShortForms=[];
+            $defaultShortFormsIndex=[];
+            $plosInOrderCat=[];
+
+            foreach($ploCategories as $ploCat){
+                $plosByCat=ProgramLearningOutcome::where('plo_category_id', $ploCat["plo_category_id"])->get();
+                array_push($plosInOrderCat, $plosByCat);
+                
+            }
+            $ploDefaultCount=0;
+            for($i=0; $i<count($plosInOrderCat); $i++){
+                for($j=0; $j<count($plosInOrderCat[$i]); $j++){
+                    $defaultShortForms[$plosInOrderCat[$i][$j]["pl_outcome_id"]]="PLO #".($ploDefaultCount+1);
+                    $defaultShortFormsIndex[$plosInOrderCat[$i][$j]["pl_outcome_id"]]=$ploDefaultCount+1;
+                    $ploDefaultCount++;
+                }
+            }
+
+            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent','defaultShortForms','defaultShortFormsIndex'));
             // get the content of the pdf document
             $content = $pdf->output();
             // set name of pdf
@@ -860,7 +887,6 @@ class ProgramController extends Controller
      * @return String $url of spreadsheet file 
      */  
     public function spreadsheet(Request $request, $programId) {
-
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {

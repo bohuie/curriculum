@@ -123,10 +123,10 @@
                                                     @foreach($ploProgramCategories as $index => $ploCat)
                                                         @if ($plo->plo_category_id == $ploCat->plo_category_id)
                                                             <tr>
-                                                                <td class="text-left align-middle" style="width: 10%;">{{$index + 1}}</td>
+                                                                <td class="text-left align-middle" style="width: 10%;">{{$defaultShortFormsIndex[$ploCat->pl_outcome_id]}}</td>
                                                                 @if ($ploCat->plo_shortphrase == '' || $ploCat->plo_shortphrase == NULL)
                                                                     <td>
-                                                                        <span style="font-weight: bold;">PLO: {{$index + 1}}</span><br>
+                                                                        <span style="font-weight: bold;">{{$defaultShortForms[$ploCat->pl_outcome_id]}}</span><br>
                                                                         {{$ploCat->pl_outcome}}
                                                                     </td>
                                                                 @else
@@ -147,10 +147,10 @@
                                                 @endif
                                                 @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                                     <tr>
-                                                        <td class="text-left align-middle" style="width: 10%;">{{count($ploProgramCategories) + $unCatIndex + 1}}</td>
+                                                        <td class="text-left align-middle" style="width: 10%;">{{$defaultShortFormsIndex[$ploCat->pl_outcome_id]}}</td>
                                                         @if ($unCatplo->plo_shortphrase == '' || $unCatplo->plo_shortphrase == NULL)
                                                             <td>
-                                                                <span style="font-weight: bold;">PLO: {{count($ploProgramCategories) + $unCatIndex + 1}}</span><br>
+                                                                <span style="font-weight: bold;">{{$defaultShortForms[$ploCat->pl_outcome_id]}}</span><br>
                                                                 {{$unCatplo->pl_outcome}}
                                                             </td>
                                                         @else
