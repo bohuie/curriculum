@@ -100,7 +100,7 @@
                             @foreach($ploProgramCategories as $index => $ploCat)
                                 @if ($category->plo_category_id == $ploCat->plo_category_id)
                                         <tr style="font-size:10px">
-                                            <td class="text-center active" style="width:5%;vertical-align:middle;"><b>{{$index + 1}}</b></td>
+                                            <td class="text-center active" style="width:5%;vertical-align:middle;"><b>{{$defaultShortFormsIndex[$ploCat->pl_outcome_id]}}</b></td>
                                             <td>
                                                 <span><b>{{$ploCat->plo_shortphrase}}</b></span><br>
                                                 {{$ploCat->pl_outcome}}
@@ -117,7 +117,7 @@
                                 </tr>
                                 @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                 <tr style="font-size:10px">
-                                    <td class="text-center active" style="width:5%;vertical-align:middle;"><b>{{count($ploProgramCategories) + $unCatIndex + 1}}</b></td>
+                                    <td class="text-center active" style="width:5%;vertical-align:middle;"><b>{{$defaultShortFormsIndex[$unCatplo->pl_outcome_id]}}</b></td>
                                     <td style="font-size:10px;">
                                         <span ><b>{{$unCatplo->plo_shortphrase}}</b></span><br>
                                         {{$unCatplo->pl_outcome}}
@@ -241,9 +241,9 @@
                                                     @endif
                                                 @else 
                                                     @if ($index < $category->plos->count() - ($program->programLearningOutcomes->count() % $category->plos->count()))   
-                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count())}}"><b>{{$defaultShortForms[$plo->pl_outcome_id]}}</b></td>
                                                     @else 
-                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}"><b>PLO #{{$ploIndexArray[$plo->pl_outcome_id]}}</b></td>
+                                                        <td colspan="{{floor($program->programLearningOutcomes->count() / $category->plos->count()) + 1}}"><b>{{$defaultShortForms[$plo->pl_outcome_id]}}</b></td>
                                                     @endif
                                                 @endif
                                             @endforeach
@@ -333,9 +333,9 @@
                                                 @endif
                                             @else 
                                                 @if ($index < $unCategorizedPLOS->count() - ($program->programLearningOutcomes->count() % $unCategorizedPLOS->count()))   
-                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>PLO #{{$ploIndexArray[$unCatPLO->pl_outcome_id]}}</b></td>
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count())}}"><b>{{$defaultShortForms[$unCatPLO->pl_outcome_id]}}</b></td>
                                                 @else 
-                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>PLO #{{$ploIndexArray[$unCatPLO->pl_outcome_id]}}</b></td>
+                                                    <td colspan="{{floor($program->programLearningOutcomes->count() / $unCategorizedPLOS->count()) + 1}}"><b>{{$defaultShortForms[$unCatPLO->pl_outcome_id]}}</b></td>
                                                 @endif
                                             @endif
                                         @endforeach
