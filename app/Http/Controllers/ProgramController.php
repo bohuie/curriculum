@@ -834,6 +834,7 @@ class ProgramController extends Controller
                 array_push($plosInOrderCat, $plosByCat);
                 
             }
+
             $ploDefaultCount=0;
             for($i=0; $i<count($plosInOrderCat); $i++){
                 for($j=0; $j<count($plosInOrderCat[$i]); $j++){
@@ -841,6 +842,12 @@ class ProgramController extends Controller
                     $defaultShortFormsIndex[$plosInOrderCat[$i][$j]["pl_outcome_id"]]=$ploDefaultCount+1;
                     $ploDefaultCount++;
                 }
+            }
+        
+            foreach($unCategorizedPLOS as $unCatPLO){
+                $defaultShortForms[$unCatPLO->pl_outcome_id]="PLO #".($ploDefaultCount+1);
+                $defaultShortFormsIndex[$unCatPLO->pl_outcome_id]=$ploDefaultCount+1;
+                $ploDefaultCount++;
             }
 
             $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent','defaultShortForms','defaultShortFormsIndex'));

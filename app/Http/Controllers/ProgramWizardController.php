@@ -107,6 +107,7 @@ class ProgramWizardController extends Controller
             array_push($plosInOrderCat, $plosByCat);
                         
         }
+        
         $ploDefaultCount=0;
         for($i=0; $i<count($plosInOrderCat); $i++){
             for($j=0; $j<count($plosInOrderCat[$i]); $j++){
@@ -114,6 +115,12 @@ class ProgramWizardController extends Controller
                 $defaultShortFormsIndex[$plosInOrderCat[$i][$j]["pl_outcome_id"]]=$ploDefaultCount+1;
                 $ploDefaultCount++;
             }
+        }
+
+        foreach($unCategorizedPLOS as $unCatPLO){
+            $defaultShortForms[$unCatPLO->pl_outcome_id]="PLO #".($ploDefaultCount+1);
+            $defaultShortFormsIndex[$unCatPLO->pl_outcome_id]=$ploDefaultCount+1;
+            $ploDefaultCount++;
         }
         
         return view('programs.wizard.step1')->with('plos', $plos)->with('program', $program)->with('ploCategories', $ploCategories)
@@ -431,8 +438,7 @@ class ProgramWizardController extends Controller
         $i+=1;
         }
         
-        
-        Log::Debug($plosInOrder);
+
 
         //get defaultShortForms based on PLO Category, then Creation Order
         $defaultShortForms=[];
@@ -451,6 +457,12 @@ class ProgramWizardController extends Controller
                 $defaultShortFormsIndex[$plosInOrderCat[$i][$j]["pl_outcome_id"]]=$ploDefaultCount+1;
                 $ploDefaultCount++;
             }
+        }
+
+        foreach($unCategorizedPLOS as $unCatPLO){
+                $defaultShortForms[$unCatPLO->pl_outcome_id]="PLO #".($ploDefaultCount+1);
+                $defaultShortFormsIndex[$unCatPLO->pl_outcome_id]=$ploDefaultCount+1;
+                $ploDefaultCount++;
         }
 
         return view('programs.wizard.step4')->with('program', $program)

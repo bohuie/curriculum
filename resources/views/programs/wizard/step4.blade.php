@@ -147,10 +147,10 @@
                                                 @endif
                                                 @foreach($unCategorizedPLOS as $unCatIndex => $unCatplo)
                                                     <tr>
-                                                        <td class="text-left align-middle" style="width: 10%;">{{$defaultShortFormsIndex[$ploCat->pl_outcome_id]}}</td>
+                                                        <td class="text-left align-middle" style="width: 10%;">{{$defaultShortFormsIndex[$unCatplo->pl_outcome_id]}}</td>
                                                         @if ($unCatplo->plo_shortphrase == '' || $unCatplo->plo_shortphrase == NULL)
                                                             <td>
-                                                                <span style="font-weight: bold;">{{$defaultShortForms[$ploCat->pl_outcome_id]}}</span><br>
+                                                                <span style="font-weight: bold;">{{$defaultShortForms[$unCatplo->pl_outcome_id]}}</span><br>
                                                                 {{$unCatplo->pl_outcome}}
                                                             </td>
                                                         @else
