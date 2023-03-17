@@ -121,12 +121,7 @@
 <script type="application/javascript">
     $(document).ready(function () {
 
-        $("form").submit(function () {
-            // prevent duplicate form submissions
-            $(this).find(":submit").attr('disabled', 'disabled');
-            $(this).find(":submit").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-
-        });
+        
     });
 </script>
 
