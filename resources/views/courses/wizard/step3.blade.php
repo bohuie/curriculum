@@ -147,7 +147,6 @@
                     <div id="admins">
                         <form action="{{route('courses.tlaReorder', $course->course_id)}}" method="POST">
                             @csrf
-                            {{method_field('POST')}}
                             <table class="table table-light reorder-tbl-rows" id="l_activity_table">
                                 <tr class="table-primary">
                                     <th class="text-center">#</th>
