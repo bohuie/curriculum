@@ -92,7 +92,7 @@
     <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
         <div>
-            To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/curriculum/forms">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
+            To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/forms/">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
         </div>
     </div>
 
@@ -751,7 +751,7 @@
             <!-- Course Missed Activity Policy -->
             <div class="col-12">
                 <label for="missingActivity"><h7 class="fw-bold">Missed Activity Policy</h7></label>
-                <p class="inputFieldDescription">{{$inputFieldDescriptions['missedActivityPolicy']}}</p>
+                <p class="inputFieldDescription">{!! $inputFieldDescriptions['missedActivityPolicy'] !!}</p> 
                 <div id="formatMAP" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                         on a new line for the best formatting
