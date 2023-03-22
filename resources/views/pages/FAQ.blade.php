@@ -213,6 +213,54 @@
                 </div>
             </div>
             
+            <div class="accordion" id="FAQAccordion9">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader9">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion9" aria-expanded="false" aria-controls="collapseFAQAccordion9">
+                            <h5>How do I register an account with this website?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion9" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader9" data-bs-parent="FAQAccordion9">
+                        <div class="accordion-body lh-lg">
+                            <p><a href="https://curriculum.ok.ubc.ca/">Curriculum MAP<a> is a tool to support curriculum mapping, analysis and planning. Curriculum MAP also has a feature to generate syllabi according to the policies, guidelines and templates provided by <a href="https://senate.ubc.ca/okanagan/">UBC Okanagan<a> and <a href="https://senate.ubc.ca/vancouver/">UBC Vancouver<a> senates.</p>
+                            <p class="fw-bold">How do I register?</p>
+                            <ol>
+                                <li>Click on "Register" at the top of the <a href="https://curriculum.ok.ubc.ca/">Curriculum MAP Website<a>.</li>
+                                <li>Create an account by entering your name, email address, and a password for the account.</li>
+                                <li>Click the <button type="submit" class="btn btn-primary">{{ __('Register') }}</button> button. A verification email will be sent to the email you have entered.</li>
+                                <li>Navigate to your email and open the verification notification.</li>
+                                <li>Click on the <img src=" {{ asset('img/verify.png') }}"/> button in the email.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" id="FAQAccordion9">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader9">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion9" aria-expanded="false" aria-controls="collapseFAQAccordion9">
+                            <h5>I registered my email account, but I cannot log in. Why?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion9" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader9" data-bs-parent="FAQAccordion9">
+                        <div class="accordion-body lh-lg">
+                            <p class="fw-bold">There are one of two reasons why you are unable to log in:</p>
+                            <ol>
+                                <li>You are using a different email address than the one you used to create the account. Try to log in with another email address. If this does not work then you will have to register again. </li>
+                                <li>It has been too long since you registered the account and failed to activate it. You need to register again and activate your account by logging into Curriculum MAP immediately. </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="accordion" id="FAQAccordion10">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
