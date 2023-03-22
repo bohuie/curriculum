@@ -94,7 +94,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->course_description}}</p>
+            @php ($course_description=explode("\n",$vancouverSyllabus->course_description))
+            @foreach($course_description as $course_des)
+            <p>{{$course_des}}</p>
+            @endforeach     
+            
         </div>
 
         <!-- course prerequisites -->
@@ -196,7 +200,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->instructor_bio}}</p>
+            @php ($instructor_bio=explode("\n",$vancouverSyllabus->instructor_bio))
+            @foreach($instructor_bio as $instr_bio)
+            <p>{{$instr_bio}}</p>
+            @endforeach     
+
         </div>
         <!-- other instructional staff -->
         <div class="mb-4">
@@ -241,7 +249,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->course_structure}}</p>
+            @php ($course_structure=explode("\n",$vancouverSyllabus->course_structure))
+            @foreach($course_structure as $course_struct)
+            <p>{{$course_struct}}</p>
+            @endforeach     
+        
         </div>
         <!-- schedule of topics -->
         <div class="mb-4">
@@ -308,7 +320,11 @@
                 </h6>
             </div>
             <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
-            <p>{{$syllabus->learning_outcomes}}</p>                                 
+            @php ($learning_outcomes=explode("\n",$syllabus->learning_outcomes))
+            @foreach($learning_outcomes as $learning_outcome)
+            <p>{{$learning_outcome}}</p>
+            @endforeach     
+
         </div>
         @endif
         <!--  learning activities -->
@@ -325,7 +341,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_activities}}</p>     
+            @php ($learning_activities=explode("\n",$syllabus->learning_activities))
+            @foreach($learning_activities as $learning_activity)
+            <p>{{$learning_activity}}</p>
+            @endforeach     
+            
         </div>
         @endif                               
         <!--  learning materials -->
@@ -342,7 +362,12 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_materials}}</p>                               
+
+            @php ($learning_materials=explode("\n",$syllabus->learning_materials))
+            @foreach($learning_materials as $learning_material)
+            <p>{{$learning_material}}</p>
+            @endforeach   
+
         </div>
         @endif
         <!--  assessments of learning -->
@@ -360,7 +385,10 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_assessments}}</p>                               
+            @php ($learning_assessments=explode("\n",$syllabus->learning_assessments))
+            @foreach($learning_assessments as $learning_assess)
+            <p>{{$learning_assess}}</p>
+            @endforeach                            
         </div>
         @endif
         <!--  course alignment table -->
@@ -557,7 +585,10 @@
                             </span>
                         </h6>
                     </div>
-                    <p>{{$syllabus->learning_resources}}</p>
+                    @php ($learning_resources=explode("\n",$syllabus->learning_resources))
+                    @foreach($learning_resources as $learning_res)
+                    <p>{{$learning_res}}</p>
+                    @endforeach
                 </div>
         @endif
             @foreach ($vancouverSyllabusResources as $index => $resource) 
@@ -655,7 +686,10 @@
             <div class="vSyllabusHeader2">
                 <h6>PASSING/GRADING CRITERIA</h6>
             </div>
-            <p>{{$syllabus->passing_criteria}}</p>
+            @php ($passing_criteria=explode("\n",$syllabus->passing_criteria))
+            @foreach($passing_criteria as $passing_crit)
+            <p>{{$passing_crit}}</p>
+            @endforeach
         </div>
 
         <!--  custom resource -->
