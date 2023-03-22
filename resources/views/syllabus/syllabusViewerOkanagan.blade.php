@@ -186,6 +186,19 @@
             </div>
             <p>{{$syllabus->learning_materials}}</p>
         </div>
+
+        <!-- learning resources -->
+        <div class="mb-4">
+                <div>
+                    <h6 class="oSyllabusHeader">Learning Resources
+                        <span>
+                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                        </span>
+                    </h6>
+                </div>
+                <p>{{$syllabus->learning_resources}}</p>
+        </div>
+
         <!--  assessments of learning -->
         <div class="mb-4">
             <div>
@@ -459,7 +472,7 @@
             <div>
                 <h6 class="oSyllabusHeader">Late Policy
                     <span>
-                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['latePolicy']}}"></i>
                     </span>
                 </h6>
             </div>
@@ -475,11 +488,7 @@
         <!--  missed activity policy -->
         <div class="mb-4">
             <div>
-                <h6 class="oSyllabusHeader">Missed Activity Policy
-                    <span>
-                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
-                    </span>
-                </h6>
+                <h6 class="oSyllabusHeader">Missed Activity Policy</h6>
             </div>
             <p>{{$syllabus->missed_activity_policy}}</p>
         </div>
@@ -491,17 +500,15 @@
             <p>{{$syllabus->passing_criteria}}</p>
         </div>
 </div>
-        <!-- learning resources -->
+        
+        <!-- Additional Course-Specific Information-->
         <div class="mb-4">
-                <div>
-                    <h6 class="oSyllabusHeader">Learning Resources
-                        <span>
-                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
-                        </span>
-                    </h6>
-                </div>
-                <p>{{$syllabus->learning_resources}}</p>
-            </div>
+                    <div>
+                        <h6 class="oSyllabusHeader">{{ !empty($syllabus) ? $syllabus->custom_resource_title : ''}}</h6>
+                    </div>
+                    <p>{{ !empty($syllabus) ? $syllabus->custom_resource : ''}}</p>
+        </div>
+
         <!-- student services resources -->
         <div class="mb-4">
             <div>
@@ -606,15 +613,16 @@
         </div>
         <div class="mb-4">
 
-        @if($syllabus->copyright)
+        @if($syllabus->copyright==1 && $syllabus->cc_license==NULL)
             <p class="text-center">
             <h6><strong><u> Copyright Statement </u></strong></h6></n>
             All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</p>
         @else
-
-            <h6><strong><u>Creative Commons Open Copyright License</u></strong></h6>
-            <br>
-            <p>{{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}} © 2022 by {{$syllabus->course_instructor}} is licensed under {{$syllabus->cc_license}}. Visit the Creative Commons Website for more information (<a href="https://creativecommons.org/licenses/">click here</a>).<p>
+            @if($syllabus->cc_license!=NULL)
+                <p class="text-center">
+                <h6><strong><u>Creative Commons Open Copyright License</u></strong></h6></n>
+                {{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}} © 2022 by {{$syllabus->course_instructor}} is licensed under {{$syllabus->cc_license}}. Visit the Creative Commons Website for more information (<a href="https://creativecommons.org/licenses/">click here</a>).<p>
+            @endif
         @endif
 
         </div>
