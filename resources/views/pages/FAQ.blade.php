@@ -239,7 +239,7 @@
                 </div>
             </div>
 
-            <div class="accordion" id="FAQAccordion9">
+            <div class="accordion" id="FAQAccordion10">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader9">
@@ -261,17 +261,17 @@
                 </div>
             </div>
 
-            <div class="accordion" id="FAQAccordion10">
+            <div class="accordion" id="FAQAccordion11">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
-                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader10">
-                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion10" aria-expanded="false" aria-controls="collapseFAQAccordion10">
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader11">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion11" aria-expanded="false" aria-controls="collapseFAQAccordion11">
                             <h5>How do I <b>duplicate</b> a course, program, or syllabus?</h5>                
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion10" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader10" data-bs-parent="FAQAccordion10">
+                    <div id="collapseFAQAccordion11" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader11" data-bs-parent="FAQAccordion11">
                         <div class="accordion-body lh-lg">
                             <p style="font-size:small" ><b>Note</b>: You must own the course, program, or syllabus in order to duplicate it.</p>
                             <p class="fw-bold">From the dashboard</p>
@@ -285,17 +285,17 @@
                 </div>
             </div>
 
-            <div class="accordion" id="FAQAccordion11">
+            <div class="accordion" id="FAQAccordion12">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
-                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader11">
-                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion11" aria-expanded="false" aria-controls="collapseFAQAccordion11">
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader12">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion12" aria-expanded="false" aria-controls="collapseFAQAccordion12">
                             <h5>How do I add <b>collaborators</b> to my course, program, or syllabus?</h5>         
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion11" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader11" data-bs-parent="FAQAccordion11">
+                    <div id="collapseFAQAccordion12" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader12" data-bs-parent="FAQAccordion12">
                         <div class="accordion-body lh-lg">
                             <p>The collaborators feature allows an owner of a course, program or syllabus to share their work with other users. The owner can select from two types of collaborators, viewers and editors. A Viewer is restricted to only being able to view the summary information, whereas an editor can make changes and create new elements, but cannot add collaborators or delete the Course, Program, or Syllabus. An example of the collaborators feature would be to add a teaching assistant to your course or syllabus as a viewer, so they can access course information.</p>
                             <p style="font-size:small" ><b>Note</b>: You must own the course, program, or syllabus in order to add collaborators.</p>
@@ -315,31 +315,12 @@
                 </div>
             </div>
 
-            <div class="accordion" id="FAQAccordion12">
-                <div class="accordion-item mb-2">
-                    <!-- FAQ accordion header -->
-                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader12">
-                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion12" aria-expanded="false" aria-controls="collapseFAQAccordion12">
-                            <h5>I ran into an error message or bug. What do I do?</h5>                
-                        </button>
-                    </h2>
-                                                        
-                    <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion12" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader12" data-bs-parent="FAQAccordion12">
-                        <div class="accordion-body lh-lg">
-                            <p>
-                                Please let us know right away so we can fix it and support you by emailing <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a>.                            
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div> 
             <div class="accordion" id="FAQAccordion13">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader13">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion13" aria-expanded="false" aria-controls="collapseFAQAccordion13">
-                            <h5>Can non-UBC users create an account and use this web application?</h5>                
+                            <h5>I ran into an error message or bug. What do I do?</h5>                
                         </button>
                     </h2>
                                                         
@@ -347,7 +328,7 @@
                     <div id="collapseFAQAccordion13" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader13" data-bs-parent="FAQAccordion13">
                         <div class="accordion-body lh-lg">
                             <p>
-                            While this tool was created to serve the UBC community, anyone can register and use the site. However, since information such as BC’s Ministry-related standards and UBC strategic plans are presented, not all users may benefit from every feature.                            
+                                Please let us know right away so we can fix it and support you by emailing <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a>.                            
                             </p>
                         </div>
                     </div>
@@ -358,12 +339,31 @@
                     <!-- FAQ accordion header -->
                     <h2 class="accordion-header fs-2" id="FAQAccordionHeader14">
                         <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion14" aria-expanded="false" aria-controls="collapseFAQAccordion14">
-                            <h5>Where is my information stored?</h5>                
+                            <h5>Can non-UBC users create an account and use this web application?</h5>                
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
                     <div id="collapseFAQAccordion14" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader14" data-bs-parent="FAQAccordion14">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            While this tool was created to serve the UBC community, anyone can register and use the site. However, since information such as BC’s Ministry-related standards and UBC strategic plans are presented, not all users may benefit from every feature.                            
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="accordion" id="FAQAccordion15">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader15">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion15" aria-expanded="false" aria-controls="collapseFAQAccordion15">
+                            <h5>Where is my information stored?</h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion15" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader15" data-bs-parent="FAQAccordion15">
                         <div class="accordion-body lh-lg">
                             <p>
                             The information gathered on the UBC Curriculum MAP website is collected under the authority of section 26(e) of the British Columbia <a href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96165_02">Freedom of Information and Protection of Privacy Act</a>.
@@ -379,17 +379,17 @@
                 </div>
             </div>
             
-            <div class="accordion" id="FAQAccordion15">
+            <div class="accordion" id="FAQAccordion16">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
-                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader15">
-                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion15" aria-expanded="false" aria-controls="collapseFAQAccordion15">
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader16">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion16" aria-expanded="false" aria-controls="collapseFAQAccordion16">
                             <h5>Which web browser is recommended?</h5>                        
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion15" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader15" data-bs-parent="FAQAccordion15">
+                    <div id="collapseFAQAccordion16" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader16" data-bs-parent="FAQAccordion16">
                         <div class="accordion-body lh-lg">
                             <p>Google Chrome and Mozilla Firefox are strongly recommended. This tool is not optimized for use with other web browsers and may perform unexpectedly.</p>
                         </div>
@@ -397,17 +397,17 @@
                 </div>
             </div> 
 
-            <div class="accordion" id="FAQAccordion16">
+            <div class="accordion" id="FAQAccordion17">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
-                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader16">
-                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion16" aria-expanded="false" aria-controls="collapseFAQAccordion16">
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader17">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion17" aria-expanded="false" aria-controls="collapseFAQAccordion17">
                             <h5>Can I collaborate with someone outside my organization?</h5>                
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion16" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader16" data-bs-parent="FAQAccordion16">
+                    <div id="collapseFAQAccordion17" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader17" data-bs-parent="FAQAccordion17">
                         <div class="accordion-body lh-lg">
                             <p>
                             Yes, the “collaboration” feature allows all users to collaborate with anybody via a valid email address.                              
