@@ -334,7 +334,7 @@
         <div class="col-12">
             <label for="otherCourseStaff"><h5 class="fw-bold">Other Instructional Staff</h5></label>
             <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['otherCourseStaff']}}</p>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['otherCourseStaff']}}"></i>
             <div id="formatStaff" class="collapsibleNotes btn-primary rounded-3"
                 style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
@@ -368,7 +368,7 @@
                     <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
                 </button>
             </span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['courseSchedule']}}</p>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
 
         </div>
 
@@ -474,7 +474,7 @@
         <div class="col-12">
             <label for="learningOutcome"><h5 class="fw-bold">Learning Outcomes</h5></label>
             <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningOutcomes']}}</p>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningOutcomes']}}"></i>
             <p class="inputFieldDescription"><i>Upon successful completion of this course, students will be able to ...</i></p>
             <div id="formatCLOs" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
@@ -485,7 +485,7 @@
         <div class="col-12">
             <label for="learningActivities"><h5 class="fw-bold">Learning Activities</h5></label>
             <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningActivities']}}</p>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningActivities']}}"></i>
             <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
             </div>                                            
@@ -495,7 +495,7 @@
         <div class="col-12">
             <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label>
             <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningMaterials'] !!}</p> 
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningMaterials']}}"></i>
             <div id="formatLM" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                     on a new line for the best formatting
@@ -513,7 +513,7 @@
         <div class="col-12">
             <label for="learningAssessments"><h5 class="fw-bold">Assessments of Learning</h5></label>
             <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningAssessments']}}</p>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningAssessments']}}"></i>
             <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry on a new line for the best formatting results.</span>                                        
             </div>                                            
@@ -724,7 +724,7 @@
             <!-- Late Policy -->
             <div class="col-12">
                 <label for="latePolicy"><h7 class="fw-bold">Late Policy</h7></label>
-                <p class="inputFieldDescription">{{$inputFieldDescriptions['latePolicy']}}</p>
+                <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['latePolicy']}}"></i>
                 <div id="formatLP" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                         on a new line for the best formatting
@@ -751,7 +751,7 @@
             <!-- Course Missed Activity Policy -->
             <div class="col-12">
                 <label for="missingActivity"><h7 class="fw-bold">Missed Activity Policy</h7></label>
-                <p class="inputFieldDescription">{!! $inputFieldDescriptions['missedActivityPolicy'] !!}</p> 
+                <p class="inputFieldDescription">{!! $inputFieldDescriptions['missedActivityPolicy'] !!}</p>
                 <div id="formatMAP" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                         on a new line for the best formatting
@@ -783,7 +783,7 @@
         <!-- Additional Course-Specific Information-->
         <div class="col-12">
             <h5 class="fw-bold">Additional Course-Specific Information</h5></label>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['customResource']}}</p>
+            <p class="inputFieldDescription">{{$inputFieldDescriptions['customResource']}}</p> 
                     <textarea data-formatnoteid="formatCS" style="height:25px;overflow:hidden;resize:none" oninput="validateMaxlength()" onpaste="validateMaxlength()" resize="none" maxlength="10000" id="customResourceTitle" 
                     name="customResourceTitle" class="form-control" type="date" form="sylabusGenerator"
                         spellcheck="true" placeholder="Title of Custom Section">{{ !empty($syllabus) ? $syllabus->custom_resource_title : ''}}</textarea>

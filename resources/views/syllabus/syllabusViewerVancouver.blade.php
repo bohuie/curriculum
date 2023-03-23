@@ -12,15 +12,7 @@
     </div>
     <!-- body -->
     <div class="card-body">
-        <!-- land acknowledgement -->
-        @if (in_array($vancouverSyllabusResources[0]->id, $selectedVancouverSyllabusResourceIds))
-        <div class="mb-4">
-            <div class="vSyllabusHeader">
-                <h6>{{strtoupper($vancouverSyllabusResources[0]->title)}}</h6>
-            </div>
-            <p>We acknowledge that the UBC Vancouver campus is situated within the traditional, ancestral and unceded territory of the Musqueam.</p>
-        </div>
-        @endif
+
         <!-- course information -->
         <div class="mb-4">
             <div class="vSyllabusHeader">
@@ -102,7 +94,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->course_description}}</p>
+            @php ($course_description=explode("\n",$vancouverSyllabus->course_description))
+            @foreach($course_description as $course_des)
+            <p>{{$course_des}}</p>
+            @endforeach     
+            
         </div>
 
         <!-- course prerequisites -->
@@ -204,7 +200,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->instructor_bio}}</p>
+            @php ($instructor_bio=explode("\n",$vancouverSyllabus->instructor_bio))
+            @foreach($instructor_bio as $instr_bio)
+            <p>{{$instr_bio}}</p>
+            @endforeach     
+
         </div>
         <!-- other instructional staff -->
         <div class="mb-4">
@@ -249,7 +249,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$vancouverSyllabus->course_structure}}</p>
+            @php ($course_structure=explode("\n",$vancouverSyllabus->course_structure))
+            @foreach($course_structure as $course_struct)
+            <p>{{$course_struct}}</p>
+            @endforeach     
+        
         </div>
         <!-- schedule of topics -->
         <div class="mb-4">
@@ -302,6 +306,7 @@
             </div>
         </div>
         <!--  learning outcomes -->
+        @if($syllabus->learning_outcomes)
         <div class="mb-4">
             <div class="vSyllabusHeader">
                 <h6>
@@ -315,24 +320,15 @@
                 </h6>
             </div>
             <p style="color:gray"><i>Upon successful completion of this course, students will be able to...</i></p>
-            <table class="table table-light table-borderless">
-                <thead>
-                    <tr class="table-primary">
-                        <th style="width:5%"></th>
-                        <th>Learning Outcome</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (explode(PHP_EOL, $syllabus->learning_outcomes) as $index => $learningOutcome)
-                        <tr>
-                            <td>{{$index + 1}}</td>
-                            <td>{{$learningOutcome}}</td>
-                        </tr>
-                    @endforeach                                               
-                </tbody>
-            </table>                                    
+            @php ($learning_outcomes=explode("\n",$syllabus->learning_outcomes))
+            @foreach($learning_outcomes as $learning_outcome)
+            <p>{{$learning_outcome}}</p>
+            @endforeach     
+
         </div>
+        @endif
         <!--  learning activities -->
+        @if($syllabus->learning_activities)
         <div class="mb-4">
             <div class="vSyllabusHeader">
                 <h6>
@@ -345,24 +341,15 @@
                     </span>
                 </h6>
             </div>
-            <table class="table table-light table-borderless">
-                <thead>
-                    <tr class="table-primary">
-                        <th style="width:5%"></th>
-                        <th>Teaching and Learning Activity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (explode(PHP_EOL, $syllabus->learning_activities) as $index => $learningActivity)
-                        <tr>
-                            <td>{{$index + 1}}</td>
-                            <td>{{$learningActivity}}</td>
-                        </tr>
-                    @endforeach                                               
-                </tbody>
-            </table>  
-        </div>                                  
+            @php ($learning_activities=explode("\n",$syllabus->learning_activities))
+            @foreach($learning_activities as $learning_activity)
+            <p>{{$learning_activity}}</p>
+            @endforeach     
+            
+        </div>
+        @endif                               
         <!--  learning materials -->
+        @if($syllabus->learning_materials)
         <div class="mb-4">
             <div class="vSyllabusHeader">
                 <h6>
@@ -375,25 +362,18 @@
                     </span>
                 </h6>
             </div>
-            <table class="table table-light table-borderless">
-                <thead>
-                    <tr class="table-primary">
-                        <th style="width:5%"></th>
-                        <th>Learning Material</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (explode(PHP_EOL, $syllabus->learning_materials) as $index => $learningMaterials)
-                        <tr>
-                            <td>{{$index + 1}}</td>
-                            <td>{{$learningMaterials}}</td>
-                        </tr>
-                    @endforeach                                               
-                </tbody>
-            </table>                                    
+
+            @php ($learning_materials=explode("\n",$syllabus->learning_materials))
+            @foreach($learning_materials as $learning_material)
+            <p>{{$learning_material}}</p>
+            @endforeach   
+
         </div>
+        @endif
         <!--  assessments of learning -->
+        @if($syllabus->learning_assessments)
         <div class="mb-4">
+            
             <div class="vSyllabusHeader">
                 <h6>
                     ASSESSMENTS OF LEARNING
@@ -405,23 +385,12 @@
                     </span>
                 </h6>
             </div>
-            <table class="table table-light table-borderless">
-                <thead>
-                    <tr class="table-primary">
-                        <th style="width:5%"></th>
-                        <th>Learning Assessment</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (explode(PHP_EOL, $syllabus->learning_assessments) as $index => $learningAssessments)
-                        <tr>
-                            <td>{{$index + 1}}</td>
-                            <td>{{$learningAssessments}}</td>
-                        </tr>
-                    @endforeach                                               
-                </tbody>
-            </table>                                    
+            @php ($learning_assessments=explode("\n",$syllabus->learning_assessments))
+            @foreach($learning_assessments as $learning_assess)
+            <p>{{$learning_assess}}</p>
+            @endforeach                            
         </div>
+        @endif
         <!--  course alignment table -->
         @if (isset($courseAlignment))
             <div class="mb-4">
@@ -607,16 +576,21 @@
             <div class="p-0 m-0" id="outcomeMapsDiv"></div>    
         @endif
         <!-- learning resources -->
-        <div class="mb-4">
-                <div class="vSyllabusHeader">
-                    <h6>LEARNING RESOURCES
-                        <span>
-                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
-                        </span>
-                    </h6>
+        @if($syllabus->learning_resources)
+            <div class="mb-4">
+                    <div class="vSyllabusHeader">
+                        <h6>LEARNING RESOURCES
+                            <span>
+                                <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                            </span>
+                        </h6>
+                    </div>
+                    @php ($learning_resources=explode("\n",$syllabus->learning_resources))
+                    @foreach($learning_resources as $learning_res)
+                    <p>{{$learning_res}}</p>
+                    @endforeach
                 </div>
-                <p>{{$syllabus->learning_resources}}</p>
-            </div>
+        @endif
             @foreach ($vancouverSyllabusResources as $index => $resource) 
                 @if (in_array($resource->id, $selectedVancouverSyllabusResourceIds) && $index != 0)
                 <div class="mb-4">
@@ -712,8 +686,25 @@
             <div class="vSyllabusHeader2">
                 <h6>PASSING/GRADING CRITERIA</h6>
             </div>
-            <p>{{$syllabus->passing_criteria}}</p>
+            @php ($passing_criteria=explode("\n",$syllabus->passing_criteria))
+            @foreach($passing_criteria as $passing_crit)
+            <p>{{$passing_crit}}</p>
+            @endforeach
         </div>
+
+        <!--  custom resource -->
+        @if($syllabus->custom_resource_title && $syllabus->custom_resource)
+        <div class="mb-4">
+            <div class="vSyllabusHeader2">
+                <h6>{{strtoupper($syllabus->custom_resource_title)}}</h6>
+            </div>
+            @php ($custom_resources=explode("\n",$syllabus->custom_resource))
+            @foreach($custom_resources as $custom_res)
+            <p>{{$custom_res}}</p>
+            @endforeach
+        </div>
+        @endif
+
         <!--  late policy -->
         <div class="mb-4">
             <div class="vSyllabusHeader2">
@@ -723,14 +714,20 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->late_policy}}</p>
+            @php ($late_policy=explode("\n",$syllabus->late_policy))
+            @foreach($late_policy as $late_pol)
+            <p>{{$late_pol}}</p>
+            @endforeach
         </div>
         <!--  missed exam policy -->
         <div class="mb-4">
             <div class="vSyllabusHeader2">
                 <h6>MISSED EXAM POLICY</h6>
             </div>
-            <p>{{$syllabus->missed_exam_policy}}</p>
+            @php ($missed_exam_policy=explode("\n",$syllabus->missed_exam_policy))
+            @foreach($missed_exam_policy as $missed_exam)
+            <p>{{$missed_exam}}</p>
+            @endforeach
         </div>
         <!--  missed activity policy -->
         <div class="mb-4">
@@ -741,8 +738,13 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->missed_activity_policy}}</p>
+            
+            @php ($missed_activity_policy=explode("\n",$syllabus->missed_activity_policy))
+            @foreach($missed_activity_policy as $missed_activity)
+            <p>{{$missed_activity}}</p>
+            @endforeach
         </div>
+
             <!-- learning analytics -->
             <div class="mb-4">
                 <div class="vSyllabusHeader2">
@@ -752,7 +754,10 @@
                         </span>
                     </h6>
                 </div>
-                <p>{{$vancouverSyllabus->learning_analytics}}</p>
+                @php ($learning_analytics=explode("\n",$vancouverSyllabus->learning_analytics))
+                @foreach($learning_analytics as $learning_analytic)
+                <p>{{$learning_analytic}}</p>
+                @endforeach
             </div>
             <div class="mb-4">
                 @if($syllabus->copyright)

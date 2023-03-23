@@ -94,7 +94,11 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$okanaganSyllabus->course_description}}</p>
+            @php ($course_description=explode("\n",$okanaganSyllabus->course_description))
+            @foreach($course_description as $course_desc)
+            <p>{{$course_desc}}</p>
+            @endforeach 
+            
         </div>
         <!-- course format -->
         <div class="mb-4">
@@ -106,7 +110,10 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$okanaganSyllabus->course_format}}</p>
+            @php ($course_format=explode("\n",$okanaganSyllabus->course_format))
+            @foreach($course_format as $course_form)
+            <p>{{$course_form}}</p>
+            @endforeach 
         </div>
         <!-- Course Overview, Content and Objectives -->
         <div class="mb-4">
@@ -115,7 +122,10 @@
                     Course Overview, Content and Objectives
                 </h6>
             </div>
-            <p>{{$okanaganSyllabus->course_overview}}</p>
+            @php ($course_overview=explode("\n",$okanaganSyllabus->course_overview))
+            @foreach($course_overview as $course_over)
+            <p>{{$course_over}}</p>
+            @endforeach 
         </div>
 
         
@@ -184,8 +194,27 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_materials}}</p>
+            @php ($learning_materials=explode("\n",$syllabus->learning_materials))
+            @foreach($learning_materials as $learning_mat)
+            <p>{{$learning_mat}}</p>
+            @endforeach 
         </div>
+
+        <!-- learning resources -->
+        <div class="mb-4">
+                <div>
+                    <h6 class="oSyllabusHeader">Learning Resources
+                        <span>
+                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+                        </span>
+                    </h6>
+                </div>
+                @php ($learning_resources=explode("\n",$syllabus->learning_resources))
+                @foreach($learning_resources as $learning_res)
+                <p>{{$learning_res}}</p>
+                @endforeach 
+        </div>
+
         <!--  assessments of learning -->
         <div class="mb-4">
             <div>
@@ -446,7 +475,10 @@
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->learning_materials}}</p>
+            @php ($learning_materials=explode("\n",$syllabus->learning_materials))
+            @foreach($learning_materials as $learning_mat)
+            <p>{{$learning_mat}}</p>
+            @endforeach  
         </div>
     
         <!-- other course policies -->
@@ -459,49 +491,60 @@
             <div>
                 <h6 class="oSyllabusHeader">Late Policy
                     <span>
-                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
+                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['latePolicy']}}"></i>
                     </span>
                 </h6>
             </div>
-            <p>{{$syllabus->late_policy}}</p>
+            
+            @php ($late_policy=explode("\n",$syllabus->late_policy))
+            @foreach($late_policy as $late_pol)
+            <p>{{$late_pol}}</p>
+            @endforeach  
         </div>
         <!--  missed exam policy -->
         <div class="mb-4">
             <div>
                 <h6  class="oSyllabusHeader">Missed Exam Policy</h6>
             </div>
-            <p>{{$syllabus->missed_exam_policy}}</p>
+            @php ($missed_exam_policy=explode("\n",$syllabus->missed_exam_policy))
+            @foreach($missed_exam_policy as $missed_exam)
+            <p>{{$missed_exam}}</p>
+            @endforeach  
+            
         </div>
         <!--  missed activity policy -->
         <div class="mb-4">
             <div>
-                <h6 class="oSyllabusHeader">Missed Activity Policy
-                    <span>
-                        <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['missedActivityPolicy']}}"></i>
-                    </span>
-                </h6>
+                <h6 class="oSyllabusHeader">Missed Activity Policy</h6>
             </div>
-            <p>{{$syllabus->missed_activity_policy}}</p>
+            @php ($missed_activity_policy=explode("\n",$syllabus->missed_activity_policy))
+            @foreach($missed_activity_policy as $missed_activity)
+            <p>{{$missed_activity}}</p>
+            @endforeach  
         </div>
         <!--  passing criteria -->
         <div class="mb-4">
             <div>
                 <h6 class="oSyllabusHeader">Passing/Grading Criteria</h6>
             </div>
-            <p>{{$syllabus->passing_criteria}}</p>
+            @php ($passing_criteria=explode("\n",$syllabus->passing_criteria))
+            @foreach($passing_criteria as $passing_crit)
+            <p>{{$passing_crit}}</p>
+            @endforeach  
         </div>
 </div>
-        <!-- learning resources -->
+        
+        <!-- Additional Course-Specific Information-->
         <div class="mb-4">
-                <div>
-                    <h6 class="oSyllabusHeader">Learning Resources
-                        <span>
-                            <i class="bi bi-info-circle-fill text-dark" data-toggle="tooltip" data-bs-placement="top" title="{{$inputFieldDescriptions['learningResources']}}"></i>
-                        </span>
-                    </h6>
-                </div>
-                <p>{{$syllabus->learning_resources}}</p>
-            </div>
+                    <div>
+                        <h6 class="oSyllabusHeader">{{ !empty($syllabus) ? $syllabus->custom_resource_title : ''}}</h6>
+                    </div>
+                    @php ($custom_resource=explode("\n",$syllabus->custom_resource))
+                    @foreach($custom_resource as $custom_res)
+                    <p>{{$custom_res}}</p>
+                    @endforeach  
+        </div>
+
         <!-- student services resources -->
         <div class="mb-4">
             <div>
@@ -606,15 +649,16 @@
         </div>
         <div class="mb-4">
 
-        @if($syllabus->copyright)
+        @if($syllabus->copyright==1 && $syllabus->cc_license==NULL)
             <p class="text-center">
             <h6><strong><u> Copyright Statement </u></strong></h6></n>
             All materials of this course (course handouts, lecture slides, assessments, course readings, etc.) are the intellectual property of the Course Instructor or licensed to be used in this course by the copyright owner. Redistribution of these materials by any means without permission of the copyright holder(s) constitutes a breach of copyright and may lead to academic discipline.</p>
         @else
-
-            <h6><strong><u>Creative Commons Open Copyright License</u></strong></h6>
-            <br>
-            <p>{{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}} © 2022 by {{$syllabus->course_instructor}} is licensed under {{$syllabus->cc_license}}. Visit the Creative Commons Website for more information (<a href="https://creativecommons.org/licenses/">click here</a>).<p>
+            @if($syllabus->cc_license!=NULL)
+                <p class="text-center">
+                <h6><strong><u>Creative Commons Open Copyright License</u></strong></h6></n>
+                {{$syllabus->course_code}} {{$syllabus->course_num}}: {{$syllabus->course_title}} © 2022 by {{$syllabus->course_instructor}} is licensed under {{$syllabus->cc_license}}. Visit the Creative Commons Website for more information (<a href="https://creativecommons.org/licenses/">click here</a>).<p>
+            @endif
         @endif
 
         </div>
