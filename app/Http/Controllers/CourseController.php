@@ -393,39 +393,48 @@ class CourseController extends Controller
 
     public function outcomeDetails(Request $request, $course_id)
     {
-        $l_outcomes_pos = $request->input('l_outcomes_pos');
-        $clos_l_activities = $request->input('l_activities') ? $request->input('l_activities') : array();
-        $clos_a_methods = $request->input('a_methods') ? $request->input('a_methods') : array();
+        //
+        $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
 
-        if ($l_outcomes_pos) {
 
-            foreach ($l_outcomes_pos as $pos => $l_outcome_id) {
-                $learningOutcome = LearningOutcome::find($l_outcome_id);
-                $learningOutcome->pos_in_alignment = $pos + 1;
-                $learningOutcome->save();
 
-                if (array_key_exists($learningOutcome->l_outcome_id, $clos_l_activities)) {
-                    $learningOutcome->learningActivities()->sync($clos_l_activities[$learningOutcome->l_outcome_id]);
-                } else {
-                    $learningOutcome->learningActivities()->detach();
-                }
+        foreach($l_outcomes as $l_outcome){
+            $i = $l_outcome->l_outcome_id;
 
-                if (array_key_exists($learningOutcome->l_outcome_id, $clos_a_methods)) {
-                    $learningOutcome->assessmentMethods()->sync($clos_a_methods[$learningOutcome->l_outcome_id]);
-                } else {
-                    $learningOutcome->assessmentMethods()->detach();
-                }
+            if($request->input('l_activities')== null){
+
+                $l_outcome->learningActivities()->detach();
+
+            }elseif (array_key_exists($i,$request->input('l_activities'))){
+                $arr=$request->input('l_activities');
+                $l_outcome->learningActivities()->detach();
+                $l_outcome->learningActivities()->sync($arr[$i]);
+
+            }else{
+
+                $l_outcome->learningActivities()->detach();
             }
+
         }
 
-        // update courses 'updated_at' field
-        $course = Course::find($course_id);
-        $course->touch();
+        foreach($l_outcomes as $l_outcome){
+            $i = $l_outcome->l_outcome_id;
 
-        // get users name for last_modified_user
-        $user = User::find(Auth::id());
-        $course->last_modified_user = $user->name;
-        $course->save();
+            if($request->input('a_methods')== null){
+
+                $l_outcome->assessmentMethods()->detach();
+
+            }elseif (array_key_exists($i,$request->input('a_methods'))){
+                $arr=$request->input('a_methods');
+                $l_outcome->assessmentMethods()->detach();
+                $l_outcome->assessmentMethods()->sync($arr[$i]);
+
+            }else{
+
+                $l_outcome->assessmentMethods()->detach();
+            }
+
+        }
 
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
