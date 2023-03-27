@@ -181,7 +181,7 @@
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion8" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader8" data-bs-parent="FAQAccordion9">
+                    <div id="collapseFAQAccordion8" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader8" data-bs-parent="FAQAccordion8">
                         <div class="accordion-body lh-lg">
                             <p>To create a program, first register a Curriculum MAP account or login. On your dashboard, you will see your "Programs".</p>
                             <p class="fw-bold">From the dashboard</p>
@@ -242,14 +242,14 @@
             <div class="accordion" id="FAQAccordion10">
                 <div class="accordion-item mb-2">
                     <!-- FAQ accordion header -->
-                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader9">
-                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion9" aria-expanded="false" aria-controls="collapseFAQAccordion9">
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader10">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion10" aria-expanded="false" aria-controls="collapseFAQAccordion10">
                             <h5>I registered my email account, but I cannot log in. Why?</h5>                
                         </button>
                     </h2>
                                                         
                     <!-- FAQ Accordion body -->
-                    <div id="collapseFAQAccordion9" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader9" data-bs-parent="FAQAccordion9">
+                    <div id="collapseFAQAccordion10" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader10" data-bs-parent="FAQAccordion10">
                         <div class="accordion-body lh-lg">
                             <p class="fw-bold">There are one of two reasons why you are unable to log in:</p>
                             <ol>

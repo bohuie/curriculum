@@ -269,7 +269,7 @@
                                                         Warning: Changing the standards will overwrite any previously saved standard mapping outcomes.
                                                     </small>
                                                     <small id="helpBlock" class="form-text text-muted">
-                                                        These are the standards from the Ministry of Advanced Education in BC.
+                                                        These are the standards from the Ministry of Post-Secondary Education and Future Skills in BC.
                                                     </small>
                                                 </div>
                                             </div>
