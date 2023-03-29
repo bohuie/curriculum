@@ -437,7 +437,7 @@
                                                     @endforeach
                                                 </select>
                                                 <small id="helpBlock" class="form-text text-muted">
-                                                    These are the standards from the Ministry of Advanced Education in BC.
+                                                    These are the standards from the Ministry of Post-Secondary Education and Future Skills.
                                                 </small>
                                             </div>
                                         </div>

@@ -43,7 +43,7 @@
                                 <div class="alert alert-primary d-flex align-items-center mt-3" role="alert" style="text-align:justify">
                                     <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
                                     <div>
-                                        In lieu of specific PLOs, the below are the <a class="alert-link" href="https://www2.gov.bc.ca/assets/gov/education/post-secondary-education/institution-resources-administration/degree-authorization/degree-program-criteria.pdf#page=19" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> standards provided by the Ministry of Advanced Education in BC</a>. Using the mapping scale provided, identify the alignment between this course against the ministry standards.                        
+                                        In lieu of specific PLOs, the below are the <a class="alert-link" href="https://www2.gov.bc.ca/assets/gov/education/post-secondary-education/institution-resources-administration/degree-authorization/degree-program-criteria.pdf#page=19" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> standards provided by the Ministry of Post-Secondary Education and Future Skills</a>. Using the mapping scale provided, identify the alignment between this course against the ministry standards.                        
                                     </div>
                                 </div>                            
 
