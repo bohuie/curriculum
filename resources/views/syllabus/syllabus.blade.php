@@ -95,8 +95,16 @@
             To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/forms/">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
         </div>
     </div>
-    
-    
+
+    @if(!empty($saveWarning))
+        <div class="alert alert-warning">
+            <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
+            <button type="button" class="close" data-dismiss="alert">×</button>  
+            <div>
+                {!!$saveWarning!!}
+            </div>  
+        </div>
+    @endif
 
 
     <form class="row gy-4 courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
@@ -350,8 +358,8 @@
                 name="otherCourseStaff" class="form-control " form="sylabusGenerator"
                 spellcheck="true" style="height:125px;">{{ !empty($syllabus) ? $syllabus->other_instructional_staff : ''}}</textarea>
         </div>
-        
-        <div class="alert alert-primary">
+
+        <div class="alert alert-info">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>  
             <button type="button" class="close" data-dismiss="alert">×</button>
             For guidelines on writing an inclusive syllabus, click <a target="_blank" rel="noopener noreferrer" href="https://ctlt-inclusiveteaching.sites.olt.ubc.ca/files/2019/08/inclusive-syllabus-digital.pdf">here <i class="bi bi-box-arrow-up-right"></i></a>.
