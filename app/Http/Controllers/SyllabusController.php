@@ -132,7 +132,8 @@ class SyllabusController extends Controller
 
         // return view to create a syllabus
         } else {
-            return view("syllabus.syllabus")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
+            $saveWarning='Remember to save your syllabus regularly! You can save your work at any time by clicking the <i class="bi bi-clipboard2-check-fill"></i> button found at the top and bottom of the page.';
+            return view("syllabus.syllabus")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', [])->with('saveWarning', $saveWarning);
         }
     }
 
