@@ -96,12 +96,12 @@
         </div>
     </div>
 
-    @if(!empty($saveWarning))
+    @if(empty($syllabus))
         <div class="alert alert-warning">
             <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
             <button type="button" class="close" data-dismiss="alert">×</button>  
             <div>
-                {!!$saveWarning!!}
+                {!! $inputFieldDescriptions['saveWarning']!!}
             </div>  
         </div>
     @endif
