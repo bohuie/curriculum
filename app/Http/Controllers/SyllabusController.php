@@ -280,6 +280,15 @@ class SyllabusController extends Controller
         $syllabus->course_year = $request->input('courseYear');
         $courseInstructors = $request->input('courseInstructor');
         $courseInstructorEmails = $request->input('courseInstructorEmail');
+
+        if($request->input('crossListed')==1){
+            $syllabus->cross_listed_code = $request->input('courseCodeCL');
+            $syllabus->cross_listed_num = $request->input('courseNumberCL');
+        } else {
+            $syllabus->cross_listed_code = null;
+            $syllabus->cross_listed_num = null;
+        }
+
         if ($request->input("copyright")==1){
             $syllabus->cc_license=null;
             $syllabus->copyright=true;
@@ -489,6 +498,18 @@ class SyllabusController extends Controller
         $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $syllabus->course_term = $request->input('courseSemester');
         $syllabus->course_year = $request->input('courseYear');
         $importCourseSettings = $request->input('import_course_settings', null);
+        $syllabus->cross_listed_code = $request->input('courseCodeCL');
+        $syllabus->cross_listed_num = $request->input('courseNumberCL');
+
+        if($request->input('crossListed')==1){
+            $syllabus->cross_listed_code = $request->input('courseCodeCL');
+            $syllabus->cross_listed_num = $request->input('courseNumberCL');
+        } else {
+            $syllabus->cross_listed_code = null;
+            $syllabus->cross_listed_num = null;
+        }
+
+
         //Creative Commons or Copyright
         if($request->input("copyright")==null){
             $syllabus->cc_license=null;
