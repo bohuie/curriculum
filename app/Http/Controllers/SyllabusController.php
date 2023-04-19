@@ -54,6 +54,7 @@ define("INPUT_TIPS", array(
     "creativeCommons" => 'Include a copyright statement or include a Creative Commons Open Copyright license of your choosing. Visit the <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">Creative Commons Website <i class="bi bi-box-arrow-up-right"></i></a> for options and more information. Need help deciding? Try using the <a href="https://creativecommons.org/choose/" target="_blank" rel="noopener noreferrer">Creative Commons License Chooser <i class="bi bi-box-arrow-up-right"></i></a>.',
     "uniPolicy" => 'Hearing from each course instructor about University policies and values can help to emphasize their importance to students. To fulfil the policy, you need only to present the following paragraph with the link to the web page that provides details and links to specific policies and resources. You may wish to take the opportunity to relate the ideas to your own course as part of your students’ education. This policy is <b>always included</b> in a generated Vancouver syllabus.',
     "customResource" => 'Include any additional information or resources that have not been provided.',
+    "saveWarning" => 'Be sure to save your content regularly by clicking the save button <i class="bi bi-clipboard2-check-fill"></i> at the top and bottom of this page.',
 ));
 
 
@@ -132,8 +133,7 @@ class SyllabusController extends Controller
 
         // return view to create a syllabus
         } else {
-            $saveWarning='Remember to save your syllabus regularly! You can save your work at any time by clicking the <i class="bi bi-clipboard2-check-fill"></i> button found at the top and bottom of the page.';
-            return view("syllabus.syllabus")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', [])->with('saveWarning', $saveWarning);
+            return view("syllabus.syllabus")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
         }
     }
 
@@ -1714,7 +1714,8 @@ class SyllabusController extends Controller
         }
 
         //include creative commons or copyright
-        if($creativeCommons = $syllabus->cc_license && $syllabus->campus=='O'){
+        $creativeCommons = $syllabus->cc_license;
+        if($syllabus->campus=='O' && !empty($syllabus->cc_license)){
             $templateProcessor->cloneBlock('NoCreativeCommons');
             $templateProcessor->setValue('creativeCommons',$creativeCommons);
             $templateProcessor->setValue('name',$syllabus->course_instructor);
