@@ -136,6 +136,77 @@
             </div>
         </div>
         
+               <!--
+             <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
+                    <div id="crossListedCode" class="col-3">
+                        <label for="courseCodeCL">Cross-Listed Course Code<span class="requiredField"></span></label>
+                        <input id = "courseCodeCL" pattern="[A-Za-z]+" minlength="1" name = "courseCodeCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->cross_listed_code : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course code.
+                        </div>
+                    </div>
+                    <div id="crossListedNumber" class="col-3">
+                        <label for="courseNumberCL">Cross-Listed Course Number<span class="requiredField"></span></label>
+                        <input id = "courseNumberCL" name = "courseNumberCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->cross_listed_num : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course number.
+                        </div>
+                    </div>
+            -->
+        
+            
+                @if(!empty($syllabus))
+                    @if($syllabus->cross_listed_code && $syllabus->cross_listed_num)
+                <div class="col-6">
+                    <div class="col-12">
+                        <div class="col-6">
+                        <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
+                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course?</label> 
+                        </div>
+                    </div>
+                </div>
+                    <div id="crossListedCode" class="col-3">
+                        <label for="courseCodeCL">Cross-Listed Course Code<span class="requiredField"></span></label>
+                        <input id = "courseCodeCL" pattern="[A-Za-z]+" minlength="1" name = "courseCodeCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->cross_listed_code : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course code.
+                        </div>
+                    </div>
+                    <div id="crossListedNumber" class="col-3">
+                        <label for="courseNumberCL">Cross-Listed Course Number<span class="requiredField"></span></label>
+                        <input id = "courseNumberCL" name = "courseNumberCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->cross_listed_num : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course number.
+                        </div>
+                    </div>
+                    @else
+                <div class="col-6">
+                    <div class="col-12">
+                        <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
+                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course?</label>
+                    </div>
+                </div>
+                <div id="crossListedCode" class="col-3"></div>
+                <div id="crossListedNumber" class="col-3"></div>
+                    @endif 
+                @else
+                <div class="col-6">
+                    <div class="col-12">
+                    <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
+                    <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course?</label>  
+                    </div>
+                </div>
+                <div id="crossListedCode" class="col-3"></div>
+            <div id="crossListedNumber" class="col-3"></div>
+                @endif
+        
+
+        
+        
+        
+
+
+        
 
 
         <div class="col-3">
@@ -1133,6 +1204,30 @@
             }
         });
 
+        //event listener for Cross Listed
+        $('#crossListed').on('change', function() {
+            if(this.checked){
+                $('#crossListedCode').html(`
+                
+                <label for="courseCodeCL">Cross-Listed Course Code<span class="requiredField"></span></label>
+            <input id = "courseCodeCL" pattern="[A-Za-z]+" minlength="1" name = "courseCodeCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->cross_listed_code : '' }}">
+            <div class="invalid-tooltip">
+                Please enter the course code.
+            </div>
+
+                `);
+                $('#crossListedNumber').html(`
+                    <label for="courseNumberCL">Cross-Listed Course Number<span class="requiredField"></span></label>
+                    <input id = "courseNumberCL" name = "courseNumberCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->cross_listed_num : '' }}">
+                    <div class="invalid-tooltip">
+                        Please enter the course number.
+                    </div>
+                `);
+            } else {
+                $('#crossListedCode').html('');
+                $('#crossListedNumber').html('');
+            }
+        });
         //event listeners for Creative Commons License Input
         $('#noneCopyright').on('click', function(event) {
             //mankey
@@ -2479,7 +2574,6 @@
                 <div class="row" id="optionalSyllabus"></div>
             </div>
             `;
-         
         
         // get campus select element
         var campus = $('#campus');
