@@ -12,23 +12,11 @@ CREATE TABLE `assessment_methods` (
   `a_method` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `weight` int(11) NOT NULL,
   `course_id` bigint(20) unsigned NOT NULL,
-  `pos_in_alignment` bigint(20) unsigned NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`a_method_id`),
   KEY `assessment_methods_course_id_foreign` (`course_id`),
   CONSTRAINT `assessment_methods_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `campuses`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `campuses` (
-  `campus_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `campus` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`campus_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `course_optional_priorities`;
@@ -68,19 +56,6 @@ CREATE TABLE `course_programs` (
 DROP TABLE IF EXISTS `course_schedules`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `course_schedules` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `syllabus_id` bigint(20) unsigned NOT NULL,
-  `row` int(11) NOT NULL,
-  `col` int(11) NOT NULL,
-  `val` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `course_schedules_syllabus_id_foreign` (`syllabus_id`),
-  CONSTRAINT `course_schedules_syllabus_id_foreign` FOREIGN KEY (`syllabus_id`) REFERENCES `syllabi` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `course_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -118,7 +93,7 @@ DROP TABLE IF EXISTS `courses`;
 CREATE TABLE `courses` (
   `course_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `course_code` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `course_num` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `course_num` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
   `delivery_modality` char(1) COLLATE utf8mb4_unicode_ci NOT NULL,
   `year` int(11) NOT NULL,
   `semester` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -133,7 +108,6 @@ CREATE TABLE `courses` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `standard_category_id` bigint(20) unsigned NOT NULL DEFAULT 1,
   `scale_category_id` bigint(20) unsigned NOT NULL DEFAULT 1,
-  `last_modified_user` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`course_id`),
   KEY `courses_program_id_foreign` (`program_id`),
   KEY `courses_standard_category_id_foreign` (`standard_category_id`),
@@ -178,34 +152,6 @@ CREATE TABLE `custom_program_learning_outcomes` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `departments`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `departments` (
-  `department_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `department` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `faculty_id` bigint(20) unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`department_id`),
-  KEY `departments_faculty_id_foreign` (`faculty_id`),
-  CONSTRAINT `departments_faculty_id_foreign` FOREIGN KEY (`faculty_id`) REFERENCES `faculties` (`faculty_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `faculties`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `faculties` (
-  `faculty_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `faculty` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `campus_id` bigint(20) unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`faculty_id`),
-  KEY `faculties_campus_id_foreign` (`campus_id`),
-  CONSTRAINT `faculties_campus_id_foreign` FOREIGN KEY (`campus_id`) REFERENCES `campuses` (`campus_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `failed_jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -246,7 +192,6 @@ CREATE TABLE `learning_activities` (
   `l_activity_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `l_activity` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `course_id` bigint(20) unsigned NOT NULL,
-  `l_activities_pos` bigint(20) unsigned NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`l_activity_id`),
@@ -262,7 +207,6 @@ CREATE TABLE `learning_outcomes` (
   `clo_shortphrase` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `l_outcome` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `course_id` bigint(20) unsigned NOT NULL,
-  `pos_in_alignment` bigint(20) unsigned NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`l_outcome_id`),
@@ -331,7 +275,6 @@ CREATE TABLE `okanagan_syllabi` (
   `syllabus_id` bigint(20) unsigned NOT NULL,
   `course_format` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `course_overview` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `course_description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -359,14 +302,10 @@ CREATE TABLE `optional_priorities` (
   `op_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `subcat_id` bigint(20) unsigned NOT NULL,
   `optional_priority` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `year` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `op_subdesc` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`op_id`),
   KEY `optional_priorities_subcat_id_foreign` (`subcat_id`),
-  KEY `optional_priorities_op_subdesc_foreign` (`op_subdesc`),
-  CONSTRAINT `optional_priorities_op_subdesc_foreign` FOREIGN KEY (`op_subdesc`) REFERENCES `optional_priorities_subdescriptions` (`op_subdesc`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `optional_priorities_subcat_id_foreign` FOREIGN KEY (`subcat_id`) REFERENCES `optional_priority_subcategories` (`subcat_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -383,17 +322,6 @@ CREATE TABLE `optional_priorities_old` (
   PRIMARY KEY (`id`),
   KEY `optional_priorities_course_id_foreign` (`course_id`),
   CONSTRAINT `optional_priorities_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `optional_priorities_subdescriptions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `optional_priorities_subdescriptions` (
-  `op_subdesc` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`op_subdesc`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `optional_priority_categories`;
@@ -547,14 +475,12 @@ DROP TABLE IF EXISTS `programs`;
 CREATE TABLE `programs` (
   `program_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `faculty` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `faculty` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `department` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `level` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `last_modified_user` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `campus` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT 'Other',
   PRIMARY KEY (`program_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -631,15 +557,11 @@ DROP TABLE IF EXISTS `standards_outcome_maps`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `standards_outcome_maps` (
   `standard_id` bigint(20) unsigned NOT NULL,
-  `course_id` bigint(20) unsigned NOT NULL,
   `standard_scale_id` bigint(20) unsigned NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`standard_id`,`course_id`) USING BTREE,
+  PRIMARY KEY (`standard_id`),
   KEY `standards_outcome_maps_standard_scale_id_foreign` (`standard_scale_id`),
-  KEY `standards_outcome_maps_course_id_foreign` (`course_id`),
-  CONSTRAINT `standards_outcome_maps_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `standards_outcome_maps_l_outcome_id_foreign` FOREIGN KEY (`l_outcome_id`) REFERENCES `learning_outcomes` (`l_outcome_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `standards_outcome_maps_standard_id_foreign` FOREIGN KEY (`standard_id`) REFERENCES `standards` (`standard_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `standards_outcome_maps_standard_scale_id_foreign` FOREIGN KEY (`standard_scale_id`) REFERENCES `standard_scales` (`standard_scale_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -664,18 +586,15 @@ CREATE TABLE `syllabi` (
   `course_title` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `course_code` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `course_num` bigint(20) unsigned DEFAULT NULL,
-  `delivery_modality` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'O',
   `course_term` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `course_year` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `campus` char(1) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `faculty` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `department` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `course_instructor` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `course_location` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `office_hours` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `class_meeting_days` char(24) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `class_meeting_days` char(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `other_instructional_staff` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `class_start_time` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `class_end_time` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -688,33 +607,7 @@ CREATE TABLE `syllabi` (
   `passing_criteria` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `learning_materials` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `learning_resources` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `last_modified_user` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `course_id` bigint(20) unsigned DEFAULT NULL,
-  `include_alignment` tinyint(1) NOT NULL DEFAULT 0,
-  `cc_license` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `copyright` tinyint(1) DEFAULT NULL,
-  `land_acknow` tinyint(1) DEFAULT NULL,
-  `custom_resource` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `custom_resource_title` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `syllabi_course_id_foreign` (`course_id`),
-  CONSTRAINT `syllabi_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `syllabi_programs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `syllabi_programs` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `syllabus_id` bigint(20) unsigned NOT NULL,
-  `program_id` bigint(20) unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `syllabi_programs_program_id_foreign` (`program_id`),
-  KEY `syllabi_programs_syllabus_id_foreign` (`syllabus_id`),
-  CONSTRAINT `syllabi_programs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`program_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `syllabi_programs_syllabus_id_foreign` FOREIGN KEY (`syllabus_id`) REFERENCES `syllabi` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `syllabi_resources_okanagan`;
@@ -766,21 +659,6 @@ CREATE TABLE `syllabi_users` (
   CONSTRAINT `syllabi_users_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `syllabus_instructors`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `syllabus_instructors` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `syllabus_id` bigint(20) unsigned NOT NULL,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `syllabus_instructors_syllabus_id_foreign` (`syllabus_id`),
-  CONSTRAINT `syllabus_instructors_syllabus_id_foreign` FOREIGN KEY (`syllabus_id`) REFERENCES `syllabi` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -793,7 +671,6 @@ CREATE TABLE `users` (
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `has_temp` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -888,28 +765,3 @@ INSERT INTO `migrations` VALUES (114,'2021_06_23_182042_create_optional_priority
 INSERT INTO `migrations` VALUES (115,'2021_06_24_181949_create_optional_priority_subcategories_table',18);
 INSERT INTO `migrations` VALUES (116,'2021_06_25_172715_create_optional_priorities_table',18);
 INSERT INTO `migrations` VALUES (117,'2021_06_26_181737_create_course_optional_priorities_table',18);
-INSERT INTO `migrations` VALUES (118,'2021_08_26_133944_update_optional_priorities_table',19);
-INSERT INTO `migrations` VALUES (119,'2021_10_15_102536_create_course_schedules_table',19);
-INSERT INTO `migrations` VALUES (120,'2021_10_19_142345_add_is_checkable_optional_priority',19);
-INSERT INTO `migrations` VALUES (121,'2021_11_09_150019_add_last_modified_user_to_tables',19);
-INSERT INTO `migrations` VALUES (122,'2021_11_17_003638_update_learning_outcomes_table',19);
-INSERT INTO `migrations` VALUES (123,'2021_12_22_145255_create_campuses_table',19);
-INSERT INTO `migrations` VALUES (124,'2021_12_22_145920_create_faculties_table',19);
-INSERT INTO `migrations` VALUES (125,'2021_12_22_150430_create_departments_table',19);
-INSERT INTO `migrations` VALUES (126,'2022_01_05_110323_update_programs_table',19);
-INSERT INTO `migrations` VALUES (127,'2022_01_25_113651_add_has_temp_password_to_users_table',19);
-INSERT INTO `migrations` VALUES (128,'2022_02_28_143658_make_course_num_nullable',19);
-INSERT INTO `migrations` VALUES (129,'2022_04_11_154306_update_class_meeting_days_syllabi_table',19);
-INSERT INTO `migrations` VALUES (130,'2022_05_11_121741_create_optional_priorities_subdescriptions_table',19);
-INSERT INTO `migrations` VALUES (131,'2022_05_11_122210_add_subdescriptions_to_optional_priorities_table',19);
-INSERT INTO `migrations` VALUES (132,'2022_05_19_120217_add_delivery_modality_to_syllabi_table',19);
-INSERT INTO `migrations` VALUES (133,'2022_05_25_143318_update_assessment_methods_table',19);
-INSERT INTO `migrations` VALUES (134,'2022_06_01_181506_add_l_activities_pos_to_learning_activities_table',19);
-INSERT INTO `migrations` VALUES (135,'2022_06_20_005833_create_syllabus_instructors_table',19);
-INSERT INTO `migrations` VALUES (136,'2022_06_28_132955_add_course_id_to_standards_outcome_maps_table',19);
-INSERT INTO `migrations` VALUES (137,'2022_07_03_214954_update_syllabi_table',19);
-INSERT INTO `migrations` VALUES (138,'2022_07_11_144058_create_syllabi_programs_table',19);
-INSERT INTO `migrations` VALUES (139,'2022_07_29_151317_update_okanagan__syllabi',19);
-INSERT INTO `migrations` VALUES (140,'2023_02_17_155758_add_copyirght_to_syllabi_table',19);
-INSERT INTO `migrations` VALUES (141,'2023_02_18_101938_add_land_acknow_to_syllabi',19);
-INSERT INTO `migrations` VALUES (142,'2023_02_22_131211_add_custom_resource_to_syllabi_table',19);
