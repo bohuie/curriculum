@@ -280,6 +280,7 @@ class SyllabusController extends Controller
         $syllabus->course_year = $request->input('courseYear');
         $courseInstructors = $request->input('courseInstructor');
         $courseInstructorEmails = $request->input('courseInstructorEmail');
+
         if ($request->input("copyright")==1){
             $syllabus->cc_license=null;
             $syllabus->copyright=true;
@@ -489,6 +490,7 @@ class SyllabusController extends Controller
         $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $syllabus->course_term = $request->input('courseSemester');
         $syllabus->course_year = $request->input('courseYear');
         $importCourseSettings = $request->input('import_course_settings', null);
+
         //Creative Commons or Copyright
         if($request->input("copyright")==null){
             $syllabus->cc_license=null;
@@ -1738,9 +1740,8 @@ class SyllabusController extends Controller
         }
         
 
-
         // add required form fields common to both campuses to template
-        $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseYear'=> $syllabus->course_year,));
+        $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseYear'=> $syllabus->course_year));
 
         $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabus->id)->get();
         $templateProcessor->setValue('courseInstructor', $syllabusInstructors->implode('name', ', '));

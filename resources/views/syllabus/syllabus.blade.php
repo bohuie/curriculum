@@ -136,6 +136,10 @@
             </div>
         </div>
         
+        
+
+
+        
 
 
         <div class="col-3">
@@ -2479,7 +2483,6 @@
                 <div class="row" id="optionalSyllabus"></div>
             </div>
             `;
-         
         
         // get campus select element
         var campus = $('#campus');
