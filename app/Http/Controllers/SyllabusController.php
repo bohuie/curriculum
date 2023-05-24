@@ -55,6 +55,7 @@ define("INPUT_TIPS", array(
     "uniPolicy" => 'Hearing from each course instructor about University policies and values can help to emphasize their importance to students. To fulfil the policy, you need only to present the following paragraph with the link to the web page that provides details and links to specific policies and resources. You may wish to take the opportunity to relate the ideas to your own course as part of your students’ education. This policy is <b>always included</b> in a generated Vancouver syllabus.',
     "customResource" => 'Include any additional information or resources that have not been provided.',
     "saveWarning" => 'Be sure to save your content regularly by clicking the save button <i class="bi bi-clipboard2-check-fill"></i> at the top and bottom of this page.',
+    "crossListed" => 'Per <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Senate Curriculum guidelines and approval <i class="bi bi-box-arrow-up-right"></i></a>.',
 ));
 
 
@@ -1760,7 +1761,7 @@ class SyllabusController extends Controller
         
         $courseName=($syllabus->course_code)." ".($syllabus->course_num);
         if($syllabus->cross_listed_code!=null){
-            $courseName=$courseName." ".($syllabus->cross_listed_code)." ".($syllabus->cross_listed_num);
+            $courseName=$courseName."/".($syllabus->cross_listed_code)." ".($syllabus->cross_listed_num);
         }
 
         // add required form fields common to both campuses to template

@@ -161,7 +161,7 @@
                     <div class="col-12">
                         <div class="col-6">
                         <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
-                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course?</label> 
+                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label>
                         </div>
                     </div>
                 </div>
@@ -183,7 +183,7 @@
                 <div class="col-6">
                     <div class="col-12">
                         <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
-                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course?</label>
+                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label>
                     </div>
                 </div>
                 <div id="crossListedCode" class="col-3"></div>
@@ -193,7 +193,7 @@
                 <div class="col-6">
                     <div class="col-12">
                     <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
-                    <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course?</label>  
+                    <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label> 
                     </div>
                 </div>
                 <div id="crossListedCode" class="col-3"></div>
