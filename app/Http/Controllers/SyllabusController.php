@@ -907,7 +907,7 @@ class SyllabusController extends Controller
                         }
                     }else{
                         $templateProcessor->cloneBlock('NocourseDescription');
-                        $templateProcessor->setValue('courseDescriptionOK0', str_replace("\n","</w:t><w:br/><w:t>",$courseDescriptionOK));
+                        $templateProcessor->setValue('courseDescriptionOK0', str_replace("\n","</w:t><w:br/><w:t>",$okanaganSyllabus->course_description));
                         $i++;
                         for($i;$i<=20;$i++){
                             $templateProcessor->setValue('courseDescriptionOK'.$i, '');
