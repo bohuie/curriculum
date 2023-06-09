@@ -24,10 +24,11 @@ Route::get('/', function () {
 });
 
 Auth::routes(['verify' => true]);
-
+URL::forceScheme('https');
 // Route to get what programs a course belongs to 
 Route::get('/course/{courseId}/programs', 'CourseController@getPrograms');
 
+Route::get('/admin/register')->name('register');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
 
