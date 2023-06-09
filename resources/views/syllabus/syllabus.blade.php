@@ -159,10 +159,8 @@
                     @if($syllabus->cross_listed_code && $syllabus->cross_listed_num)
                 <div class="col-6">
                     <div class="col-12">
-                        <div class="col-6">
                         <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
                         <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label>
-                        </div>
                     </div>
                 </div>
                     <div id="crossListedCode" class="col-3">
