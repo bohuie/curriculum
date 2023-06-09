@@ -27,6 +27,8 @@
                     <p style="font-size:12px" class="text-muted m-0">SAVE</p>
                 </button>
             </div>
+            <!-- PDF Download Disabled while we investigate escaping issues -->
+            <!--
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="pdf" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -35,6 +37,7 @@
                     <p style="font-size:12px" class="text-muted m-0">PDF</p>
                 </button>
             </div>
+            -->
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="word" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -1101,6 +1104,8 @@
                     <p style="font-size:12px" class="text-muted m-0">SAVE</p>
                 </button>
             </div>
+            <!-- PDF Download Disabled while we investigate escaping issues -->
+            <!--
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="pdf" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -1109,6 +1114,7 @@
                     <p style="font-size:12px" class="text-muted m-0">PDF</p>
                 </button>
             </div>
+            -->
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="word" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
