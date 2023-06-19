@@ -55,6 +55,7 @@ define("INPUT_TIPS", array(
     "uniPolicy" => 'Hearing from each course instructor about University policies and values can help to emphasize their importance to students. To fulfil the policy, you need only to present the following paragraph with the link to the web page that provides details and links to specific policies and resources. You may wish to take the opportunity to relate the ideas to your own course as part of your students’ education. This policy is <b>always included</b> in a generated Vancouver syllabus.',
     "customResource" => 'Include any additional information or resources that have not been provided.',
     "saveWarning" => 'Be sure to save your content regularly by clicking the save button <i class="bi bi-clipboard2-check-fill"></i> at the top and bottom of this page.',
+    "crossListed" => 'Per <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Senate Curriculum guidelines and approval <i class="bi bi-box-arrow-up-right"></i></a>.',
 ));
 
 
@@ -281,6 +282,14 @@ class SyllabusController extends Controller
         $courseInstructors = $request->input('courseInstructor');
         $courseInstructorEmails = $request->input('courseInstructorEmail');
 
+        if($request->input('crossListed')==1){
+            $syllabus->cross_listed_code = $request->input('courseCodeCL');
+            $syllabus->cross_listed_num = $request->input('courseNumberCL');
+        } else {
+            $syllabus->cross_listed_code = null;
+            $syllabus->cross_listed_num = null;
+        }
+
         if ($request->input("copyright")==1){
             $syllabus->cc_license=null;
             $syllabus->copyright=true;
@@ -490,6 +499,17 @@ class SyllabusController extends Controller
         $request->input('courseSemester') == 'O' ? $syllabus->course_term = $request->input('courseSemesterOther') : $syllabus->course_term = $request->input('courseSemester');
         $syllabus->course_year = $request->input('courseYear');
         $importCourseSettings = $request->input('import_course_settings', null);
+        $syllabus->cross_listed_code = $request->input('courseCodeCL');
+        $syllabus->cross_listed_num = $request->input('courseNumberCL');
+
+        if($request->input('crossListed')==1){
+            $syllabus->cross_listed_code = $request->input('courseCodeCL');
+            $syllabus->cross_listed_num = $request->input('courseNumberCL');
+        } else {
+            $syllabus->cross_listed_code = null;
+            $syllabus->cross_listed_num = null;
+        }
+
 
         //Creative Commons or Copyright
         if($request->input("copyright")==null){
@@ -1739,9 +1759,13 @@ class SyllabusController extends Controller
             $templateProcessor->cloneBlock('NoLand',0);
         }
         
+        $courseName=($syllabus->course_code)." ".($syllabus->course_num);
+        if($syllabus->cross_listed_code!=null){
+            $courseName=$courseName."/".($syllabus->cross_listed_code)." ".($syllabus->cross_listed_num);
+        }
 
         // add required form fields common to both campuses to template
-        $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseYear'=> $syllabus->course_year));
+        $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseYear'=> $syllabus->course_year, 'courseCodeCL'=> $syllabus->cross_listed_code, 'courseNumberCL'=> $syllabus->cross_listed_num, 'courseName'=> $courseName));
 
         $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabus->id)->get();
         $templateProcessor->setValue('courseInstructor', $syllabusInstructors->implode('name', ', '));

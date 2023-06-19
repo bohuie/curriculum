@@ -27,6 +27,8 @@
                     <p style="font-size:12px" class="text-muted m-0">SAVE</p>
                 </button>
             </div>
+            <!-- PDF Download Disabled while we investigate escaping issues -->
+            <!--
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="pdf" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -35,6 +37,7 @@
                     <p style="font-size:12px" class="text-muted m-0">PDF</p>
                 </button>
             </div>
+            -->
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="word" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -135,6 +138,71 @@
                 Please enter the course number.
             </div>
         </div>
+        
+               <!--
+             <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
+                    <div id="crossListedCode" class="col-3">
+                        <label for="courseCodeCL">Cross-Listed Course Code<span class="requiredField"></span></label>
+                        <input id = "courseCodeCL" pattern="[A-Za-z]+" minlength="1" name = "courseCodeCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->cross_listed_code : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course code.
+                        </div>
+                    </div>
+                    <div id="crossListedNumber" class="col-3">
+                        <label for="courseNumberCL">Cross-Listed Course Number<span class="requiredField"></span></label>
+                        <input id = "courseNumberCL" name = "courseNumberCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->cross_listed_num : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course number.
+                        </div>
+                    </div>
+            -->
+        
+            
+                @if(!empty($syllabus))
+                    @if($syllabus->cross_listed_code && $syllabus->cross_listed_num)
+                <div class="col-6">
+                    <div class="col-12">
+                        <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
+                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label>
+                    </div>
+                </div>
+                    <div id="crossListedCode" class="col-3">
+                        <label for="courseCodeCL">Cross-Listed Course Code<span class="requiredField"></span></label>
+                        <input id = "courseCodeCL" pattern="[A-Za-z]+" minlength="1" name = "courseCodeCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->cross_listed_code : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course code.
+                        </div>
+                    </div>
+                    <div id="crossListedNumber" class="col-3">
+                        <label for="courseNumberCL">Cross-Listed Course Number<span class="requiredField"></span></label>
+                        <input id = "courseNumberCL" name = "courseNumberCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->cross_listed_num : '' }}">
+                        <div class="invalid-tooltip">
+                            Please enter the course number.
+                        </div>
+                    </div>
+                    @else
+                <div class="col-6">
+                    <div class="col-12">
+                        <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
+                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label>
+                    </div>
+                </div>
+                <div id="crossListedCode" class="col-3"></div>
+                <div id="crossListedNumber" class="col-3"></div>
+                    @endif 
+                @else
+                <div class="col-6">
+                    <div class="col-12">
+                    <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
+                    <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label> 
+                    </div>
+                </div>
+                <div id="crossListedCode" class="col-3"></div>
+            <div id="crossListedNumber" class="col-3"></div>
+                @endif
+        
+
+        
         
         
 
@@ -517,7 +585,7 @@
         <div class="col-12">
             <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label>
             <span class="requiredBySenate"></span>
-            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningMaterials']}}"></i>
+            <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningMaterials'] !!}</p>
             <div id="formatLM" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                     on a new line for the best formatting
@@ -1036,6 +1104,8 @@
                     <p style="font-size:12px" class="text-muted m-0">SAVE</p>
                 </button>
             </div>
+            <!-- PDF Download Disabled while we investigate escaping issues -->
+            <!--
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="pdf" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -1044,6 +1114,7 @@
                     <p style="font-size:12px" class="text-muted m-0">PDF</p>
                 </button>
             </div>
+            -->
             <div class="col-2" style="max-width:10%">
                 <button type="submit" name="download" value="word" form="sylabusGenerator"
                     class="btn m-0 p-0" style="background:none;border:none" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -1137,6 +1208,30 @@
             }
         });
 
+        //event listener for Cross Listed
+        $('#crossListed').on('change', function() {
+            if(this.checked){
+                $('#crossListedCode').html(`
+                
+                <label for="courseCodeCL">Cross-Listed Course Code<span class="requiredField"></span></label>
+            <input id = "courseCodeCL" pattern="[A-Za-z]+" minlength="1" name = "courseCodeCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="4" class ="form-control" type="text" placeholder="E.g. CPSC" required value="{{ !empty($syllabus) ? $syllabus->cross_listed_code : '' }}">
+            <div class="invalid-tooltip">
+                Please enter the course code.
+            </div>
+
+                `);
+                $('#crossListedNumber').html(`
+                    <label for="courseNumberCL">Cross-Listed Course Number<span class="requiredField"></span></label>
+                    <input id = "courseNumberCL" name = "courseNumberCL" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="3" class ="form-control" type="number" placeholder="E.g. 310" value="{{ !empty($syllabus) ? $syllabus->cross_listed_num : '' }}">
+                    <div class="invalid-tooltip">
+                        Please enter the course number.
+                    </div>
+                `);
+            } else {
+                $('#crossListedCode').html('');
+                $('#crossListedNumber').html('');
+            }
+        });
         //event listeners for Creative Commons License Input
         $('#noneCopyright').on('click', function(event) {
             //mankey
@@ -2211,7 +2306,7 @@
          <!-- Course Learning Resources -->
             <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
             <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{{$inputFieldDescriptions['learningResources']}}</p>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
             <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                     on a new line for the best formatting
