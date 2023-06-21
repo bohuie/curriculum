@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CourseTest extends TestCase
 {
@@ -18,7 +19,7 @@ class CourseTest extends TestCase
      * @return void
      */
 
-    public function test_course(){
+    public function test_storing_new_course(){
 
         $delivery_modalities=['O','B','I'];
         $semesters=['W1','W2','S1','S2'];
@@ -27,6 +28,7 @@ class CourseTest extends TestCase
         $user = User::first();
         //Need to use real user in DB for this to work
 
+        $count= DB::table('courses')->count();
         
 
         $response=$this->actingAs($user)->post(route('courses.store'), [
@@ -41,11 +43,12 @@ class CourseTest extends TestCase
             'assigned' => 1,
             'type' => 'unassigned',
             'standard_category_id' => 1,
-            'scale_category_id' => 1
+            'scale_category_id' => 1,
+            'user_id' => $user->id
         ]);
 
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/courseWizard/'.($count+1).'/step1');
         
         /*
         //$this->be($user);
