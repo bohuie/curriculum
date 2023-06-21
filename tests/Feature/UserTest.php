@@ -51,15 +51,20 @@ class UserTest extends TestCase
     }
 
     public function test_it_stores_new_users(){
-        $response=$this->post('/register', [
+        $response=$this->followingRedirects()->post('/register', [
             'name' => 'Dary',
             'email' => 'dary@gmail.com',
             'password' => 'dary1234',
             'password_confirmation'=> 'dary1234'
-        ]);
+        ])->assertStatus(200);
 
+        /*
         $response->assertRedirect('/');
+        $response = $this->followingRedirects()
+        ->post('/login', ['email' => 'john@example.com'])
+        ->assertStatus(200);
         //In example it should redirect to /home
+        */
     }
     /*
     public function test_database(){

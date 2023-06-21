@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\URL;
 |
 */
 
-URL::forceScheme('https');
+//URL::forceScheme('https');
 
 Route::get('/', function () {
     return view('pages.landing');
