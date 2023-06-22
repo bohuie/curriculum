@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\Invitation;
 use App\Models\LearningOutcome;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Artisan;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+//URL::forceScheme('https');
 
 Route::get('/', function () {
     return view('pages.landing');
