@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\URL;
 |
 */
 
+//Currently need to force HTTPS for Unit Testing to function properly, looking into a fix now.
 //URL::forceScheme('https');
 
 Route::get('/', function () {

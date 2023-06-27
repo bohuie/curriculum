@@ -118,12 +118,22 @@
                                     @else
                                         @if ($syllabusPermission->pivot->permission == 1)
                                             <td class="text-center align-middle">
-                                                <button type="input" class="btn btn-primary" data-toggle="modal" data-target="#transferSyllabusConfirmation{{$syllabus->id}}">Transfer Ownership</button>
+
+                                                <!-- <button type="input" class="btn btn-primary" data-toggle="modal" data-target="#transferSyllabusConfirmation{{$syllabus->id}}">Transfer Ownership</button> -->
+
+                                                <form style='display:inline' action="{{ action('SyllabusUserController@transferOwnership') }}">
+                                                            @csrf
+                                                            <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
+                                                            <input type="hidden" class="form-check-input " name="newOwnerId" value={{$syllabusCollaborator->id}}>
+                                                            <input type="hidden" class="form-check-input " name="oldOwnerId" value={{$user->id}}>
+                                                            <button type="input" class="btn btn-primary">Transfer Ownership</button>
+                                                        </form>
+
                                                 <span class="ml-2 mr-2"></span>
                                                 <button type="input" class="btn btn-danger btn" onclick="deleteSyllabusCollab(this)">Remove</button>
                                             </td>
-
-                                            <!-- Transfer Confirmation Modal -->
+            
+                                            <!-- Transfer Confirmation Modal 
                                             <div class="modal fade" id="transferSyllabusConfirmation{{$syllabus->id}}" tabindex="-1" role="dialog" aria-labelledby="transferSyllabusConfirmation{{$syllabus->id}}" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -148,7 +158,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                        -->
                                         @else
                                             <td class="text-center"></td>
                                         @endif
