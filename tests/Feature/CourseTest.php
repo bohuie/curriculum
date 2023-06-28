@@ -27,9 +27,9 @@ class CourseTest extends TestCase
         $user = User::factory()->count(1)->make();
         $user = User::first();
         //Need to use real user in DB for this to work
-
-        $count= DB::table('courses')->count();
-        
+        //it turns out that this is just pulling the first user from the database
+        //therefore only works with an authenticated user
+        //we need to make an authenticated/verified user for this test
 
         $response=$this->actingAs($user)->post(route('courses.store'), [
             'course_code' => 'TEST',
@@ -37,7 +37,7 @@ class CourseTest extends TestCase
             'delivery_modality' => $delivery_modalities[array_rand($delivery_modalities)],
             'course_year' => 2022,
             'course_semester' => $semesters[array_rand($semesters)],
-            'course_title' => 'Intro to Testing',
+            'course_title' => 'Intro to Unit Testing',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'assigned' => 1,
@@ -47,16 +47,33 @@ class CourseTest extends TestCase
             'user_id' => $user->id
         ]);
 
+        $count= DB::table('courses')->count();
 
-        $response->assertRedirect('/courseWizard/'.($count+1).'/step1');
+        $response->assertRedirect('/courseWizard/'.($count).'/step1');
         
-        /*
-        //$this->be($user);
-        $course=Course::factory(1)->create();
-        //dd($course);
-        $response= $this->post(route('courses.store', $course));
-        $response->assertRedirectTo(route('courseWizard.step1', $course->course_id));
-        //$this->assertTrue();
-        */
     }
+
+    /*
+    public function test_deleting_course(){
+        $user = User::factory()->count(1)->make();
+        $user = User::first();
+        $count= DB::table('courses')->count();
+
+        $response=$this->actingAs($user)->delete(route('courses.unassign', $count));
+        //or
+        $response=$this->actingAs($user)->delete(route('courses.unassign'), [
+            'course' => $count,
+        ]);
+        
+
+        $this->assertDatabaseMissing('courses', [
+            'course_id' => $count,
+        ]);
+
+
+
+
+    }
+    */
+
 }
