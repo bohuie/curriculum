@@ -171,12 +171,19 @@
                         <li class="lead">Save or print the results.</li>
                         <li class="lead">Log back in to review or edit your work.</li>
                     </ol>
-
+                    <br>
                     <p class="lead">
                         Be ready to input this information when prompted by the application. The tool will walk you through a series of steps ending with a summary of your curriculum alignment.
                     </p>
+                    <br>
+                    <p class="lead">
+                        Watch this demo for further guidance: <a href="https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/</a>.
+                    </p>
+                    
                 </div>
         </div>
+
+
     </div>
 
     <div class="row p-md-5 justify-content-center text-dark bg-secondary">
