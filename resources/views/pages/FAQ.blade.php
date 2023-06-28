@@ -81,7 +81,7 @@
                     <div id="collapseFAQAccordion4" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader4" data-bs-parent="FAQAccordion4">
                         <div class="accordion-body lh-lg">
                             <p>
-                                Yes, you may request support for course and program mapping from the Centre for Teaching and Learning by emailing <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a>. If you are in UBC's Vancouver campus, you may contact Carrie Hunter (<a href="mailto:carrie.hunter@ubc.ca">carrie.hunter@ubc.ca</a>) at the Centre for Teaching, Learning and Technology.
+                                Yes, you may request support for course and program mapping from the Centre for Teaching and Learning by emailing <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a>. If you are in UBC's Vancouver campus, you can request support from the Centre for Teaching, Learning and Technology by emailing <a href="mailto:curriculum.support@ubc.ca">curriculum.support@ubc.ca</a>.
                             </p>
                         </div>
                     </div>
