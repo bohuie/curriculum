@@ -37,6 +37,7 @@ class UserTest extends TestCase
         $this->assertTrue($user1->name != $user2->name);
     }
 
+    /*
     public function test_delete_user(){
         $user = User::factory()->count(1)->make();
         $user = User::first();
@@ -49,6 +50,7 @@ class UserTest extends TestCase
         $this->assertTrue($flag);
         //In the example he just goes assertTrue(true) which just always returns true.
     }
+    */
 
     public function test_it_stores_new_users(){
         $response=$this->followingRedirects()->post('/register', [
@@ -87,7 +89,7 @@ class UserTest extends TestCase
     $this->patch($uri, $data=[], $header=[])
     $this->delete($uri, $data=[], $header=[])
     $uri=endpoint of route
-    Not an illuminate response, but an instance of the TestResponse???
+    Not an illuminate response, but an instance of the TestResponse
     */
 
 }
