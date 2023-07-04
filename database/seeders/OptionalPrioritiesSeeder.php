@@ -46,8 +46,8 @@ class OptionalPrioritiesSeeder extends Seeder
         $osc = new OptionalPrioritySubcategories;
         $osc->subcat_id = 2;
         $osc->cat_id = 1;
-        $osc->subcat_name = "<a href=\"https://www.workbc.ca/getmedia/c43af36f-f408-4990-9ae1-c5b5f5f7be7a/BC_Labour_Market_Outlook_2021_9MB.pdf.aspx\" target=\"_blank\">BC's Labour Market: Top skills in Demand</a>";
-        $osc->subcat_desc = "BC's tops skills in demand,as forecasted to the year 2029 by the <a href=\"https://www.workbc.ca/getmedia/c43af36f-f408-4990-9ae1-c5b5f5f7be7a/BC_Labour_Market_Outlook_2021_9MB.pdf.aspx\"></i> BC Labour Market Outlook (page 28)</a>
+        $osc->subcat_name = "<a href=\"https://www.workbc.ca/research-labour-market/bcs-labour-market-outlook-2022-edition\" target=\"_blank\">BC's Labour Market: Top skills in Demand</a>";
+        $osc->subcat_desc = "BC's tops skills in demand,as forecasted to the year 2032 by the <a href=\"https://www.workbc.ca/research-labour-market/bcs-labour-market-outlook-2022-edition\"></i> BC Labour Market Outlook (page 28)</a>
                                 , are the following:";
         $osc->subcat_postamble = "Additionally, BC expects <a href=\"https://www.workbc.ca/Labour-Market-Industry/Jobs-in-Demand/High-Demand-Occupations.aspx\""
                                 . "target=\"_blank\"><i class=\"bi bi-box-arrow-up-right\"></i> these occupations to be of \"High Opportunity\"</a> in the province. 
@@ -190,23 +190,24 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->optional_priority = "Speaking";
         $opp->year = 2021;
         $opp->save();
-        
+
         $opp = new OptionalPriorities;
         $opp->op_id = 10;
-        $opp->subcat_id = 2;
-        $opp->optional_priority = "Reading Comprehension";
-        $opp->year = 2021;
-        $opp->save();
-        
-        $opp = new OptionalPriorities;
-        $opp->op_id = 11;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Critical Thinking";
         $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
-        $opp->op_id = 12;
+        $opp->op_id = 11;
+        $opp->subcat_id = 2;
+        $opp->optional_priority = "Reading Comprehension";
+        $opp->year = 2021;
+        $opp->save();
+        
+        
+        $opp = new OptionalPriorities;
+        $opp->op_id = 15;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Social Perceptiveness";
         $opp->year = 2021;
@@ -220,28 +221,28 @@ class OptionalPrioritiesSeeder extends Seeder
         $opp->save();
         
         $opp = new OptionalPriorities;
-        $opp->op_id = 14;
+        $opp->op_id = 17;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Writing";
         $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
-        $opp->op_id = 15;
+        $opp->op_id = 12;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Monitoring";
         $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
-        $opp->op_id = 16;
+        $opp->op_id = 14;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Complex Problem Solving";
         $opp->year = 2021;
         $opp->save();
         
         $opp = new OptionalPriorities;
-        $opp->op_id = 17;
+        $opp->op_id = 16;
         $opp->subcat_id = 2;
         $opp->optional_priority = "Coordination";
         $opp->year = 2021;
