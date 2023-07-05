@@ -57,33 +57,51 @@ class CourseTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $count= DB::table('courses')->count();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
 
-        $response->assertRedirect('/courseWizard/'.($count).'/step1');
+        $response->assertRedirect('/courseWizard/'.($course->course_id).'/step1');
         
     }
 
+    public function test_adding_collaborator(){
+        $user = User::where('name', 'Test User for Courses')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        $response=$this->actingAs($user)->post(route('courses.assign', $course->course_id), [
+            "course_new_collabs" => [0 => "testing@ubc.ca"],
+            "course_new_permissions" => [0 => "edit"],
+        ]);
+
+        $this->assertDatabaseHas('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user->id
+        ]);
+
+    }
+
+    
     
     public function test_deleting_course(){
-        //currently fails since course is not deleted, but does perform route
-        //just using to delete test user at this point
+        
         $user = User::where('name', 'Test User for Courses')->first();
-        $count= DB::table('courses')->count();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
 
-        $response=$this->actingAs($user)->delete(route('courses.unassign', $count));
+        $response=$this->actingAs($user)->delete(route('courses.destroy', $course->course_id));
 
-        /*$this->assertDatabaseMissing('courses', [
-            'course_id' => $count,
+        $this->assertDatabaseMissing('courses', [
+            'course_id' => $course->course_id
         ]);
-        */
-
-        //Delete course test user
+        
+        //Delete Test User
         User::where('name', 'Test User for Courses')->delete();
 
         $this->assertDatabaseMissing('users', [
             'name' => 'Test User for Courses',
         ]);
     }
+    
+
+
     
 
 }
