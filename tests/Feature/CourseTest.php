@@ -85,6 +85,33 @@ class CourseTest extends TestCase
 
     }
 
+    /*
+    public function test_transferring_course(){
+        
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
+
+        $response=$this->actingAs($user)->get(route('courseUser.transferOwnership'), [
+            'course_id' => $course->course_id,
+            'oldOwnerId' => $user->id,
+            'newOwnerId' => $user2->id
+        ]);
+
+        $this->assertDatabaseHas('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user->id,
+            'permission' => 2
+        ]);
+
+        $this->assertDatabaseHas('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user2->id,
+            'permission' => 1
+        ]);
+    }
+    */
+
     public function test_removing_collaborator(){
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
