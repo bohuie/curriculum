@@ -85,6 +85,23 @@ class CourseTest extends TestCase
 
     }
 
+    public function test_removing_collaborator(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
+
+        //courses.unassign is an unused route, rather within CourseUserController.php in the store() method
+        // "$this->destroy($savedCourseUser);" is called when the new list of users is shorter than the current
+        //Therefore, we just use the same path courses.assign and pass an empty array
+
+        $response=$this->actingAs($user)->post(route('courses.assign', $course->course_id), []);
+
+        $this->assertDatabaseMissing('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user2->id
+        ]);
+    }
     
     public function test_deleting_course(){
         
