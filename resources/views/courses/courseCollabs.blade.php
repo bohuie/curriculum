@@ -122,7 +122,7 @@
                                             </td>
 
                                             <td class="text-center align-middle">
-                                                <button type="input" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#transferCourseConfirmation{{$course->course_id}}">Transfer Ownership</button>
+                                                <button type="input" class="open-transferCourseConfirmation btn btn-primary btn-sm" data-toggle="modal" data-target="#transferCourseConfirmation{{$course->course_id}}" data-collaborator="{{$courseCollaborator->name}}">Transfer Ownership</button>
                                             </td>
 
                                             <!-- Transfer Confirmation Modal -->
@@ -135,7 +135,11 @@
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
-                                                        <div class="modal-body">Are you sure you want to give ownership of the course: {{$course->course_title}} to the user: {{$courseCollaborator->name}}?</div>
+
+                                                        <div class="modal-body">Are you sure you want to give ownership of the course: {{$course->course_title}} to the user: 
+                                                            <input type="text" name="collaboratorId" id="collaboratorId" value="" disabled="disabled" style="background-color: #ffff; border:none; min-width:4px;"/>?
+                                                        </div>
+
                                                         <form action="{{ action('CourseUserController@transferOwnership') }}">
                                                             @csrf
                                                             <input type="hidden" class="form-check-input " name="course_id" value={{$course->course_id}}>
@@ -178,6 +182,17 @@
 <script>
 
     $(document).ready(function () {
+
+        $(document).on("click", ".open-transferCourseConfirmation", function () {
+        var collaboratorId = $(this).data('collaborator');
+
+        
+        $(".modal-body #collaboratorId").val( collaboratorId );
+        // As pointed out in comments, 
+        // it is unnecessary to have to manually call the modal.
+        // $('#addBookDialog').modal('show');
+        });
+
 
         $('.addCourseCollabForm').submit(function (event) {
             // get the course ID
@@ -269,4 +284,5 @@
             </tr>
         `);
     }
+    
 </script>
