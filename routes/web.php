@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\Invitation;
 use App\Models\LearningOutcome;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Artisan;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+//Currently need to force HTTPS for Unit Testing to function properly, looking into a fix now.
+//URL::forceScheme('https');
 
 Route::get('/', function () {
     return view('pages.landing');

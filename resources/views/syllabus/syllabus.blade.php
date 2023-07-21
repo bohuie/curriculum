@@ -163,7 +163,7 @@
                 <div class="col-6">
                     <div class="col-12">
                         <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
-                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label>
+                        <label class="form-check-label mb-2" for="crossListed">{!! $inputFieldDescriptions['crossListed'] !!}</label>
                     </div>
                 </div>
                     <div id="crossListedCode" class="col-3">
@@ -184,7 +184,7 @@
                 <div class="col-6">
                     <div class="col-12">
                         <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
-                        <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label>
+                        <label class="form-check-label mb-2" for="crossListed">{!! $inputFieldDescriptions['crossListed'] !!}</label>
                     </div>
                 </div>
                 <div id="crossListedCode" class="col-3"></div>
@@ -194,7 +194,7 @@
                 <div class="col-6">
                     <div class="col-12">
                     <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1">
-                    <label class="form-check-label mb-2" for="crossListed">Is this a Cross-Listed Course? {!! $inputFieldDescriptions['crossListed'] !!}</label> 
+                    <label class="form-check-label mb-2" for="crossListed">{!! $inputFieldDescriptions['crossListed'] !!}</label> 
                     </div>
                 </div>
                 <div id="crossListedCode" class="col-3"></div>
@@ -434,7 +434,7 @@
         <div class="alert alert-info">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>  
             <button type="button" class="close" data-dismiss="alert">×</button>
-            For guidelines on writing an inclusive syllabus, click <a target="_blank" rel="noopener noreferrer" href="https://ctlt-inclusiveteaching.sites.olt.ubc.ca/files/2019/08/inclusive-syllabus-digital.pdf">here <i class="bi bi-box-arrow-up-right"></i></a>.
+                <a target="_blank" rel="noopener noreferrer" href="https://ctlt-inclusiveteaching.sites.olt.ubc.ca/files/2019/08/inclusive-syllabus-digital.pdf">Guidelines to write an inclusive syllabus <i class="bi bi-box-arrow-up-right"></i></a>.
         </div>
 
         <!-- Okanaga Course Description -->
