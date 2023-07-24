@@ -56,8 +56,25 @@ class CourseTest extends TestCase
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
 
         $response->assertRedirect('/courseWizard/'.($course->course_id).'/step1');
+
+        $this->assertDatabaseHas('courses', [
+            'course_title' => "Intro to Unit Testing"
+        ]);
         
     }
+    
+    public function test_submit_course(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $response=$this->actingAs($user)->get(route('courses.submit', $course->course_id));
+        $response->assertRedirect('/home');
+
+        $this->assertDatabaseHas('courses', [
+            'course_title' => "Intro to Unit Testing"
+        ]);
+
+    }
+    
 
     public function test_adding_collaborator(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
