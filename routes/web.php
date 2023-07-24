@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\URL;
 */
 
 //Currently need to force HTTPS for Unit Testing to function properly, looking into a fix now.
-//URL::forceScheme('https');
+URL::forceScheme('https');
 
 Route::get('/', function () {
     return view('pages.landing');
@@ -78,7 +78,7 @@ Route::post('/courses', 'CourseController@store')->name('courses.store');
 Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
 Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');
 Route::get('/courseUser','CourseUserController@leave')->name('courseUser.leave');
-Route::get('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
+Route::post('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
 
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
