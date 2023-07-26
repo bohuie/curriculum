@@ -74,6 +74,34 @@ class CourseTest extends TestCase
         ]);
 
     }
+
+    public function test_create_clo(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
+            "current_l_outcome" => [
+            
+            ],
+            "current_l_outcome_short_phrase" => [
+            
+            ],
+            "new_l_outcomes" => [
+            0 => "Test Course Learning Outcome 1"
+            ],
+            "new_short_phrases" => [
+            0 => "Test CLO Short 1"
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_outcomes', [
+            'l_outcome' => 'Test Course Learning Outcome 1',
+            'clo_shortphrase' => 'Test CLO Short 1'
+        ]);
+    }
     
 
     public function test_adding_collaborator(){
