@@ -78,7 +78,7 @@ Route::post('/courses', 'CourseController@store')->name('courses.store');
 Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
 Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');
 Route::get('/courseUser','CourseUserController@leave')->name('courseUser.leave');
-Route::get('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
+Route::post('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
 
 Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
 Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
@@ -94,6 +94,7 @@ Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('co
 // Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 Route::resource('/lo','LearningOutcomeController');
 Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
+Route::post('/store/clos','LearningOutcomeController@store')->name('course.outcomes.store');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
 Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
