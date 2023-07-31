@@ -62,6 +62,23 @@ class CourseTest extends TestCase
         ]);
         
     }
+
+    public function test_duplicate_course(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        $response=$this->actingAs($user)->get(route('courses.duplicate', $course->course_id), [
+            "course_code" => "TEST",
+            "course_num" => "111",
+            "course_title" => "Intro to Unit Testing Duplicate",
+        ]);
+
+        $this->assertDatabaseHas('courses', [
+            'course_title' => "Intro to Unit Testing Duplicate"
+        ]);
+
+    }
     
     public function test_submit_course(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -190,12 +207,15 @@ class CourseTest extends TestCase
         //We are testing Course and CourseUser routes here, so deleting manually is fine to clean up.
         User::where('email', 'test-course-collab@ubc.ca')->delete();
         User::where('email', 'test-course@ubc.ca')->delete();
+        //Delete Duplicate Course
+        Course::where('course_title', 'Intro to Unit Testing')->delete();
 
         $this->assertDatabaseMissing('users', [
             'email' => 'test-course-collab@ubc.ca',
             'email' => 'test-course@ubc.ca'
         ]);
     }
+    
     
     
 
