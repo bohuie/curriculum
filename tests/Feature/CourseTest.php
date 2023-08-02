@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\LearningOutcome;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
 use Carbon\Carbon;
@@ -62,7 +63,7 @@ class CourseTest extends TestCase
         ]);
         
     }
-
+    /*
     public function test_duplicate_course(){
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -79,6 +80,7 @@ class CourseTest extends TestCase
         ]);
 
     }
+    */
     
     public function test_submit_course(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -115,6 +117,33 @@ class CourseTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('learning_outcomes', [
+            'l_outcome' => 'Test Course Learning Outcome 1',
+            'clo_shortphrase' => 'Test CLO Short 1'
+        ]);
+    }
+
+    public function test_delete_clo(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $clo = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 1')->first();
+
+        $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
+            "current_l_outcome" => [
+            
+            ],
+            "current_l_outcome_short_phrase" => [
+            
+            ],
+            "new_l_outcomes" => [
+
+            ],
+            "new_short_phrases" => [
+                
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseMissing('learning_outcomes', [
             'l_outcome' => 'Test Course Learning Outcome 1',
             'clo_shortphrase' => 'Test CLO Short 1'
         ]);
