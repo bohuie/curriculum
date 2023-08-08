@@ -63,6 +63,13 @@ class CourseTest extends TestCase
         ]);
         
     }
+    
+    public function test_download_pdf(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $response=$this->actingAs($user)->get(route('courses.pdf', $course->course_id))->assertStatus(200);
+    }
     /*
     public function test_duplicate_course(){
 
