@@ -136,35 +136,26 @@ class CourseTest extends TestCase
         ]);
     }
 
-    /*
+    
     public function test_reorder_clo(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $clo1 = LearningOutcome::where('l_outcome','Test Course Learning Outcome 1')->first();
+        $clo2 = LearningOutcome::where('l_outcome','Test Course Learning Outcome 2')->first();
 
-        //LearningOutcomeController@store
-
-        $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
-            "current_l_outcome" => [
-            
-            ],
-            "current_l_outcome_short_phrase" => [
-            
-            ],
-            "new_l_outcomes" => [
-            0 => "Test Course Learning Outcome 1"
-            ],
-            "new_short_phrases" => [
-            0 => "Test CLO Short 1"
-            ],
-            "course_id" => $course->course_id
+        $response=$this->actingAs($user)->post(route('courses.loReorder', $course->course_id), [
+            "l_outcome_pos" => [
+                0 => $clo2->l_outcome_id,
+                1 => $clo1->l_outcome_id
+            ]
         ]);
 
         $this->assertDatabaseHas('learning_outcomes', [
-            'l_outcome' => 'Test Course Learning Outcome 1',
-            'clo_shortphrase' => 'Test CLO Short 1'
+            'l_outcome' => 'Test Course Learning Outcome 2',
+            'pos_in_alignment' => 0
         ]);
     }
-    */
+    
 
     public function test_delete_clo(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -173,10 +164,10 @@ class CourseTest extends TestCase
 
         $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
             "current_l_outcome" => [
-            
+                0 => "Test Course Learning Outcome 2"
             ],
             "current_l_outcome_short_phrase" => [
-            
+                0 => "Test CLO Short 2",
             ],
             "new_l_outcomes" => [
 
