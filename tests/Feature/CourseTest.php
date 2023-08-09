@@ -70,24 +70,23 @@ class CourseTest extends TestCase
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
         $response=$this->actingAs($user)->get(route('courses.pdf', $course->course_id))->assertStatus(200);
     }
-    /*
+    
     public function test_duplicate_course(){
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
 
-        $response=$this->actingAs($user)->get(route('courses.duplicate', $course->course_id), [
+        $response=$this->actingAs($user)->post(route('courses.duplicate', $course->course_id), [
             "course_code" => "TEST",
             "course_num" => "111",
-            "course_title" => "Intro to Unit Testing Duplicate",
+            "course_title" => "Intro to Unit Testing - Copy",
         ]);
 
         $this->assertDatabaseHas('courses', [
-            'course_title' => "Intro to Unit Testing Duplicate"
+            'course_title' => "Intro to Unit Testing - Copy"
         ]);
 
     }
-    */
     
     public function test_submit_course(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
