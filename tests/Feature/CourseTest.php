@@ -106,7 +106,7 @@ class CourseTest extends TestCase
 
         //LearningOutcomeController@store
 
-        $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
+        $response=$this->actingAs($user)->post(route('courses.outcomes.store'), [
             "current_l_outcome" => [
             
             ],
@@ -154,6 +154,41 @@ class CourseTest extends TestCase
             'pos_in_alignment' => 0
         ]);
     }
+
+    public function test_create_la(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('la.store'), [
+            "current_l_activities" => [
+
+            ],
+
+            "new_l_activities" => [
+                1 => "Group discussion",
+                2 => "Issue-based inquiry",
+                3 => "Guest Speaker"
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => 'Group discussion',
+            'course_id' => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => 'Issue-based inquiry',
+            'course_id' => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => 'Guest Speaker',
+            'course_id' => $course->course_id
+        ]);
+    }
     
 
     public function test_delete_clo(){
@@ -161,7 +196,7 @@ class CourseTest extends TestCase
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
         $clo = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 1')->first();
 
-        $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
+        $response=$this->actingAs($user)->post(route('courses.outcomes.store'), [
             "current_l_outcome" => [
                 0 => "Test Course Learning Outcome 2"
             ],
