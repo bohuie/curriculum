@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\LearningOutcome;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
+use App\Models\LearningActivity;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -190,6 +191,26 @@ class CourseTest extends TestCase
         ]);
     }
     
+    public function test_reorder_la(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $learningActivities = LearningActivity::where('course_id', $course->course_id)->get();
+
+
+        $response=$this->actingAs($user)->post(route('courses.loReorder', $course->course_id), [
+            "l_outcome_pos" => [
+                0 => $learningActivities[1]->l_outcome_id,
+                1 => $learningActivities[0]->l_outcome_id,
+                2 => $learningActivities[2]->l_outcome_id
+            ]
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => $learningActivities[1]->l_activity,
+            'l_activities_pos' => 0,
+            'course_id' => $course->course_id
+        ]);
+    }
 
     public function test_delete_clo(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
