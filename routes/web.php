@@ -107,6 +107,7 @@ Route::post('/ajax/custom_methods','CustomAssessmentMethodsController@store' );
 Route::post('/store/la','LearningActivityController@store')->name('la.store');
 
 Route::resource('/am','AssessmentMethodController');
+Route::post('/store/am','AssessmentMethodController@store')->name('am.store');
 
 Route::resource('/outcomeMap','OutcomeMapController');
 //Route for standards mapping
