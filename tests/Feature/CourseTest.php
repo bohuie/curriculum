@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\AssessmentMethod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -256,6 +257,27 @@ class CourseTest extends TestCase
             'weight' => 10
         ]);
 
+    }
+
+    public function test_reorder_am(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $assessmentMethods = AssessmentMethod::where('course_id', $course->course_id)->get();
+
+
+        $response=$this->actingAs($user)->post(route('courses.loReorder', $course->course_id), [
+            "a_method_pos" => [
+                0 => $assessmentMethods[1]->a_method_id,
+                1 => $assessmentMethods[0]->a_method_id,
+                2 => $assessmentMethods[2]->a_method_id
+            ]
+        ]);
+
+        $this->assertDatabaseHas('assessment_methods', [
+            'a_method' => $assessmentMethods[1]->a_method,
+            'pos_in_alignment' => 0,
+            'course_id' => $course->course_id
+        ]);
     }
 
     public function test_delete_clo(){
