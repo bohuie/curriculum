@@ -213,6 +213,31 @@ class CourseTest extends TestCase
         ]);
     }
 
+    public function test_delete_la(){
+        
+            $user = User::where('email', 'test-course@ubc.ca')->first();
+            $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+    
+            //LearningOutcomeController@store
+    
+            $response=$this->actingAs($user)->post(route('la.store'), [
+                "current_l_activities" => [
+    
+                ],
+    
+                "new_l_activities" => [
+
+                ],
+                "course_id" => $course->course_id
+            ]);
+    
+            $this->assertDatabaseMissing('learning_activities', [
+                'course_id' => $course->course_id
+            ]);
+    
+        
+    }
+
     public function test_create_am(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
