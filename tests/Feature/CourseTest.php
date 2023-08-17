@@ -157,6 +157,33 @@ class CourseTest extends TestCase
         ]);
     }
 
+    public function test_delete_clo(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $clo = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 1')->first();
+
+        $response=$this->actingAs($user)->post(route('courses.outcomes.store'), [
+            "current_l_outcome" => [
+                0 => "Test Course Learning Outcome 2"
+            ],
+            "current_l_outcome_short_phrase" => [
+                0 => "Test CLO Short 2",
+            ],
+            "new_l_outcomes" => [
+
+            ],
+            "new_short_phrases" => [
+                
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseMissing('learning_outcomes', [
+            'l_outcome' => 'Test Course Learning Outcome 1',
+            'clo_shortphrase' => 'Test CLO Short 1'
+        ]);
+    }
+
     public function test_create_la(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -305,32 +332,35 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_delete_clo(){
+    public function test_delete_am(){
+        
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
-        $clo = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 1')->first();
 
-        $response=$this->actingAs($user)->post(route('courses.outcomes.store'), [
-            "current_l_outcome" => [
-                0 => "Test Course Learning Outcome 2"
-            ],
-            "current_l_outcome_short_phrase" => [
-                0 => "Test CLO Short 2",
-            ],
-            "new_l_outcomes" => [
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('am.store'), [
+            "current_a_methods" => [
 
             ],
-            "new_short_phrases" => [
-                
+
+            "current_weights" => [
+
+            ],
+
+            "new_a_methods" => [
+
             ],
             "course_id" => $course->course_id
         ]);
 
-        $this->assertDatabaseMissing('learning_outcomes', [
-            'l_outcome' => 'Test Course Learning Outcome 1',
-            'clo_shortphrase' => 'Test CLO Short 1'
+        $this->assertDatabaseMissing('assessment_methods', [
+            'course_id' => $course->course_id
         ]);
+
+    
     }
+
     
 
     public function test_adding_collaborator(){
