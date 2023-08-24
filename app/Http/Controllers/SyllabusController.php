@@ -1047,22 +1047,27 @@ class SyllabusController extends Controller
                 
                 // tell template processor to include other course staff if user completed the field(s)
                 if($syllabus->other_instructional_staff){
-                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
-                    // split other course staff string on newline char
                     $otherCourseStaffArr = explode("\n", $syllabus->other_instructional_staff);
-                    // create a table for other course staff (workaround for no list option)
-                    $otherCourseStaffTable = new Table($tableStyle);
-                    //$otherCourseStaffTable->addRow();
-                    //$otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other  Instructional Staff', $tableHeaderFontStyle);
-
-                    // add a new row and cell to table for each course staff member
-                    foreach($otherCourseStaffArr as $index => $courseStaffMember){
-                        $otherCourseStaffTable->addRow();
-                        $otherCourseStaffTable->addCell()->addText(strval($index + 1));
-                        $otherCourseStaffTable->addCell()->addText($courseStaffMember);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($otherCourseStaffArr as $index => $otherCourseStaff){
+                            $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, $otherCourseStaff."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
+                        $templateProcessor->setValue('otherInstructionalStaff0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->other_instructional_staff));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
+                        }
                     }
-                    // add other course staff table to word doc
-                    $templateProcessor->setComplexBlock('otherInstructionalStaff', $otherCourseStaffTable);
+                    
                 }else{
                     $templateProcessor->cloneBlock('NoOtherInstructionalStaff',0);
                 }
@@ -1466,25 +1471,30 @@ class SyllabusController extends Controller
                 }
                
                 // tell template processor to include other course staff if user completed the field(s)
-                if($otherCourseStaff =  $syllabus->other_instructional_staff){
-                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff', 0);
-                    // split other course staff string on newline char
-                    $otherCourseStaffArr = explode("\n", $otherCourseStaff);
-                    // create a table for other course staff (workaround for no list option)
-                    $otherCourseStaffTable = new Table($tableStyle);
-                    //$otherCourseStaffTable->addRow();
-                    //$otherCourseStaffTable->addCell(10, $tableHeaderRowStyle);                    $otherCourseStaffTable->addCell(null, $tableHeaderRowStyle)->addText('Other Instructional Staff', $tableHeaderFontStyle);
-                    // add a new row and cell to table for each course staff member
-                    foreach($otherCourseStaffArr as $index => $courseStaffMember){
-                        $otherCourseStaffTable->addRow();
-                        $otherCourseStaffTable->addCell()->addText(strval($index + 1));
-                        $otherCourseStaffTable->addCell()->addText($courseStaffMember);
+                if($syllabus->other_instructional_staff){
+                    $otherCourseStaffArr = explode("\n", $syllabus->other_instructional_staff);
+                    $i=0;
+                    if($ext == 'pdf') {
+                        foreach($otherCourseStaffArr as $index => $otherCourseStaff){
+                            $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, $otherCourseStaff."</w:t><w:br/><w:t>");
+                            $i++;
+                        }
+                        
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
+                        }
+                    }else{
+                        $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
+                        $templateProcessor->setValue('otherInstructionalStaff0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->other_instructional_staff));
+                        $i++;
+                        for($i;$i<=20;$i++){
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
+                        }
                     }
-                    // add other course staff table to word doc
-                    $templateProcessor->setComplexBlock('otherInstructionalStaff', $otherCourseStaffTable);
+                    
                 }else{
-                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
-                    $templateProcessor->setValue('otherInstructionalStaff', '');
+                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff',0);
                 }
                 // tell template processor to include course location if user completed the field(s)
                 if ($courseLocation =  $syllabus->course_location) {
