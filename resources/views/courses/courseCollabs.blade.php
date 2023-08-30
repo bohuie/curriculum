@@ -136,7 +136,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">Are you sure you want to give ownership of the course: {{$course->course_title}} to the user: {{$courseCollaborator->name}}?</div>
-                                                        <form action="{{ action('CourseUserController@transferOwnership') }}">
+                                                        <form method="POST" action="{{ action('CourseUserController@transferOwnership') }}">
                                                             @csrf
                                                             <input type="hidden" class="form-check-input " name="course_id" value={{$course->course_id}}>
                                                             <input type="hidden" class="form-check-input " name="newOwnerId" value={{$courseCollaborator->id}}>

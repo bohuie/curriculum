@@ -95,7 +95,7 @@
     <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
         <div>
-            To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/forms/">UBC Okanagan <i class="bi bi-box-arrow-up-right"></i></a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver <i class="bi bi-box-arrow-up-right"></i></a> senate. 
+            To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/forms/">UBC Okanagan</a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver</a> senate. 
         </div>
     </div>
 
@@ -434,7 +434,7 @@
         <div class="alert alert-info">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>  
             <button type="button" class="close" data-dismiss="alert">×</button>
-                <a target="_blank" rel="noopener noreferrer" href="https://ctlt-inclusiveteaching.sites.olt.ubc.ca/files/2019/08/inclusive-syllabus-digital.pdf">Guidelines to write an inclusive syllabus <i class="bi bi-box-arrow-up-right"></i></a>.
+                <a target="_blank" rel="noopener noreferrer" href="https://ctlt-inclusiveteaching.sites.olt.ubc.ca/files/2019/08/inclusive-syllabus-digital.pdf">Guidelines to write an inclusive syllabus</a>.
         </div>
 
         <!-- Okanaga Course Description -->
@@ -891,6 +891,13 @@
 
         <!-- Optional Statements -->
         <div class="col-12" id="optionalStatements"></div>
+        
+        <!-- UBC Academic Integrity Website -->
+        <div class="col-12">
+        <label for="academicIntegrityUBC"><h5 class="fw-bold">UBC’s Academic Integrity Website</h5></label>
+            <br>
+            <p class="inputFieldDescription">For additional language you may consider adding to your syllabus regarding generative artificial intelligence, visit <a href="https://academicintegrity.ubc.ca/generative-ai-syllabus/">UBC's Academic Integrity website.</a></p> 
+        </div>
 
         <!-- Copyright Statement -->
         <div class="col-12" id="crStatement"></div>
@@ -2332,13 +2339,13 @@
         var vancouverOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                <a href="https://senate.ubc.ca/policies-resources-support-student-success/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Vancouver senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+                <a href="https://senate.ubc.ca/policies-resources-support-student-success/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Vancouver senate website.</a>
             </p>`;
         
         var okanaganOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website.</a>
             </p>`;
 
          // list of vancouver syllabus resources
@@ -2571,7 +2578,7 @@
                     <div id="optionalSyllabusDesc"></div>
                 @else
                     <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website. <i class="bi bi-box-arrow-up-right"></i></a>
+                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website.</a>
                     </p>
                 @endif
             <div class="form-check m-4">

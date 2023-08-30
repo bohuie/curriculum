@@ -27,19 +27,15 @@ class CourseTest extends TestCase
         //$user = User::factory()->count(1)->make();
         //$user = User::first();
 
-        //create verified user
+        //Create Verified User
         DB::table('users')->insert([
-            'name' => 'Test User for Courses',
-            'email' => 'test@email.ca',
+            'name' => 'Test Course',
+            'email' => 'test-course@ubc.ca',
             'email_verified_at' => Carbon::now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
         ]);
 
-        $user = User::where('name', 'Test User for Courses')->first();
-        //Need to use real user in DB for this to work
-        //it turns out that this is just pulling the first user from the database
-        //therefore only works with an authenticated user
-        //we need to make an authenticated/verified user for this test
+        $user = User::where('email', 'test-course@ubc.ca')->first();
 
         $response=$this->actingAs($user)->post(route('courses.store'), [
             'course_code' => 'TEST',
@@ -57,33 +53,153 @@ class CourseTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $count= DB::table('courses')->count();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
 
-        $response->assertRedirect('/courseWizard/'.($count).'/step1');
+        $response->assertRedirect('/courseWizard/'.($course->course_id).'/step1');
+
+        $this->assertDatabaseHas('courses', [
+            'course_title' => "Intro to Unit Testing"
+        ]);
         
+    }
+    
+    public function test_submit_course(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $response=$this->actingAs($user)->get(route('courses.submit', $course->course_id));
+        $response->assertRedirect('/home');
+
+        $this->assertDatabaseHas('courses', [
+            'course_title' => "Intro to Unit Testing"
+        ]);
+
+    }
+
+    public function test_create_clo(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
+            "current_l_outcome" => [
+            
+            ],
+            "current_l_outcome_short_phrase" => [
+            
+            ],
+            "new_l_outcomes" => [
+            0 => "Test Course Learning Outcome 1"
+            ],
+            "new_short_phrases" => [
+            0 => "Test CLO Short 1"
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_outcomes', [
+            'l_outcome' => 'Test Course Learning Outcome 1',
+            'clo_shortphrase' => 'Test CLO Short 1'
+        ]);
+    }
+    
+
+    public function test_adding_collaborator(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //Create Verified User for Course Collaboration Testing
+        DB::table('users')->insert([
+            'name' => 'Test Course Collab',
+            'email' => 'test-course-collab@ubc.ca',
+            'email_verified_at' => Carbon::now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+        ]);
+
+        $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
+
+        $response=$this->actingAs($user)->post(route('courses.assign', $course->course_id), [
+            "course_new_collabs" => [0 => "test-course-collab@ubc.ca"],
+            "course_new_permissions" => [0 => "edit"],
+        ]);
+
+        $this->assertDatabaseHas('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user2->id
+        ]);
+
     }
 
     
-    public function test_deleting_course(){
-        //currently fails since course is not deleted, but does perform route
-        //just using to delete test user at this point
-        $user = User::where('name', 'Test User for Courses')->first();
-        $count= DB::table('courses')->count();
+    public function test_transferring_course(){
+        
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
 
-        $response=$this->actingAs($user)->delete(route('courses.unassign', $count));
-
-        /*$this->assertDatabaseMissing('courses', [
-            'course_id' => $count,
+        $response=$this->actingAs($user)->post(route('courseUser.transferOwnership'), [
+            'course_id' => $course->course_id,
+            'oldOwnerId' => $user->id,
+            'newOwnerId' => $user2->id
         ]);
-        */
 
-        //Delete course test user
-        User::where('name', 'Test User for Courses')->delete();
+        $this->assertDatabaseHas('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user->id,
+            'permission' => 2
+        ]);
 
-        $this->assertDatabaseMissing('users', [
-            'name' => 'Test User for Courses',
+        $this->assertDatabaseHas('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user2->id,
+            'permission' => 1
         ]);
     }
+    
+
+    public function test_removing_collaborator(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
+
+        //courses.unassign is an unused route, rather within CourseUserController.php in the store() method
+        // "$this->destroy($savedCourseUser);" is called when the new list of users is shorter than the current
+        //Therefore, we just use the same path courses.assign and pass an empty array
+
+        $response=$this->actingAs($user2)->post(route('courses.assign', $course->course_id), []);
+
+        $this->assertDatabaseMissing('course_users', [
+            'course_id' => $course->course_id,
+            'user_id' => $user->id
+        ]);
+    }
+    
+    public function test_deleting_course(){
+        
+        $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        $response=$this->actingAs($user2)->delete(route('courses.destroy', $course->course_id));
+
+        $this->assertDatabaseMissing('courses', [
+            'course_id' => $course->course_id
+        ]);
+        
+        //Delete Test User(s)
+        //We are testing Course and CourseUser routes here, so deleting manually is fine to clean up.
+        User::where('email', 'test-course-collab@ubc.ca')->delete();
+        User::where('email', 'test-course@ubc.ca')->delete();
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'test-course-collab@ubc.ca',
+            'email' => 'test-course@ubc.ca'
+        ]);
+    }
+    
+    
+
+
     
 
 }
