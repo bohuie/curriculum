@@ -89,12 +89,12 @@ Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
 Route::delete('/courses/{course}/pdf', 'CourseController@deletePDF')->name('courses.delete.pdf');
 Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
-Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
+Route::post('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
 
 // Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 Route::resource('/lo','LearningOutcomeController');
 Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
-Route::post('/store/clos','LearningOutcomeController@store')->name('course.outcomes.store');
+Route::post('/store/clos','LearningOutcomeController@store')->name('courses.outcomes.store');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
 Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
@@ -104,8 +104,10 @@ Route::resource('/la','LearningActivityController');
 
 Route::post('/ajax/custom_activities','CustomLearningActivitiesController@store' );
 Route::post('/ajax/custom_methods','CustomAssessmentMethodsController@store' );
+Route::post('/store/la','LearningActivityController@store')->name('la.store');
 
 Route::resource('/am','AssessmentMethodController');
+Route::post('/store/am','AssessmentMethodController@store')->name('am.store');
 
 Route::resource('/outcomeMap','OutcomeMapController');
 //Route for standards mapping

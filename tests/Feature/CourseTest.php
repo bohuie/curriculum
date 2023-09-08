@@ -2,12 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\AssessmentMethod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\LearningOutcome;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
+use App\Models\LearningActivity;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -63,6 +66,30 @@ class CourseTest extends TestCase
         
     }
     
+    public function test_download_pdf(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $response=$this->actingAs($user)->get(route('courses.pdf', $course->course_id))->assertStatus(200);
+    }
+    
+    public function test_duplicate_course(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        $response=$this->actingAs($user)->post(route('courses.duplicate', $course->course_id), [
+            "course_code" => "TEST",
+            "course_num" => "111",
+            "course_title" => "Intro to Unit Testing - Copy",
+        ]);
+
+        $this->assertDatabaseHas('courses', [
+            'course_title' => "Intro to Unit Testing - Copy"
+        ]);
+
+    }
+    
     public function test_submit_course(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -81,7 +108,7 @@ class CourseTest extends TestCase
 
         //LearningOutcomeController@store
 
-        $response=$this->actingAs($user)->post(route('course.outcomes.store'), [
+        $response=$this->actingAs($user)->post(route('courses.outcomes.store'), [
             "current_l_outcome" => [
             
             ],
@@ -89,10 +116,12 @@ class CourseTest extends TestCase
             
             ],
             "new_l_outcomes" => [
-            0 => "Test Course Learning Outcome 1"
+            0 => "Test Course Learning Outcome 1",
+            1 => "Test Course Learning Outcome 2"
             ],
             "new_short_phrases" => [
-            0 => "Test CLO Short 1"
+            0 => "Test CLO Short 1",
+            1 => "Test CLO Short 2"
             ],
             "course_id" => $course->course_id
         ]);
@@ -101,7 +130,272 @@ class CourseTest extends TestCase
             'l_outcome' => 'Test Course Learning Outcome 1',
             'clo_shortphrase' => 'Test CLO Short 1'
         ]);
+
+        $this->assertDatabaseHas('learning_outcomes', [
+            'l_outcome' => 'Test Course Learning Outcome 2',
+            'clo_shortphrase' => 'Test CLO Short 2'
+        ]);
     }
+
+    public function test_create_la(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('la.store'), [
+            "current_l_activities" => [
+
+            ],
+
+            "new_l_activities" => [
+                1 => "Group discussion",
+                2 => "Issue-based inquiry",
+                3 => "Guest Speaker"
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => 'Group discussion',
+            'course_id' => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => 'Issue-based inquiry',
+            'course_id' => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => 'Guest Speaker',
+            'course_id' => $course->course_id
+        ]);
+    }
+
+
+    public function test_create_am(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('am.store'), [
+        "current_a_methods" => [
+
+        ],
+        "current_weights" => [
+
+        ],
+        "new_a_methods" => [
+            1 => "Assignment",
+            2 => "Attendance",
+            3 => "Debate"
+            ],
+        "new_weights" => [
+            1 => "50",
+            2 => "40",
+            3 => "10",
+        ],
+        "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseHas('assessment_methods', [
+            'a_method' => 'Assignment',
+            'course_id' => $course->course_id,
+            'weight' => 50
+        ]);
+
+        $this->assertDatabaseHas('assessment_methods', [
+            'a_method' => 'Attendance',
+            'course_id' => $course->course_id,
+            'weight' => 40
+        ]);
+
+        $this->assertDatabaseHas('assessment_methods', [
+            'a_method' => 'Debate',
+            'course_id' => $course->course_id,
+            'weight' => 10
+        ]);
+
+    }
+
+
+    public function test_course_alignment(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $learningActivities = LearningActivity::where('course_id', $course->course_id)->get();
+        $assessmentMethods = AssessmentMethod::where('course_id', $course->course_id)->get();
+
+        $response=$this->actingAs($user)->post(route('courses.outcomeDetails', $course->course_id), [
+        "a_methods" => [
+        $assessmentMethods[0]->a_method_id => [
+          0 => "1"
+        ],
+        $assessmentMethods[1]->a_method_id => [
+          0 => "1",
+          1 => "2"
+        ]
+        ],
+      "l_activities" => [
+        $learningActivities[0]->a_method_id => [
+            0 => "1"
+          ],
+          $assessmentMethods[1]->a_method_id => [
+            0 => "1",
+            1 => "2"
+          ]
+      ]
+      "l_outcomes_pos" => [
+        0 => "35",
+        1 => "36"
+      ]
+        ]);
+
+
+    }
+
+    public function test_reorder_am(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $assessmentMethods = AssessmentMethod::where('course_id', $course->course_id)->get();
+
+
+        $response=$this->actingAs($user)->post(route('courses.loReorder', $course->course_id), [
+            "a_method_pos" => [
+                0 => $assessmentMethods[1]->a_method_id,
+                1 => $assessmentMethods[0]->a_method_id,
+                2 => $assessmentMethods[2]->a_method_id
+            ]
+        ]);
+
+        $this->assertDatabaseHas('assessment_methods', [
+            'a_method' => $assessmentMethods[1]->a_method,
+            'pos_in_alignment' => 0,
+            'course_id' => $course->course_id
+        ]);
+    }
+
+    public function test_reorder_la(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $learningActivities = LearningActivity::where('course_id', $course->course_id)->get();
+
+
+        $response=$this->actingAs($user)->post(route('courses.loReorder', $course->course_id), [
+            "l_outcome_pos" => [
+                0 => $learningActivities[1]->l_outcome_id,
+                1 => $learningActivities[0]->l_outcome_id,
+                2 => $learningActivities[2]->l_outcome_id
+            ]
+        ]);
+
+        $this->assertDatabaseHas('learning_activities', [
+            'l_activity' => $learningActivities[1]->l_activity,
+            'l_activities_pos' => 0,
+            'course_id' => $course->course_id
+        ]);
+    }
+
+    public function test_reorder_clo(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $clo1 = LearningOutcome::where('l_outcome','Test Course Learning Outcome 1')->first();
+        $clo2 = LearningOutcome::where('l_outcome','Test Course Learning Outcome 2')->first();
+
+        $response=$this->actingAs($user)->post(route('courses.loReorder', $course->course_id), [
+            "l_outcome_pos" => [
+                0 => $clo2->l_outcome_id,
+                1 => $clo1->l_outcome_id
+            ]
+        ]);
+
+        $this->assertDatabaseHas('learning_outcomes', [
+            'l_outcome' => 'Test Course Learning Outcome 2',
+            'pos_in_alignment' => 0
+        ]);
+    }
+
+    public function test_delete_clo(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $clo = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 1')->first();
+
+        $response=$this->actingAs($user)->post(route('courses.outcomes.store'), [
+            "current_l_outcome" => [
+                0 => "Test Course Learning Outcome 2"
+            ],
+            "current_l_outcome_short_phrase" => [
+                0 => "Test CLO Short 2",
+            ],
+            "new_l_outcomes" => [
+
+            ],
+            "new_short_phrases" => [
+                
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseMissing('learning_outcomes', [
+            'l_outcome' => 'Test Course Learning Outcome 1',
+            'clo_shortphrase' => 'Test CLO Short 1'
+        ]);
+    }
+
+    public function test_delete_am(){
+        
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('am.store'), [
+            "current_a_methods" => [
+
+            ],
+
+            "current_weights" => [
+
+            ],
+
+            "new_a_methods" => [
+
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseMissing('assessment_methods', [
+            'course_id' => $course->course_id
+        ]);
+
+    
+    }
+
+    public function test_delete_la(){
+        
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('la.store'), [
+            "current_l_activities" => [
+
+            ],
+
+            "new_l_activities" => [
+
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseMissing('learning_activities', [
+            'course_id' => $course->course_id
+        ]);
+
+    
+}
+
     
 
     public function test_adding_collaborator(){
@@ -190,12 +484,15 @@ class CourseTest extends TestCase
         //We are testing Course and CourseUser routes here, so deleting manually is fine to clean up.
         User::where('email', 'test-course-collab@ubc.ca')->delete();
         User::where('email', 'test-course@ubc.ca')->delete();
+        //Delete Duplicate Course
+        Course::where('course_title', 'Intro to Unit Testing')->delete();
 
         $this->assertDatabaseMissing('users', [
             'email' => 'test-course-collab@ubc.ca',
             'email' => 'test-course@ubc.ca'
         ]);
     }
+    
     
     
 
