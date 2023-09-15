@@ -102,6 +102,35 @@ class CourseTest extends TestCase
             'clo_shortphrase' => 'Test CLO Short 1'
         ]);
     }
+
+    public function test_standardsOutcomeMap_store(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+
+        //setting this mapping to all "Introduced" for this course, except 1
+        $response=$this->actingAs($user)->post(route('outcomeMap.store'), [
+            "course_id" => $course->course_id,
+            "map" => [
+                $course->course_id => [
+                    1 => "102",
+                    2 => "101",
+                    3 => "101",
+                    4 => "101",
+                    5 => "101",
+                    6 => "101",
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('standards_outcome_maps', [
+            'course_id' => $course->course_id,
+            'standard_scale_id' => '101',
+            'standard_id' => 6
+        ]);
+        //this is failing when it should be working
+        //cannot get out of for loop in StandardOutcomeMapController
+    }
     
 
     public function test_adding_collaborator(){

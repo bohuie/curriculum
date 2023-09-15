@@ -110,6 +110,7 @@ Route::resource('/am','AssessmentMethodController');
 Route::resource('/outcomeMap','OutcomeMapController');
 //Route for standards mapping
 Route::resource('/standardsOutcomeMap', 'StandardsOutcomeMapController');
+Route::post('/store/standardsOutcomeMap','StandardsOutcomeMapController@store')->name('outcomeMap.store');
 
 Route::resource('/mappingScale','MappingScaleController');
 Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDefaultMappingScale')->name('mappingScale.addDefaultMappingScale');
