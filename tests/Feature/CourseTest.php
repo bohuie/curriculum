@@ -244,11 +244,11 @@ class CourseTest extends TestCase
             0 => "1",
             1 => "2"
           ]
-      ]
-      "l_outcomes_pos" => [
-        0 => "35",
-        1 => "36"
-      ]
+          ],
+        "l_outcomes_pos" => [
+            0 => "35",
+            1 => "36"
+        ]
         ]);
 
 
