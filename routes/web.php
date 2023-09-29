@@ -94,18 +94,21 @@ Route::get('/courses/{course}/duplicate','CourseController@duplicate')->name('co
 // Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 Route::resource('/lo','LearningOutcomeController');
 Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
-Route::post('/store/clos','LearningOutcomeController@store')->name('course.outcomes.store');
+Route::post('/store/clos','LearningOutcomeController@store')->name('courses.outcomes.store');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
 Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
 
 
 Route::resource('/la','LearningActivityController');
+Route::post('/la/store', 'LearningActivityController@store')->name('la.store');
+
 
 Route::post('/ajax/custom_activities','CustomLearningActivitiesController@store' );
 Route::post('/ajax/custom_methods','CustomAssessmentMethodsController@store' );
 
 Route::resource('/am','AssessmentMethodController');
+Route::post('/am/store', 'AssessmentMethodController@store')->name('am.store');
 
 Route::resource('/outcomeMap','OutcomeMapController');
 //Route for standards mapping
