@@ -223,30 +223,38 @@ class CourseTest extends TestCase
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
         $learningActivities = LearningActivity::where('course_id', $course->course_id)->get();
         $assessmentMethods = AssessmentMethod::where('course_id', $course->course_id)->get();
+        $learningOutcome1 = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 1')->first();
+        $learningOutcome2 = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 2')->first();
+
 
         $response=$this->actingAs($user)->post(route('courses.outcomeDetails', $course->course_id), [
         "a_methods" => [
-        $assessmentMethods[0]->a_method_id => [
-          0 => "1"
+            $learningOutcome1->l_outcome_id => [
+                0 => $assessmentMethods[0]->a_method_id
+                //This is mapping CLO #1 to the first assessment method
+            ],
+            $learningOutcome2->l_outcome_id => [
+                0 => $assessmentMethods[0]->a_method_id,
+                1 => $assessmentMethods[1]->a_method_id
+                //This is mapping CLO #2 to the first and second assessment method
+            ]
         ],
-        $assessmentMethods[1]->a_method_id => [
-          0 => "1",
-          1 => "2"
-        ]
-        ],
-      "l_activities" => [
-        $learningActivities[0]->a_method_id => [
-            0 => "1"
-          ],
-          $assessmentMethods[1]->a_method_id => [
-            0 => "1",
-            1 => "2"
-          ]
+        "l_activities" => [
+            $learningOutcome1->l_outcome_id => [
+                0 => $learningActivities-> l_activity_id
+                //This is mapping only CLO #1 to the first Learning Activity
+            ]
           ],
         "l_outcomes_pos" => [
-            0 => "35",
-            1 => "36"
+            0 => $learningOutcome1->l_outcome_id,
+            1 => $learningOutcome2->l_outcome_id,
         ]
+        ]);
+
+        
+        $this->assertDatabaseHas('outcome_assessments', [
+            'l_outcome_id' => $learningOutcome1->l_outcome_id,
+            'a_method_id' => $assessmentMethods[0]->a_method_id
         ]);
 
 
