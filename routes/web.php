@@ -61,6 +61,7 @@ Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.l
 Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
 Route::resource('/programs','ProgramController');
+Route::post('/programs', 'ProgramController@store')->name('programs.store');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 // Program Summary PDF routes
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
@@ -97,7 +98,9 @@ Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.o
 Route::post('/store/clos','LearningOutcomeController@store')->name('courses.outcomes.store');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
+Route::post('/plo/store', 'ProgramLearningOutcomeController@store')->name('program.outcomes.store');
 Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
+
 
 
 Route::resource('/la','LearningActivityController');
@@ -116,9 +119,12 @@ Route::resource('/standardsOutcomeMap', 'StandardsOutcomeMapController');
 Route::post('/store/standardsOutcomeMap','StandardsOutcomeMapController@store')->name('outcomeMap.store');
 
 Route::resource('/mappingScale','MappingScaleController');
+Route::post('/mappingScale/store', 'MappingScaleController@store')->name('program.mappingScale.store');
 Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDefaultMappingScale')->name('mappingScale.addDefaultMappingScale');
 
+
 Route::resource('/ploCategory','PLOCategoryController');
+Route::post('/ploCategory/store', 'PLOCategoryController@store')->name('program.category.store');
 
 Route::resource('/programUser','ProgramUserController');
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
