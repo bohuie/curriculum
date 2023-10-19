@@ -241,7 +241,7 @@ class CourseTest extends TestCase
         ],
         "l_activities" => [
             $learningOutcome1->l_outcome_id => [
-                0 => $learningActivities-> l_activity_id
+                0 => $learningActivities[0]-> l_activity_id
                 //This is mapping only CLO #1 to the first Learning Activity
             ]
           ],
