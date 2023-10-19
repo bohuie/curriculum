@@ -413,7 +413,7 @@ class CourseTest extends TestCase
             "course_id" => $course->course_id,
             "map" => [
                 $course->course_id => [
-                    1 => "102",
+                    1 => "101",
                     2 => "101",
                     3 => "101",
                     4 => "101",
@@ -423,13 +423,13 @@ class CourseTest extends TestCase
             ]
         ]);
 
-        /*
+        
         $this->assertDatabaseHas('standards_outcome_maps', [
             'course_id' => $course->course_id,
             'standard_scale_id' => '101',
             'standard_id' => 6
         ]);
-        */
+        
         //this is failing when it should be working
         //cannot get out of for loop in StandardOutcomeMapController
     }
