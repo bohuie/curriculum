@@ -161,15 +161,32 @@ use Illuminate\Support\Facades\DB;
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
 
+        DB::table('courses')->insert([
+            'course_code' => 'TEST',
+            'course_num' => '101',
+            'delivery_modality' => 'O',
+            'year' => 2022,
+            'semester' => 'W1',
+            'section' => 001,
+            'course_title' => 'Unit Testing Course 2',
+            'status' => -1,
+            'assigned' => 1,
+            'type' => 'unassigned',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+
+        ]);
+        
+        $course = Course::where('course_title', 'Unit Testing Course 2')->first();
         
         $response=$this->actingAs($user)->post(route('courseProgram.addCoursesToProgram',$program->program_id), [
             "selectedCourses" => [
-            0 => "36"],
+            0 => $course->course_id],
            // "program_id" => $program->program_id
             ]);
 
             $this->assertDatabaseHas('course_programs', [
-                'course_id' => "36"
+                'course_id' => $course->course_id
             ]);
 
             
