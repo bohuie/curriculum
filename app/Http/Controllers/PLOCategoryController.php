@@ -46,6 +46,7 @@ class PLOCategoryController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request);
         // validate request data 
         $this->validate($request, [
             'program_id'=> 'required',

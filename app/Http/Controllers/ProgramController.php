@@ -1772,7 +1772,7 @@ class ProgramController extends Controller
     }
 
     public function duplicate(Request $request, $program_id) {
-
+        //dd($request);
         //
         $this->validate($request, [
             'program'=> 'required',
