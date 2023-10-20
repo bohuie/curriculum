@@ -8,6 +8,10 @@ use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
+use App\Models\Program;
+use App\Models\ProgramLearningOutcome;
+use App\Models\CourseProgram;
+use App\Models\MappingScaleProgram;
 use App\Models\LearningActivity;
 use App\Models\AssessmentMethod;
 use App\Models\LearningOutcome;
@@ -321,6 +325,86 @@ class CourseTest extends TestCase
         ]);
     }
 
+    public function test_program_outcome_mapping(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $clo = LearningOutcome::where('l_outcome','Test Course Learning Outcome 2')->first();
+
+        //create test program
+        DB::table('programs')->insert([
+            'program' => 'Testing Program for Courses',
+            'faculty' => 'Irving K. Barber Faculty of Science',
+            'level' => 'Bachelors',
+            'campus' => 'O',
+            'status' => -1,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+
+        ]);
+        
+        $program = Program::where('program', 'Testing Program for Courses')->first();
+
+        //must set mapping scale (we will use 3 point scale I/D/A)
+        DB::table('mapping_scale_programs')->insert([
+            'map_scale_id'=> 1,
+            'program_id'=> $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        DB::table('mapping_scale_programs')->insert([
+            'map_scale_id'=> 2,
+            'program_id'=> $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        DB::table('mapping_scale_programs')->insert([
+            'map_scale_id'=> 3,
+            'program_id'=> $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+
+        //create test PLOs
+        DB::table('program_learning_outcomes')->insert([
+            'plo_shortphrase' => 'Short PLO 1',
+            'pl_outcome' => 'Course Testing PLO 1',
+            'program_id' => $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+
+        ]);
+
+        $plo = ProgramLearningOutcome::where('pl_outcome', 'Course Testing PLO 1')->first();
+        //must add course to program 
+        DB::table('course_programs')->insert([
+            'course_id' => $course->course_id,
+            'program_id' => $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        DB::table('courses')->where('course_id', $course->course_id)->update(['program_id' => $program->program_id]);
+        //test mapping CLOs to PLOs
+
+        $response=$this->actingAs($user)->post(route('outcomeMap.store'), [
+            'course_id' => $course->course_id,
+            'l_outcome_id' => $clo->l_outcome_id,
+            "map" => [
+                $clo->l_outcome_id => [
+                    $plo->pl_outcome_id => 1 //this is setting the mapping scale option to I, since that is the map_scale_id (0=N/A,1=I,2=D,3=A)
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('outcome_maps', [
+            'l_outcome_id' => $clo->l_outcome_id,
+            'pl_outcome_id' => $plo->pl_outcome_id,
+            'map_scale_id' => 1
+        ]);
+
+
+    }
+
     public function test_delete_clo(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -409,7 +493,7 @@ class CourseTest extends TestCase
 
 
         //setting this mapping to all "Introduced" for this course, except 1
-        $response=$this->actingAs($user)->post(route('outcomeMap.store'), [
+        $response=$this->actingAs($user)->post(route('standardsOutcomeMap.store'), [
             "course_id" => $course->course_id,
             "map" => [
                 $course->course_id => [
@@ -510,6 +594,7 @@ class CourseTest extends TestCase
         
         $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $program = Program::where('program', 'Testing Program for Courses')->first();
 
         $response=$this->actingAs($user2)->delete(route('courses.destroy', $course->course_id));
 
@@ -521,6 +606,11 @@ class CourseTest extends TestCase
         //We are testing Course and CourseUser routes here, so deleting manually is fine to clean up.
         User::where('email', 'test-course-collab@ubc.ca')->delete();
         User::where('email', 'test-course@ubc.ca')->delete();
+
+        //Will also delete Programs to cleanup
+        CourseProgram::where('program_id', $program->program_id)->delete();
+        Program::where('program_id', $program->program_id)->delete();
+        MappingScaleProgram::where('program_id', $program->program_id)->delete();
 
         $this->assertDatabaseMissing('users', [
             'email' => 'test-course-collab@ubc.ca',
