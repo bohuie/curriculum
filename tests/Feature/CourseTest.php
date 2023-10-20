@@ -405,6 +405,25 @@ class CourseTest extends TestCase
 
     }
 
+    public function test_optional_priorities_store(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        
+        $response=$this->actingAs($user)->post(route('storeOptionalPLOs'), [
+            'course_id' => $course->course_id,
+            'optionalItem' => [
+                0 => "70"
+                //Assigning Optional Priority with ID=70 to the course
+            ]
+        ]);
+
+        $this->assertDatabaseHas('course_optional_priorities', [
+            'op_id' => 70,
+            'course_id' => $course->course_id
+        ]);
+
+    }
+
     public function test_delete_clo(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
