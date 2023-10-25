@@ -74,7 +74,10 @@
                             <li class="nav-item">
 
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" href="{{ route('syllabus') }}">Syllabus Generator</a>
+                                <form name="SyllabusSubmit" action="{{route('syllabus')}}" method="GET">
+                                    <input type="hidden" name="syllabus_id" value="">
+                                    <a class="nav-link text-white" href="#" onclick="document.SyllabusSubmit.submit();">Syllabus Generator</a>
+                                </form>
                                 </li>
 
                                 <li class="nav-item dropdown">
