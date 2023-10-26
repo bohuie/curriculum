@@ -69,10 +69,10 @@ class SyllabusController extends Controller
         $this->middleware('hasAccess');
     }
 
-    public function index(Request $request) {
+    public function index(Request $request, $syllabusId=null) {
         // get the current user
         $user = User::find(Auth::id());
-        $syllabusId = $request->input("syllabus_id");
+        //$syllabusId = $request->input("syllabus_id");
         // get this users courses
         $myCourses = $user->courses;
         // get vancouver campus resources

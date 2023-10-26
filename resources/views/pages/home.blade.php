@@ -945,11 +945,12 @@
                         @include('layouts.guide')
 
                         <div style="float:right;">
-                            <a href="{{route('syllabus')}}">
-                                <button style="border: none; background: none; outline: none;">
-                                    <i class="bi bi-plus-circle text-white"></i>
-                                </button>
-                            </a>
+                            <form name="SyllabusSubmit" action="{{route('syllabus')}}" method="GET">
+                                    <input type="hidden" name="syllabus_id" value="">
+                                    <button type="submit" style="border: none; background: none; outline: none;">
+                                        <i class="bi bi-plus-circle text-white"></i>
+                                    </button>
+                            </form>
                         </div>
                     </h3>
                 </div>
