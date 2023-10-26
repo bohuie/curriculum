@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.3",
+        "php": "^8.2",
         "backpack/crud": "^5.0.0",
         "barryvdh/laravel-dompdf": "^0.9.0",
         "consoletvs/charts": "6.*",
