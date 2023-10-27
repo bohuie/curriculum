@@ -116,7 +116,7 @@ use Illuminate\Support\Facades\DB;
             "program_id" => $program->program_id
               ]);
 
-                   
+
     }
     */
     public function test_addDefaultMappingScale()
@@ -133,7 +133,7 @@ use Illuminate\Support\Facades\DB;
                 'map_scale_id' => "105"
             ]); 
 
-           
+            
     }
 
     public function test_mappingScale_store()
@@ -196,17 +196,20 @@ use Illuminate\Support\Facades\DB;
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
+        $course = Course::where('course_code', 'Test101')->first();
 
         $response=$this->actingAs($user)->post(route('courseProgram.editCourseRequired',$program->program_id), [
             "required" => "0",
             "note" => null,
-            "course_id" => "36",
-            "user_id" => "82",
+            "course_id" => $course->course_id,
+            "user_id" => $user->user_id,
           //  "program_id" => $program->program_id
             ]);
 
             $this->assertDatabaseHas('course_programs', [
-                'course_required' => "0"
+                "course_id" => $course->course_id,
+                'course_required' => "0",
+                "program_id" => $program->program_id
             ]);
             
     }
@@ -226,7 +229,7 @@ use Illuminate\Support\Facades\DB;
                 'program' => "Bachelor of Science - Copy"
             ]);
 
-           
+            
     }
 
     public function test_adding_collaborator()
@@ -235,19 +238,19 @@ use Illuminate\Support\Facades\DB;
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
 
         DB::table('users')->insert([
-            'name' => 'Test Course Collab',
-            'email' => 'test-course-collab@ubc.ca',
+            'name' => 'Test program Collab',
+            'email' => 'test-program-collab@ubc.ca',
             'email_verified_at' => Carbon::now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
         ]);
 
-        $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
+        $user2 = User::where('email', 'test-program-collab@ubc.ca')->first();
 
         $response=$this->actingAs($user)->post(route('programUser.add',$program->program_id), [
             "program_new_collabs" => [
-        0 => "test-course-collab@ubc.ca"]
+        0 => "test-program-collab@ubc.ca"]
         ,
-      "program_new_permissions" => [
+            "program_new_permissions" => [
         0 => "edit"]
         
             
@@ -257,7 +260,13 @@ use Illuminate\Support\Facades\DB;
                 "program_id" => $program->program_id,
                 'permission' => "1"
             ]);
+
             User::where('email', 'test-program@ubc.ca')->delete();
             Program::where('program', 'Bachelor of Testing')->delete();
+
+            $this->assertDatabaseMissing('users', [
+                'email' => 'test-program-collab@ubc.ca',
+                'email' => 'test-program@ubc.ca'
+            ]);
     }
 }
