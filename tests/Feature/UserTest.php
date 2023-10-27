@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Invite;
+use Illuminate\Support\Facades\Auth;
 
 class UserTest extends TestCase
 {
@@ -37,8 +39,50 @@ class UserTest extends TestCase
             'email' => 'test.register@ubc.ca'
         ]);
 
+
+    }
+
+    public function test_login_user(){
+        $response=$this->post(route('login'), [
+            "email" => "test.register@ubc.ca",
+            "password" => "password",
+        ]);
+
+        $user= User::where('email', 'test.register@ubc.ca')->first();
+
+        $response->assertStatus(302);
+        $response->assertRedirect('home');
+
+        if(Auth::id() == $user->id){
+            $this->assertTrue(true);
+        }else $this->assertTrue(false);
+
+        User::where('email', 'test.register@ubc.ca')->delete();
+        //$this->followRedirects($response)->assertSee('.success-message');
+    }
+    /*
+    public function testVerifyEmailValidatesUser(): void
+    {
+        // VerifyEmail extends Illuminate\Auth\Notifications\VerifyEmail in this example
+        $notification = new Invite();
+        $user = User::where('email', 'test.register@ubc.ca')->first();
+    
+        // New user should not has verified their email yet
+        $this->assertFalse($user->hasVerifiedEmail());
+    
+        $mail = $notification->toMail($user);
+        $uri = $mail->actionUrl;
+    
+        // Simulate clicking on the validation link
+        $this->actingAs($user)
+            ->get($uri);
+    
+        // User should have verified their email
+        $this->assertTrue(User::find($user->id)->hasVerifiedEmail());
+
         User::where('email', 'test.register@ubc.ca')->delete();
     }
+    */
 
 
 
