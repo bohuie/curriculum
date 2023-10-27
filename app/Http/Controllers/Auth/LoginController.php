@@ -50,7 +50,6 @@ class LoginController extends Controller
 
     protected function validateLogin(Request $request)
     {
-        dd($request);
         if (!App::environment('local') && !App::environment('testing')) {
             $request->validate([
                 $this->username() => 'required|string',

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Invite;
+use Illuminate\Support\Facades\Auth;
 
 class UserTest extends TestCase
 {
@@ -38,7 +39,6 @@ class UserTest extends TestCase
             'email' => 'test.register@ubc.ca'
         ]);
 
-        User::where('email', 'test.register@ubc.ca')->delete();
 
     }
 
@@ -47,6 +47,18 @@ class UserTest extends TestCase
             "email" => "test.register@ubc.ca",
             "password" => "password",
         ]);
+
+        $user= User::where('email', 'test.register@ubc.ca')->first();
+
+        $response->assertStatus(302);
+        $response->assertRedirect('home');
+
+        if(Auth::id() == $user->id){
+            $this->assertTrue(true);
+        }else $this->assertTrue(false);
+
+        User::where('email', 'test.register@ubc.ca')->delete();
+        //$this->followRedirects($response)->assertSee('.success-message');
     }
     /*
     public function testVerifyEmailValidatesUser(): void
