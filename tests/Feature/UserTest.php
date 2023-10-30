@@ -60,6 +60,21 @@ class UserTest extends TestCase
         User::where('email', 'test.register@ubc.ca')->delete();
         //$this->followRedirects($response)->assertSee('.success-message');
     }
+
+    public function test_invite_user(){
+        $user= User::where('email', 'test.register@ubc.ca')->first();
+
+        $response=$this->actingAs($user)->post(route('storeInvitation'), [
+            "email" => "test.invite@ubc.ca",
+            "user_id" => $user->id,
+            "type" => "unassigned"
+        ]);
+
+        $this->assertDatabaseHas("invites", [
+            "user_id" => $user->id,
+            "email" => "test.invite@ubc.ca"
+        ]);
+    }
     /*
     public function testVerifyEmailValidatesUser(): void
     {
