@@ -58,7 +58,7 @@ Route::post('/syllabi/{syllabusId}/{ext}','SyllabusController@download')->name('
 Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
 // route for syllabus collaborator functions
 Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
-Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
+Route::post('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
 Route::resource('/programs','ProgramController');
 Route::post('/programs', 'ProgramController@store')->name('programs.store');

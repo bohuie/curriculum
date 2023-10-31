@@ -129,7 +129,7 @@ class SyllabiTest extends TestCase
         $syllabus = Syllabus::where('course_title', 'Intro to Greatness')->orderBy('id', 'DESC')->first();
         $user2 = User::where('email', 'test-syllabi-collab@ubc.ca')->first();
 
-        $response=$this->actingAs($user)->get(route('syllabusUser.transferOwnership'), [
+        $response=$this->actingAs($user)->post(route('syllabusUser.transferOwnership'), [
             'syllabus_id' => $syllabus->id,
             'oldOwnerId' => $user->id,
             'newOwnerId' => $user2->id
@@ -202,12 +202,14 @@ class SyllabiTest extends TestCase
 
         $response=$this->actingAs($user)->delete(route('syllabus.delete',$syllabus->id));
 
-        $this->assertDatabaseMissing('syllabi', [
-            'id' => $syllabus->id
-        ]);
 
         User::where('email', 'test-syllabi@ubc.ca')->delete();
         Syllabus::where('course_title', 'Intro to Greatness')->delete();
         User::where('email', 'test-syllabi-collab@ubc.ca')->delete();
+
+        $this->assertDatabaseMissing('syllabi', [
+            'id' => $syllabus->id
+        ]);
+
     }
 }

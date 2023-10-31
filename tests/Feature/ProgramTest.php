@@ -160,33 +160,27 @@ use Illuminate\Support\Facades\DB;
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
-
         DB::table('courses')->insert([
-            'course_code' => 'TEST',
-            'course_num' => '101',
-            'delivery_modality' => 'O',
-            'year' => 2022,
+            'course_code' => 'Test101',
+            'course_title' => 'Program Testing',
+            'year' => '2023',
             'semester' => 'W1',
-            'section' => 001,
-            'course_title' => 'Unit Testing Course 2',
-            'status' => -1,
+            'delivery_modality' =>'O',
             'assigned' => 1,
             'type' => 'unassigned',
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-
+            'standard_category_id' => 1,
+            'scale_category_id' => 1
         ]);
         
-        $course = Course::where('course_title', 'Unit Testing Course 2')->first();
-        
+        $course = Course::where('course_code', 'Test101')->first();
         $response=$this->actingAs($user)->post(route('courseProgram.addCoursesToProgram',$program->program_id), [
             "selectedCourses" => [
             0 => $course->course_id],
-           // "program_id" => $program->program_id
+            "program_id" => $program->program_id
             ]);
 
             $this->assertDatabaseHas('course_programs', [
-                'course_id' => $course->course_id
+                "course_id" => $course->course_id
             ]);
 
             
@@ -214,6 +208,7 @@ use Illuminate\Support\Facades\DB;
             
     }
 
+
     public function test_duplicateProgram()
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
@@ -238,7 +233,9 @@ use Illuminate\Support\Facades\DB;
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
 
         DB::table('users')->insert([
-            'name' => 'Test program Collab',
+          
+            'name' => 'Test Program Collab',
+
             'email' => 'test-program-collab@ubc.ca',
             'email_verified_at' => Carbon::now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
@@ -263,6 +260,7 @@ use Illuminate\Support\Facades\DB;
 
             User::where('email', 'test-program@ubc.ca')->delete();
             Program::where('program', 'Bachelor of Testing')->delete();
+            User::where('email', 'test-program-collab@ubc.ca')->delete();
 
             $this->assertDatabaseMissing('users', [
                 'email' => 'test-program-collab@ubc.ca',
