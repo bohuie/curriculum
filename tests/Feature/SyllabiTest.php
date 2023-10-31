@@ -210,5 +210,6 @@ class SyllabiTest extends TestCase
         $this->assertDatabaseMissing('syllabi', [
             'id' => $syllabus->id
         ]);
+
     }
 }

@@ -116,7 +116,7 @@ use Illuminate\Support\Facades\DB;
             "program_id" => $program->program_id
               ]);
 
-                   
+
     }
     */
     public function test_addDefaultMappingScale()
@@ -133,7 +133,7 @@ use Illuminate\Support\Facades\DB;
                 'map_scale_id' => "105"
             ]); 
 
-           
+            
     }
 
     public function test_mappingScale_store()
@@ -224,7 +224,7 @@ use Illuminate\Support\Facades\DB;
                 'program' => "Bachelor of Science - Copy"
             ]);
 
-           
+            
     }
 
     public function test_adding_collaborator()
@@ -233,7 +233,9 @@ use Illuminate\Support\Facades\DB;
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
 
         DB::table('users')->insert([
+          
             'name' => 'Test Program Collab',
+
             'email' => 'test-program-collab@ubc.ca',
             'email_verified_at' => Carbon::now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
@@ -245,7 +247,7 @@ use Illuminate\Support\Facades\DB;
             "program_new_collabs" => [
         0 => "test-program-collab@ubc.ca"]
         ,
-      "program_new_permissions" => [
+            "program_new_permissions" => [
         0 => "edit"]
         
             
@@ -255,8 +257,14 @@ use Illuminate\Support\Facades\DB;
                 "program_id" => $program->program_id,
                 'permission' => "1"
             ]);
+
             User::where('email', 'test-program@ubc.ca')->delete();
             Program::where('program', 'Bachelor of Testing')->delete();
             User::where('email', 'test-program-collab@ubc.ca')->delete();
+
+            $this->assertDatabaseMissing('users', [
+                'email' => 'test-program-collab@ubc.ca',
+                'email' => 'test-program@ubc.ca'
+            ]);
     }
 }

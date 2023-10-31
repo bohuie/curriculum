@@ -51,7 +51,7 @@ Route::delete('/syllabusGenerator/{syllabusId}', 'SyllabusController@destroy')->
 // route to assign a syllabus collaborator
 Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
 // route to unassign a syllabus collaborator
-Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
+Route::delete('/syllabi/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
 // route to download a syllabus
 Route::post('/syllabi/{syllabusId}/{ext}','SyllabusController@download')->name('syllabus.download');
 // rout to duplicate syllabi
