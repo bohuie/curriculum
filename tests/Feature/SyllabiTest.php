@@ -107,21 +107,30 @@ class SyllabiTest extends TestCase
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
         ]);
 
+        DB::table('users')->insert([
+            'name' => 'Test Syllabus Collab Leave',
+            'email' => 'test-syllabi-collab-leave@ubc.ca',
+            'email_verified_at' => Carbon::now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+        ]);
+
         $user2 = User::where('email', 'test-syllabi-collab@ubc.ca')->first();
+        $user3 = User::where('email', 'test-syllabi-collab-leave@ubc.ca')->first();
 
         $response=$this->actingAs($user)->post(route('syllabus.assign',$syllabus->id), [
         "syllabus_new_collabs" => [
-        0 => "test-syllabi-collab@ubc.ca"
+        0 => "test-syllabi-collab@ubc.ca",1 =>"test-syllabi-collab-leave@ubc.ca"
         ],
         "syllabus_new_permissions" => [
-        0 => "edit"
+        0 => "edit", 1=> "edit"
         ]
         ]);
-        
+
         $this->assertDatabaseHas('syllabi_users', [
             'syllabus_id' => $syllabus->id,
             'user_id' => $user2->id
         ]);
+        
     }
     public function test_syllabus_transfer()
     {
@@ -193,7 +202,22 @@ class SyllabiTest extends TestCase
             
     }
 
+    public function test_syllabus_leave()
+    {
+        $user = User::where('email', 'test-syllabi@ubc.ca')->first();
+        $syllabus = Syllabus::where('course_title', 'Intro to Greatness')->orderBy('id', 'DESC')->first();
+        $user3 = User::where('email', 'test-syllabi-collab-leave@ubc.ca')->first();
 
+        $response=$this->actingAs($user)->post(route('syllabusUser.leave'), [
+            'syllabus_id' => $syllabus->id,
+            "syllabusCollaboratorId" => $user3->id,
+            ]);
+
+            $this->assertDatabaseMissing('syllabi_users', [
+                'user_id' => $user3->id
+            ]);
+
+    }
 
     public function test_syllabus_delete()
     {
@@ -206,6 +230,7 @@ class SyllabiTest extends TestCase
         User::where('email', 'test-syllabi@ubc.ca')->delete();
         Syllabus::where('course_title', 'Intro to Greatness')->delete();
         User::where('email', 'test-syllabi-collab@ubc.ca')->delete();
+        User::where('email', 'test-syllabi-collab-leave@ubc.ca')->delete();
 
         $this->assertDatabaseMissing('syllabi', [
             'id' => $syllabus->id
