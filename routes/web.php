@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\URL;
 */
 
 //Currently need to force HTTPS for Unit Testing to function properly, looking into a fix now.
-//URL::forceScheme('https');
+URL::forceScheme('https');
 
 Route::get('/', function () {
     return view('pages.landing');
@@ -57,7 +57,7 @@ Route::post('/syllabi/{syllabusId}/{ext}','SyllabusController@download')->name('
 // rout to duplicate syllabi
 Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
 // route for syllabus collaborator functions
-Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
+Route::post('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
 Route::post('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
 Route::resource('/programs','ProgramController');
