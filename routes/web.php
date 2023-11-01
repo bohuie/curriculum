@@ -109,6 +109,7 @@ Route::post('/la/store', 'LearningActivityController@store')->name('la.store');
 
 Route::post('/ajax/custom_activities','CustomLearningActivitiesController@store' );
 Route::post('/ajax/custom_methods','CustomAssessmentMethodsController@store' );
+Route::post('/store/la','LearningActivityController@store')->name('la.store');
 
 Route::resource('/am','AssessmentMethodController');
 Route::post('/am/store', 'AssessmentMethodController@store')->name('am.store');

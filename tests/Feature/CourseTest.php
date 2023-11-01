@@ -2,12 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\AssessmentMethod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\LearningOutcome;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
+
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\CourseProgram;
@@ -15,6 +18,7 @@ use App\Models\MappingScaleProgram;
 use App\Models\LearningActivity;
 use App\Models\AssessmentMethod;
 use App\Models\LearningOutcome;
+
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -68,6 +72,30 @@ class CourseTest extends TestCase
             'course_title' => "Intro to Unit Testing"
         ]);
         
+    }
+    
+    public function test_download_pdf(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $response=$this->actingAs($user)->get(route('courses.pdf', $course->course_id))->assertStatus(200);
+    }
+    
+    public function test_duplicate_course(){
+
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        $response=$this->actingAs($user)->post(route('courses.duplicate', $course->course_id), [
+            "course_code" => "TEST",
+            "course_num" => "111",
+            "course_title" => "Intro to Unit Testing - Copy",
+        ]);
+
+        $this->assertDatabaseHas('courses', [
+            'course_title' => "Intro to Unit Testing - Copy"
+        ]);
+
     }
     
     public function test_submit_course(){
@@ -176,6 +204,7 @@ class CourseTest extends TestCase
         ]);
     }
 
+
     public function test_create_am(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -221,7 +250,6 @@ class CourseTest extends TestCase
         ]);
 
     }
-
     public function test_course_alignment(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -260,6 +288,7 @@ class CourseTest extends TestCase
             'l_outcome_id' => $learningOutcome1->l_outcome_id,
             'a_method_id' => $assessmentMethods[0]->a_method_id
         ]);
+
 
 
     }
@@ -324,6 +353,7 @@ class CourseTest extends TestCase
             'pos_in_alignment' => 0
         ]);
     }
+
 
     public function test_program_outcome_mapping(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -424,6 +454,7 @@ class CourseTest extends TestCase
 
     }
 
+
     public function test_delete_clo(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -478,6 +509,7 @@ class CourseTest extends TestCase
         ]);
 
     
+
     }
 
     public function test_delete_la(){
@@ -535,7 +567,34 @@ class CourseTest extends TestCase
         
         //this is failing when it should be working
         //cannot get out of for loop in StandardOutcomeMapController
+
     }
+
+    public function test_delete_la(){
+        
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+        //LearningOutcomeController@store
+
+        $response=$this->actingAs($user)->post(route('la.store'), [
+            "current_l_activities" => [
+
+            ],
+
+            "new_l_activities" => [
+
+            ],
+            "course_id" => $course->course_id
+        ]);
+
+        $this->assertDatabaseMissing('learning_activities', [
+            'course_id' => $course->course_id
+        ]);
+
+    
+}
+
     
 
     public function test_adding_collaborator(){
@@ -625,6 +684,8 @@ class CourseTest extends TestCase
         //We are testing Course and CourseUser routes here, so deleting manually is fine to clean up.
         User::where('email', 'test-course-collab@ubc.ca')->delete();
         User::where('email', 'test-course@ubc.ca')->delete();
+        //Delete Duplicate Course
+        Course::where('course_title', 'Intro to Unit Testing')->delete();
 
         //Will also delete Programs to cleanup
         CourseProgram::where('program_id', $program->program_id)->delete();
@@ -636,6 +697,7 @@ class CourseTest extends TestCase
             'email' => 'test-course@ubc.ca'
         ]);
     }
+    
     
     
 
