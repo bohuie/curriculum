@@ -2,6 +2,16 @@
 
 @section('content')
 
+<div class="container mt-4">
+    <div class="alert alert-warning">
+                <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
+                <button type="button" class="close" data-dismiss="alert">×</button>  
+                <div>
+                The Curriculum MAP tool will be undergoing a planned maintenance on <b>November 20th between 8:30AM-12:30PM</b>. We encourage you to avoid using the tool at this time. This is part of regular maintenance to ensure that the tool is up-to date and able to serve you effectively.
+                </div>  
+    </div>
+</div>
+
 <link href=" {{ asset('css/accordions.css') }}" rel="stylesheet" type="text/css" >
 <!--Link for FontAwesome Font for the arrows for the accordions.-->
 <link href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" rel="stylesheet" type="text/css" >
