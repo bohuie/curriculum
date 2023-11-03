@@ -980,7 +980,10 @@
                                 <tr>
                                     <!-- course title -->
                                     <td>
-                                        <a href="{{route('syllabus', $syllabus->id)}}">{{$syllabus->course_title}}</a>
+                                        <form name="ExistingSyllabus" action="{{route('syllabus')}}" method="GET">
+                                            <input type="hidden" name="syllabus_id" value="{{$syllabus->id}}">
+                                            <a href="#" onclick="document.ExistingSyllabus.submit();">{{$syllabus->course_title}}</a>
+                                        </form>
                                     </td>
                                     <!-- course code -->
                                     <td>
