@@ -53,7 +53,6 @@ class ProgramUserController extends Controller
      */
     public function store(Request $request, $programId)
     {
-        //dd($request);
         // get the current user
         $currentUser = User::find(Auth::id());
         // get the current user permission

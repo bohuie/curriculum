@@ -53,7 +53,6 @@ class ProgramLearningOutcomeController extends Controller
      */
     public function store(Request $request)
     {
-      //  dd($request);
         // validate request data 
         $this->validate($request, [
             'program_id'=> 'required',
@@ -213,7 +212,6 @@ class ProgramLearningOutcomeController extends Controller
 
     public function import(Request $request)
     {   
-      //  dd($request);
         // $this->validate($request, [
         //     'upload'=> 'required|mimes:csv,xlsx,xlx,xls|max:2048',
         // ]);
