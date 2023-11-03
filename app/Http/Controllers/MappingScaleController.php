@@ -48,7 +48,6 @@ class MappingScaleController extends Controller
      */
     public function store(Request $request)
     {
-       // dd($request);
         //
         $this->validate($request, [
             
@@ -210,7 +209,6 @@ class MappingScaleController extends Controller
     }
 
     public function addDefaultMappingScale(Request $request) {
-        //dd($request);
         $mapping_scale_categories_id = $request->input('mapping_scale_categories_id');
         
         // Delete outcome maps if they exist

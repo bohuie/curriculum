@@ -20,7 +20,6 @@ class CourseProgramController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function addCoursesToProgram(Request $request){
-        //dd($request);
         $this->validate($request, [
             'program_id' => 'required',
             ]);
@@ -76,7 +75,6 @@ class CourseProgramController extends Controller
     }
 
     public function editCourseRequired(Request $request) {
-       // dd($request);
         $courseId = $request->input('course_id');
         $programId = $request->input('program_id');
         $required = $request->input('required');
