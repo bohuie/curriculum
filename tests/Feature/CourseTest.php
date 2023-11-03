@@ -2,15 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\AssessmentMethod;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\LearningOutcome;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Course;
 
+use App\Models\Course;
+use App\Models\User;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\CourseProgram;
@@ -18,9 +12,11 @@ use App\Models\MappingScaleProgram;
 use App\Models\LearningActivity;
 use App\Models\AssessmentMethod;
 use App\Models\LearningOutcome;
-
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+
 
 class CourseTest extends TestCase
 {
@@ -74,41 +70,8 @@ class CourseTest extends TestCase
         
     }
     
-    public function test_download_pdf(){
 
-        $user = User::where('email', 'test-course@ubc.ca')->first();
-        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
-        $response=$this->actingAs($user)->get(route('courses.pdf', $course->course_id))->assertStatus(200);
-    }
     
-    public function test_duplicate_course(){
-
-        $user = User::where('email', 'test-course@ubc.ca')->first();
-        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
-
-        $response=$this->actingAs($user)->post(route('courses.duplicate', $course->course_id), [
-            "course_code" => "TEST",
-            "course_num" => "111",
-            "course_title" => "Intro to Unit Testing - Copy",
-        ]);
-
-        $this->assertDatabaseHas('courses', [
-            'course_title' => "Intro to Unit Testing - Copy"
-        ]);
-
-    }
-    
-    public function test_submit_course(){
-        $user = User::where('email', 'test-course@ubc.ca')->first();
-        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
-        $response=$this->actingAs($user)->get(route('courses.submit', $course->course_id));
-        $response->assertRedirect('/home');
-
-        $this->assertDatabaseHas('courses', [
-            'course_title' => "Intro to Unit Testing"
-        ]);
-
-    }
 
     public function test_download_pdf(){
 
@@ -570,30 +533,6 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_delete_la(){
-        
-        $user = User::where('email', 'test-course@ubc.ca')->first();
-        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
-
-        //LearningOutcomeController@store
-
-        $response=$this->actingAs($user)->post(route('la.store'), [
-            "current_l_activities" => [
-
-            ],
-
-            "new_l_activities" => [
-
-            ],
-            "course_id" => $course->course_id
-        ]);
-
-        $this->assertDatabaseMissing('learning_activities', [
-            'course_id' => $course->course_id
-        ]);
-
-    
-}
 
     
 
