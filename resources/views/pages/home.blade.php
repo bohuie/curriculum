@@ -982,7 +982,7 @@
                                     <td>
                                         <form name="ExistingSyllabus" action="{{route('syllabus')}}" method="GET">
                                             <input type="hidden" name="syllabus_id" value="{{$syllabus->id}}">
-                                            <a href="#" onclick="document.ExistingSyllabus.submit();">{{$syllabus->course_title}}</a>
+                                            <button type="submit" style="background:none; border:none; padding:0; font-family:arial, sans-serif; color:#069; cursor:pointer;">{{$syllabus->course_title}}</button>
                                         </form>
                                     </td>
                                     <!-- course code -->
