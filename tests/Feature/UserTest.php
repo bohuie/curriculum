@@ -41,6 +41,13 @@ class UserTest extends TestCase
 
 
     }
+/*
+    public function test_recover_password()
+    {
+        $response=$this->post(route('password.email'), [
+            "email" => "test.register@ubc.ca"
+        ]);
+    }
 
     public function test_login_user(){
         $response=$this->post(route('login'), [
@@ -57,9 +64,23 @@ class UserTest extends TestCase
             $this->assertTrue(true);
         }else $this->assertTrue(false);
 
-        User::where('email', 'test.register@ubc.ca')->delete();
+      //  User::where('email', 'test.register@ubc.ca')->delete();
         //$this->followRedirects($response)->assertSee('.success-message');
     }
+    public function test_user_invite()
+    {
+        $response=$this->post(route('storeInvitation'), [
+            "email" => "test.register-invite@ubc.ca"
+        ]);
+
+        $user= User::where('email', 'test.register@ubc.ca')->first();
+
+        $this->assertDatabaseHas('invites', [
+            'email' => 'test.register-invite@ubc.ca'
+        ]);
+
+    }
+*/
     /*
     public function testVerifyEmailValidatesUser(): void
     {
