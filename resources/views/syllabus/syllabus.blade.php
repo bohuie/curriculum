@@ -2582,7 +2582,7 @@
 
          var optionalStatements =`
 
-         <h5  class="fw-bold">Resources to Support Student Success</h5>
+         <h5  class="fw-bold">Student Service Resources</h5>
                 @if(!empty($syllabus))
                     <div id="optionalSyllabusDesc"></div>
                 @else
