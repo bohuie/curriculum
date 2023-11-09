@@ -36,27 +36,22 @@ class OkanaganSyllabusResourceSeeder extends Seeder
 
         OkanaganSyllabusResource::create([
             'id_name' => 'disability',
-            'title' => 'UBC Okanagan Disability Resource Centre',
+            'title' => 'Okanagan Disability Resource Centre',
         ]);
 
         OkanaganSyllabusResource::create([
             'id_name' => 'equity',
-            'title' => 'UBC Okanagan Equity and Inclusion Office',
+            'title' => 'Equity and Inclusion Office',
         ]);
 
         OkanaganSyllabusResource::create([
             'id_name' => 'health',
-            'title' => 'Health and Wellness',
+            'title' => 'Wellbeing and Accessibility Services (WAS)',
         ]);
 
         OkanaganSyllabusResource::create([
             'id_name' => 'student',
             'title' => 'Student Learning Hub',
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'global',
-            'title' => 'The Global Engagement Office'
         ]);
 
         OkanaganSyllabusResource::create([
@@ -72,6 +67,11 @@ class OkanaganSyllabusResourceSeeder extends Seeder
         OkanaganSyllabusResource::create([
             'id_name' => 'ombud',
             'title' => 'Office of the Ombudperson',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'svpro',
+            'title' => 'Sexual Violence Prevention and Response Office (SVPRO)',
         ]);
 
 
