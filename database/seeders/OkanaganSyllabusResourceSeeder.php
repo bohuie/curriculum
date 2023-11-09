@@ -74,6 +74,11 @@ class OkanaganSyllabusResourceSeeder extends Seeder
             'title' => 'Sexual Violence Prevention and Response Office (SVPRO)',
         ]);
 
+        OkanaganSyllabusResource::create([
+            'id_name' => 'wellbeing',
+            'title' => 'UBC Okanagan Walk-In Well-Being Clinic',
+        ]);
+
 
     }
 }
