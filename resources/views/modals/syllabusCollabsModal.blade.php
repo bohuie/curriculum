@@ -102,7 +102,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">Are you sure you want to leave {{$syllabus->course_title}} syllabus?</div>
-                                                    <form action="{{ action('SyllabusUserController@leave') }}" class="float-right">
+                                                    <form action="{{ action('SyllabusUserController@leave') }}" method="post" class="float-right">
                                                         @csrf
 
                                                         <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
@@ -135,7 +135,7 @@
                                                 
                                             </td>
             
-                                            <-- Transfer Confirmation Modal -->
+                                            
                                             <div class="modal fade" id="transferSyllabusConfirmation{{$syllabus->id}}" tabindex="-1" role="dialog" aria-labelledby="transferSyllabusConfirmation{{$syllabus->id}}" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -146,7 +146,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">Are you sure you want to give ownership of the syllabus: {{$syllabus->course_title}} to the user: {{$syllabusCollaborator->name}}?</div>
-                                                        <form action="{{ action('SyllabusUserController@transferOwnership') }}">
+                                                        <form action="{{ action('SyllabusUserController@transferOwnership') }}" method="post">
                                                             @csrf
                                                             <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
                                                             <input type="hidden" class="form-check-input " name="newOwnerId" value={{$syllabusCollaborator->id}}>

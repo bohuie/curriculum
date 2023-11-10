@@ -125,7 +125,7 @@
                                                 <button type="input" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#transferSyllabusConfirmation{{$syllabus->id}}">Transfer Ownership</button>
                                             </td>
 
-                                            <!-- Transfer Confirmation Modal -->
+                                            
                                             <div class="modal fade" id="transferSyllabusConfirmation{{$syllabus->id}}" tabindex="-1" role="dialog" aria-labelledby="transferSyllabusConfirmation{{$syllabus->id}}" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
