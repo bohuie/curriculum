@@ -76,6 +76,9 @@
                 @case('B')
                     Hybrid
                     @break
+                @case('M')
+                    Multi-Access
+                    @break
                 @default
                     In-person
             @endswitch
