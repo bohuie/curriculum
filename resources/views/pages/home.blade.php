@@ -993,7 +993,10 @@
                                 <tr>
                                     <!-- course title -->
                                     <td>
-                                        <a href="{{route('syllabus', $syllabus->id)}}">{{$syllabus->course_title}}</a>
+                                    <form name="ExistingSyllabus" action="{{route('syllabus')}}" method="GET">
+	                                <input type="hidden" name="syllabus_id" value="{{$syllabus->id}}">
+                                    <button type="submit" style="background:none; border:none; padding:0; font-family:arial, sans-serif; color:#069; cursor:pointer;">{{$syllabus->course_title}}</button>
+                                    </form>
                                     </td>
                                     <!-- course code -->
                                     <td>
