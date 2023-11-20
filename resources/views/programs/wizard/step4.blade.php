@@ -57,7 +57,7 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="downloadBtn">
                                     <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#setContentPDF"><i class="bi bi-file-pdf-fill text-danger"></i> PDF </button></li>
-                                    <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel (Chrome and Firefox Only)</button></li>
+                                    <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal" disabled><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel (Currently Disabled, Undergoing Maintenance)</button></li>
                                 </ul>
                                 
                             </div>
