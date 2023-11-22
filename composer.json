@@ -22,6 +22,8 @@
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
+        "maennchen/zipstream-php": "2.4.0",
+        "myclabs/php-enum": "^1.8",
         "phpoffice/phpspreadsheet": "^1.29",
         "phpoffice/phpword": "^0.18.1"
     },
