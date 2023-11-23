@@ -15,7 +15,7 @@ class ProgramUser extends Model
 
     protected $guarded = ['permission'];
 
-    protected $fillable = ['user_id','program_id'];
+    protected $fillable = ['user_id', 'program_id'];
 
     public $incrementing = false;
 }

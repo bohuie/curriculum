@@ -9,17 +9,17 @@ class MappingScaleProgram extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = ['map_scale_id','program_id'];
+    protected $primaryKey = ['map_scale_id', 'program_id'];
 
     public $incrementing = false;
-    
+
     public function mappingScales()
     {
-        return $this->belongsTo(MappingScale::Class);
+        return $this->belongsTo(MappingScale::class);
     }
-    
+
     public function programs()
     {
-        return $this->belongsTo(Program::Class);
+        return $this->belongsTo(Program::class);
     }
 }

@@ -38,14 +38,14 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\ForceHTTPS::class,
-            \Illuminate\Http\Middleware\FrameGuard::class
+            \Illuminate\Http\Middleware\FrameGuard::class,
         ],
 
         'api' => [
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-        
+
         // 'XSS' => [\App\Http\Middleware\XSS::class,],
     ];
 

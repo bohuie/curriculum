@@ -16,7 +16,7 @@ class AddCopyirghtToSyllabiTable extends Migration
         Schema::table('syllabi', function (Blueprint $table) {
             $table->text('cc_license')->after('include_alignment')->nullable();
             $table->boolean('copyright')->after('cc_license')->nullable();
-            
+
         });
     }
 

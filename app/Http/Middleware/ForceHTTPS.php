@@ -11,14 +11,15 @@ class ForceHTTPS
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next) {
-        if (!$request->secure() && !App::environment('local')) {
+    public function handle(Request $request, Closure $next)
+    {
+        if (! $request->secure() && ! App::environment('local')) {
             return redirect()->secure($request->getRequestUri());
         }
+
         return $next($request);
     }
 }

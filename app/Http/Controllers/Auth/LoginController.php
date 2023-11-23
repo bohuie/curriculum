@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Auth;
-
-use Illuminate\Support\Facades\Validator;
 use App\Rules\GoogleRecaptcha;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -32,11 +29,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-
-
-    
     protected $redirectTo = RouteServiceProvider::HOME;
-    
 
     /**
      * Create a new controller instance.
@@ -50,7 +43,7 @@ class LoginController extends Controller
 
     protected function validateLogin(Request $request)
     {
-        if (!App::environment('local') && !App::environment('testing')) {
+        if (! App::environment('local') && ! App::environment('testing')) {
             $request->validate([
                 $this->username() => 'required|string',
                 'password' => 'required|string',
@@ -60,7 +53,7 @@ class LoginController extends Controller
             $request->validate([
                 $this->username() => 'required|string',
                 'password' => 'required|string',
-                /*'g-recaptcha-response' => ['required', new GoogleRecaptcha],*/  //this is commented for use on localhost as captcha does not work on local instance.
+                /*'g-recaptcha-response' => ['required', new GoogleRecaptcha],*/ //this is commented for use on localhost as captcha does not work on local instance.
             ]);
         }
     }

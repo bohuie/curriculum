@@ -10,7 +10,7 @@ class StandardsOutcomeMap extends Pivot
 {
     use HasFactory;
 
-    protected $table = "standards_outcome_maps";
+    protected $table = 'standards_outcome_maps';
 
     protected $primaryKey = ['standard_id', 'course_id'];
 

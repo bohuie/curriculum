@@ -15,7 +15,7 @@ class AddLandAcknowToSyllabi extends Migration
     {
         Schema::table('syllabi', function (Blueprint $table) {
             $table->boolean('land_acknow')->after('copyright')->nullable();
-            
+
         });
     }
 

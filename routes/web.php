@@ -1,12 +1,9 @@
 <?php
 
-use App\Http\Controllers\HomeController;
-use App\Models\Invite;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Mail\Invitation;
-use App\Models\LearningOutcome;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
 /*
@@ -29,11 +26,11 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => true]);
 
-// Route to get what programs a course belongs to 
+// Route to get what programs a course belongs to
 Route::get('/course/{courseId}/programs', 'CourseController@getPrograms');
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/home/{course}/submit','CourseController@submit')->name('home.submit');
+Route::get('/home/{course}/submit', 'CourseController@submit')->name('home.submit');
 
 Route::get('/about', 'AboutController@index')->name('about');
 
@@ -45,107 +42,102 @@ Route::get('/syllabusGenerator/{syllabusId?}', 'SyllabusController@index')->name
 // route to save a syllabus
 Route::post('/syllabusGenerator/{syllabusId?}', 'SyllabusController@save')->name('syllabus.save');
 // route to import course info into a syllabus
-Route::get('/syllabusGenerator/import/course','SyllabusController@getCourseInfo');
+Route::get('/syllabusGenerator/import/course', 'SyllabusController@getCourseInfo');
 // route to delete a syllabus
 Route::delete('/syllabusGenerator/{syllabusId}', 'SyllabusController@destroy')->name('syllabus.delete');
 // route to assign a syllabus collaborator
-Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
+Route::post('/syllabus/{syllabusId}/assign', 'SyllabusUserController@store')->name('syllabus.assign');
 // route to unassign a syllabus collaborator
 Route::delete('/syllabi/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
 // route to download a syllabus
-Route::post('/syllabi/{syllabusId}/{ext}','SyllabusController@download')->name('syllabus.download');
+Route::post('/syllabi/{syllabusId}/{ext}', 'SyllabusController@download')->name('syllabus.download');
 // rout to duplicate syllabi
-Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
+Route::get('/syllabus/{syllabusId}/duplicate', 'SyllabusController@duplicate')->name('syllabus.duplicate');
 // route for syllabus collaborator functions
-Route::post('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
-Route::post('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
+Route::post('/syllabusUser', 'SyllabusUserController@leave')->name('syllabusUser.leave');
+Route::post('/syllabusUserTransfer', 'SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
-Route::resource('/programs','ProgramController');
+Route::resource('/programs', 'ProgramController');
 Route::post('/programs', 'ProgramController@store')->name('programs.store');
-Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
+Route::get('/programs/{program}/submit', 'ProgramController@submit')->name('programs.submit');
 // Program Summary PDF routes
-Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
+Route::get('/programs/{program}/pdf', 'ProgramController@pdf')->name('programs.pdf');
 Route::delete('/programs/{program}/pdf', 'ProgramController@deletePDF')->name('programs.delete.pdf');
 // Program Summary Spreadsheet routes
-Route::get('/programs/{program}/spreadsheet','ProgramController@spreadsheet')->name('programs.spreadsheet');
+Route::get('/programs/{program}/spreadsheet', 'ProgramController@spreadsheet')->name('programs.spreadsheet');
 Route::delete('/programs/{program}/spreadsheet', 'ProgramController@delSpreadsheet')->name('programs.delete.spreadsheet');
 
-Route::get('/programs/{program}/duplicate','ProgramController@duplicate')->name('programs.duplicate');
+Route::get('/programs/{program}/duplicate', 'ProgramController@duplicate')->name('programs.duplicate');
 
-
-Route::resource('/courses','CourseController');
+Route::resource('/courses', 'CourseController');
 Route::post('/courses', 'CourseController@store')->name('courses.store');
 
-Route::post('/courses/{course}/assign','CourseUserController@store')->name('courses.assign');
-Route::delete('/courses/{course}/unassign','CourseUserController@destroy')->name('courses.unassign');
-Route::get('/courseUser','CourseUserController@leave')->name('courseUser.leave');
-Route::post('/courseUserTransfer','CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
+Route::post('/courses/{course}/assign', 'CourseUserController@store')->name('courses.assign');
+Route::delete('/courses/{course}/unassign', 'CourseUserController@destroy')->name('courses.unassign');
+Route::get('/courseUser', 'CourseUserController@leave')->name('courseUser.leave');
+Route::post('/courseUserTransfer', 'CourseUserController@transferOwnership')->name('courseUser.transferOwnership');
 
-Route::get('/courses/{course}/submit','CourseController@submit')->name('courses.submit');
-Route::post('/courses/{course}/outcomeDetails','CourseController@outcomeDetails')->name('courses.outcomeDetails');
-Route::post('/courses/{course}/amReorder','CourseController@amReorder')->name('courses.amReorder');
-Route::post('/courses/{course}/loReorder','CourseController@loReorder')->name('courses.loReorder');
-Route::post('/courses/{course}/tlaReorder','CourseController@tlaReorder')->name('courses.tlaReorder');
-Route::get('/courses/{course}/pdf','CourseController@pdf')->name('courses.pdf');
+Route::get('/courses/{course}/submit', 'CourseController@submit')->name('courses.submit');
+Route::post('/courses/{course}/outcomeDetails', 'CourseController@outcomeDetails')->name('courses.outcomeDetails');
+Route::post('/courses/{course}/amReorder', 'CourseController@amReorder')->name('courses.amReorder');
+Route::post('/courses/{course}/loReorder', 'CourseController@loReorder')->name('courses.loReorder');
+Route::post('/courses/{course}/tlaReorder', 'CourseController@tlaReorder')->name('courses.tlaReorder');
+Route::get('/courses/{course}/pdf', 'CourseController@pdf')->name('courses.pdf');
 Route::delete('/courses/{course}/pdf', 'CourseController@deletePDF')->name('courses.delete.pdf');
-Route::get('/courses/{course}/remove','CourseController@removeFromProgram')->name('courses.remove');
-Route::get('/courses/{course}/emailCourseInstructor','CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
-Route::post('/courses/{course}/duplicate','CourseController@duplicate')->name('courses.duplicate');
+Route::get('/courses/{course}/remove', 'CourseController@removeFromProgram')->name('courses.remove');
+Route::get('/courses/{course}/emailCourseInstructor', 'CourseController@emailCourseInstructor')->name('courses.emailCourseInstructor');
+Route::post('/courses/{course}/duplicate', 'CourseController@duplicate')->name('courses.duplicate');
 
 // Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
-Route::resource('/lo','LearningOutcomeController');
+Route::resource('/lo', 'LearningOutcomeController');
 Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.outcomes.import');
-Route::post('/store/clos','LearningOutcomeController@store')->name('courses.outcomes.store');
+Route::post('/store/clos', 'LearningOutcomeController@store')->name('courses.outcomes.store');
 
-Route::resource('/plo','ProgramLearningOutcomeController');
+Route::resource('/plo', 'ProgramLearningOutcomeController');
 Route::post('/plo/store', 'ProgramLearningOutcomeController@store')->name('program.outcomes.store');
 Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
 
-
-
-Route::resource('/la','LearningActivityController');
+Route::resource('/la', 'LearningActivityController');
 Route::post('/la/store', 'LearningActivityController@store')->name('la.store');
 
+Route::post('/ajax/custom_activities', 'CustomLearningActivitiesController@store');
+Route::post('/ajax/custom_methods', 'CustomAssessmentMethodsController@store');
+Route::post('/store/la', 'LearningActivityController@store')->name('la.store');
 
-Route::post('/ajax/custom_activities','CustomLearningActivitiesController@store' );
-Route::post('/ajax/custom_methods','CustomAssessmentMethodsController@store' );
-Route::post('/store/la','LearningActivityController@store')->name('la.store');
-
-Route::resource('/am','AssessmentMethodController');
+Route::resource('/am', 'AssessmentMethodController');
 Route::post('/am/store', 'AssessmentMethodController@store')->name('am.store');
 
-Route::resource('/outcomeMap','OutcomeMapController');
-Route::post('/store/OutcomeMap','OutcomeMapController@store')->name('OutcomeMap.store');
+Route::resource('/outcomeMap', 'OutcomeMapController');
+Route::post('/store/OutcomeMap', 'OutcomeMapController@store')->name('OutcomeMap.store');
 //Route for standards mapping
 Route::resource('/standardsOutcomeMap', 'StandardsOutcomeMapController');
-Route::post('/store/standardsOutcomeMap','StandardsOutcomeMapController@store')->name('standardsOutcomeMap.store');
+Route::post('/store/standardsOutcomeMap', 'StandardsOutcomeMapController@store')->name('standardsOutcomeMap.store');
 
-Route::resource('/mappingScale','MappingScaleController');
+Route::resource('/mappingScale', 'MappingScaleController');
 Route::post('/mappingScale/store', 'MappingScaleController@store')->name('program.mappingScale.store');
-Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDefaultMappingScale')->name('mappingScale.addDefaultMappingScale');
+Route::post('/mappingScale/addDefaultMappingScale', 'MappingScaleController@addDefaultMappingScale')->name('mappingScale.addDefaultMappingScale');
 
-
-Route::resource('/ploCategory','PLOCategoryController');
+Route::resource('/ploCategory', 'PLOCategoryController');
 Route::post('/ploCategory/store', 'PLOCategoryController@store')->name('program.category.store');
 
-Route::resource('/programUser','ProgramUserController');
+Route::resource('/programUser', 'ProgramUserController');
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');
-Route::delete('/programUser/delete','ProgramUserController@delete')->name('programUser.destroy');
-Route::get('/programUser/leave','ProgramUserController@leave')->name('programUser.leave');
-Route::get('/programUserTransfer','ProgramUserController@transferOwnership')->name('programUser.transferOwnership');
+Route::delete('/programUser/delete', 'ProgramUserController@delete')->name('programUser.destroy');
+Route::get('/programUser/leave', 'ProgramUserController@leave')->name('programUser.leave');
+Route::get('/programUserTransfer', 'ProgramUserController@transferOwnership')->name('programUser.transferOwnership');
 
 // Program wizard controller used to sent info from database to the blade page
-Route::get('/programWizard/{program}/step1','ProgramWizardController@step1')->name('programWizard.step1');
-Route::get('/programWizard/{program}/step2','ProgramWizardController@step2')->name('programWizard.step2');
-Route::get('/programWizard/{program}/step3','ProgramWizardController@step3')->name('programWizard.step3');
-Route::get('/programWizard/{program}/step4','ProgramWizardController@step4')->name('programWizard.step4');
+Route::get('/programWizard/{program}/step1', 'ProgramWizardController@step1')->name('programWizard.step1');
+Route::get('/programWizard/{program}/step2', 'ProgramWizardController@step2')->name('programWizard.step2');
+Route::get('/programWizard/{program}/step3', 'ProgramWizardController@step3')->name('programWizard.step3');
+Route::get('/programWizard/{program}/step4', 'ProgramWizardController@step4')->name('programWizard.step4');
 
 // Program step3 add existing courses to a program
 Route::post('/programWizard/{program}/step3/addCoursesToProgram', 'CourseProgramController@addCoursesToProgram')->name('courseProgram.addCoursesToProgram');
 // Program step3 edit required status
 Route::post('/programWizard/{program}/step3/editCourseRequired', 'CourseProgramController@editCourseRequired')->name('courseProgram.editCourseRequired');
 
-// Program step 4 Used to get frequency distribution tables 
+// Program step 4 Used to get frequency distribution tables
 Route::get('/programWizard/{program}/get-courses', 'ProgramWizardController@getCourses');
 Route::get('/programWizard/{program}/get-required', 'ProgramWizardController@getRequiredCourses');
 Route::get('/programWizard/{program}/get-non-required', 'ProgramWizardController@getNonRequiredCourses');
@@ -181,23 +173,22 @@ Route::get('/programWizard/{program}/get-op-fourth-year', 'ProgramWizardControll
 Route::get('/programWizard/{program}/get-op-graduate', 'ProgramWizardController@getOptionalPrioritiesGraduate');
 
 // Course wizard controller used to sent info from database to the blade page
-Route::get('/courseWizard/{course}/step1','CourseWizardController@step1')->name('courseWizard.step1');
-Route::get('/courseWizard/{course}/step2','CourseWizardController@step2')->name('courseWizard.step2');
-Route::get('/courseWizard/{course}/step3','CourseWizardController@step3')->name('courseWizard.step3');
-Route::get('/courseWizard/{course}/step4','CourseWizardController@step4')->name('courseWizard.step4');
-Route::get('/courseWizard/{course}/step5','CourseWizardController@step5')->name('courseWizard.step5');
-Route::get('/courseWizard/{course}/step6','CourseWizardController@step6')->name('courseWizard.step6');
-Route::get('/courseWizard/{course}/step7','CourseWizardController@step7')->name('courseWizard.step7');
-
+Route::get('/courseWizard/{course}/step1', 'CourseWizardController@step1')->name('courseWizard.step1');
+Route::get('/courseWizard/{course}/step2', 'CourseWizardController@step2')->name('courseWizard.step2');
+Route::get('/courseWizard/{course}/step3', 'CourseWizardController@step3')->name('courseWizard.step3');
+Route::get('/courseWizard/{course}/step4', 'CourseWizardController@step4')->name('courseWizard.step4');
+Route::get('/courseWizard/{course}/step5', 'CourseWizardController@step5')->name('courseWizard.step5');
+Route::get('/courseWizard/{course}/step6', 'CourseWizardController@step6')->name('courseWizard.step6');
+Route::get('/courseWizard/{course}/step7', 'CourseWizardController@step7')->name('courseWizard.step7');
 
 // Save optional PLOs
-Route::post('/optionals','OptionalPriorities@store')->name('storeOptionalPLOs');
+Route::post('/optionals', 'OptionalPriorities@store')->name('storeOptionalPLOs');
 
 // Invatation route
 Route::get('/invite', 'InviteController@index')->name('requestInvitation');
 
 // route used to sent the invitation email
-Route::post('/invitations','InviteController@store')->name('storeInvitation');
+Route::post('/invitations', 'InviteController@store')->name('storeInvitation');
 
 // UnderConstruction page
 Route::get('/construction', function () {
@@ -205,12 +196,12 @@ Route::get('/construction', function () {
 });
 
 // Admin Email Page
-Route::get('/email','AdminEmailController@index')->name('email');
+Route::get('/email', 'AdminEmailController@index')->name('email');
 Route::post('/email', 'AdminEmailController@send')->name('email.send');
 
 Auth::routes();
 
-// register backpack auth routes manually 
+// register backpack auth routes manually
 Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_prefix')], function () {
     Route::auth();
     Route::get('logout', 'Auth\LoginController@logout');
@@ -221,12 +212,13 @@ Route::group(['middleware' => 'web', 'prefix' => config('backpack.base.route_pre
 // Route::get('/accountInformation',[AccountInformationController::class, 'index'])->name('accountInformation');
 // Route::post('/accountInformation-update',[AccountInformationController::class, 'update'])->name('accountInformation.update');
 // *** These Routes work locally but not on staging ***
-Route::get('/accountInformation','Auth\AccountInformationController@index')->name('accountInformation');
-Route::post('/accountInformation-update','Auth\AccountInformationController@update')->name('accountInformation.update');
+Route::get('/accountInformation', 'Auth\AccountInformationController@index')->name('accountInformation');
+Route::post('/accountInformation-update', 'Auth\AccountInformationController@update')->name('accountInformation.update');
 
-Route::get('/clear-cache', function() {
+Route::get('/clear-cache', function () {
     $exitCode = Artisan::call('config:cache');
     $exitCode = Artisan::call('config:clear');
     $exitCode = Artisan::call('cache:clear');
+
     return 'DONE'; //Return anything
 });

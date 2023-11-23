@@ -15,7 +15,7 @@ class UpdateLearningOutcomesTable extends Migration
     {
         Schema::table('learning_outcomes', function (Blueprint $table) {
             $table->unsignedBigInteger('pos_in_alignment')->default(0)->after('course_id');
-        });    
+        });
     }
 
     /**

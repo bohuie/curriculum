@@ -15,7 +15,9 @@ class CustomLearningActivities extends Model
     |--------------------------------------------------------------------------
     */
     protected $primaryKey = 'custom_activity_id';
+
     protected $table = 'custom_learning_activities';
+
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];

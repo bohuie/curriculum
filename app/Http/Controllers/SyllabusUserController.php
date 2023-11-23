@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Mail\NotifyNewSyllabusUserMail;
-use App\Models\syllabus\SyllabusUser;
-use App\Models\syllabus\Syllabus;
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Mail\NotifySyllabusUserMail;
 use App\Mail\NotifySyllabusUserOwnerMail;
+use App\Models\syllabus\Syllabus;
+use App\Models\syllabus\SyllabusUser;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Throwable;
+use Illuminate\Support\Facades\Mail;
 
 class SyllabusUserController extends Controller
 {
@@ -24,7 +22,6 @@ class SyllabusUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
@@ -48,11 +45,10 @@ class SyllabusUserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $syllabusId)
-    {   
+    {
         // get the current user
         $currentUser = User::find(Auth::id());
         // get the current user permission
@@ -65,8 +61,8 @@ class SyllabusUserController extends Controller
         $warningMessages = Collection::make();
 
         // if the current user is the owner, save the collaborators and their permissions
-        if ($currentUserPermission == 1 ) {
-            $currentPermissions = ($request->input('syllabus_current_permissions')) ? $request->input('syllabus_current_permissions') : array();
+        if ($currentUserPermission == 1) {
+            $currentPermissions = ($request->input('syllabus_current_permissions')) ? $request->input('syllabus_current_permissions') : [];
             $newCollabs = $request->input('syllabus_new_collabs');
             $newPermissions = $request->input('syllabus_new_permissions');
             // get the saved collaborators for this syllabus, but not the owner
@@ -90,8 +86,8 @@ class SyllabusUserController extends Controller
                     $user = User::where('email', $newCollab)->first();
                     // if the user has registered with the tool, add the new collab
                     if ($user) {
-                        // make sure the new collab user isn't already collaborating on this syllabus 
-                        if (!in_array($user->email, $syllabus->users->pluck('email')->toArray())) {
+                        // make sure the new collab user isn't already collaborating on this syllabus
+                        if (! in_array($user->email, $syllabus->users->pluck('email')->toArray())) {
                             // get their given permission level
                             $permission = $newPermissions[$index];
                             // create a new collaborator
@@ -104,12 +100,12 @@ class SyllabusUserController extends Controller
                             switch ($permission) {
                                 case 'edit':
                                     $syllabusUser->permission = 2;
-                                break;
+                                    break;
                                 case 'view':
                                     $syllabusUser->permission = 3;
-                                break;
+                                    break;
                             }
-                            if($syllabusUser->save()){
+                            if ($syllabusUser->save()) {
                                 // update syllabus 'updated_at' field
                                 $syllabus = Syllabus::find($syllabusId);
                                 $syllabus->touch();
@@ -124,10 +120,10 @@ class SyllabusUserController extends Controller
                                 // email the owner letting them know they have added a new collaborator
                                 Mail::to($currentUser->email)->send(new NotifySyllabusUserOwnerMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $user->name));
                             } else {
-                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
+                                $errorMessages->add('There was an error adding '.'<b>'.$user->email.'</b>'.' to syllabus '.$syllabus->course_code.' '.$syllabus->course_num);
                             }
                         } else {
-                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
+                            $warningMessages->add('<b>'.$user->email.'</b>'.' is already collaborating on syllabus '.$syllabus->course_code.' '.$syllabus->course_num);
                         }
                     } else {
                         $name = explode('@', $newCollab);
@@ -137,8 +133,8 @@ class SyllabusUserController extends Controller
                         $newUser->has_temp = 1;
                         // generate random password
                         $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-                        $pass = array(); 
-                        $combLen = strlen($comb) - 1; 
+                        $pass = [];
+                        $combLen = strlen($comb) - 1;
                         for ($i = 0; $i < 8; $i++) {
                             $n = rand(0, $combLen);
                             $pass[] = $comb[$n];
@@ -160,12 +156,12 @@ class SyllabusUserController extends Controller
                         switch ($permission) {
                             case 'edit':
                                 $syllabusUser->permission = 2;
-                            break;
+                                break;
                             case 'view':
                                 $syllabusUser->permission = 3;
-                            break;
+                                break;
                         }
-                        if($syllabusUser->save()){
+                        if ($syllabusUser->save()) {
                             // update syllabus 'updated_at' field
                             $syllabus = syllabus::find($syllabusId);
                             $syllabus->touch();
@@ -178,21 +174,21 @@ class SyllabusUserController extends Controller
                             // email user to be added
                             Mail::to($newUser->email)->send(new NotifyNewSyllabusUserMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $currentUser->name, implode($pass), $newUser->email));
                             // email the owner letting them know they have added a new collaborator
-                            Mail::to($currentUser->email)->send(new NotifySyllabusUserOwnerMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $newUser->name));                      
+                            Mail::to($currentUser->email)->send(new NotifySyllabusUserOwnerMail($syllabus->course_code, $syllabus->course_num, $syllabus->course_title, $newUser->name));
                         } else {
-                            $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to course ' . $syllabus->course_title);
+                            $errorMessages->add('There was an error adding '.'<b>'.$newUser->email.'</b>'.' to course '.$syllabus->course_title);
                         }
                         // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
                 }
             }
-        // else the current user does not own this syllabus
+            // else the current user does not own this syllabus
         } else {
             $errorMessages->add('You do not have permission to add collaborators to this syllabus');
         }
         // if no errors or warnings, flash a success message
         if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
-            $request->session()->flash('success', 'Successfully updated collaborators on syllabus ' . $syllabus->course_code . ' ' . $syllabus->course_num);
+            $request->session()->flash('success', 'Successfully updated collaborators on syllabus '.$syllabus->course_code.' '.$syllabus->course_num);
         }
         // return to the previous page
         return redirect()->back()->with('errorMessages', $errorMessages)->with('warningMessages', $warningMessages);
@@ -232,15 +228,15 @@ class SyllabusUserController extends Controller
         switch ($permissions[$syllabusUser->user_id]) {
             case 'edit':
                 $syllabusUser->permission = 2;
-            break;
-            
+                break;
+
             case 'view':
                 $syllabusUser->permission = 3;
-            break;
+                break;
         }
-        
+
         $syllabusUser->save();
-        
+
     }
 
     /**
@@ -256,24 +252,27 @@ class SyllabusUserController extends Controller
         // get the current user permission
         $currentUserPermission = SyllabusUser::where([['syllabus_id', $syllabusUser->syllabus_id], ['user_id', $currentUser->id]])->first()->permission;
         // if the current user is the owner, delete the given syllabus collaborator
-        if ($currentUserPermission == 1 ) {
+        if ($currentUserPermission == 1) {
             $syllabusUser->delete();
         }
     }
 
-    public function leave(Request $request) {
-        
+    public function leave(Request $request)
+    {
+
         $syllabus = Syllabus::find($request->input('syllabus_id'));
         $syllabusUser = SyllabusUser::where('user_id', $request->input('syllabusCollaboratorId'))->where('syllabus_id', $request->input('syllabus_id'))->first();
         if ($syllabusUser->delete()) {
-            $request->session()->flash('success', 'Successfully left ' .$syllabus->course_title);
+            $request->session()->flash('success', 'Successfully left '.$syllabus->course_title);
         } else {
             $request->session()->flash('error', 'Failed to leave the syllabus');
         }
+
         return redirect()->back();
     }
 
-    public function transferOwnership(Request $request) {
+    public function transferOwnership(Request $request)
+    {
         $syllabus = Syllabus::find($request->input('syllabus_id'));
         $oldSyllabusOwner = SyllabusUser::where('user_id', $request->input('oldOwnerId'))->where('syllabus_id', $request->input('syllabus_id'))->first();
         $newSyllabusOwner = SyllabusUser::where('user_id', $request->input('newOwnerId'))->where('syllabus_id', $request->input('syllabus_id'))->first();
@@ -284,14 +283,14 @@ class SyllabusUserController extends Controller
 
         if ($newSyllabusOwner->save()) {
             if ($oldSyllabusOwner->save()) {
-                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$syllabus->course_title. ' syllabus.');
+                $request->session()->flash('success', 'Successfully transferred ownership for the '.$syllabus->course_title.' syllabus.');
             } else {
-                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$syllabus->course_title. ' syllabus');
+                $request->session()->flash('error', 'Failed to transfer ownership of the '.$syllabus->course_title.' syllabus');
             }
         } else {
-            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$syllabus->course_title. ' syllabus');
+            $request->session()->flash('error', 'Failed to transfer ownership of the '.$syllabus->course_title.' syllabus');
         }
-        
+
         return redirect()->back();
     }
 }

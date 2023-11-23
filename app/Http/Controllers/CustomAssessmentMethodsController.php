@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\custom_assessment_methods;
-use App\Models\Custom_assessment_methods as ModelsCustom_assessment_methods;
 use Illuminate\Http\Request;
 
 class CustomAssessmentMethodsController extends Controller
@@ -31,24 +30,23 @@ class CustomAssessmentMethodsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'custom_methods'=> 'required',
-            ]);
+            'custom_methods' => 'required',
+        ]);
 
         $custom_methods = $request->custom_methods;
 
-        foreach($custom_methods as $method) {
+        foreach ($custom_methods as $method) {
             $la = new Custom_assessment_methods;
             $la->custom_methods = $method;
 
-            if($la->save()){
+            if ($la->save()) {
                 $request->session()->flash('success', 'New teaching/learning activity added');
-            }else{
+            } else {
                 $request->session()->flash('error', 'There was an error adding the teaching/learning activity');
             }
         }
@@ -57,7 +55,6 @@ class CustomAssessmentMethodsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
      * @return \Illuminate\Http\Response
      */
     public function show(custom_assessment_methods $custom_assessment_methods)
@@ -68,7 +65,6 @@ class CustomAssessmentMethodsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
      * @return \Illuminate\Http\Response
      */
     public function edit(custom_assessment_methods $custom_assessment_methods)
@@ -79,8 +75,6 @@ class CustomAssessmentMethodsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, custom_assessment_methods $custom_assessment_methods)
@@ -91,7 +85,6 @@ class CustomAssessmentMethodsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\custom_assessment_methods  $custom_assessment_methods
      * @return \Illuminate\Http\Response
      */
     public function destroy(custom_assessment_methods $custom_assessment_methods)

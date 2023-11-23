@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CourseFactory extends Factory
 {
@@ -14,12 +14,12 @@ class CourseFactory extends Factory
      */
     public function definition()
     {
-        $delivery_modalities=['O','B','I'];
-        $semesters=['W1','W2','S1','S2'];
+        $delivery_modalities = ['O', 'B', 'I'];
+        $semesters = ['W1', 'W2', 'S1', 'S2'];
 
         return [
             'course_code' => $this->faker->asciify('****'),
-            'course_num' => $this->faker->randomNumber($nbDigits = 3, $strict=true),
+            'course_num' => $this->faker->randomNumber($nbDigits = 3, $strict = true),
             'delivery_modality' => $delivery_modalities[array_rand($delivery_modalities)],
             'year' => $this->faker->year,
             'semester' => $semesters[array_rand($semesters)],

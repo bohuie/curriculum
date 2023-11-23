@@ -15,7 +15,7 @@ class CreateOptionalPrioritiesSubdescriptionsTable extends Migration
     {
         Schema::create('optional_priorities_subdescriptions', function (Blueprint $table) {
             $table->id('op_subdesc');
-            $table->text("description");
+            $table->text('description');
             $table->timestamps();
         });
     }

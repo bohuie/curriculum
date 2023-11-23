@@ -16,5 +16,4 @@ class SyllabusProgram extends Model
     protected $guarded = 'id';
 
     protected $fillable = ['syllabus_id', 'program_id'];
-
 }

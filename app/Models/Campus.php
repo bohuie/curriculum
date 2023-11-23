@@ -17,7 +17,8 @@ class Campus extends Model
 
     protected $fillable = ['campus'];
 
-    public function faculties(){
-        return $this->hasMany(faculty::class, 'campus_id','campus_id');
+    public function faculties()
+    {
+        return $this->hasMany(faculty::class, 'campus_id', 'campus_id');
     }
 }

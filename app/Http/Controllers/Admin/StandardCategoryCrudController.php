@@ -7,10 +7,9 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\DB;
 
-
 /**
  * Class StandardCategoryCrudController
- * @package App\Http\Controllers\Admin
+ *
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
 class StandardCategoryCrudController extends CrudController
@@ -23,23 +22,24 @@ class StandardCategoryCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
     {
         CRUD::setModel(\App\Models\StandardCategory::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/standard-category');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/standard-category');
         CRUD::setEntityNameStrings('standard category', 'standard categories');
 
-        // Hide the preview button 
+        // Hide the preview button
         $this->crud->denyAccess('show');
     }
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -49,95 +49,96 @@ class StandardCategoryCrudController extends CrudController
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']);
          */
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(StandardCategoryRequest::class);        
-        
+        CRUD::setValidation(StandardCategoryRequest::class);
+
         $this->crud->addField([
             'name' => 'sc_name', // The db column name
-            'label' => "Standard Category Name&nbsp;&nbsp;<span style=color:red>*</span>", // Table column heading
+            'label' => 'Standard Category Name&nbsp;&nbsp;<span style=color:red>*</span>', // Table column heading
             'type' => 'valid_text',
             'attributes' => [
-                        'req' => 'true',
-                        ],
+                'req' => 'true',
+            ],
         ]);
-        
-    
+
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
     {
-        
+
         $this->crud->addField([
             'name' => 'sc_name', // The db column name
-            'label' => "Standard Category Name&nbsp;&nbsp;<span style=color:red>*</span>", // Table column heading
+            'label' => 'Standard Category Name&nbsp;&nbsp;<span style=color:red>*</span>', // Table column heading
             'attributes' => [
-                        'req' => 'true',
-                        ],
-            'type' => 'valid_text'
+                'req' => 'true',
+            ],
+            'type' => 'valid_text',
         ]);
-        
+
         $this->crud->addField([   // repeatable
-            'name'  => 'Standardtable', //NO SPACE!!!
+            'name' => 'Standardtable', //NO SPACE!!!
             'label' => 'Standards',
             // 'type'  => 'repeatable',
-            'type'  => 'select_multiple',
+            'type' => 'select_multiple',
             'entity' => 'standards',
             'model' => 'App\Models\StandardCategory',
             'fields' => [
                 [
-                    'name'    => 'standard_id',
-                    'type'    => 'Text',
-                    'label'   => 'Id',
+                    'name' => 'standard_id',
+                    'type' => 'Text',
+                    'label' => 'Id',
                     'attributes' => [
                         'disabled' => 'true',
-                        ],
+                    ],
                     'wrapper' => ['class' => 'form-group col-md-2'],
                 ],
                 [
-                    'name'    => 's_shortphrase',
-                    'type'    => 'text',
-                    'label'   => 'Standard Shortphrase&nbsp;&nbsp;<span style=color:red>*</span>',
+                    'name' => 's_shortphrase',
+                    'type' => 'text',
+                    'label' => 'Standard Shortphrase&nbsp;&nbsp;<span style=color:red>*</span>',
                     'attributes' => [
                         'req' => 'true',
-                        ],
+                    ],
                     'wrapper' => ['class' => 'form-group col-md-4'],
                 ],
                 [
-                    'name'    => 's_outcome',
-                    'type'    => 'textarea',
-                    'label'   => 'Standard Outcome&nbsp;&nbsp;<span style=color:red>*</span>', 
+                    'name' => 's_outcome',
+                    'type' => 'textarea',
+                    'label' => 'Standard Outcome&nbsp;&nbsp;<span style=color:red>*</span>',
                     'attributes' => [
                         'req' => 'true',
-                        ],
-                ],              
+                    ],
+                ],
             ],
 
             // optional
-            'new_item_label'  => 'Add Standard', // customize the text of the button
+            'new_item_label' => 'Add Standard', // customize the text of the button
             'init_rows' => 0, // number of empty rows to be initialized, by default 1
             'min_rows' => 0, // minimum rows allowed, when reached the "delete" buttons will be hidden
-            'max_rows' => 10 // maximum rows allowed, when reached the "new item" button will be hidden
+            'max_rows' => 10, // maximum rows allowed, when reached the "new item" button will be hidden
 
         ]);
     }
-    
+
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
 
     public function destroy($id)

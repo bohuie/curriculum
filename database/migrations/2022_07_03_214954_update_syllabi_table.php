@@ -17,7 +17,7 @@ class UpdateSyllabiTable extends Migration
             $table->string('faculty')->after('campus')->nullable();
             $table->string('department')->after('faculty')->nullable();
             $table->unsignedBigInteger('course_id')->nullable();
-            $table->foreign('course_id')->references('course_id')->on('courses')->onDelete('set null')->onUpdate('cascade'); 
+            $table->foreign('course_id')->references('course_id')->on('courses')->onDelete('set null')->onUpdate('cascade');
             $table->boolean('include_alignment')->after('course_id')->default(0);
         });
     }

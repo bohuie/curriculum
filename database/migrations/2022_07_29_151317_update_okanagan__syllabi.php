@@ -15,7 +15,7 @@ class UpdateOkanaganSyllabi extends Migration
     {
         Schema::table('okanagan_syllabi', function (Blueprint $table) {
             $table->text('course_description')->after('course_overview')->nullable();
-            
+
         });
     }
 

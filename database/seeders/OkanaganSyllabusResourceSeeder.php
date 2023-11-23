@@ -79,6 +79,5 @@ class OkanaganSyllabusResourceSeeder extends Seeder
             'title' => 'UBC Okanagan Walk-In Well-Being Clinic',
         ]);
 
-
     }
 }

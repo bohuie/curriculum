@@ -9,7 +9,5 @@ class RoleUser extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = ['role_id','user_id'];
-
-
+    protected $primaryKey = ['role_id', 'user_id'];
 }

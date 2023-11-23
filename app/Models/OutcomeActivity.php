@@ -13,7 +13,7 @@ class OutcomeActivity extends Pivot
 
     protected $table = 'outcome_activities';
 
-    protected $primaryKey = ['l_outcome_id','l_activity_id'];
+    protected $primaryKey = ['l_outcome_id', 'l_activity_id'];
 
     public $incrementing = false;
 }

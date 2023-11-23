@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Helpers;
 
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
 
 class ReadOutcomesFilter implements IReadFilter
@@ -30,4 +30,3 @@ class ReadOutcomesFilter implements IReadFilter
         return false;
     }
 }
-?>

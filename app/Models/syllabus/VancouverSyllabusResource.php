@@ -12,5 +12,4 @@ class VancouverSyllabusResource extends Model
     protected $table = 'vancouver_syllabus_resources';
 
     public $timestamps = false;
-
 }
