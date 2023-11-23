@@ -51,16 +51,17 @@ Route::delete('/syllabusGenerator/{syllabusId}', 'SyllabusController@destroy')->
 // route to assign a syllabus collaborator
 Route::post('/syllabus/{syllabusId}/assign','SyllabusUserController@store')->name('syllabus.assign');
 // route to unassign a syllabus collaborator
-Route::delete('/syllabi/{syllabusId}/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
+Route::delete('/syllabi/unassign', 'SyllabusUserController@destroy')->name('syllabus.unassign');
 // route to download a syllabus
 Route::post('/syllabi/{syllabusId}/{ext}','SyllabusController@download')->name('syllabus.download');
 // rout to duplicate syllabi
 Route::get('/syllabus/{syllabusId}/duplicate','SyllabusController@duplicate')->name('syllabus.duplicate');
 // route for syllabus collaborator functions
-Route::get('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
-Route::get('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
+Route::post('/syllabusUser','SyllabusUserController@leave')->name('syllabusUser.leave');
+Route::post('/syllabusUserTransfer','SyllabusUserController@transferOwnership')->name('syllabusUser.transferOwnership');
 
 Route::resource('/programs','ProgramController');
+Route::post('/programs', 'ProgramController@store')->name('programs.store');
 Route::get('/programs/{program}/submit','ProgramController@submit')->name('programs.submit');
 // Program Summary PDF routes
 Route::get('/programs/{program}/pdf','ProgramController@pdf')->name('programs.pdf');
@@ -97,26 +98,35 @@ Route::post('/import/clos', 'LearningOutcomeController@import')->name('courses.o
 Route::post('/store/clos','LearningOutcomeController@store')->name('courses.outcomes.store');
 
 Route::resource('/plo','ProgramLearningOutcomeController');
+Route::post('/plo/store', 'ProgramLearningOutcomeController@store')->name('program.outcomes.store');
 Route::post('/import/plos', 'ProgramLearningOutcomeController@import')->name('program.outcomes.import');
 
 
+
 Route::resource('/la','LearningActivityController');
+Route::post('/la/store', 'LearningActivityController@store')->name('la.store');
+
 
 Route::post('/ajax/custom_activities','CustomLearningActivitiesController@store' );
 Route::post('/ajax/custom_methods','CustomAssessmentMethodsController@store' );
 Route::post('/store/la','LearningActivityController@store')->name('la.store');
 
 Route::resource('/am','AssessmentMethodController');
-Route::post('/store/am','AssessmentMethodController@store')->name('am.store');
+Route::post('/am/store', 'AssessmentMethodController@store')->name('am.store');
 
 Route::resource('/outcomeMap','OutcomeMapController');
+Route::post('/store/OutcomeMap','OutcomeMapController@store')->name('OutcomeMap.store');
 //Route for standards mapping
 Route::resource('/standardsOutcomeMap', 'StandardsOutcomeMapController');
+Route::post('/store/standardsOutcomeMap','StandardsOutcomeMapController@store')->name('standardsOutcomeMap.store');
 
 Route::resource('/mappingScale','MappingScaleController');
+Route::post('/mappingScale/store', 'MappingScaleController@store')->name('program.mappingScale.store');
 Route::post('/mappingScale/addDefaultMappingScale','MappingScaleController@addDefaultMappingScale')->name('mappingScale.addDefaultMappingScale');
 
+
 Route::resource('/ploCategory','PLOCategoryController');
+Route::post('/ploCategory/store', 'PLOCategoryController@store')->name('program.category.store');
 
 Route::resource('/programUser','ProgramUserController');
 Route::post('/program/{programId}/collaborator/add', 'ProgramUserController@store')->name('programUser.add');

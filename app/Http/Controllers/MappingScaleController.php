@@ -121,6 +121,7 @@ class MappingScaleController extends Controller
      */
     public function update(Request $request, $map_scale_id)
     {
+        
         //
         $this->validate($request, [
             

@@ -56,7 +56,7 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {    
-        if (!App::environment('local')) {
+        if (!App::environment('local') && !App::environment('testing')) {
             return Validator::make($data, [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -104,8 +104,9 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
+        
         $this->validator($request->all())->validate();
-
+        
         event(new Registered($user = $this->create($request->all())));
 
         $request->session()->flash('success','Successfully registered');

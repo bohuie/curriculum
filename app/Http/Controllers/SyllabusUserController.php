@@ -262,6 +262,7 @@ class SyllabusUserController extends Controller
     }
 
     public function leave(Request $request) {
+        
         $syllabus = Syllabus::find($request->input('syllabus_id'));
         $syllabusUser = SyllabusUser::where('user_id', $request->input('syllabusCollaboratorId'))->where('syllabus_id', $request->input('syllabus_id'))->first();
         if ($syllabusUser->delete()) {

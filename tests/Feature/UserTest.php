@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Invite;
+use Illuminate\Support\Facades\Auth;
 
 class UserTest extends TestCase
 {
@@ -15,7 +17,7 @@ class UserTest extends TestCase
      * @return void
      */
 
-     /*
+    /*
     public function test_example()
     {
         $response = $this->get('/');
@@ -23,73 +25,86 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
     */
+    public function test_register_user(){
 
-    public function test_duplicate_user(){
-        $user1 = User::make([
-            'name'=>'Dary',
-            'email' => 'dary@gmail.com'
-        ]);
-        $user2 = User::make([
-            'name'=>'John',
-            'email' => 'john@gmail.com'
+        $response=$this->post(route('register'), [
+            "name" => "Test Register",
+            "email" => "test.register@ubc.ca",
+            "password" => "password",
+            "password_confirmation" => "password"
         ]);
 
-        $this->assertTrue($user1->name != $user2->name);
-    }
-
-    /*
-    public function test_delete_user(){
-        $user = User::factory()->count(1)->make();
-        $user = User::first();
-        $flag=false;
-        if($user){
-            $user->delete();
-            $flag=true;
-        }
-
-        $this->assertTrue($flag);
-        //In the example he just goes assertTrue(true) which just always returns true.
-    }
-    */
-
-    public function test_it_stores_new_users(){
-        $response=$this->followingRedirects()->post('/register', [
-            'name' => 'Dary',
-            'email' => 'dary@gmail.com',
-            'password' => 'dary1234',
-            'password_confirmation'=> 'dary1234'
-        ])->assertStatus(200);
-
-        /*
-        $response->assertRedirect('/');
-        $response = $this->followingRedirects()
-        ->post('/login', ['email' => 'john@example.com'])
-        ->assertStatus(200);
-        //In example it should redirect to /home
-        */
-    }
-    /*
-    public function test_database(){
         $this->assertDatabaseHas('users', [
-            'name'=> 'Dary'
+            'name' => 'Test Register',
+            'email' => 'test.register@ubc.ca'
         ]);
-        //didn't create in seeder, but this is the same idea
+
+
+    }
+/*
+    public function test_recover_password()
+    {
+        $response=$this->post(route('password.email'), [
+            "email" => "test.register@ubc.ca"
+        ]);
     }
 
+    public function test_login_user(){
+        $response=$this->post(route('login'), [
+            "email" => "test.register@ubc.ca",
+            "password" => "password",
+        ]);
+
+        $user= User::where('email', 'test.register@ubc.ca')->first();
+
+        $response->assertStatus(302);
+        $response->assertRedirect('home');
+
+        if(Auth::id() == $user->id){
+            $this->assertTrue(true);
+        }else $this->assertTrue(false);
+
+      //  User::where('email', 'test.register@ubc.ca')->delete();
+        //$this->followRedirects($response)->assertSee('.success-message');
+    }
+    public function test_user_invite()
+    {
+        $response=$this->post(route('storeInvitation'), [
+            "email" => "test.register-invite@ubc.ca"
+        ]);
+
+        $user= User::where('email', 'test.register@ubc.ca')->first();
+
+        $this->assertDatabaseHas('invites', [
+            'email' => 'test.register-invite@ubc.ca'
+        ]);
+
+    }
+*/
+    /*
+    public function testVerifyEmailValidatesUser(): void
+    {
+        // VerifyEmail extends Illuminate\Auth\Notifications\VerifyEmail in this example
+        $notification = new Invite();
+        $user = User::where('email', 'test.register@ubc.ca')->first();
     
-    public function test_if_seeders_works(){
-        $this->seed(); //Seed all seeders in the seeder folder
+        // New user should not has verified their email yet
+        $this->assertFalse($user->hasVerifiedEmail());
+    
+        $mail = $notification->toMail($user);
+        $uri = $mail->actionUrl;
+    
+        // Simulate clicking on the validation link
+        $this->actingAs($user)
+            ->get($uri);
+    
+        // User should have verified their email
+        $this->assertTrue(User::find($user->id)->hasVerifiedEmail());
+
+        User::where('email', 'test.register@ubc.ca')->delete();
     }
     */
-    /*
-    5 Calls you can make:
-    $this->get($uri, $header=[])
-    $this->post($uri, $data=[], $header=[])
-    $this->put($uri, $data=[], $header=[])
-    $this->patch($uri, $data=[], $header=[])
-    $this->delete($uri, $data=[], $header=[])
-    $uri=endpoint of route
-    Not an illuminate response, but an instance of the TestResponse
-    */
+
+
 
 }

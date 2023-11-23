@@ -37,10 +37,11 @@ class StandardsOutcomeMapController extends Controller
     */
     public function store(Request $request)
     {
+
         $this->validate($request, [
             'map' => 'required',
             ]);
-
+        
         $outcomeMap = $request->input('map');
         foreach ($outcomeMap as $courseId => $standardToScaleIds) {
             foreach (array_keys($standardToScaleIds) as $standardId) {
@@ -50,6 +51,7 @@ class StandardsOutcomeMapController extends Controller
                 );
             }
         }
+
 
         // update courses 'updated_at' field
         $course = Course::find($request->input('course_id'));

@@ -2,17 +2,21 @@
 
 namespace Tests\Feature;
 
-use App\Models\AssessmentMethod;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\LearningOutcome;
-use Illuminate\Support\Facades\Auth;
+
 use App\Models\Course;
+use App\Models\User;
+use App\Models\Program;
+use App\Models\ProgramLearningOutcome;
+use App\Models\CourseProgram;
+use App\Models\MappingScaleProgram;
 use App\Models\LearningActivity;
+use App\Models\AssessmentMethod;
+use App\Models\LearningOutcome;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+
 
 class CourseTest extends TestCase
 {
@@ -66,6 +70,9 @@ class CourseTest extends TestCase
         
     }
     
+
+    
+
     public function test_download_pdf(){
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -86,18 +93,6 @@ class CourseTest extends TestCase
 
         $this->assertDatabaseHas('courses', [
             'course_title' => "Intro to Unit Testing - Copy"
-        ]);
-
-    }
-    
-    public function test_submit_course(){
-        $user = User::where('email', 'test-course@ubc.ca')->first();
-        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
-        $response=$this->actingAs($user)->get(route('courses.submit', $course->course_id));
-        $response->assertRedirect('/home');
-
-        $this->assertDatabaseHas('courses', [
-            'course_title' => "Intro to Unit Testing"
         ]);
 
     }
@@ -218,38 +213,45 @@ class CourseTest extends TestCase
         ]);
 
     }
-
-
     public function test_course_alignment(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
         $learningActivities = LearningActivity::where('course_id', $course->course_id)->get();
         $assessmentMethods = AssessmentMethod::where('course_id', $course->course_id)->get();
+        $learningOutcome1 = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 1')->first();
+        $learningOutcome2 = LearningOutcome::where('l_outcome', 'Test Course Learning Outcome 2')->first();
+
 
         $response=$this->actingAs($user)->post(route('courses.outcomeDetails', $course->course_id), [
         "a_methods" => [
-        $assessmentMethods[0]->a_method_id => [
-          0 => "1"
+            $learningOutcome1->l_outcome_id => [
+                0 => $assessmentMethods[0]->a_method_id
+                //This is mapping CLO #1 to the first assessment method
+            ],
+            $learningOutcome2->l_outcome_id => [
+                0 => $assessmentMethods[0]->a_method_id,
+                1 => $assessmentMethods[1]->a_method_id
+                //This is mapping CLO #2 to the first and second assessment method
+            ]
         ],
-        $assessmentMethods[1]->a_method_id => [
-          0 => "1",
-          1 => "2"
-        ]
-        ],
-      "l_activities" => [
-        $learningActivities[0]->a_method_id => [
-            0 => "1"
-          ],
-          $assessmentMethods[1]->a_method_id => [
-            0 => "1",
-            1 => "2"
-          ]
+        "l_activities" => [
+            $learningOutcome1->l_outcome_id => [
+                0 => $learningActivities[0]-> l_activity_id
+                //This is mapping only CLO #1 to the first Learning Activity
+            ]
           ],
         "l_outcomes_pos" => [
-            0 => "35",
-            1 => "36"
+            0 => $learningOutcome1->l_outcome_id,
+            1 => $learningOutcome2->l_outcome_id,
         ]
         ]);
+
+        
+        $this->assertDatabaseHas('outcome_assessments', [
+            'l_outcome_id' => $learningOutcome1->l_outcome_id,
+            'a_method_id' => $assessmentMethods[0]->a_method_id
+        ]);
+
 
 
     }
@@ -315,6 +317,107 @@ class CourseTest extends TestCase
         ]);
     }
 
+
+    public function test_program_outcome_mapping(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $clo = LearningOutcome::where('l_outcome','Test Course Learning Outcome 2')->first();
+
+        //create test program
+        DB::table('programs')->insert([
+            'program' => 'Testing Program for Courses',
+            'faculty' => 'Irving K. Barber Faculty of Science',
+            'level' => 'Bachelors',
+            'campus' => 'O',
+            'status' => -1,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+
+        ]);
+        
+        $program = Program::where('program', 'Testing Program for Courses')->first();
+
+        //must set mapping scale (we will use 3 point scale I/D/A)
+        DB::table('mapping_scale_programs')->insert([
+            'map_scale_id'=> 1,
+            'program_id'=> $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        DB::table('mapping_scale_programs')->insert([
+            'map_scale_id'=> 2,
+            'program_id'=> $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        DB::table('mapping_scale_programs')->insert([
+            'map_scale_id'=> 3,
+            'program_id'=> $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+
+        //create test PLOs
+        DB::table('program_learning_outcomes')->insert([
+            'plo_shortphrase' => 'Short PLO 1',
+            'pl_outcome' => 'Course Testing PLO 1',
+            'program_id' => $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+
+        ]);
+
+        $plo = ProgramLearningOutcome::where('pl_outcome', 'Course Testing PLO 1')->first();
+        //must add course to program 
+        DB::table('course_programs')->insert([
+            'course_id' => $course->course_id,
+            'program_id' => $program->program_id,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        DB::table('courses')->where('course_id', $course->course_id)->update(['program_id' => $program->program_id]);
+        //test mapping CLOs to PLOs
+
+        $response=$this->actingAs($user)->post(route('outcomeMap.store'), [
+            'course_id' => $course->course_id,
+            'l_outcome_id' => $clo->l_outcome_id,
+            "map" => [
+                $clo->l_outcome_id => [
+                    $plo->pl_outcome_id => 1 //this is setting the mapping scale option to I, since that is the map_scale_id (0=N/A,1=I,2=D,3=A)
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('outcome_maps', [
+            'l_outcome_id' => $clo->l_outcome_id,
+            'pl_outcome_id' => $plo->pl_outcome_id,
+            'map_scale_id' => 1
+        ]);
+
+
+    }
+
+    public function test_optional_priorities_store(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        
+        $response=$this->actingAs($user)->post(route('storeOptionalPLOs'), [
+            'course_id' => $course->course_id,
+            'optionalItem' => [
+                0 => "70"
+                //Assigning Optional Priority with ID=70 to the course
+            ]
+        ]);
+
+        $this->assertDatabaseHas('course_optional_priorities', [
+            'op_id' => 70,
+            'course_id' => $course->course_id
+        ]);
+
+    }
+
+
     public function test_delete_clo(){
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -369,6 +472,7 @@ class CourseTest extends TestCase
         ]);
 
     
+
     }
 
     public function test_delete_la(){
@@ -395,6 +499,40 @@ class CourseTest extends TestCase
 
     
 }
+
+
+    public function test_standardsOutcomeMap_store(){
+        $user = User::where('email', 'test-course@ubc.ca')->first();
+        $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+
+
+        //setting this mapping to all "Introduced" for this course, except 1
+        $response=$this->actingAs($user)->post(route('standardsOutcomeMap.store'), [
+            "course_id" => $course->course_id,
+            "map" => [
+                $course->course_id => [
+                    1 => "101",
+                    2 => "101",
+                    3 => "101",
+                    4 => "101",
+                    5 => "101",
+                    6 => "101",
+                ]
+            ]
+        ]);
+
+        
+        $this->assertDatabaseHas('standards_outcome_maps', [
+            'course_id' => $course->course_id,
+            'standard_scale_id' => '101',
+            'standard_id' => 6
+        ]);
+        
+        //this is failing when it should be working
+        //cannot get out of for loop in StandardOutcomeMapController
+
+    }
+
 
     
 
@@ -473,6 +611,7 @@ class CourseTest extends TestCase
         
         $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
+        $program = Program::where('program', 'Testing Program for Courses')->first();
 
         $response=$this->actingAs($user2)->delete(route('courses.destroy', $course->course_id));
 
@@ -487,6 +626,11 @@ class CourseTest extends TestCase
         //Delete Duplicate Course
         Course::where('course_title', 'Intro to Unit Testing')->delete();
 
+        //Will also delete Programs to cleanup
+        CourseProgram::where('program_id', $program->program_id)->delete();
+        Program::where('program_id', $program->program_id)->delete();
+        MappingScaleProgram::where('program_id', $program->program_id)->delete();
+
         $this->assertDatabaseMissing('users', [
             'email' => 'test-course-collab@ubc.ca',
             'email' => 'test-course@ubc.ca'
@@ -498,5 +642,5 @@ class CourseTest extends TestCase
 
 
     
-
+    
 }

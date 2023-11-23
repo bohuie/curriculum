@@ -24,6 +24,19 @@
     </div>
 @endif
 
+
+
+<div class="container mt-4">
+    <div class="alert alert-warning">
+                <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
+                <button type="button" class="close" data-dismiss="alert">×</button>  
+                <div>
+                The Curriculum MAP tool will be undergoing a planned maintenance on <b>November 20th between 8:30AM-12:30PM</b>. We encourage you to avoid using the tool at this time. This is part of regular maintenance to ensure that the tool is up-to date and able to serve you effectively.
+                </div>  
+    </div>
+</div>
+
+    
 <div class="container mt-4">
     <div class="row">
         <div style="width: 100%;border-bottom: 1px solid #DCDCDC">
@@ -980,7 +993,10 @@
                                 <tr>
                                     <!-- course title -->
                                     <td>
-                                        <a href="{{route('syllabus', $syllabus->id)}}">{{$syllabus->course_title}}</a>
+                                    <form name="ExistingSyllabus" action="{{route('syllabus')}}" method="GET">
+	                                <input type="hidden" name="syllabus_id" value="{{$syllabus->id}}">
+                                    <button type="submit" style="background:none; border:none; padding:0; font-family:arial, sans-serif; color:#069; cursor:pointer;">{{$syllabus->course_title}}</button>
+                                    </form>
                                     </td>
                                     <!-- course code -->
                                     <td>
