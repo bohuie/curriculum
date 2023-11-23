@@ -166,7 +166,7 @@ class CourseCrudController extends CrudController
             'name' => 'programs', // the column that contains the ID of that connected entity;
             'entity' => 'programs', // the method that defines the relationship in your Model
             'attribute' => 'program', // foreign key attribute that is shown to user
-            'model' => "App\Models\Program", // foreign key model
+            'model' => \App\Models\Program::class, // foreign key model
             'placeholder' => 'Select a program', // placeholder for the select2 input
             'pivot' => true,
         ]);
@@ -194,7 +194,7 @@ class CourseCrudController extends CrudController
             // OPTIONALS:
             'entity' => 'users', // the method that defines the relationship in your Model
             'attribute' => 'email', // foreign key attribute that is shown to user (identifiable attribute)
-            'model' => "App\Models\User", // foreign key Eloquent model
+            'model' => \App\Models\User::class, // foreign key Eloquent model
             'placeholder' => 'Select a user', // placeholder for the select2 input
             'pivot' => true,
             'select_all' => true,
@@ -247,7 +247,7 @@ class CourseCrudController extends CrudController
             'type' => 'select',
             'entity' => 'standardCategory', // the method that defines the relationship in your Model
             'attribute' => 'sc_name', // foreign key attribute that is shown to user (identifiable attribute)
-            'model' => "App\Models\StandardCategory", // foreign key Eloquent model
+            'model' => \App\Models\StandardCategory::class, // foreign key Eloquent model
             'wrapper' => ['class' => 'form-group col-md-5'],
         ]);
 
@@ -257,7 +257,7 @@ class CourseCrudController extends CrudController
             'type' => 'select',
             'entity' => 'standardScalesCategory', // the method that defines the relationship in your Model
             'attribute' => 'name', // foreign key attribute that is shown to user (identifiable attribute)
-            'model' => "App\Models\StandardsScaleCategory", // foreign key Eloquent model
+            'model' => \App\Models\StandardsScaleCategory::class, // foreign key Eloquent model
             'wrapper' => ['class' => 'form-group col-md-5'],
         ]);
 
@@ -380,7 +380,7 @@ class CourseCrudController extends CrudController
                     'name' => 'a_method',
                     'label' => 'Assessment Method&nbsp;&nbsp;<span style=color:red>*</span>',
                     'type' => 'list_select',
-                    'model' => 'App\Models\Custom_assessment_methods',
+                    'model' => \App\Models\Custom_assessment_methods::class,
                     'attribute' => 'custom_methods',
                     'foreign-ref' => 'custom_methods', //the column from which the strings are pulled
                     'attributes' => ['req' => 'true'],  //this is actually an input, not a select.
@@ -428,7 +428,7 @@ class CourseCrudController extends CrudController
                     'name' => 'l_activity',
                     'label' => 'Teaching and Learning Activity&nbsp;&nbsp;<span style=color:red>*</span>',
                     'type' => 'list_select',
-                    'model' => 'App\Models\Custom_learning_activities',
+                    'model' => \App\Models\Custom_learning_activities::class,
                     'attribute' => 'custom_activities',
                     'foreign-ref' => 'custom_activities', //the column from which the strings are pulled
                     'attributes' => ['req' => 'true'],  //works because this is actually an input, not a select.

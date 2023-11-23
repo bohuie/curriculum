@@ -15,11 +15,11 @@ class AssessmentMethod extends Model
 
     public function learningOutcomes()
     {
-        return $this->belongsToMany('App\Models\LearningOutcome')->using('App\Models\OutcomeAssessment');
+        return $this->belongsToMany(\App\Models\LearningOutcome::class)->using(\App\Models\OutcomeAssessment::class);
     }
 
     public function course()
     {
-        return $this->belongsTo('App\Models\Course');
+        return $this->belongsTo(\App\Models\Course::class);
     }
 }

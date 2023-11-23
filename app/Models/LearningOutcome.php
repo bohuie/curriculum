@@ -19,22 +19,22 @@ class LearningOutcome extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Models\Course', 'course_id');
+        return $this->belongsTo(\App\Models\Course::class, 'course_id');
     }
 
     public function assessmentMethods()
     {
-        return $this->belongsToMany('App\Models\AssessmentMethod', 'outcome_assessments', 'l_outcome_id', 'a_method_id')->using('App\Models\OutcomeAssessment')->withTimeStamps();
+        return $this->belongsToMany(\App\Models\AssessmentMethod::class, 'outcome_assessments', 'l_outcome_id', 'a_method_id')->using(\App\Models\OutcomeAssessment::class)->withTimeStamps();
     }
 
     public function learningActivities()
     {
-        return $this->belongsToMany('App\Models\LearningActivity', 'outcome_activities', 'l_outcome_id', 'l_activity_id')->using('App\Models\OutcomeActivity')->withTimeStamps();
+        return $this->belongsToMany(\App\Models\LearningActivity::class, 'outcome_activities', 'l_outcome_id', 'l_activity_id')->using(\App\Models\OutcomeActivity::class)->withTimeStamps();
     }
 
     public function programLearningOutcomes()
     {
-        return $this->belongsToMany('App\Models\ProgramLearningOutcome', 'outcome_maps', 'l_outcome_id', 'pl_outcome_id')->using('App\Models\OutcomeMap')->withPivot('map_scale_id')->withTimeStamps();
+        return $this->belongsToMany(\App\Models\ProgramLearningOutcome::class, 'outcome_maps', 'l_outcome_id', 'pl_outcome_id')->using(\App\Models\OutcomeMap::class)->withPivot('map_scale_id')->withTimeStamps();
     }
 
     public function outcomeMap()

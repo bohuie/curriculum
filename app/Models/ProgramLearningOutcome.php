@@ -15,12 +15,12 @@ class ProgramLearningOutcome extends Model
 
     public function learningOutcomes()
     {
-        return $this->belongsToMany(LearningOutcome::class, 'outcome_maps', 'pl_outcome_id', 'l_outcome_id')->using('App\Models\OutcomeMap')->withPivot('map_scale_id')->withTimestamps();
+        return $this->belongsToMany(LearningOutcome::class, 'outcome_maps', 'pl_outcome_id', 'l_outcome_id')->using(\App\Models\OutcomeMap::class)->withPivot('map_scale_id')->withTimestamps();
     }
 
     public function category()
     {
-        return $this->belongsTo('App\Models\PLOCategory', 'plo_category_id', 'plo_category_id');
+        return $this->belongsTo(\App\Models\PLOCategory::class, 'plo_category_id', 'plo_category_id');
     }
 
     // get the program that owns the program learning outcome

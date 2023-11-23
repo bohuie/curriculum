@@ -102,7 +102,7 @@ class SubcategoriesCrudController extends CrudController
             'name' => 'cat_id', // The db column name
             'entity' => 'optionalPriorityCategory',
             'attribute' => 'cat_name',
-            'model' => 'App\Models\OptionalPriorityCategories',
+            'model' => \App\Models\OptionalPriorityCategories::class,
         ]);
 
         $this->crud->addField([
@@ -160,7 +160,7 @@ class SubcategoriesCrudController extends CrudController
             'name' => 'cat_id', // The db column name
             'entity' => 'optionalPriorityCategory',
             'attribute' => 'cat_name',
-            'model' => 'App\Models\OptionalPriorityCategories',
+            'model' => \App\Models\OptionalPriorityCategories::class,
         ]);
 
         $this->crud->addField([
@@ -199,7 +199,7 @@ class SubcategoriesCrudController extends CrudController
             'name' => 'optionalPriorityCategory', // The db column name
             'entity' => 'optionalPriorityCategory',
             'attribute' => 'cat_name',
-            'model' => 'App\Models\OptionalPriorityCategories',
+            'model' => \App\Models\OptionalPriorityCategories::class,
         ]);
         $this->crud->addColumn([
             'name' => 'subcat_name',

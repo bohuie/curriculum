@@ -207,7 +207,7 @@ class ProgramCrudController extends CrudController
             // OPTIONAL
             'entity' => 'users', // the method that defines the relationship in your Model
             'attribute' => 'email', // foreign key attribute that is shown to user
-            'model' => "App\Models\User", // foreign key model
+            'model' => \App\Models\User::class, // foreign key model
             'wrapper' => ['class' => 'form-group col-md-4'],
         ]);
 
@@ -279,8 +279,8 @@ class ProgramCrudController extends CrudController
             'type' => 'check_mapping_scales',
             'label' => 'Map Scales',
             'entity' => 'mappingScaleLevels', // the method that defines the relationship in your Model
-            'model' => "App\Models\MappingScale", // foreign key model
-            'model_categories' => "App\Models\MappingScaleCategory",
+            'model' => \App\Models\MappingScale::class, // foreign key model
+            'model_categories' => \App\Models\MappingScaleCategory::class,
             'attribute' => [
                 'title', // foreign key attribute that is shown to user
                 'colour',
@@ -296,7 +296,7 @@ class ProgramCrudController extends CrudController
             'type' => 'select_multiple',
             'label' => 'Courses',
             'entity' => 'courses', // the method that defines the relationship in your Model
-            'model' => "App\Models\Course", // foreign key model
+            'model' => \App\Models\Course::class, // foreign key model
             'attribute' => 'course_title',
             'tooltip' => 'course_title', //this will show up when mousing over items
             'group_by_cat' => 'course_code', //the attribute to group by

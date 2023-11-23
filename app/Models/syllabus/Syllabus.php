@@ -15,6 +15,6 @@ class Syllabus extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\Models\User', 'syllabi_users', 'syllabus_id', 'user_id')->withPivot('permission');
+        return $this->belongsToMany(\App\Models\User::class, 'syllabi_users', 'syllabus_id', 'user_id')->withPivot('permission');
     }
 }

@@ -149,7 +149,7 @@ class OptionalPriorityCrudController extends CrudController
             'name' => 'subcat_id', // The db column name
             'entity' => 'optionalPrioritySubcategory',
             'attribute' => 'subcat_name',
-            'model' => "App\Models\OptionalPrioritySubcategories",
+            'model' => \App\Models\OptionalPrioritySubcategories::class,
         ]);
     }
 
@@ -207,7 +207,7 @@ class OptionalPriorityCrudController extends CrudController
             'name' => 'optionalPrioritySubcategory', // The db column name
             'entity' => 'optionalPrioritySubcategory',
             'attribute' => 'subcat_name',
-            'model' => "App\Models\OptionalPrioritySubcategories",
+            'model' => \App\Models\OptionalPrioritySubcategories::class,
         ]);
 
         // Category

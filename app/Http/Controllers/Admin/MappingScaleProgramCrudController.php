@@ -43,7 +43,7 @@ class MappingScaleProgramCrudController extends CrudController
             'type' => 'select',
             'label' => 'Id',
             'entity' => 'mappingScaleLevels',
-            'model' => 'App\Models\MappingScaleProgram',
+            'model' => \App\Models\MappingScaleProgram::class,
             'attribute' => 'title',
             //'attributes' => ['disabled' => 'true'],
             'wrapper' => ['class' => 'form-group col-md-2'],

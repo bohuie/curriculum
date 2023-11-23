@@ -15,11 +15,11 @@ class LearningActivity extends Model
 
     public function learningOutcomes()
     {
-        return $this->belongsToMany('App\Models\LearningOutcome')->using('App\Models\OutcomeActivity');
+        return $this->belongsToMany(\App\Models\LearningOutcome::class)->using(\App\Models\OutcomeActivity::class);
     }
 
     public function course()
     {
-        return $this->belongsTo('App\Models\Course');
+        return $this->belongsTo(\App\Models\Course::class);
     }
 }

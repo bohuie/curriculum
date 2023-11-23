@@ -120,7 +120,7 @@ class StandardsScaleCategoryCrudController extends CrudController
             // 'type'  => 'repeatable',
             'type' => 'select_multiple',
             'entity' => 'standardScales',
-            'model' => 'App\Models\StandardsScaleCategory',
+            'model' => \App\Models\StandardsScaleCategory::class,
 
             'fields' => [
                 [

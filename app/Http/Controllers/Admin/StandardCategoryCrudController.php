@@ -100,7 +100,7 @@ class StandardCategoryCrudController extends CrudController
             // 'type'  => 'repeatable',
             'type' => 'select_multiple',
             'entity' => 'standards',
-            'model' => 'App\Models\StandardCategory',
+            'model' => \App\Models\StandardCategory::class,
             'fields' => [
                 [
                     'name' => 'standard_id',
