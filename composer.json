@@ -15,7 +15,6 @@
         "doctrine/dbal": "2.12.1",
         "dompdf/dompdf": "^1.0",
         "fideloper/proxy": "^4.2",
-        "fruitcake/laravel-cors": "^2.0",
         "google/recaptcha": "1.2.*",
         "guzzlehttp/guzzle": "^7.0.1",
         "laminas/laminas-escaper": "^2.7",
