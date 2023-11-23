@@ -680,8 +680,8 @@ class CourseCrudController extends CrudController
                     DB::table('standards_outcome_maps')->insert(['l_outcome_id' => $exKey[1], 'standard_id' => $exKey[2], 'standard_scale_id' => $val[0]]);
                 } else {
                     \App\Models\StandardsOutcomeMap::where('l_outcome_id', $exKey[1])
-                            ->where('standard_id', $exKey[2])
-                            ->update(['standard_scale_id' => $val[0]]);
+                        ->where('standard_id', $exKey[2])
+                        ->update(['standard_scale_id' => $val[0]]);
                 }
             }
         }

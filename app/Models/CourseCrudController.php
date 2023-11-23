@@ -721,8 +721,8 @@ class CourseCrudController extends CrudController
                     DB::table('outcome_maps')->insert(['l_outcome_id' => $exKey[1], 'pl_outcome_id' => $exKey[2], 'map_scale_id' => $val[0]]);
                 } else {
                     \App\Models\OutcomeMap::where('l_outcome_id', $exKey[1])
-                            ->where('pl_outcome_id', $exKey[2])
-                            ->update(['map_scale_id' => $val[0]]);
+                        ->where('pl_outcome_id', $exKey[2])
+                        ->update(['map_scale_id' => $val[0]]);
                 }
             }
         }
