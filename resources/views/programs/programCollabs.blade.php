@@ -102,7 +102,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">Are you sure you want to leave {{$program->program}} program?</div>
-                                                        <form action="{{ action('ProgramUserController@leave') }}" class="float-right">
+                                                        <form action="{{ action([\App\Http\Controllers\ProgramUserController::class, 'leave']) }}" class="float-right">
                                                             @csrf
 
                                                             <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
@@ -136,7 +136,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">Are you sure you want to give ownership of the program: {{$program->program}} to the user: {{$programCollaborator->name}}?</div>
-                                                            <form action="{{ action('ProgramUserController@transferOwnership') }}">
+                                                            <form action="{{ action([\App\Http\Controllers\ProgramUserController::class, 'transferOwnership']) }}">
                                                                 @csrf
                                                                 <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
                                                                 <input type="hidden" class="form-check-input " name="newOwnerId" value={{$programCollaborator->id}}>
@@ -163,7 +163,7 @@
                 @endif
             </div>
 
-            <form method="POST" id="saveProgramCollabChanges{{$program->program_id}}" action="{{ action('ProgramUserController@store', ['programId' => $program->program_id]) }}">
+            <form method="POST" id="saveProgramCollabChanges{{$program->program_id}}" action="{{ action([\App\Http\Controllers\ProgramUserController::class, 'store'], ['programId' => $program->program_id]) }}">
                 @csrf
                 <input type="hidden" class="form-check-input " name="program_id" value={{$program->program_id}}>
                 <div class="modal-footer">

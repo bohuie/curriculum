@@ -92,7 +92,7 @@
                                         </div>
                                     </div>
 
-                                    <form method="POST" id="saveCLOChanges" action="{{ action('LearningOutcomeController@store') }}">
+                                    <form method="POST" id="saveCLOChanges" action="{{ action([\App\Http\Controllers\LearningOutcomeController::class, 'store']) }}">
                                     @csrf
                                         <div class="modal-footer">
                                             <input type="hidden" name="course_id" value="{{$course->course_id}}" form="saveCLOChanges">
@@ -126,7 +126,7 @@
                     </div>
 
                     <div class="row mb-2 align-items-end">
-                        <form method="POST" class="col-6" action="{{ action('LearningOutcomeController@import') }}" enctype="multipart/form-data">
+                        <form method="POST" class="col-6" action="{{ action([\App\Http\Controllers\LearningOutcomeController::class, 'import']) }}" enctype="multipart/form-data">
                             <p>
                                 <a href="{{asset('import_samples/import-clos-template.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-clos-template.xlsx</a>
                                 or

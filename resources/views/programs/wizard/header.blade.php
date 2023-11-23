@@ -80,7 +80,7 @@
                                             </button>
                                         </div>
                                         
-                                        <form method="POST" action="{{ action('ProgramController@update', $program->program_id) }}">
+                                        <form method="POST" action="{{ action([\App\Http\Controllers\ProgramController::class, 'update'], $program->program_id) }}">
                                             @csrf
                                             {{method_field('PUT')}}
                                             <div class="modal-body">
