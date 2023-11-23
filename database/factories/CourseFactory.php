@@ -21,7 +21,7 @@ class CourseFactory extends Factory
             'course_code' => $this->faker->asciify('****'),
             'course_num' => $this->faker->randomNumber($nbDigits = 3, $strict = true),
             'delivery_modality' => $delivery_modalities[array_rand($delivery_modalities)],
-            'year' => $this->faker->year,
+            'year' => $this->faker->year(),
             'semester' => $semesters[array_rand($semesters)],
             'course_title' => $this->faker->asciify('********************'),
             'created_at' => Carbon::now(),
