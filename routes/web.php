@@ -3,7 +3,6 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminEmailController;
 use App\Http\Controllers\AssessmentMethodController;
-use App\Http\Controllers\Auth;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseProgramController;
 use App\Http\Controllers\CourseUserController;
