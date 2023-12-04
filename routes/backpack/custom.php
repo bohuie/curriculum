@@ -6,6 +6,9 @@
 // This route file is loaded automatically by Backpack\Base.
 // Routes you generate using Backpack\Generators will be placed here.
 
+//Crud routes have been throwing errors since Shift from 8.x->9.x. Will need to fix in future if we decide to use backpack.
+
+/*
 Route::prefix(config('backpack.base.route_prefix', 'admin'))->middleware(array_merge((array) config('backpack.base.web_middleware', 'web'), (array) config('backpack.base.middleware_key', 'admin')))->group([
     'middleware' => array_merge(
         (array) config('backpack.base.web_middleware', 'web'),
@@ -26,3 +29,5 @@ Route::prefix(config('backpack.base.route_prefix', 'admin'))->middleware(array_m
         Route::crud('custom-assessment-methods', 'CustomAssessmentMethodsCrudController');
         Route::crud('custom-learning-activities', 'CustomLearningActivitiesCrudController');
     }); // this should be the absolute last line of this file
+
+*/
