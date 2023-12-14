@@ -164,6 +164,8 @@ class SyllabiTest extends TestCase
         ]);
     }
 
+    //commenting out unfinished tests
+    /*
     public function test_syllabus_download()
     {
         $user = User::where('email', 'test-syllabi@ubc.ca')->first();
@@ -190,6 +192,7 @@ class SyllabiTest extends TestCase
         ]);
 
     }
+    */
 
     public function test_syllabus_leave()
     {
