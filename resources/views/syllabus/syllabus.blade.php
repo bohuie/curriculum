@@ -2580,7 +2580,7 @@
                     <div id="optionalSyllabusDesc"></div>
                 @else
                     <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website.</a>
+                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners.
                     </p>
                 @endif
             <div class="form-check m-4">

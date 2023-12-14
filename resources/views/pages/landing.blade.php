@@ -177,7 +177,7 @@
                     </p>
                     <br>
                     <p class="lead">
-                        Watch this demo for further guidance: <a href="https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/</a>.
+                        Watch <a href="https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i>this demo</a> for further guidance.
                     </p>
                     
                 </div>

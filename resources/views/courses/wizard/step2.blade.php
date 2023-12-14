@@ -155,6 +155,7 @@
                                                     <option value="Participation">
                                                     <option value="Project">
                                                     <option value="Project plan">
+                                                    <option value="Presentation">
                                                     <option value="Poem">
                                                     <option value="Play">
                                                     <option value="Quiz">
