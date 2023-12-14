@@ -540,7 +540,7 @@
                                                             <h5 class="modal-title" id="editPLOModalLabel">Edit Program Learning Outcome (PLO)</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <form method="POST" action="{{ action([\App\Http\Controllers\ProgramLearningOutcomeController::class, 'update'], $unCatplo->pl_outcome_id) }}">
+                                                        <form method="POST" action="{{ action('ProgramLearningOutcomeController@update', $unCatplo->pl_outcome_id) }}">
                                                             @csrf
                                                             {{method_field('PUT')}}
                                                             <div class="modal-body">
