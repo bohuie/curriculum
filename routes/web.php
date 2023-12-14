@@ -146,6 +146,7 @@ Route::post('/mappingScale/addDefaultMappingScale', [MappingScaleController::cla
 
 Route::resource('/ploCategory', 'PLOCategoryController');
 Route::post('/ploCategory/store', [PLOCategoryController::class, 'store'])->name('program.category.store');
+Route::delete('/ploCategory/{program}/delete', [PLOCategoryController::class, 'destroy'])->name('program.category.destroy');
 
 Route::resource('/programUser', 'ProgramUserController');
 Route::post('/program/{programId}/collaborator/add', [ProgramUserController::class, 'store'])->name('programUser.add');

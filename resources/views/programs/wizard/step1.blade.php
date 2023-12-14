@@ -269,7 +269,7 @@
                                                             </div>
 
                                                             <form method="POST"
-                                                                action="{{ action([\App\Http\Controllers\PLOCategoryController::class, 'update'], $category->plo_category_id) }}">
+                                                                action="{{ action('PLOCategoryController@update', $category->plo_category_id) }}">
                                                                 @csrf
                                                                 {{method_field('PUT')}}
 
@@ -305,7 +305,7 @@
                                                             Are you sure you want to delete category: {{$category->plo_category}}?
                                                             </div>
 
-                                                            <form action="{{route('ploCategory.destroy', $category->plo_category_id)}}" method="POST">
+                                                            <form action="{{route('program.category.destroy', $category->plo_category_id)}}" method="POST">
                                                                 @csrf
                                                                 {{method_field('DELETE')}}
                                                                 <input type="hidden" class="form-check-input " name="program_id"
