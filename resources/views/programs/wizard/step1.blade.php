@@ -428,9 +428,10 @@
                                                                 <h5 class="modal-title" id="editPLOModalLabel">Edit Program Learning Outcome (PLO)</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
-                                                            <form method="POST" action="{{ action([\App\Http\Controllers\ProgramLearningOutcomeController::class, 'update'], $ploCat->pl_outcome_id) }}">
+                                                            
+                                                            <form action="{{route('plo.update', $ploCat->pl_outcome_id)}}" method="POST">
                                                                 @csrf
-                                                                {{method_field('PUT')}}
+                                                                {{method_field('POST')}}
                                                                 <div class="modal-body">
                                                                     <div class="form-floating mb-3">
                                                                         <textarea id="editPLOinput{{$ploCat->pl_outcome_id}}" name="plo" class="form-control" placeholder="E.g. Develop..."  style="height: 100px" required>{{$ploCat->pl_outcome}}</textarea>
@@ -540,9 +541,10 @@
                                                             <h5 class="modal-title" id="editPLOModalLabel">Edit Program Learning Outcome (PLO)</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <form method="POST" action="{{ action('ProgramLearningOutcomeController@update', $unCatplo->pl_outcome_id) }}">
+                                                        
+                                                        <form action="{{route('plo.update', $unCatplo->pl_outcome_id)}}" method="POST">
                                                             @csrf
-                                                            {{method_field('PUT')}}
+                                                            {{method_field('POST')}}
                                                             <div class="modal-body">
                                                                 <div class="form-floating mb-3">
                                                                     <textarea id="editPLOinput{{$unCatplo->pl_outcome_id}}" name="plo" class="form-control" placeholder="E.g. Develop..."  style="height: 100px" required>{{$unCatplo->pl_outcome}}</textarea>
