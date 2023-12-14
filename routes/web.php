@@ -122,6 +122,7 @@ Route::post('/store/clos', [LearningOutcomeController::class, 'store'])->name('c
 Route::resource('/plo', 'ProgramLearningOutcomeController');
 Route::post('/plo/store', [ProgramLearningOutcomeController::class, 'store'])->name('program.outcomes.store');
 Route::post('/import/plos', [ProgramLearningOutcomeController::class, 'import'])->name('program.outcomes.import');
+Route::delete('/plo/{program}/delete', [ProgramLearningOutcomeController::class, 'destroy'])->name('plo.destroy');
 
 Route::resource('/la', 'LearningActivityController');
 Route::post('/la/store', [LearningActivityController::class, 'store'])->name('la.store');
