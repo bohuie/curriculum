@@ -268,10 +268,9 @@
                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
 
-                                                            <form method="POST"
-                                                                action="{{ action('PLOCategoryController@update', $category->plo_category_id) }}">
+                                                            <form action="{{route('program.category.update', $category->plo_category_id)}}" method="POST">
                                                                 @csrf
-                                                                {{method_field('PUT')}}
+                                                                {{method_field('POST')}}
 
                                                                 <div class="modal-body">
                                                                     <div class="form-floating mb-3">
