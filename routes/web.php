@@ -87,6 +87,7 @@ Route::resource('/programs', 'ProgramController');
 Route::post('/programs', [ProgramController::class, 'store'])->name('programs.store');
 Route::get('/programs/{program}/submit', [ProgramController::class, 'submit'])->name('programs.submit');
 Route::post('/programs/{program}/update', [ProgramController::class, 'update'])->name('programs.update');
+Route::delete('/programs/{program}/delete', [ProgramController::class, 'destroy'])->name('programs.destroy');
 // Program Summary PDF routes
 Route::get('/programs/{program}/pdf', [ProgramController::class, 'pdf'])->name('programs.pdf');
 Route::delete('/programs/{program}/pdf', [ProgramController::class, 'deletePDF'])->name('programs.delete.pdf');
