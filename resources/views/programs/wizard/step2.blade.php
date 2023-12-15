@@ -199,7 +199,7 @@
                                                             </div>
                                                             <form action="{{route('mappingScale.update', $ms->map_scale_id)}}" method="POST">
                                                                 @csrf
-                                                                {{method_field('PUT')}}
+                                                                {{method_field('POST')}}
                                                                 <div class="modal-body">
                                                                     <div class="form-group row">
                                                                         <label for="title" class="col-md-4 col-form-label text-md-right">Title</label>
@@ -309,8 +309,8 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-
-                                <form method="POST" action="{{ action([\App\Http\Controllers\MappingScaleController::class, 'store']) }}">
+                                <form action="{{route('program.mappingScale.store')}}" method="POST">
+                                
                                     @csrf
 
                                     <div class="modal-body">

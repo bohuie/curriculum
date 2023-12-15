@@ -144,8 +144,8 @@ Route::post('/store/standardsOutcomeMap', [StandardsOutcomeMapController::class,
 Route::resource('/mappingScale', 'MappingScaleController');
 Route::post('/mappingScale/store', [MappingScaleController::class, 'store'])->name('program.mappingScale.store');
 Route::post('/mappingScale/addDefaultMappingScale', [MappingScaleController::class, 'addDefaultMappingScale'])->name('mappingScale.addDefaultMappingScale');
-Route::delete('/mappingScale/delete', [MappingScaleController::class, 'destroy'])->name('mappingScale.destroy');
-Route::post('/mappingScale/update', [MappingScaleController::class, 'update'])->name('mappingScale.update');
+Route::delete('/mappingScale/{program}/delete', [MappingScaleController::class, 'destroy'])->name('mappingScale.destroy');
+Route::post('/mappingScale/{program}/update', [MappingScaleController::class, 'update'])->name('mappingScale.update');
 
 Route::resource('/ploCategory', 'PLOCategoryController');
 Route::post('/ploCategory/store', [PLOCategoryController::class, 'store'])->name('program.category.store');
