@@ -197,8 +197,7 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            <form method="POST"
-                                                                action="{{ action([\App\Http\Controllers\MappingScaleController::class, 'update'], $ms->map_scale_id) }}">
+                                                            <form action="{{route('mappingScale.update', $ms->map_scale_id)}}" method="POST">
                                                                 @csrf
                                                                 {{method_field('PUT')}}
                                                                 <div class="modal-body">
