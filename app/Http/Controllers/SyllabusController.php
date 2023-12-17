@@ -77,6 +77,7 @@ class SyllabusController extends Controller
             $pathArr=explode("/", $url["path"]);
             $syllabusId=$pathArr[count($pathArr)-1];
         }
+        
         // get this users courses
         $myCourses = $user->courses;
         // get vancouver campus resources
@@ -90,7 +91,7 @@ class SyllabusController extends Controller
 
         $courseAlignment = null;
         $outcomeMaps = null;
-        if ($syllabusId != null) {
+        if ($syllabusId != null && $syllabusId!='syllabusGenerator') {
             $syllabus = Syllabus::find($syllabusId);
             // get this users permission level
             $userPermission = $user->syllabi->where('id', $syllabusId)->first()->pivot->permission;
