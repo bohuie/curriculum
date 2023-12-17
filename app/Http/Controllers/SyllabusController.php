@@ -71,6 +71,12 @@ class SyllabusController extends Controller
         // get the current user
         $user = User::find(Auth::id());
         $syllabusId = $request->input('syllabus_id');
+
+        $url = parse_url($_SERVER['REQUEST_URI']);
+        if ($syllabusId==null){
+            $pathArr=explode("/", $url["path"]);
+            $syllabusId=$pathArr[count($pathArr)-1];
+        }
         // get this users courses
         $myCourses = $user->courses;
         // get vancouver campus resources
