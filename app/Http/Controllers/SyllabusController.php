@@ -250,10 +250,73 @@ class SyllabusController extends Controller
             // download syllabus
             return $this->download($syllabus->id, $request->input('download'));
         }
+        
+        $syllabusId = $syllabus->id;
+        // get this users courses
+        $myCourses = $user->courses;
+        // get vancouver campus resources
+        $vancouverSyllabusResources = VancouverSyllabusResource::all();
+        // get okanagan campus resources
+        $okanaganSyllabusResources = OkanaganSyllabusResource::all();
+        // get faculties
+        $faculties = Faculty::orderBy('faculty')->get();
+        // get departments
+        $departments = Department::orderBy('department')->get();
 
-        return redirect()->route('syllabus', [
-            'syllabusId' => $syllabus->id,
-        ]);
+        $courseAlignment = null;
+        $outcomeMaps = null;
+        if ($syllabusId != null) {
+            $syllabus = Syllabus::find($syllabusId);
+            // get this users permission level
+            $userPermission = $user->syllabi->where('id', $syllabusId)->first()->pivot->permission;
+            // check for user settings
+            if (isset($syllabus->course_id)) {
+                $importCourse = Course::find($syllabus->course_id);
+                if ($syllabus->include_alignment) {
+
+                    $courseAlignment = $importCourse->learningOutcomes;
+                    foreach ($courseAlignment as $clo) {
+                        $clo->assessmentMethods;
+                        $clo->learningActivities;
+                    }
+                }
+                $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id)->pluck('program_id')->toArray();
+                if (count($syllabusProgramIds) > 0) {
+                    $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $importCourse->course_id);
+                }
+            }
+
+            // get  Vancouver Syllabus
+            $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id);
+
+            // get  Okanagan Syllabus
+            $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id);
+
+            // show view based on user permission
+            switch ($userPermission) {
+                // owner
+                case 1:
+                    return $this->syllabusEditor($syllabus, ['user' => $user, 'myCourses' => $myCourses, 'vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'faculties' => $faculties, 'departments' => $departments, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps]);
+
+                    break;
+                case 2:
+                    // editor
+                    return $this->syllabusEditor($syllabus, ['user' => $user, 'myCourses' => $myCourses, 'vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'faculties' => $faculties, 'departments' => $departments, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps]);
+                    break;
+                    // viewer
+                case 3:
+                    return $this->syllabusViewer($syllabus, ['vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps, 'vancouverSyllabus' => $vancouverSyllabus, 'okanaganSyllabus' => $okanaganSyllabus]);
+
+                    break;
+                    // return view to create a syllabus as default
+                default:
+                    return view('syllabus.syllabusGenerator')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
+            }
+
+            // return view to create a syllabus
+        } else {
+            return view('syllabus.syllabus')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
+        }
     }
 
     /**
