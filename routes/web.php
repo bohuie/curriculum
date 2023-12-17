@@ -115,6 +115,7 @@ Route::delete('/courses/{course}/pdf', [CourseController::class, 'deletePDF'])->
 Route::get('/courses/{course}/remove', [CourseController::class, 'removeFromProgram'])->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor', [CourseController::class, 'emailCourseInstructor'])->name('courses.emailCourseInstructor');
 Route::post('/courses/{course}/duplicate', [CourseController::class, 'duplicate'])->name('courses.duplicate');
+Route::delete('/courses/{course}/destroy', [CourseController::class, 'destroy'])->name('courses.destroy');
 
 // Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 Route::resource('/lo', 'LearningOutcomeController');
