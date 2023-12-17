@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProgramLearningOutcome;
-use App\Models\LearningOutcome;
 use App\Models\Course;
 use App\Models\OutcomeMap;
-use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,17 +40,16 @@ class OutcomeMapController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $this->validate($request, [
             'map' => 'required',
-            ]);
+        ]);
 
         $outcomeMap = $request->input('map');
-        
+
         // dd($outcomeMap);
 
         foreach ($outcomeMap as $cloId => $ploToScaleIds) {
@@ -79,7 +75,6 @@ class OutcomeMapController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\OutcomeMap  $outcomeMap
      * @return \Illuminate\Http\Response
      */
     public function show(OutcomeMap $outcomeMap)
@@ -90,7 +85,6 @@ class OutcomeMapController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\OutcomeMap  $outcomeMap
      * @return \Illuminate\Http\Response
      */
     public function edit(OutcomeMap $outcomeMap)
@@ -101,8 +95,6 @@ class OutcomeMapController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\OutcomeMap  $outcomeMap
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, OutcomeMap $outcomeMap)
@@ -113,7 +105,6 @@ class OutcomeMapController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\OutcomeMap  $outcomeMap
      * @return \Illuminate\Http\Response
      */
     public function destroy(OutcomeMap $outcomeMap)

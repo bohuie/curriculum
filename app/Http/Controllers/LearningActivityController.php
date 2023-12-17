@@ -16,7 +16,6 @@ class LearningActivityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
@@ -41,7 +40,6 @@ class LearningActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -54,7 +52,7 @@ class LearningActivityController extends Controller
             // get the course
             $course = Course::find($courseId);
             // case: delete all teaching and learning activities
-            if (!$currentActivities && !$newActivities) {
+            if (! $currentActivities && ! $newActivities) {
                 Course::find($courseId)->learningActivities()->delete();
             }
             // get the saved assessment methods for this course
@@ -70,7 +68,7 @@ class LearningActivityController extends Controller
                     $learningActivity->delete();
                 }
             }
-            // add new learning activities 
+            // add new learning activities
             if ($newActivities) {
                 foreach ($newActivities as $index => $newActivity) {
                     $newLearningActivity = new LearningActivity;
@@ -88,7 +86,7 @@ class LearningActivityController extends Controller
             $course->last_modified_user = $user->name;
             $course->save();
 
-            $request->session()->flash('success','Your teaching and learning activities were updated successfully!');
+            $request->session()->flash('success', 'Your teaching and learning activities were updated successfully!');
 
         } catch (Throwable $exception) {
             // flash error message if something goes wrong
@@ -103,7 +101,6 @@ class LearningActivityController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\LearningActivity  $learningActivity
      * @return \Illuminate\Http\Response
      */
     public function show(LearningActivity $learningActivity)
@@ -114,7 +111,6 @@ class LearningActivityController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\LearningActivity  $learningActivity
      * @return \Illuminate\Http\Response
      */
     public function edit(LearningActivity $learningActivity)
@@ -125,8 +121,6 @@ class LearningActivityController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\LearningActivity  $learningActivity
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, LearningActivity $learningActivity)
@@ -146,8 +140,7 @@ class LearningActivityController extends Controller
         $la = learningActivity::where('l_activity_id', $l_activity_id)->first();
         $course_id = $request->input('course_id');
 
-
-        if($la->delete()){
+        if ($la->delete()) {
             // update courses 'updated_at' field
             $course = Course::find($course_id);
             $course->touch();
@@ -156,11 +149,12 @@ class LearningActivityController extends Controller
             $user = User::find(Auth::id());
             $course->last_modified_user = $user->name;
             $course->save();
-            
-            $request->session()->flash('success','Teaching/learning activity has been deleted');
-        }else{
+
+            $request->session()->flash('success', 'Teaching/learning activity has been deleted');
+        } else {
             $request->session()->flash('error', 'There was an error deleting the teaching/learning activity');
         }
+
         return redirect()->route('courseWizard.step3', $request->input('course_id'));
     }
 }

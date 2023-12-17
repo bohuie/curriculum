@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateOkanaganSyllabi extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class UpdateOkanaganSyllabi extends Migration
     {
         Schema::table('okanagan_syllabi', function (Blueprint $table) {
             $table->text('course_description')->after('course_overview')->nullable();
-            
+
         });
     }
 
@@ -30,4 +30,4 @@ class UpdateOkanaganSyllabi extends Migration
             $table->dropColumn(['course_description']);
         });
     }
-}
+};

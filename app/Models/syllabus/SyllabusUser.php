@@ -15,10 +15,7 @@ class SyllabusUser extends Model
 
     protected $guarded = ['permission'];
 
-    protected $fillable = ['syllabus_id', 'user_id',];
+    protected $fillable = ['syllabus_id', 'user_id'];
 
     public $incrementing = false;
-
 }
-
-

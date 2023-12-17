@@ -1316,7 +1316,7 @@
                 </button>
             </div>
             
-            <form method="POST" action="{{ action('ProgramController@store') }}">
+            <form method="POST" action="{{ action([\App\Http\Controllers\ProgramController::class, 'store']) }}">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group row">
@@ -1437,7 +1437,7 @@
                         </button>
                     </div>
 
-                <form id="createCourse" method="POST" action="{{ action('CourseController@store') }}">
+                <form id="createCourse" method="POST" action="{{ action([\App\Http\Controllers\CourseController::class, 'store']) }}">
                         @csrf
                     <div class="modal-body">
 

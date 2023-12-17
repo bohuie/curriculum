@@ -15,47 +15,55 @@ class MappingScaleCategory extends Model
 
     protected $primaryKey = 'mapping_scale_categories_id';
 
-
     protected $fillable = ['title', 'description', 'msc_title', 'Mappingtable'];
 
-
-    public function mappingScales() {
+    public function mappingScales()
+    {
         return $this->hasMany(MappingScale::class, 'mapping_scale_categories_id', 'mapping_scale_categories_id');
     }
-    
-    public function getMappingtableAttribute(){
+
+    public function getMappingtableAttribute()
+    {
         $catID = request()->route()->parameter('id');
         $test = DB::table('mapping_scales')->where('mapping_scale_categories_id', $catID)->get();
+
         return json_encode($test);
     }
-    
-    public function setMappingtableAttribute($value){
+
+    public function setMappingtableAttribute($value)
+    {
         $catID = request()->route()->parameter('id');
         $jdata = json_decode($value);
-        if(!is_array($jdata))$jdata = [];
+        if (! is_array($jdata)) {
+            $jdata = [];
+        }
         $existingScales = MappingScale::where('mapping_scale_categories_id', $catID)->get();
         $setScales = [];
-        foreach($existingScales as $sc){array_push($setScales,$sc->map_scale_id);}
-        $nSc = [];        
-        foreach($jdata as $row)
-            if(property_exists($row, "map_scale_id"))
-                array_push($nSc,$row->map_scale_id);
-        
-        $setDel = array_filter($setScales, function($element) use($nSc){
-            return !(in_array($element, $nSc));
+        foreach ($existingScales as $sc) {
+            array_push($setScales, $sc->map_scale_id);
+        }
+        $nSc = [];
+        foreach ($jdata as $row) {
+            if (property_exists($row, 'map_scale_id')) {
+                array_push($nSc, $row->map_scale_id);
+            }
+        }
+
+        $setDel = array_filter($setScales, function ($element) use ($nSc) {
+            return ! (in_array($element, $nSc));
         });
-        foreach($jdata as $row){
-            $id=-1;
-            if(property_exists($row, "map_scale_id") && $row->map_scale_id != ""){
+        foreach ($jdata as $row) {
+            $id = -1;
+            if (property_exists($row, 'map_scale_id') && $row->map_scale_id != '') {
                 $id = $row->map_scale_id;
             }
-            if(in_array($id, $setScales))
-                    MappingScale::where('map_scale_id', $id)->update(['title' => $row->title, 'abbreviation' => $row->abbreviation, 'description' => $row->description, 'colour' => $row->colour]);
-            else{
+            if (in_array($id, $setScales)) {
+                MappingScale::where('map_scale_id', $id)->update(['title' => $row->title, 'abbreviation' => $row->abbreviation, 'description' => $row->description, 'colour' => $row->colour]);
+            } else {
                 MappingScale::create(['mapping_scale_categories_id' => $catID, 'title' => $row->title, 'abbreviation' => $row->abbreviation, 'description' => $row->description, 'colour' => $row->colour]);
             }
         }
-        
+
         MappingScale::whereIn('map_scale_id', $setDel)->delete();
     }
 }

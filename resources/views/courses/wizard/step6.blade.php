@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="container row">
                                     <div class="col">
-                                        <form action="{{action('StandardsOutcomeMapController@store')}}" method="POST">
+                                        <form action="{{action([\App\Http\Controllers\StandardsOutcomeMapController::class, 'store'])}}" method="POST">
                                             @csrf
                                             <input type="hidden" name="course_id" value="{{$course->course_id}}">
                                             <div class="card border-white">

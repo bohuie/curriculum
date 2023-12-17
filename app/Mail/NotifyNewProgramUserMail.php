@@ -3,23 +3,27 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use PhpParser\Node\Expr\Cast\String_;
 
 class NotifyNewProgramUserMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $program_title, $user_name, $pass, $email;
+    public $program_title;
+
+    public $user_name;
+
+    public $pass;
+
+    public $email;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(String $program_title, String $user_name, String $pass, String $email)
+    public function __construct(string $program_title, string $user_name, string $pass, string $email)
     {
         $this->program_title = $program_title;   // program title (ex. Bachelor of Computer Science)
         $this->user_name = $user_name;           // Inviting Collaborator's name
@@ -39,7 +43,7 @@ class NotifyNewProgramUserMail extends Mailable
             'user_name' => $this->user_name,
             'pass' => $this->pass,
             'email' => $this->email,
-            ])
-        ->subject('Program Collaboration Invitation');  // set subject to Invitation to Collaborate, see Mail docs for more info.
+        ])
+            ->subject('Program Collaboration Invitation');  // set subject to Invitation to Collaborate, see Mail docs for more info.
     }
 }

@@ -198,7 +198,7 @@
                                                                 </button>
                                                             </div>
                                                             <form method="POST"
-                                                                action="{{ action('MappingScaleController@update', $ms->map_scale_id) }}">
+                                                                action="{{ action([\App\Http\Controllers\MappingScaleController::class, 'update'], $ms->map_scale_id) }}">
                                                                 @csrf
                                                                 {{method_field('PUT')}}
                                                                 <div class="modal-body">
@@ -311,7 +311,7 @@
                                     </button>
                                 </div>
 
-                                <form method="POST" action="{{ action('MappingScaleController@store') }}">
+                                <form method="POST" action="{{ action([\App\Http\Controllers\MappingScaleController::class, 'store']) }}">
                                     @csrf
 
                                     <div class="modal-body">

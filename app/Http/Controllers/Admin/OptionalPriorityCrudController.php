@@ -7,10 +7,9 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\DB;
 
-use App\Models\OptionalPriorities;
 /**
  * Class OptionalPriorityCrudController
- * @package App\Http\Controllers\Admin
+ *
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
 class OptionalPriorityCrudController extends CrudController
@@ -23,76 +22,78 @@ class OptionalPriorityCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
     {
         CRUD::setModel(\App\Models\OptionalPriorities::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/optional-priority');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/optional-priority');
         CRUD::setEntityNameStrings('optional priority', 'optional priorities');
 
-        // Hide the preview button 
+        // Hide the preview button
         $this->crud->denyAccess('show');
     }
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
-    {   
+    {
         // Priority
         $this->crud->addColumn([
             'name' => 'op_id', // The db column name
-            'label' => 'Optional Priority ID',// Table column heading
+            'label' => 'Optional Priority ID', // Table column heading
             'type' => 'number',
-            'searchLogic' => function($query, $column, $searchTerm){
-                $query ->orWhere('op_id', 'like', '%'.$searchTerm.'%');
-            }
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->orWhere('op_id', 'like', '%'.$searchTerm.'%');
+            },
         ]);
 
         $this->crud->addColumn([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
+            'label' => 'Optional Priority', // Table column heading
             'type' => 'text',
-            'searchLogic' => function($query, $column, $searchTerm){
-                $query ->orWhere('optional_priority', 'like', '%'.$searchTerm.'%');
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->orWhere('optional_priority', 'like', '%'.$searchTerm.'%');
             },
         ]);
-        
+
         $this->crud->addColumn([
-            'label' => 'Subcategory Name',// Table column heading
+            'label' => 'Subcategory Name', // Table column heading
             'type' => 'strip_select',
             'name' => 'optionalPrioritySubcategory', // The db column name
-            'entity' =>'optionalPrioritySubcategory',
+            'entity' => 'optionalPrioritySubcategory',
             'attribute' => 'subcat_name',
             'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
-        
+
         $this->crud->addColumn([
             'name' => 'subcat_id', // The db column name
-            'label' => 'Subcat ID',// Table column heading
+            'label' => 'Subcat ID', // Table column heading
             'type' => 'number',
-            'searchLogic' => function($query, $column, $searchTerm){
-                $query ->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
-            }
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->orWhere('subcat_id', 'like', '%'.$searchTerm.'%');
+            },
         ]);
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         CRUD::setValidation(OptionalPriorityRequest::class);
         $op_id_num = \DB::table('optional_priorities')->count();
-        
+
         // Priority
         /*$this->crud->addField([
             'name' => 'op_id', // The db column name
@@ -104,11 +105,11 @@ class OptionalPriorityCrudController extends CrudController
         ]);*/
         $this->crud->addField([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
+            'label' => 'Optional Priority&nbsp;&nbsp;<span style="color:red">*</span>', // Table column heading
             'type' => 'valid_textarea',
-            'attributes' => [ 'req' => 'true']
+            'attributes' => ['req' => 'true'],
         ]);
-        
+
         // Category
         /*$this->crud->addField([
             'name' => 'cat_name', // The db column name
@@ -122,72 +123,73 @@ class OptionalPriorityCrudController extends CrudController
             'type' => 'Text'
         ]);*/
 
-       // SubCategory
-       /*$this->crud->addField([
-            'name' => 'subcat_id', // The db column name
-            'label' => "Subcat Id",// Table column heading
-            'type' => 'number',
-            'default' => '1',
-        ]);*/
+        // SubCategory
+        /*$this->crud->addField([
+             'name' => 'subcat_id', // The db column name
+             'label' => "Subcat Id",// Table column heading
+             'type' => 'number',
+             'default' => '1',
+         ]);*/
 
         $this->crud->addField([
             'name' => 'isCheckable', // The db column name
-            'label' => "Is Checkable?&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
+            'label' => 'Is Checkable?&nbsp;&nbsp;<span style="color:red">*</span>', // Table column heading
             'type' => 'radio',
-            'options'     => [
-                // the key will be stored in the db, the value will be shown as label; 
-                0 => "Not a checkable Strategic Priority",
-                1 => "Checkable Strategic Priority"
+            'options' => [
+                // the key will be stored in the db, the value will be shown as label;
+                0 => 'Not a checkable Strategic Priority',
+                1 => 'Checkable Strategic Priority',
             ],
             'attributes' => ['req' => 'true'],
         ]);
 
         $this->crud->addField([
-            'label' => "Subcategory Name",// Table column heading
+            'label' => 'Subcategory Name', // Table column heading
             'type' => 'select',
             'name' => 'subcat_id', // The db column name
-            'entity' =>'optionalPrioritySubcategory',
-            'attribute' =>'subcat_name',
-            'model' => "App\Models\OptionalPrioritySubcategories",
+            'entity' => 'optionalPrioritySubcategory',
+            'attribute' => 'subcat_name',
+            'model' => \App\Models\OptionalPrioritySubcategories::class,
         ]);
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
 
-     // Edit 
+    // Edit
     protected function setupUpdateOperation()
     {
         CRUD::setValidation(OptionalPriorityRequest::class);
         $op_id_num = \DB::table('optional_priorities')->count();
-        
+
         // Priority
         $this->crud->addField([
             'name' => 'op_id', // The db column name
-            'label' => "OptionalPriority Id",// Table column heading
+            'label' => 'OptionalPriority Id', // Table column heading
             'type' => 'number',
             'default' => $op_id_num + 1,
-            'attributes'=>['readonly'=>'readonly',
-                           ],
+            'attributes' => ['readonly' => 'readonly',
+            ],
         ]);
         $this->crud->addField([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
+            'label' => 'Optional Priority&nbsp;&nbsp;<span style="color:red">*</span>', // Table column heading
             'type' => 'valid_textarea',
-            'attributes' => [ 'req' => 'true']
+            'attributes' => ['req' => 'true'],
         ]);
         $this->crud->addField([
             'name' => 'isCheckable', // The db column name
-            'label' => "Is Checkable?&nbsp;&nbsp;<span style=\"color:red\">*</span>",// Table column heading
+            'label' => 'Is Checkable?&nbsp;&nbsp;<span style="color:red">*</span>', // Table column heading
             'type' => 'radio',
-            'options'     => [
-                // the key will be stored in the db, the value will be shown as label; 
-                0 => "Not a checkable Strategic Priority",
-                1 => "Checkable Strategic Priority"
+            'options' => [
+                // the key will be stored in the db, the value will be shown as label;
+                0 => 'Not a checkable Strategic Priority',
+                1 => 'Checkable Strategic Priority',
             ],
             'attributes' => ['req' => 'true'],
         ]);
@@ -200,12 +202,12 @@ class OptionalPriorityCrudController extends CrudController
         // ]);
 
         $this->crud->addField([
-            'label' => 'Subcategory Name',// Table column heading
+            'label' => 'Subcategory Name', // Table column heading
             'type' => 'select',
             'name' => 'optionalPrioritySubcategory', // The db column name
-            'entity' =>'optionalPrioritySubcategory',
-            'attribute' =>'subcat_name',
-            'model' => "App\Models\OptionalPrioritySubcategories",
+            'entity' => 'optionalPrioritySubcategory',
+            'attribute' => 'subcat_name',
+            'model' => \App\Models\OptionalPrioritySubcategories::class,
         ]);
 
         // Category
@@ -219,38 +221,38 @@ class OptionalPriorityCrudController extends CrudController
         // Priority
         $this->crud->addColumn([
             'name' => 'op_id', // The db column name
-            'label' => "Optional Priority ID",// Table column heading
+            'label' => 'Optional Priority ID', // Table column heading
             'type' => 'Text',
         ]);
         $this->crud->addColumn([
             'name' => 'optional_priority', // The db column name
-            'label' => "Optional Priority",// Table column heading
-            'type' => 'Text'
+            'label' => 'Optional Priority', // Table column heading
+            'type' => 'Text',
         ]);
 
         // SubCategory
         $this->crud->addColumn([
             'name' => 'subcat_id', // The db column name
-            'label' => "Subcat ID",// Table column heading
-            'type' => 'Text'
+            'label' => 'Subcat ID', // Table column heading
+            'type' => 'Text',
         ]);
         $this->crud->addColumn([
-            'label' => 'Subcategory Name',// Table column heading
+            'label' => 'Subcategory Name', // Table column heading
             'type' => 'select',
             'name' => 'subcat_name', // The db column name
-            'entity' =>'optionalPrioritySubcategory',
-            'attribute' =>'subcat_name',
+            'entity' => 'optionalPrioritySubcategory',
+            'attribute' => 'subcat_name',
             'model' => App\Models\OptionalPrioritySubcategories::class,
         ]);
 
     }
-    
+
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
 
     public function destroy($id)
     {
-        $this->crud->hasAccessOrFail('delete');        
+        $this->crud->hasAccessOrFail('delete');
+
         return $this->crud->delete($id);
     }
-
 }

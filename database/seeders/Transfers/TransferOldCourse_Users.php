@@ -15,7 +15,7 @@ class TransferOldCourse_Users extends Seeder
      */
     public function run()
     {
-                // arr = [courseId][userId] = time created at
+        // arr = [courseId][userId] = time created at
         // example
         // arr = 3
         //        => 2 = null
@@ -23,9 +23,9 @@ class TransferOldCourse_Users extends Seeder
         //     = 7
         //        => 2 = 5946728
         $oldCU = DB::table('course_users_old')->get();
-        $coursesUsers = array();
+        $coursesUsers = [];
         foreach ($oldCU as $old) {
-            $coursesUsers[$old->course_id][$old->user_id] = ( $old->created_at == NULL ? NULL : (time() - strtotime($old->created_at)) );
+            $coursesUsers[$old->course_id][$old->user_id] = ($old->created_at == null ? null : (time() - strtotime($old->created_at)));
         }
         // loop through $arr and store in new db
         foreach ($coursesUsers as $courseId => $courseUsers) {
@@ -36,13 +36,13 @@ class TransferOldCourse_Users extends Seeder
                     'course_id' => $courseId,
                     'user_id' => key($courseUsers),
                     'permission' => 1,
-                    "created_at" =>  \Carbon\Carbon::now(),
-                    "updated_at" => \Carbon\Carbon::now()
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now(),
                 ]);
-            // There exists more than one user for a course
+                // There exists more than one user for a course
             } else {
                 // if there are more than one collaborators per course
-                $collaboratorsPerCourse = array();
+                $collaboratorsPerCourse = [];
                 $hasDate = false;
                 foreach ($courseUsers as $userId => $courseUser) {
                     $collaboratorsPerCourse[$userId] = $courseUser;
@@ -51,17 +51,17 @@ class TransferOldCourse_Users extends Seeder
                     }
                 }
                 if ($hasDate) {
-                    // There is a date is present 
-                    if (! in_array(NULL, $collaboratorsPerCourse)) {
+                    // There is a date is present
+                    if (! in_array(null, $collaboratorsPerCourse)) {
                         // Case 2, no null values in the array, there are only dates to compare
                         $ownerId = 0;
                         $time = 0;
                         foreach ($collaboratorsPerCourse as $userId => $cpc) {
-                            // stores the first users time and id, used to compare to subsequent users 
+                            // stores the first users time and id, used to compare to subsequent users
                             if ($time == 0) {
                                 $time = $cpc;
                                 $ownerId = $userId;
-                            }elseif ($time < $cpc) {
+                            } elseif ($time < $cpc) {
                                 // Store the Larger time, as the greatest size represents the original creator and therefore, the owner.
                                 $time = $cpc;
                                 $ownerId = $userId;
@@ -72,10 +72,10 @@ class TransferOldCourse_Users extends Seeder
                             'course_id' => $courseId,
                             'user_id' => $ownerId,
                             'permission' => 1,
-                            "created_at" =>  \Carbon\Carbon::now(),
-                            "updated_at" => \Carbon\Carbon::now()
+                            'created_at' => \Carbon\Carbon::now(),
+                            'updated_at' => \Carbon\Carbon::now(),
                         ]);
-                        
+
                         // insert each non owner
                         foreach ($collaboratorsPerCourse as $userId => $cpc) {
                             if ($userId != $ownerId) {
@@ -83,12 +83,12 @@ class TransferOldCourse_Users extends Seeder
                                     'course_id' => $courseId,
                                     'user_id' => $userId,
                                     'permission' => 2,
-                                    "created_at" =>  \Carbon\Carbon::now(),
-                                    "updated_at" => \Carbon\Carbon::now()
+                                    'created_at' => \Carbon\Carbon::now(),
+                                    'updated_at' => \Carbon\Carbon::now(),
                                 ]);
                             }
                         }
-                        
+
                     } else {
                         // case 3 There is a combination of dates and null values
                         // step 1: loop through all collaborators.
@@ -97,11 +97,11 @@ class TransferOldCourse_Users extends Seeder
                         foreach ($collaboratorsPerCourse as $userId => $cpc) {
                             // step 2: store only the ones with a date, and then compare all of the users with a date to each other to find the owner as done above.
                             if ($cpc != null) {
-                                // stores the first users time and id, used to compare to subsequent users 
+                                // stores the first users time and id, used to compare to subsequent users
                                 if ($time == 0) {
                                     $time = $cpc;
                                     $ownerId = $userId;
-                                }elseif ($time < $cpc) {
+                                } elseif ($time < $cpc) {
                                     // Store the Larger time, as the greatest size represents the original creator and therefore, the owner.
                                     $time = $cpc;
                                     $ownerId = $userId;
@@ -113,8 +113,8 @@ class TransferOldCourse_Users extends Seeder
                             'course_id' => $courseId,
                             'user_id' => $ownerId,
                             'permission' => 1,
-                            "created_at" =>  \Carbon\Carbon::now(),
-                            "updated_at" => \Carbon\Carbon::now()
+                            'created_at' => \Carbon\Carbon::now(),
+                            'updated_at' => \Carbon\Carbon::now(),
                         ]);
                         // step 3: store all other users as editors
                         // insert each non owner
@@ -124,8 +124,8 @@ class TransferOldCourse_Users extends Seeder
                                     'course_id' => $courseId,
                                     'user_id' => $userId,
                                     'permission' => 2,
-                                    "created_at" =>  \Carbon\Carbon::now(),
-                                    "updated_at" => \Carbon\Carbon::now()
+                                    'created_at' => \Carbon\Carbon::now(),
+                                    'updated_at' => \Carbon\Carbon::now(),
                                 ]);
                             }
                         }
@@ -133,7 +133,7 @@ class TransferOldCourse_Users extends Seeder
                 } else {
                     // case 4 There are no dates present in the array. NOTE: This case poses the most problems as there is no real way in determining which user owns the course
                     // Store the first user found as the owner and all subsequent users as editors
-                    $isFirstUser = TRUE;
+                    $isFirstUser = true;
                     foreach ($collaboratorsPerCourse as $userId => $cpc) {
                         // stores first user found as owner, then $isFirstUser becomes false, leading to all other users becoming editors.
                         if ($isFirstUser) {
@@ -141,8 +141,8 @@ class TransferOldCourse_Users extends Seeder
                                 'course_id' => $courseId,
                                 'user_id' => $userId,
                                 'permission' => 1,
-                                "created_at" =>  \Carbon\Carbon::now(),
-                                "updated_at" => \Carbon\Carbon::now()
+                                'created_at' => \Carbon\Carbon::now(),
+                                'updated_at' => \Carbon\Carbon::now(),
                             ]);
                             $isFirstUser = false;
                         } else {
@@ -150,8 +150,8 @@ class TransferOldCourse_Users extends Seeder
                                 'course_id' => $courseId,
                                 'user_id' => $userId,
                                 'permission' => 2,
-                                "created_at" =>  \Carbon\Carbon::now(),
-                                "updated_at" => \Carbon\Carbon::now()
+                                'created_at' => \Carbon\Carbon::now(),
+                                'updated_at' => \Carbon\Carbon::now(),
                             ]);
                         }
                     }

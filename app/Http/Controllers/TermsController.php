@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class TermsController extends Controller
 {
     /**
@@ -13,7 +11,7 @@ class TermsController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth',['except'=>['index']]);
+        $this->middleware('auth', ['except' => ['index']]);
     }
 
     /**

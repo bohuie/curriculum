@@ -22,9 +22,9 @@ class TransferMapScaleValue extends Seeder
             $mapScale = DB::table('mapping_scales')->where('abbreviation', $abv)->first();
             if ($mapScale != null) {
                 DB::table('outcome_maps')->updateOrInsert(
-                ['l_outcome_id' => $map->l_outcome_id, 'pl_outcome_id' => $map->pl_outcome_id],
-                ['map_scale_id' => $mapScale->map_scale_id]
-            );
+                    ['l_outcome_id' => $map->l_outcome_id, 'pl_outcome_id' => $map->pl_outcome_id],
+                    ['map_scale_id' => $mapScale->map_scale_id]
+                );
             }
         }
     }

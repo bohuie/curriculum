@@ -13,7 +13,5 @@ class SyllabusResourceOkanagan extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['syllabus_id', 'o_syllabus_resource_id',];
-
-
+    protected $fillable = ['syllabus_id', 'o_syllabus_resource_id'];
 }

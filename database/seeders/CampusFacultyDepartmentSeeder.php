@@ -38,8 +38,6 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $facultyALA->campus_id = $campusV->campus_id;
         $facultyALA->save();
 
-
-
         // Departments for the applied sciences faculty
         $departmentALA = new Department;
         $departmentALA->department = 'School of Architecture and Landscape Architecture';
@@ -417,7 +415,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
 
-        // Education 
+        // Education
         $faculty = new Faculty;
         $faculty->faculty = 'Faculty of Education';
         $faculty->campus_id = $campusV->campus_id;
@@ -532,7 +530,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->department = 'Kinesiology';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
-        
+
         // Journalism
         $faculty = new Faculty;
         $faculty->faculty = 'Faculty of Land and Food Systems';
@@ -575,7 +573,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $faculty->faculty = 'School of Library, Archival and Information Studies';
         $faculty->campus_id = $campusV->campus_id;
         $faculty->save();
-        
+
         $department = new Department;
         $department->department = 'Library, Archival and Information Studies';
         $department->faculty_id = $faculty->faculty_id;
@@ -691,7 +689,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->department = 'Division of Medical Oncology';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
-        
+
         $department = new Department;
         $department->department = 'Division of Nephrology';
         $department->faculty_id = $faculty->faculty_id;
@@ -824,7 +822,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->department = 'Human Early Learning Partnership (HELP)';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
-        
+
         // School of population and Public Health
         $faculty = new Faculty;
         $faculty->faculty = 'School of Public Policy and Global Affairs';
@@ -937,7 +935,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->department = 'Department of Mathematics';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
-        
+
         $department = new Department;
         $department->department = 'Department of Microbiology and Immunology';
         $department->faculty_id = $faculty->faculty_id;
@@ -947,7 +945,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->department = 'Department of Physics and Astronomy';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
-        
+
         $department = new Department;
         $department->department = 'Institute for Resources, Environment and Sustainability (IRES)';
         $department->faculty_id = $faculty->faculty_id;
@@ -1158,6 +1156,6 @@ class CampusFacultyDepartmentSeeder extends Seeder
         $department->department = 'Graduate Studies';
         $department->faculty_id = $faculty->faculty_id;
         $department->save();
-    
+
     }
 }

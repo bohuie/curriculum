@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\syllabus\VancouverSyllabusResource;
 use Illuminate\Database\Seeder;
 
 class VancouverSyllabusResourceSeeder extends Seeder
@@ -14,7 +13,6 @@ class VancouverSyllabusResourceSeeder extends Seeder
      */
     public function run()
     {
-        
-        
+
     }
 }

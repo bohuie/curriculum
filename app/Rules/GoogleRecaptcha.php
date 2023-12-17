@@ -2,7 +2,6 @@
 
 namespace App\Rules;
 
-
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Validation\Rule;
 
@@ -34,11 +33,12 @@ class GoogleRecaptcha implements Rule
                 'form_params' => [
                     'secret' => env('GOOGLE_CAPTCHA_PRIVATE_KEY', false),
                     'remoteip' => request()->getClientIp(),
-                    'response' => $value
-                ]
+                    'response' => $value,
+                ],
             ]
         );
-        $body = json_decode((string)$response->getBody());
+        $body = json_decode((string) $response->getBody());
+
         return $body->success;
     }
 

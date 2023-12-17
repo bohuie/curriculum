@@ -15,7 +15,9 @@ class CustomAssessmentMethods extends Model
     |--------------------------------------------------------------------------
     */
     protected $primaryKey = 'custom_method_id';
+
     protected $table = 'custom_assessment_methods';
+
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['custom_method_id'];

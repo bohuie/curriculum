@@ -13,7 +13,5 @@ class SyllabusResourceVancouver extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['syllabus_id', 'v_syllabus_resource_id',];
-
-
+    protected $fillable = ['syllabus_id', 'v_syllabus_resource_id'];
 }

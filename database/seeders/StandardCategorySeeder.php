@@ -26,7 +26,7 @@ class StandardCategorySeeder extends Seeder
 
         $msc3 = new StandardCategory;
         $msc3->standard_category_id = 3;
-        $msc3->sc_name = "Doctoral degree level standards";
+        $msc3->sc_name = 'Doctoral degree level standards';
         $msc3->save();
     }
 }

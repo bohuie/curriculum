@@ -79,6 +79,5 @@ class OkanaganSyllabusResourceSeeder extends Seeder
             'title' => 'Walk-In Well-Being Clinic',
         ]);
 
-
     }
 }

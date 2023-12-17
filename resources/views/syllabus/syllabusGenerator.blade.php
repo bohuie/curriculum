@@ -150,7 +150,7 @@
                     </div>
                 </div>               
                 
-                <form class="courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
+                <form class="courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action([\App\Http\Controllers\SyllabusController::class, 'save'], $syllabus->id) : action([\App\Http\Controllers\SyllabusController::class, 'save'])}}">
                     @csrf
                     <div class="container">
                         <div class="row mb-4 mr-2">

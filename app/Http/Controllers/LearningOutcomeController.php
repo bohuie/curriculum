@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ReadOutcomesFilter;
 use App\Models\Course;
 use App\Models\LearningOutcome;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use App\Helpers\ReadOutcomesFilter;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Throwable;
 
 class LearningOutcomeController extends Controller
 {
@@ -24,7 +24,7 @@ class LearningOutcomeController extends Controller
     {
         $this->middleware(['auth', 'verified']);
     }
-    
+
     public function index()
     {
         //
@@ -44,11 +44,10 @@ class LearningOutcomeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {   
+    {
         // try to update CLOs
         try {
             $courseId = $request->input('course_id');
@@ -60,7 +59,7 @@ class LearningOutcomeController extends Controller
             $newShortPhrases = $request->input('new_short_phrases');
 
             // case: delete all course learning outcomes
-            if (!$currentCLOs && !$newCLOs) {
+            if (! $currentCLOs && ! $newCLOs) {
                 Course::find($courseId)->learningOutcomes()->delete();
             }
             // get the course
@@ -107,8 +106,8 @@ class LearningOutcomeController extends Controller
             $user = User::find(Auth::id());
             $course->last_modified_user = $user->name;
             $course->save();
-                        
-            $request->session()->flash('success','Your course learning outcomes were updated successfully!');
+
+            $request->session()->flash('success', 'Your course learning outcomes were updated successfully!');
         } catch (Throwable $exception) {
             $request->session()->flash('error', 'There was an error updating your course learning outcomes');
         } finally {
@@ -119,7 +118,6 @@ class LearningOutcomeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\LearningOutcome  $learningOutcome
      * @return \Illuminate\Http\Response
      */
     public function show(LearningOutcome $learningOutcome)
@@ -133,7 +131,7 @@ class LearningOutcomeController extends Controller
      * @param  \App\Models\LearningOutcome  $learningOutcome
      * @return \Illuminate\Http\Response
      */
-    public function edit( $l_outcome_id)
+    public function edit($l_outcome_id)
     {
         //
         $lo = LearningOutcome::where('l_outcome_id', $l_outcome_id)->first();
@@ -143,7 +141,6 @@ class LearningOutcomeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\LearningOutcome  $learningOutcome
      * @return \Illuminate\Http\Response
      */
@@ -151,19 +148,19 @@ class LearningOutcomeController extends Controller
     {
         //
         $this->validate($request, [
-            'l_outcome'=> 'required',
-            ]);
+            'l_outcome' => 'required',
+        ]);
 
         $lo = LearningOutcome::where('l_outcome_id', $l_outcome_id)->first();
         $lo->l_outcome = $request->input('l_outcome');
         $lo->clo_shortphrase = $request->input('title');
-        
-        if($lo->save()){
+
+        if ($lo->save()) {
             $request->session()->flash('success', 'Course learning outcome updated');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error updating the course learning outcome');
         }
-        
+
         return redirect()->route('courseWizard.step1', $request->input('course_id'));
     }
 
@@ -178,7 +175,7 @@ class LearningOutcomeController extends Controller
         //
         $lo = LearningOutcome::where('l_outcome_id', $l_outcome_id)->first();
 
-        if($lo->delete()){
+        if ($lo->delete()) {
             // update courses 'updated_at' field
             $course = Course::find($request->input('course_id'));
             $course->touch();
@@ -187,11 +184,12 @@ class LearningOutcomeController extends Controller
             $user = User::find(Auth::id());
             $course->last_modified_user = $user->name;
             $course->save();
-            
-            $request->session()->flash('success','Course learning outcome has been deleted');
-        }else{
+
+            $request->session()->flash('success', 'Course learning outcome has been deleted');
+        } else {
             $request->session()->flash('error', 'There was an error deleting the course learning outcome');
         }
+
         return redirect()->route('courseWizard.step1', $request->input('course_id'));
     }
 
@@ -201,7 +199,7 @@ class LearningOutcomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function import(Request $request)
-    {   
+    {
         // $this->validate($request, [
         //     'upload'=> 'required|mimes:csv,xlsx,xlx,xls|max:2048',
         // ]);
@@ -211,26 +209,28 @@ class LearningOutcomeController extends Controller
         $path = $file->storeAs(
             'temporary', $clientFileName
         );
-        
-        $absolutePath = storage_path('app' . DIRECTORY_SEPARATOR . 'temporary' . DIRECTORY_SEPARATOR . $clientFileName);
+
+        $absolutePath = storage_path('app'.DIRECTORY_SEPARATOR.'temporary'.DIRECTORY_SEPARATOR.$clientFileName);
 
         /**  Create a new reader of the type defined by $clientFileName extension  **/
         $reader = IOFactory::createReaderForFile($absolutePath);
         /**  Advise the reader that we only want to load cell data, not cell formatting info  **/
         $reader->setReadDataOnly(true);
         // a read filter can be used to set rules on which cells should be read from a file
-        $reader->setReadFilter( new ReadOutcomesFilter(0, 30, ['A', 'B']) );
+        $reader->setReadFilter(new ReadOutcomesFilter(0, 30, ['A', 'B']));
         /**  Load $inputFileName to a Spreadsheet Object  **/
-        $spreadsheet = $reader->load($absolutePath); 
+        $spreadsheet = $reader->load($absolutePath);
         $worksheet = $spreadsheet->getActiveSheet();
 
         foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
             // skip header row
-            if ($rowIndex == 1) continue;
+            if ($rowIndex == 1) {
+                continue;
+            }
             // get cell iterator
             $cellIterator = $row->getCellIterator();
             // loop through cells only when value is set
-            $cellIterator->setIterateOnlyExistingCells(TRUE); 
+            $cellIterator->setIterateOnlyExistingCells(true);
             $learningOutcome = new LearningOutcome;
             // set clo course id
             $learningOutcome->course_id = $courseId;
@@ -239,15 +239,19 @@ class LearningOutcomeController extends Controller
                 // get column index of cell
                 $cellColumnIndex = Coordinate::columnIndexFromString($cell->getColumn());
                 switch ($cellColumnIndex) {
-                    case 1: 
+                    case 1:
                         // set CLO value
                         $cloValue = $cell->getValue();
-                        if ($cloValue) $learningOutcome->l_outcome = $cloValue;
+                        if ($cloValue) {
+                            $learningOutcome->l_outcome = $cloValue;
+                        }
                         break;
                     case 2:
                         // set CLO Short Phrase
                         $cloShortPhrase = $cell->getValue();
-                        if ($cloShortPhrase) $learningOutcome->clo_shortphrase = $cloShortPhrase;
+                        if ($cloShortPhrase) {
+                            $learningOutcome->clo_shortphrase = $cloShortPhrase;
+                        }
                         break;
                     default:
                         break;
@@ -258,12 +262,12 @@ class LearningOutcomeController extends Controller
                 $learningOutcome->save();
             }
         }
-        // delete file on server        
+        // delete file on server
         Storage::delete($path);
         // before clearing the spreadsheet from memory, "break" the cyclic references to worksheets.
         $spreadsheet->disconnectWorksheets();
         unset($spreadsheet);
-        // return 
+        // return
         return redirect()->back();
 
     }

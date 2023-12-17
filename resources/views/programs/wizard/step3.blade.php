@@ -283,7 +283,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <form method="POST" action="{{ action('CourseController@store') }}">
+                                <form method="POST" action="{{ action([\App\Http\Controllers\CourseController::class, 'store']) }}">
                                     @csrf
                                     <div class="modal-body">
 

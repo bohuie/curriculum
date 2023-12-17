@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSyllabiProgramsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -17,8 +17,8 @@ class CreateSyllabiProgramsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('syllabus_id');
             $table->unsignedBigInteger('program_id');
-            $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('cascade')->onUpdate('cascade'); 
-            $table->foreign('syllabus_id')->references('id')->on('syllabi')->onDelete('cascade')->onUpdate('cascade');   
+            $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('syllabus_id')->references('id')->on('syllabi')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -32,4 +32,4 @@ class CreateSyllabiProgramsTable extends Migration
     {
         Schema::dropIfExists('syllabi_programs');
     }
-}
+};

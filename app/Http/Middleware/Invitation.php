@@ -9,7 +9,7 @@ class Invitatation extends Middleware
     // User will be redirected to regiration page
     protected function redirectTo($request)
     {
-        if (!$request->expectsJson()) {
+        if (! $request->expectsJson()) {
             return redirect('register');
         }
     }

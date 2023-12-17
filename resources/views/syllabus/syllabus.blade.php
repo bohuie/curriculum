@@ -112,7 +112,7 @@
     @endif
 
 
-    <form class="row gy-4 courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
+    <form class="row gy-4 courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action([\App\Http\Controllers\SyllabusController::class, 'save'], $syllabus->id) : action([\App\Http\Controllers\SyllabusController::class, 'save'])}}">
         @csrf
 
         <h5 class="fw-bold col-12 mt-5">Course Information</h5>

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLandAcknowToSyllabi extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class AddLandAcknowToSyllabi extends Migration
     {
         Schema::table('syllabi', function (Blueprint $table) {
             $table->boolean('land_acknow')->after('copyright')->nullable();
-            
+
         });
     }
 
@@ -30,4 +30,4 @@ class AddLandAcknowToSyllabi extends Migration
             $table->dropColumn(['land_acknow']);
         });
     }
-}
+};

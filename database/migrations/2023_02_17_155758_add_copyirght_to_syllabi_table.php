@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCopyirghtToSyllabiTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -16,7 +16,7 @@ class AddCopyirghtToSyllabiTable extends Migration
         Schema::table('syllabi', function (Blueprint $table) {
             $table->text('cc_license')->after('include_alignment')->nullable();
             $table->boolean('copyright')->after('cc_license')->nullable();
-            
+
         });
     }
 
@@ -32,4 +32,4 @@ class AddCopyirghtToSyllabiTable extends Migration
             $table->dropColumn(['copyright']);
         });
     }
-}
+};

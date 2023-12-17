@@ -102,7 +102,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">Are you sure you want to leave {{$course->course_title}} course?</div>
-                                                    <form action="{{ action('CourseUserController@leave') }}" class="float-right">
+                                                    <form action="{{ action([\App\Http\Controllers\CourseUserController::class, 'leave']) }}" class="float-right">
                                                         @csrf
 
                                                         <input type="hidden" class="form-check-input " name="course_id" value={{$course->course_id}}>
@@ -136,7 +136,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">Are you sure you want to give ownership of the course: {{$course->course_title}} to the user: {{$courseCollaborator->name}}?</div>
-                                                        <form method="POST" action="{{ action('CourseUserController@transferOwnership') }}">
+                                                        <form method="POST" action="{{ action([\App\Http\Controllers\CourseUserController::class, 'transferOwnership']) }}">
                                                             @csrf
                                                             <input type="hidden" class="form-check-input " name="course_id" value={{$course->course_id}}>
                                                             <input type="hidden" class="form-check-input " name="newOwnerId" value={{$courseCollaborator->id}}>
@@ -163,7 +163,7 @@
                 @endif
             </div>
 
-            <form method="POST" id="saveCourseCollabChanges{{$course->course_id}}" action="{{ action('CourseUserController@store', ['course' => $course->course_id]) }}">
+            <form method="POST" id="saveCourseCollabChanges{{$course->course_id}}" action="{{ action([\App\Http\Controllers\CourseUserController::class, 'store'], ['course' => $course->course_id]) }}">
                 @csrf
                 <div class="modal-footer">
                     <button type="button" class="cancelCourseCollabChanges btn btn-secondary col-3" data-bs-dismiss="modal" data-course_id="{{$course->course_id}}">Cancel</button>

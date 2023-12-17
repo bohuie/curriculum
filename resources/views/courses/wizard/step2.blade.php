@@ -223,7 +223,7 @@
                                         </table>                                    
                                     </div>
                                 </div>
-                                <form method="POST" id="saveAssessmentMethodChanges" action="{{ action('AssessmentMethodController@store') }}">
+                                <form method="POST" id="saveAssessmentMethodChanges" action="{{ action([\App\Http\Controllers\AssessmentMethodController::class, 'store']) }}">
                                     @csrf
                                     <div class="modal-footer">
                                         <input type="hidden" name="course_id" value="{{$course->course_id}}" form="saveAssessmentMethodChanges">

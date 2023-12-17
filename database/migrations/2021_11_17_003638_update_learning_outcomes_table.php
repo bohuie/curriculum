@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateLearningOutcomesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class UpdateLearningOutcomesTable extends Migration
     {
         Schema::table('learning_outcomes', function (Blueprint $table) {
             $table->unsignedBigInteger('pos_in_alignment')->default(0)->after('course_id');
-        });    
+        });
     }
 
     /**
@@ -30,4 +30,4 @@ class UpdateLearningOutcomesTable extends Migration
             $table->dropColumn('pos_in_alignment');
         });
     }
-}
+};
