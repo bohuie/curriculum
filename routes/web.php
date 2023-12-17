@@ -3,7 +3,6 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminEmailController;
 use App\Http\Controllers\AssessmentMethodController;
-use App\Http\Controllers\Auth;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseProgramController;
 use App\Http\Controllers\CourseUserController;
@@ -87,6 +86,8 @@ Route::post('/syllabusUserTransfer', [SyllabusUserController::class, 'transferOw
 Route::resource('/programs', 'ProgramController');
 Route::post('/programs', [ProgramController::class, 'store'])->name('programs.store');
 Route::get('/programs/{program}/submit', [ProgramController::class, 'submit'])->name('programs.submit');
+Route::post('/programs/{program}/update', [ProgramController::class, 'update'])->name('programs.update');
+Route::delete('/programs/{program}/delete', [ProgramController::class, 'destroy'])->name('programs.destroy');
 // Program Summary PDF routes
 Route::get('/programs/{program}/pdf', [ProgramController::class, 'pdf'])->name('programs.pdf');
 Route::delete('/programs/{program}/pdf', [ProgramController::class, 'deletePDF'])->name('programs.delete.pdf');
@@ -114,6 +115,7 @@ Route::delete('/courses/{course}/pdf', [CourseController::class, 'deletePDF'])->
 Route::get('/courses/{course}/remove', [CourseController::class, 'removeFromProgram'])->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor', [CourseController::class, 'emailCourseInstructor'])->name('courses.emailCourseInstructor');
 Route::post('/courses/{course}/duplicate', [CourseController::class, 'duplicate'])->name('courses.duplicate');
+Route::delete('/courses/{course}/destroy', [CourseController::class, 'destroy'])->name('courses.destroy');
 
 // Route::resource('/lo','LearningOutcomeController')->only(['store','update','edit', 'destroy']);
 Route::resource('/lo', 'LearningOutcomeController');
@@ -123,6 +125,8 @@ Route::post('/store/clos', [LearningOutcomeController::class, 'store'])->name('c
 Route::resource('/plo', 'ProgramLearningOutcomeController');
 Route::post('/plo/store', [ProgramLearningOutcomeController::class, 'store'])->name('program.outcomes.store');
 Route::post('/import/plos', [ProgramLearningOutcomeController::class, 'import'])->name('program.outcomes.import');
+Route::delete('/plo/{program}/delete', [ProgramLearningOutcomeController::class, 'destroy'])->name('plo.destroy');
+Route::post('/plo/{program}/update', [ProgramLearningOutcomeController::class, 'update'])->name('plo.update');
 
 Route::resource('/la', 'LearningActivityController');
 Route::post('/la/store', [LearningActivityController::class, 'store'])->name('la.store');
@@ -135,7 +139,7 @@ Route::resource('/am', 'AssessmentMethodController');
 Route::post('/am/store', [AssessmentMethodController::class, 'store'])->name('am.store');
 
 Route::resource('/outcomeMap', 'OutcomeMapController');
-Route::post('/store/OutcomeMap', [OutcomeMapController::class, 'store'])->name('OutcomeMap.store');
+Route::post('/store/OutcomeMap', [OutcomeMapController::class, 'store'])->name('outcomeMap.store');
 //Route for standards mapping
 Route::resource('/standardsOutcomeMap', 'StandardsOutcomeMapController');
 Route::post('/store/standardsOutcomeMap', [StandardsOutcomeMapController::class, 'store'])->name('standardsOutcomeMap.store');
@@ -143,9 +147,13 @@ Route::post('/store/standardsOutcomeMap', [StandardsOutcomeMapController::class,
 Route::resource('/mappingScale', 'MappingScaleController');
 Route::post('/mappingScale/store', [MappingScaleController::class, 'store'])->name('program.mappingScale.store');
 Route::post('/mappingScale/addDefaultMappingScale', [MappingScaleController::class, 'addDefaultMappingScale'])->name('mappingScale.addDefaultMappingScale');
+Route::delete('/mappingScale/{program}/delete', [MappingScaleController::class, 'destroy'])->name('mappingScale.destroy');
+Route::post('/mappingScale/{program}/update', [MappingScaleController::class, 'update'])->name('mappingScale.update');
 
 Route::resource('/ploCategory', 'PLOCategoryController');
 Route::post('/ploCategory/store', [PLOCategoryController::class, 'store'])->name('program.category.store');
+Route::delete('/ploCategory/{program}/delete', [PLOCategoryController::class, 'destroy'])->name('program.category.destroy');
+Route::post('/ploCategory/{program}/update', [PLOCategoryController::class, 'update'])->name('program.category.update');
 
 Route::resource('/programUser', 'ProgramUserController');
 Route::post('/program/{programId}/collaborator/add', [ProgramUserController::class, 'store'])->name('programUser.add');

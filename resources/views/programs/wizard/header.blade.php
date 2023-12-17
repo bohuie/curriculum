@@ -72,9 +72,9 @@
                                             </button>
                                         </div>
                                         
-                                        <form method="POST" action="{{ action([\App\Http\Controllers\ProgramController::class, 'update'], $program->program_id) }}">
+                                        <form method="POST" action="{{route('programs.update', $program->program_id)}}">
                                             @csrf
-                                            {{method_field('PUT')}}
+                                            {{method_field('POST')}}
                                             <div class="modal-body">
                                                 <div class="form-group row">
                                                     <label for="program" class="col-md-2 col-form-label text-md-right">Program Name</label>
