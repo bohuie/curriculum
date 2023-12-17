@@ -139,7 +139,7 @@ Route::resource('/am', 'AssessmentMethodController');
 Route::post('/am/store', [AssessmentMethodController::class, 'store'])->name('am.store');
 
 Route::resource('/outcomeMap', 'OutcomeMapController');
-Route::post('/store/OutcomeMap', [OutcomeMapController::class, 'store'])->name('OutcomeMap.store');
+Route::post('/store/OutcomeMap', [OutcomeMapController::class, 'store'])->name('outcomeMap.store');
 //Route for standards mapping
 Route::resource('/standardsOutcomeMap', 'StandardsOutcomeMapController');
 Route::post('/store/standardsOutcomeMap', [StandardsOutcomeMapController::class, 'store'])->name('standardsOutcomeMap.store');
