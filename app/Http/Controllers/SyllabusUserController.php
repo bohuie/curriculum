@@ -268,7 +268,8 @@ class SyllabusUserController extends Controller
             $request->session()->flash('error', 'Failed to leave the syllabus');
         }
 
-        return redirect()->back();
+        // return to the dashboard
+        return redirect()->route('home');
     }
 
     public function transferOwnership(Request $request)
