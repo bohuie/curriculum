@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-
+<div class="alert alert-warning">
+            <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
+            <button type="button" class="close" data-dismiss="alert">×</button>  
+            <div>
+            The tool will be undergoing planned maintenance on <b>January 5th between 8:30 - 9:30 AM</b>. Please try again later if you experience any usability issues during this time.
+            </div>  
+</div>
 <link href=" {{ asset('css/accordions.css') }}" rel="stylesheet" type="text/css" >
 <!--Link for FontAwesome Font for the arrows for the accordions.-->
 <link href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" rel="stylesheet" type="text/css" >
