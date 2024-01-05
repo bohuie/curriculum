@@ -41,7 +41,7 @@ class CustomLearningActivitiesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         CRUD::setFromDb(); // columns
 
@@ -59,7 +59,7 @@ class CustomLearningActivitiesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(CustomLearningActivitiesRequest::class);
 
@@ -86,7 +86,7 @@ class CustomLearningActivitiesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
     }

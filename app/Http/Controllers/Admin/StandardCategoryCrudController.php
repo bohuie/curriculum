@@ -42,7 +42,7 @@ class StandardCategoryCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         CRUD::column('sc_name');
 
@@ -60,7 +60,7 @@ class StandardCategoryCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(StandardCategoryRequest::class);
 
@@ -82,7 +82,7 @@ class StandardCategoryCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
 
         $this->crud->addField([

@@ -40,7 +40,7 @@ class SubcategoriesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         $this->crud->addColumn([
             'name' => 'subcat_id',
@@ -83,7 +83,7 @@ class SubcategoriesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(SubcategoriesRequest::class);
         $subid = \DB::table('optional_priority_subcategories')->count();
@@ -141,7 +141,7 @@ class SubcategoriesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         CRUD::setValidation(SubcategoriesRequest::class);
         $subid = \DB::table('optional_priority_subcategories')->count();

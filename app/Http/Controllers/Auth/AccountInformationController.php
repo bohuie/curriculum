@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -27,7 +29,7 @@ class AccountInformationController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $token = $request->route()->parameter('token');
         $user = User::find(Auth::id());
@@ -35,7 +37,7 @@ class AccountInformationController extends Controller
         return view('auth.accountInformation')->with('user', $user)->with('token', $token);
     }
 
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         $user = User::find(Auth::id());
         if ($request->input('name') != null) {

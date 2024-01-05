@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\AssessmentMethod;
 use App\Models\Course;
 use App\Models\User;
@@ -21,7 +22,7 @@ class AssessmentMethodController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -116,7 +117,7 @@ class AssessmentMethodController extends Controller
      * @param  \App\Models\AssessmentMethod  $assessmentMethod
      * @return \Illuminate\Http\Response
      */
-    public function edit($assessmentMethod)
+    public function edit(AssessmentMethod $assessmentMethod)
     {
         //
 
@@ -128,7 +129,7 @@ class AssessmentMethodController extends Controller
      * @param  \App\Models\AssessmentMethod  $assessmentMethod
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $a_method_id)
+    public function update(Request $request, $a_method_id): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -162,7 +163,7 @@ class AssessmentMethodController extends Controller
      * @param  \App\Models\AssessmentMethod  $assessmentMethod
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $a_method_id)
+    public function destroy(Request $request, $a_method_id): RedirectResponse
     {
         $am = AssessmentMethod::where('a_method_id', $a_method_id)->first();
         $course_id = $request->input('course_id');

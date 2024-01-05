@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Helpers\ReadOutcomesFilter;
 use App\Models\Course;
 use App\Models\LearningOutcome;
@@ -25,7 +26,7 @@ class LearningOutcomeController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -46,7 +47,7 @@ class LearningOutcomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // try to update CLOs
         try {
@@ -144,7 +145,7 @@ class LearningOutcomeController extends Controller
      * @param  \App\Models\LearningOutcome  $learningOutcome
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $l_outcome_id)
+    public function update(Request $request, $l_outcome_id): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -170,7 +171,7 @@ class LearningOutcomeController extends Controller
      * @param  \App\Models\LearningOutcome  $learningOutcome
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $l_outcome_id)
+    public function destroy(Request $request, $l_outcome_id): RedirectResponse
     {
         //
         $lo = LearningOutcome::where('l_outcome_id', $l_outcome_id)->first();

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\AssessmentMethod;
 use App\Models\Campus;
 use App\Models\Course;
@@ -40,7 +43,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index(Request $request)
+    public function index(Request $request): Renderable
     {
         //Artisan::call('route:clear', []);
 
@@ -196,7 +199,7 @@ class HomeController extends Controller
             ->with('departments', $departments);
     }
 
-    public function getProgramUsers($program_id)
+    public function getProgramUsers($program_id): View
     {
 
         $programUsers = ProgramUser::join('users', 'program_users.user_id', '=', 'users.id')
@@ -212,7 +215,7 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $course_id)
+    public function destroy(Request $request, $course_id): RedirectResponse
     {
         //
         $c = Course::where('course_id', $course_id)->first();
@@ -232,7 +235,7 @@ class HomeController extends Controller
 
     }
 
-    public function submit(Request $request, $course_id)
+    public function submit(Request $request, $course_id): RedirectResponse
     {
         //
         $c = Course::where('course_id', $course_id)->first();

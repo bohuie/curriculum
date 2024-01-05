@@ -41,7 +41,7 @@ class CustomAssessmentMethodsCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         $this->crud->addColumn([
             'name' => 'custom_method_id', // The db column name
@@ -74,7 +74,7 @@ class CustomAssessmentMethodsCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(CustomAssessmentMethodsRequest::class);
 
@@ -101,7 +101,7 @@ class CustomAssessmentMethodsCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
     }

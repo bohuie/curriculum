@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\Course;
 use App\Models\OutcomeMap;
 use App\Models\User;
@@ -21,7 +22,7 @@ class OutcomeMapController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -42,7 +43,7 @@ class OutcomeMapController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'map' => 'required',

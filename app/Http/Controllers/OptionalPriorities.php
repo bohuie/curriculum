@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\Course;
 use App\Models\CourseOptionalPriorities;
 use App\Models\User;
@@ -19,7 +20,7 @@ class OptionalPriorities extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'course_id' => 'required',

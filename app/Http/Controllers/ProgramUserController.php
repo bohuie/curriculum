@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Mail\NotifyNewProgramUserMail;
 use App\Mail\NotifyProgramAdminMail;
 use App\Mail\NotifyProgramOwnerMail;
@@ -27,7 +28,7 @@ class ProgramUserController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -257,7 +258,7 @@ class ProgramUserController extends Controller
         }
     }
 
-    public function leave(Request $request)
+    public function leave(Request $request): RedirectResponse
     {
         $program = Program::find($request->input('program_id'));
         $programUser = ProgramUser::where('user_id', $request->input('programCollaboratorId'))->where('program_id', $request->input('program_id'))->first();
@@ -270,7 +271,7 @@ class ProgramUserController extends Controller
         return redirect()->back();
     }
 
-    public function transferOwnership(Request $request)
+    public function transferOwnership(Request $request): RedirectResponse
     {
         $program = Program::find($request->input('program_id'));
         $oldProgramOwner = ProgramUser::where('user_id', $request->input('oldOwnerId'))->where('program_id', $request->input('program_id'))->first();

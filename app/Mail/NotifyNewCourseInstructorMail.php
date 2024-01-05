@@ -39,7 +39,7 @@ class NotifyNewCourseInstructorMail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): static
     {
         return $this->markdown('emails.notifyNewCourseInstructor', [ // pass public variables (set in __construct) to notifyInstructor.blade
             'course_code' => $this->course_code,

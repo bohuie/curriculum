@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
@@ -55,7 +56,7 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
         //
         $user->roles()->sync($request->roles);
@@ -76,7 +77,7 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user, Request $request)
+    public function destroy(User $user, Request $request): RedirectResponse
     {
 
         if (Gate::denies('admin-privilege')) {

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Mail\NotifyInstructorForMappingMail;
 use App\Mail\NotifyNewCourseInstructorMail;
 use App\Mail\NotifyNewUserAndInstructorMail;
@@ -46,7 +48,7 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): RedirectResponse
     {
         return redirect()->back();
     }
@@ -66,7 +68,7 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // validate request input
         $this->validate($request, [
@@ -199,7 +201,7 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function addProgramToCourse(Request $request)
+    public function addProgramToCourse(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'course_id' => 'required',
@@ -234,7 +236,7 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($course_id)
+    public function show($course_id): View
     {
         //
         $course = Course::where('course_id', $course_id)->first();
@@ -282,7 +284,7 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($course_id)
+    public function edit($course_id): RedirectResponse
     {
         //
         $course = Course::where('course_id', $course_id)->first();
@@ -298,7 +300,7 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $course_id)
+    public function update(Request $request, $course_id): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -349,7 +351,7 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $course_id)
+    public function destroy(Request $request, $course_id): RedirectResponse
     {
         // find the course to delete
         $course = Course::find($course_id);
@@ -371,7 +373,7 @@ class CourseController extends Controller
         return redirect()->route('home');
     }
 
-    public function submit(Request $request, $course_id)
+    public function submit(Request $request, $course_id): RedirectResponse
     {
         //
         $c = Course::where('course_id', $course_id)->first();
@@ -386,7 +388,7 @@ class CourseController extends Controller
         return redirect()->route('home');
     }
 
-    public function outcomeDetails(Request $request, $course_id)
+    public function outcomeDetails(Request $request, $course_id): RedirectResponse
     {
         //
         $l_outcomes = LearningOutcome::where('course_id', $course_id)->get();
@@ -432,7 +434,7 @@ class CourseController extends Controller
         return redirect()->route('courseWizard.step4', $course_id)->with('success', 'Changes have been saved successfully.');
     }
 
-    public function amReorder(Request $request, $course_id)
+    public function amReorder(Request $request, $course_id): RedirectResponse
     {
         $a_method_pos = $request->input('a_method_pos');
 
@@ -456,7 +458,7 @@ class CourseController extends Controller
         return redirect()->route('courseWizard.step2', $course_id)->with('success', 'Changes have been saved successfully.');
     }
 
-    public function loReorder(Request $request, $course_id)
+    public function loReorder(Request $request, $course_id): RedirectResponse
     {
         $l_outcomes_pos = $request->input('l_outcomes_pos');
 
@@ -480,7 +482,7 @@ class CourseController extends Controller
         return redirect()->route('courseWizard.step1', $course_id)->with('success', 'Changes have been saved successfully.');
     }
 
-    public function tlaReorder(Request $request, $course_id)
+    public function tlaReorder(Request $request, $course_id): RedirectResponse
     {
         $l_activities_pos = $request->input('l_activities_pos');
 
@@ -616,7 +618,7 @@ class CourseController extends Controller
     }
 
     // Removes the program id for a given course (Used In program wizard step 3).
-    public function removeFromProgram(Request $request, $course_id)
+    public function removeFromProgram(Request $request, $course_id): RedirectResponse
     {
 
         // Delete row from coursePrograms
@@ -653,7 +655,7 @@ class CourseController extends Controller
         return redirect()->route('programWizard.step3', $request->input('program_id'));
     }
 
-    public function emailCourseInstructor(Request $request, $course_id)
+    public function emailCourseInstructor(Request $request, $course_id): RedirectResponse
     {
         $program_owner = User::find($request->input('program_owner_id'));
         $course_owner = User::find($request->input('course_owner_id'));
@@ -674,7 +676,7 @@ class CourseController extends Controller
         return redirect()->route('programWizard.step3', $request->input('program_id'));
     }
 
-    public function duplicate(Request $request, $course_id)
+    public function duplicate(Request $request, $course_id): RedirectResponse
     {
 
         $this->validate($request, [

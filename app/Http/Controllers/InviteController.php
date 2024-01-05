@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Mail\Invitation;
 use App\Models\Invite;
 use App\Models\User;
@@ -24,7 +26,7 @@ class InviteController extends Controller
     }
 
     // function to get to Invitation page
-    public function index()
+    public function index(): View
     {
         $user = User::where('id', Auth::id())->first();
         $invites = Invite::where('user_id', $user->id)->get();
@@ -33,7 +35,7 @@ class InviteController extends Controller
     }
 
     // Sent a invitation email with generated token
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
 
         $this->validate($request, [

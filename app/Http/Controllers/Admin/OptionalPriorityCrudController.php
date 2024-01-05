@@ -42,7 +42,7 @@ class OptionalPriorityCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         // Priority
         $this->crud->addColumn([
@@ -89,7 +89,7 @@ class OptionalPriorityCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(OptionalPriorityRequest::class);
         $op_id_num = \DB::table('optional_priorities')->count();
@@ -162,7 +162,7 @@ class OptionalPriorityCrudController extends CrudController
      */
 
     // Edit
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         CRUD::setValidation(OptionalPriorityRequest::class);
         $op_id_num = \DB::table('optional_priorities')->count();

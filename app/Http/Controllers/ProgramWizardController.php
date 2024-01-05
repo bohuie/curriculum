@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Models\AssessmentMethod;
 use App\Models\Campus;
 use App\Models\Course;
@@ -274,7 +276,7 @@ class ProgramWizardController extends Controller
             ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
-    public function step4($program_id, Request $request)
+    public function step4($program_id, Request $request): View
     {
         $isEditor = false;
         $isViewer = false;
@@ -478,7 +480,7 @@ class ProgramWizardController extends Controller
         return $newArray;
     }
 
-    public function getMinistryStandards($program_id)
+    public function getMinistryStandards($program_id): JsonResponse
     {
         $program = Program::where('program_id', $program_id)->first();
 
@@ -592,7 +594,7 @@ class ProgramWizardController extends Controller
         return $output;
     }
 
-    public function getOptionalPriorities($program_id)
+    public function getOptionalPriorities($program_id): JsonResponse
     {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
@@ -632,7 +634,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesFirstYear($program_id)
+    public function getOptionalPrioritiesFirstYear($program_id): JsonResponse
     {
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -677,7 +679,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesSecondYear($program_id)
+    public function getOptionalPrioritiesSecondYear($program_id): JsonResponse
     {
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -722,7 +724,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesThirdYear($program_id)
+    public function getOptionalPrioritiesThirdYear($program_id): JsonResponse
     {
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -767,7 +769,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesFourthYear($program_id)
+    public function getOptionalPrioritiesFourthYear($program_id): JsonResponse
     {
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -812,7 +814,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesGraduate($program_id)
+    public function getOptionalPrioritiesGraduate($program_id): JsonResponse
     {
         $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -885,7 +887,7 @@ class ProgramWizardController extends Controller
         return $output;
     }
 
-    public function getAssessmentMethods($program_id)
+    public function getAssessmentMethods($program_id): JsonResponse
     {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
@@ -923,7 +925,7 @@ class ProgramWizardController extends Controller
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsFirstYear($program_id)
+    public function getAssessmentMethodsFirstYear($program_id): JsonResponse
     {
         // get all the courses this program belongs to
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
@@ -967,7 +969,7 @@ class ProgramWizardController extends Controller
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsSecondYear($program_id)
+    public function getAssessmentMethodsSecondYear($program_id): JsonResponse
     {
         // get all the courses this program belongs to
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
@@ -1011,7 +1013,7 @@ class ProgramWizardController extends Controller
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsThirdYear($program_id)
+    public function getAssessmentMethodsThirdYear($program_id): JsonResponse
     {
         // get all the courses this program belongs to
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
@@ -1055,7 +1057,7 @@ class ProgramWizardController extends Controller
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsFourthYear($program_id)
+    public function getAssessmentMethodsFourthYear($program_id): JsonResponse
     {
         // get all the courses this program belongs to
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
@@ -1099,7 +1101,7 @@ class ProgramWizardController extends Controller
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsGraduate($program_id)
+    public function getAssessmentMethodsGraduate($program_id): JsonResponse
     {
         // get all the courses this program belongs to
         $GraduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
@@ -1143,7 +1145,7 @@ class ProgramWizardController extends Controller
         return response()->json($amFrequencies, 200);
     }
 
-    public function getLearningActivities($program_id)
+    public function getLearningActivities($program_id): JsonResponse
     {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
@@ -1174,7 +1176,7 @@ class ProgramWizardController extends Controller
         return response()->json($laFrequencies, 200);
     }
 
-    public function getFirstYearLearningActivities($program_id)
+    public function getFirstYearLearningActivities($program_id): JsonResponse
     {
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1210,7 +1212,7 @@ class ProgramWizardController extends Controller
         return response()->json($laFrequencies, 200);
     }
 
-    public function getSecondYearLearningActivities($program_id)
+    public function getSecondYearLearningActivities($program_id): JsonResponse
     {
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1246,7 +1248,7 @@ class ProgramWizardController extends Controller
         return response()->json($laFrequencies, 200);
     }
 
-    public function getThirdYearLearningActivities($program_id)
+    public function getThirdYearLearningActivities($program_id): JsonResponse
     {
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1282,7 +1284,7 @@ class ProgramWizardController extends Controller
         return response()->json($laFrequencies, 200);
     }
 
-    public function getFourthYearLearningActivities($program_id)
+    public function getFourthYearLearningActivities($program_id): JsonResponse
     {
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1318,7 +1320,7 @@ class ProgramWizardController extends Controller
         return response()->json($laFrequencies, 200);
     }
 
-    public function getGraduateLearningActivities($program_id)
+    public function getGraduateLearningActivities($program_id): JsonResponse
     {
         $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1624,7 +1626,7 @@ class ProgramWizardController extends Controller
     }
 
     // called when requested by ajax on step 4
-    public function getCourses($program_id)
+    public function getCourses($program_id): JsonResponse
     {
         $program = Program::find($program_id);
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
@@ -1661,7 +1663,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getRequiredCourses($program_id)
+    public function getRequiredCourses($program_id): JsonResponse
     {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all of the required courses this program belongs to
@@ -1697,7 +1699,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getNonRequiredCourses($program_id)
+    public function getNonRequiredCourses($program_id): JsonResponse
     {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all of the non-required courses this program belongs to
@@ -1733,7 +1735,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getFirstCourses($program_id)
+    public function getFirstCourses($program_id): JsonResponse
     {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
@@ -1775,7 +1777,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getSecondCourses($program_id)
+    public function getSecondCourses($program_id): JsonResponse
     {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
@@ -1817,7 +1819,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getThirdCourses($program_id)
+    public function getThirdCourses($program_id): JsonResponse
     {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
@@ -1859,7 +1861,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getFourthCourses($program_id)
+    public function getFourthCourses($program_id): JsonResponse
     {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
@@ -1901,7 +1903,7 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getGraduateCourses($program_id)
+    public function getGraduateCourses($program_id): JsonResponse
     {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();

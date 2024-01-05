@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Mail\NotifyInstructorMail;
 use App\Mail\NotifyInstructorOwnerMail;
 use App\Mail\NotifyNewInstructorMail;
@@ -257,7 +258,7 @@ class CourseUserController extends Controller
         }
     }
 
-    public function leave(Request $request)
+    public function leave(Request $request): RedirectResponse
     {
         $course = Course::find($request->input('course_id'));
         $courseUser = CourseUser::where('user_id', $request->input('courseCollaboratorId'))->where('course_id', $request->input('course_id'))->first();
@@ -270,7 +271,7 @@ class CourseUserController extends Controller
         return redirect()->back();
     }
 
-    public function transferOwnership(Request $request)
+    public function transferOwnership(Request $request): RedirectResponse
     {
         $course = Course::find($request->input('course_id'));
         $oldCourseOwner = CourseUser::where('user_id', $request->input('oldOwnerId'))->where('course_id', $request->input('course_id'))->first();

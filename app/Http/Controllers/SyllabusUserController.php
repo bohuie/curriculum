@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Mail\NotifyNewSyllabusUserMail;
 use App\Mail\NotifySyllabusUserMail;
 use App\Mail\NotifySyllabusUserOwnerMail;
@@ -273,7 +274,7 @@ class SyllabusUserController extends Controller
         return redirect()->route('home');
     }
 
-    public function transferOwnership(Request $request)
+    public function transferOwnership(Request $request): RedirectResponse
     {
         $syllabus = Syllabus::find($request->input('syllabus_id'));
         $oldSyllabusOwner = SyllabusUser::where('user_id', $request->input('oldOwnerId'))->where('syllabus_id', $request->input('syllabus_id'))->first();

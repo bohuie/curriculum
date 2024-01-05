@@ -40,7 +40,7 @@ class MappingScaleCategoryCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         CRUD::column('msc_title');
         CRUD::column('description');
@@ -59,7 +59,7 @@ class MappingScaleCategoryCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(MappingScaleCategoryRequest::class);
 
@@ -95,7 +95,7 @@ class MappingScaleCategoryCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
 

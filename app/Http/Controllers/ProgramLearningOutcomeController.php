@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 // composer generates this autoload.php file so you can start using the classes in dependencies without any extra work
 
+use Illuminate\Http\RedirectResponse;
 use App\Helpers\ReadOutcomesFilter;
 use App\Models\CourseProgram;
 use App\Models\PLOCategory;
@@ -30,7 +31,7 @@ class ProgramLearningOutcomeController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -51,7 +52,7 @@ class ProgramLearningOutcomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // validate request data
         $this->validate($request, [
@@ -147,7 +148,7 @@ class ProgramLearningOutcomeController extends Controller
      * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $programLearningOutcomeID)
+    public function update(Request $request, $programLearningOutcomeID): RedirectResponse
     {
         // validate request input
         $this->validate($request, [
@@ -183,7 +184,7 @@ class ProgramLearningOutcomeController extends Controller
      * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $programLearningOutcome)
+    public function destroy(Request $request, ProgramLearningOutcome $programLearningOutcome): RedirectResponse
     {
         //
         $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome);

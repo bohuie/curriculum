@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\Course;
 use App\Models\LearningActivity;
 use App\Models\User;
@@ -21,7 +22,7 @@ class LearningActivityController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -134,7 +135,7 @@ class LearningActivityController extends Controller
      * @param  \App\Models\LearningActivity  $learningActivity
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $l_activity_id)
+    public function destroy(Request $request, $l_activity_id): RedirectResponse
     {
         //
         $la = learningActivity::where('l_activity_id', $l_activity_id)->first();

@@ -40,7 +40,7 @@ class MappingScaleCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         CRUD::column('title');
         CRUD::column('abbreviation');
@@ -65,7 +65,7 @@ class MappingScaleCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         $this->crud->addField([
             'name' => 'title',
@@ -112,7 +112,7 @@ class MappingScaleCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         //$this->setupCreateOperation();
         $this->crud->addField([

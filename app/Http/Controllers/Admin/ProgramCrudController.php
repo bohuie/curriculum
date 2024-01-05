@@ -42,7 +42,7 @@ class ProgramCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         $this->crud->addColumn([
             'name' => 'program', // The db column name
@@ -108,7 +108,7 @@ class ProgramCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(ProgramRequest::class);
 
@@ -225,7 +225,7 @@ class ProgramCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
 

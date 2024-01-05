@@ -39,7 +39,7 @@ class TemplateEmail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): static
     {
         return $this->markdown('emails.emailTemplate', [ // pass public variables (set in __construct) to emailTemplate.blade
             'title' => $this->title,

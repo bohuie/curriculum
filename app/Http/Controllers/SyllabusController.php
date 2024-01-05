@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\Course;
 use App\Models\CourseSchedule;
 use App\Models\Department;
@@ -336,7 +337,7 @@ class SyllabusController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function create($request)
+    public function create(Request $request)
     {
         // get current user
         $user = User::where('id', Auth::id())->first();
@@ -555,7 +556,7 @@ class SyllabusController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($request, $syllabusId)
+    public function update(Request $request, $syllabusId)
     {
         // get the syllabus, and start updating it
         $syllabus = Syllabus::find($syllabusId);
@@ -823,7 +824,7 @@ class SyllabusController extends Controller
      * @param  int  $syllabusId
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $syllabusId)
+    public function destroy(Request $request, int $syllabusId)
     {
         // find the syllabus to delete
         $syllabus = Syllabus::find($syllabusId);
@@ -971,7 +972,7 @@ class SyllabusController extends Controller
      * @param  string  $ext: the file extension
      * @return a download response
      */
-    public function download($syllabusId, $ext)
+    public function download(int $syllabusId, $ext): a
     {
 
         $syllabus = Syllabus::find($syllabusId);
@@ -2235,7 +2236,7 @@ class SyllabusController extends Controller
         $docTemplate->setComplexBlock('outcomeMap-'.strval($index), $outcomeMapTbl);
     }
 
-    public function duplicate(Request $request, $syllabusId)
+    public function duplicate(Request $request, $syllabusId): RedirectResponse
     {
 
         // validate request

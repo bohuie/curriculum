@@ -41,7 +41,7 @@ class CategoriesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         $this->crud->addColumn([
             'name' => 'cat_id',
@@ -75,7 +75,7 @@ class CategoriesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(CategoriesRequest::class);
         // $catId = \DB::table('optional_priority_categories')->count();
@@ -110,7 +110,7 @@ class CategoriesCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->crud->addField([
             'name' => 'cat_id',

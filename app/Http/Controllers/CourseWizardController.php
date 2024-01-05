@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\AssessmentMethod;
 use App\Models\Course;
 use App\Models\CourseProgram;
@@ -463,7 +464,7 @@ class CourseWizardController extends Controller
             ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('opSubDesc', $opSubDesc);
     }
 
-    public function step7($course_id, Request $request)
+    public function step7($course_id, Request $request): View
     {
         $isEditor = false;
         if ($request->isEditor) {

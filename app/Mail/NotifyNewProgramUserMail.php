@@ -36,7 +36,7 @@ class NotifyNewProgramUserMail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): static
     {
         return $this->markdown('emails.notifyNewProgramUser', [ // pass public variables (set in __construct) to notifyProgramAdmin.blade
             'program_title' => $this->program_title,

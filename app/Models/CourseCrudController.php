@@ -26,7 +26,7 @@ class CourseCrudController extends CrudController
      *
      * @return void
      */
-    public function setup()
+    public function setup(): void
     {
         CRUD::setModel(\App\Models\Course::class);
         CRUD::setRoute(config('backpack.base.route_prefix').'/course');
@@ -42,7 +42,7 @@ class CourseCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
 
         $this->crud->addColumn([
@@ -106,7 +106,7 @@ class CourseCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(CourseRequest::class);
 
@@ -272,7 +272,7 @@ class CourseCrudController extends CrudController
      *
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         // $this->setupCreateOperation();
 

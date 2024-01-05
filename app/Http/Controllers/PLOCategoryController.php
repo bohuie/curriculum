@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\User;
@@ -21,7 +22,7 @@ class PLOCategoryController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -42,7 +43,7 @@ class PLOCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // validate request data
         $this->validate($request, [
@@ -127,7 +128,7 @@ class PLOCategoryController extends Controller
      * @param  \App\Models\PLOCategory  $pLOCategory
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $plo_category_id)
+    public function update(Request $request, $plo_category_id): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -163,7 +164,7 @@ class PLOCategoryController extends Controller
      * @param  \App\Models\PLOCategory  $pLOCategory
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $plo_category_id)
+    public function destroy(Request $request, $plo_category_id): RedirectResponse
     {
         //
         $c = PLOCategory::where('plo_category_id', $plo_category_id)->first();
