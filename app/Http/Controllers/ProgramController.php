@@ -44,8 +44,6 @@ class ProgramController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(): RedirectResponse
     {
@@ -65,8 +63,6 @@ class ProgramController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {
@@ -115,7 +111,6 @@ class ProgramController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show(int $id)
@@ -127,7 +122,6 @@ class ProgramController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit(int $id)
@@ -140,7 +134,6 @@ class ProgramController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $program_id): RedirectResponse
     {
@@ -183,7 +176,6 @@ class ProgramController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $program_id): RedirectResponse
     {
@@ -272,7 +264,6 @@ class ProgramController extends Controller
      * Helper for spreadsheet and pdf summary files which gets images of the charts included in this program
      *
      * @param Request HTTP request
-     * @param  int  $programId
      * @return array $url of pdf
      */
     private function getImagesOfCharts(int $programId, $dstFileExt): array
@@ -891,7 +882,6 @@ class ProgramController extends Controller
      * Build a spreadsheet file of this program.
      *
      * @param Request HTTP $request
-     * @param  int  $programId
      * @return string $url of spreadsheet file
      */
     public function spreadsheet(Request $request, int $programId)
@@ -967,8 +957,6 @@ class ProgramController extends Controller
     /**
      * Private helper function to create sheets with charts in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $charts: array of urls to charts indexed by their sheet name
      */
     private function makeChartSheets(Spreadsheet $spreadsheet, int $programId, $charts)
@@ -1005,9 +993,7 @@ class ProgramController extends Controller
      * Private helper function to create the learning outcomes sheet in the program summary spreadsheet
      *
      * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
     private function makeMinistryStandardsSheet($sheet, int $programId): Worksheet
     {
@@ -1191,10 +1177,7 @@ class ProgramController extends Controller
     /**
      * Private helper function to create the learning outcomes sheet in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
     private function makeLearningOutcomesSheet(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
     {
@@ -1268,10 +1251,7 @@ class ProgramController extends Controller
     /**
      * Private helper function to create the mapping scales sheet in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
     private function makeMappingScalesSheet(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
     {
@@ -1316,10 +1296,7 @@ class ProgramController extends Controller
     /**
      * Private helper function to create the program outcome map sheet in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
     private function makeOutcomeMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
     {
@@ -1490,7 +1467,6 @@ class ProgramController extends Controller
     /**
      * Delete the the temporarily saved charts for this program overview.
      *
-     * @param  int  $programId
      * @param  array  $charts: array of chart urls
      */
     private function deleteCharts(int $programId, $charts)
@@ -1514,7 +1490,6 @@ class ProgramController extends Controller
      * Delete the saved spreadsheet file for this program if it exists.
      *
      * @param Request HTTP request
-     * @param  int  $programId
      */
     public function delSpreadsheet(Request $request, int $programId)
     {

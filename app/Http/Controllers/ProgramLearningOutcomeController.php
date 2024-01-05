@@ -49,8 +49,6 @@ class ProgramLearningOutcomeController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {
@@ -146,7 +144,6 @@ class ProgramLearningOutcomeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $programLearningOutcomeID): RedirectResponse
     {
@@ -180,9 +177,6 @@ class ProgramLearningOutcomeController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, ProgramLearningOutcome $programLearningOutcome): RedirectResponse
     {

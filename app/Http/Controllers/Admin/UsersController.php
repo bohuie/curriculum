@@ -53,8 +53,6 @@ class UsersController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, User $user): RedirectResponse
     {
@@ -74,8 +72,6 @@ class UsersController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function destroy(User $user, Request $request): RedirectResponse
     {

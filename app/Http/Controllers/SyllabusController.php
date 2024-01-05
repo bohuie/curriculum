@@ -334,7 +334,6 @@ class SyllabusController extends Controller
     /**
      * Create a new syllabus resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
@@ -552,7 +551,6 @@ class SyllabusController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -821,7 +819,6 @@ class SyllabusController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $syllabusId
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, int $syllabusId)
@@ -968,7 +965,6 @@ class SyllabusController extends Controller
     /**
      * Download the given syllabus $syllabusId in $ext format
      *
-     * @param  int  $syllabusId
      * @param  string  $ext: the file extension
      * @return a download response
      */

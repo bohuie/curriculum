@@ -8,8 +8,6 @@ class StoreInvitationRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -20,8 +18,6 @@ class StoreInvitationRequest extends FormRequest
 
     /**
      * Custom error messages.
-     *
-     * @return array
      */
     public function messages(): array
     {

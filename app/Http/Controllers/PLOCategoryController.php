@@ -40,8 +40,6 @@ class PLOCategoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {
@@ -126,7 +124,6 @@ class PLOCategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $plo_category_id): RedirectResponse
     {
@@ -162,7 +159,6 @@ class PLOCategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $plo_category_id): RedirectResponse
     {

@@ -43,8 +43,6 @@ class MappingScaleController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {
@@ -113,7 +111,6 @@ class MappingScaleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\MappingScale  $mappingScale
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $map_scale_id): RedirectResponse
     {
@@ -156,7 +153,6 @@ class MappingScaleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\MappingScale  $mappingScale
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $map_scale_id): RedirectResponse
     {

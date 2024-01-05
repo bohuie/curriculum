@@ -44,8 +44,6 @@ class LearningOutcomeController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {
@@ -143,7 +141,6 @@ class LearningOutcomeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\LearningOutcome  $learningOutcome
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $l_outcome_id): RedirectResponse
     {
@@ -169,7 +166,6 @@ class LearningOutcomeController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\LearningOutcome  $learningOutcome
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $l_outcome_id): RedirectResponse
     {

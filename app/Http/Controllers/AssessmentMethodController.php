@@ -114,7 +114,6 @@ class AssessmentMethodController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\AssessmentMethod  $assessmentMethod
      * @return \Illuminate\Http\Response
      */
     public function edit(AssessmentMethod $assessmentMethod)
@@ -127,7 +126,6 @@ class AssessmentMethodController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\AssessmentMethod  $assessmentMethod
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $a_method_id): RedirectResponse
     {
@@ -161,7 +159,6 @@ class AssessmentMethodController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\AssessmentMethod  $assessmentMethod
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $a_method_id): RedirectResponse
     {

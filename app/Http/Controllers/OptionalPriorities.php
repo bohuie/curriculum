@@ -17,8 +17,6 @@ class OptionalPriorities extends Controller
     //
     /**
      * Store all new optional PLOs to table.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {

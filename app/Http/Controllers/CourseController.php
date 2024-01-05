@@ -45,8 +45,6 @@ class CourseController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(): RedirectResponse
     {
@@ -65,8 +63,6 @@ class CourseController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
     {
@@ -198,8 +194,6 @@ class CourseController extends Controller
 
     /**
      * Copy a existed resource and assign it to the program.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function addProgramToCourse(Request $request): RedirectResponse
     {
@@ -234,7 +228,6 @@ class CourseController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($course_id): View
     {
@@ -282,7 +275,6 @@ class CourseController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function edit($course_id): RedirectResponse
     {
@@ -298,7 +290,6 @@ class CourseController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $course_id): RedirectResponse
     {
@@ -349,7 +340,6 @@ class CourseController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $course_id): RedirectResponse
     {

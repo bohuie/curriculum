@@ -17,9 +17,6 @@ use Tests\TestCase;
 
 class CourseTest extends TestCase
 {
-    /**
-     * @return void
-     */
     public function test_storing_new_course(): void
     {
 

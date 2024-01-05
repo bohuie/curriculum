@@ -50,9 +50,6 @@ class CheckIfAdmin
 
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
     public function handle(Request $request, Closure $next): Response
     {

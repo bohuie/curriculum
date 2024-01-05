@@ -199,7 +199,6 @@ class SyllabusUserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function show(SyllabusUser $syllabusUser)
@@ -210,7 +209,6 @@ class SyllabusUserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function edit(SyllabusUser $syllabusUser)
@@ -221,7 +219,6 @@ class SyllabusUserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function update(SyllabusUser $syllabusUser, $permissions)
@@ -244,7 +241,6 @@ class SyllabusUserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function destroy(SyllabusUser $syllabusUser)

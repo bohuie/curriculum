@@ -11,9 +11,6 @@ use Tests\TestCase;
 
 class ProgramTest extends TestCase
 {
-    /**
-     * @return void
-     */
     public function test_storing_new_program(): void
     {
         DB::table('users')->insert([

@@ -16,8 +16,6 @@ class CourseProgramController extends Controller
 
     /**
      * Add courses to a program
-     *
-     * @return \Illuminate\Http\Response
      */
     public function addCoursesToProgram(Request $request): RedirectResponse
     {
