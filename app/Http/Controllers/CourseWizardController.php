@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
 use App\Models\AssessmentMethod;
 use App\Models\Course;
 use App\Models\CourseProgram;
@@ -26,6 +25,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class CourseWizardController extends Controller
 {

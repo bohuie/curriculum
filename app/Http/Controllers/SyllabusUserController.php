@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
 use App\Mail\NotifyNewSyllabusUserMail;
 use App\Mail\NotifySyllabusUserMail;
 use App\Mail\NotifySyllabusUserOwnerMail;
@@ -11,6 +10,7 @@ use App\Models\syllabus\SyllabusUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

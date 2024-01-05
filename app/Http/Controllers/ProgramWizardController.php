@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use App\Models\AssessmentMethod;
 use App\Models\Campus;
 use App\Models\Course;
@@ -26,9 +24,11 @@ use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use App\Models\User;
 use Doctrine\DBAL\Schema\Index;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class ProgramWizardController extends Controller
 {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Symfony\Component\HttpFoundation\Response;
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 // Most likely should be removed. I have commented this out under the Kernel middleware group.
 // Laravel has built in XSS protection built in and this is redundant.

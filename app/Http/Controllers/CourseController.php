@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Mail\NotifyInstructorForMappingMail;
 use App\Mail\NotifyNewCourseInstructorMail;
 use App\Mail\NotifyNewUserAndInstructorMail;
@@ -26,12 +24,14 @@ use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use PDF;
 use Throwable;
 

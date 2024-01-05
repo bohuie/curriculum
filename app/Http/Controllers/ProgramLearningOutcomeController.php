@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 // composer generates this autoload.php file so you can start using the classes in dependencies without any extra work
 
-use Illuminate\Http\RedirectResponse;
 use App\Helpers\ReadOutcomesFilter;
 use App\Models\CourseProgram;
 use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
