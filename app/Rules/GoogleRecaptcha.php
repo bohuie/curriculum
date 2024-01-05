@@ -22,7 +22,7 @@ class GoogleRecaptcha implements Rule
      *
      * @param  mixed  $value
      */
-    public function passes(string $attribute, $value): bool
+    public function passes($attribute, $value)
     {
         //
         $client = new Client();
