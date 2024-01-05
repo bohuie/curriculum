@@ -14,7 +14,7 @@ class CampusFacultyDepartmentSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // create campuses
         $campusV = new Campus;

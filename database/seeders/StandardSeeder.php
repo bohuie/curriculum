@@ -12,7 +12,7 @@ class StandardSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         //
         // Undergraduate Ministry Standards 1 - 6:

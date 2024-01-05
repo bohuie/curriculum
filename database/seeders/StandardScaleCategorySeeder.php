@@ -12,7 +12,7 @@ class StandardScaleCategorySeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sc = new StandardsScaleCategory;
         $sc->scale_category_id = 1;

@@ -14,7 +14,7 @@ class TransferSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // transfer outcome map records for undergraduate degree level
         $ugradProgram = Program::find(1);

@@ -13,7 +13,7 @@ class TransferMapScaleValue extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         //
         $outcomeMaps = OutcomeMap::all();

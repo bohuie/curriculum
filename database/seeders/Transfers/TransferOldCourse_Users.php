@@ -13,7 +13,7 @@ class TransferOldCourse_Users extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // arr = [courseId][userId] = time created at
         // example

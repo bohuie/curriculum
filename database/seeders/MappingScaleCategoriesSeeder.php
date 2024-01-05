@@ -12,7 +12,7 @@ class MappingScaleCategoriesSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         //
         $mc = new MappingScaleCategory;

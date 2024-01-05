@@ -12,7 +12,7 @@ class CourseFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         $delivery_modalities = ['O', 'B', 'I'];
         $semesters = ['W1', 'W2', 'S1', 'S2'];

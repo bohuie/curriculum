@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('syllabi', function (Blueprint $table) {
             $table->string('faculty')->after('campus')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('syllabi', function (Blueprint $table) {
             $table->dropForeign('syllabi_course_id_foreign');

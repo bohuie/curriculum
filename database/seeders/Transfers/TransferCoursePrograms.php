@@ -14,7 +14,7 @@ class TransferCoursePrograms extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $courses = DB::table('courses')->get();
         foreach ($courses as $index => $course) {

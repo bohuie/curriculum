@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('assessment_methods', function (Blueprint $table) {
             $table->unsignedBigInteger('pos_in_alignment')->default(0)->after('course_id');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('assessment_methods', function (Blueprint $table) {
             $table->drop('pos_in_alignment');

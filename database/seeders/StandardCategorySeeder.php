@@ -12,7 +12,7 @@ class StandardCategorySeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $msc = new StandardCategory;
         $msc->standard_category_id = 1;

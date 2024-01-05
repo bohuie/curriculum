@@ -11,7 +11,7 @@ class StoreInvitationRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'email' => 'required|email|unique:invitations',
@@ -23,7 +23,7 @@ class StoreInvitationRequest extends FormRequest
      *
      * @return array
      */
-    public function messages()
+    public function messages(): array
     {
         return [
             'email.unique' => 'Invitation with this email address already requested.',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Models\Course;
 use App\Models\Program;
 use App\Models\syllabus\Syllabus;
@@ -17,7 +18,7 @@ class HasAccessMiddleware
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         $course_id = $request->route()->parameter('course');
         $program_id = $request->route()->parameter('program');

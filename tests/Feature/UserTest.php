@@ -23,7 +23,7 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
     */
-    public function test_register_user()
+    public function test_register_user(): void
     {
 
         $response = $this->post(route('register'), [

@@ -13,7 +13,7 @@ class TransferOldProgram_Users extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // arr = [programId][userId] = time created at
         // example

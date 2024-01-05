@@ -14,7 +14,7 @@ class TransferOptionalPriorities extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
 
         $newOptionalPriorities = OptionalPriorities::all();
