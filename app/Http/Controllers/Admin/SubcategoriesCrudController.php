@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\DB;
  */
 class SubcategoriesCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -37,10 +37,8 @@ class SubcategoriesCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
-     *
-     * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         $this->crud->addColumn([
             'name' => 'subcat_id',
@@ -80,10 +78,8 @@ class SubcategoriesCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
-     *
-     * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(SubcategoriesRequest::class);
         $subid = \DB::table('optional_priority_subcategories')->count();
@@ -138,10 +134,8 @@ class SubcategoriesCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
-     *
-     * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         CRUD::setValidation(SubcategoriesRequest::class);
         $subid = \DB::table('optional_priority_subcategories')->count();
@@ -232,6 +226,7 @@ class SubcategoriesCrudController extends CrudController
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
         $opscID = request()->route()->parameter('id');
         $r = DB::table('optional_priorities')->where('subcat_id', '=', $opscID)->delete();
+
         //this deletes the record itself.
         return $this->crud->delete($id);
     }

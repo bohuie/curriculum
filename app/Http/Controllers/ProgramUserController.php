@@ -10,6 +10,7 @@ use App\Models\ProgramUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -27,7 +28,7 @@ class ProgramUserController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -184,7 +185,7 @@ class ProgramUserController extends Controller
                     }
                 }
             }
-            // else the current user does not own this program
+        // else the current user does not own this program
         } else {
             $errorMessages->add('You do not have permission to add collaborators to this program');
         }
@@ -257,7 +258,7 @@ class ProgramUserController extends Controller
         }
     }
 
-    public function leave(Request $request)
+    public function leave(Request $request): RedirectResponse
     {
         $program = Program::find($request->input('program_id'));
         $programUser = ProgramUser::where('user_id', $request->input('programCollaboratorId'))->where('program_id', $request->input('program_id'))->first();
@@ -270,7 +271,7 @@ class ProgramUserController extends Controller
         return redirect()->back();
     }
 
-    public function transferOwnership(Request $request)
+    public function transferOwnership(Request $request): RedirectResponse
     {
         $program = Program::find($request->input('program_id'));
         $oldProgramOwner = ProgramUser::where('user_id', $request->input('oldOwnerId'))->where('program_id', $request->input('program_id'))->first();

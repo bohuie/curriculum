@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
@@ -21,7 +22,7 @@ class PLOCategoryController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -39,10 +40,8 @@ class PLOCategoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // validate request data
         $this->validate($request, [
@@ -125,9 +124,8 @@ class PLOCategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $plo_category_id)
+    public function update(Request $request, $plo_category_id): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -161,9 +159,8 @@ class PLOCategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $plo_category_id)
+    public function destroy(Request $request, $plo_category_id): RedirectResponse
     {
         //
         $c = PLOCategory::where('plo_category_id', $plo_category_id)->first();

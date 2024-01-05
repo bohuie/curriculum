@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('syllabi', function (Blueprint $table) {
             $table->boolean('land_acknow')->after('copyright')->nullable();
@@ -21,10 +19,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('syllabi', function (Blueprint $table) {
             $table->dropColumn(['land_acknow']);

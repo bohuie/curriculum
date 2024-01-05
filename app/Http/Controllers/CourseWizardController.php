@@ -25,6 +25,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class CourseWizardController extends Controller
 {
@@ -463,7 +464,7 @@ class CourseWizardController extends Controller
             ->with('expectedProgramOutcomeMapCount', $expectedProgramOutcomeMapCount)->with('hasNonAlignedCLO', $hasNonAlignedCLO)->with('opSubDesc', $opSubDesc);
     }
 
-    public function step7($course_id, Request $request)
+    public function step7($course_id, Request $request): View
     {
         $isEditor = false;
         if ($request->isEditor) {

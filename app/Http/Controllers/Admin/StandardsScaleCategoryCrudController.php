@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\DB;
  */
 class StandardsScaleCategoryCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -39,10 +39,8 @@ class StandardsScaleCategoryCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
-     *
-     * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         CRUD::column('name');
         CRUD::column('description');
@@ -58,10 +56,8 @@ class StandardsScaleCategoryCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
-     *
-     * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
 
         CRUD::setValidation(StandardsScaleCategoryRequest::class);
@@ -94,10 +90,8 @@ class StandardsScaleCategoryCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
-     *
-     * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->crud->addField([
             'name' => 'name', // The db column name
@@ -190,6 +184,7 @@ class StandardsScaleCategoryCrudController extends CrudController
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
         $sscID = request()->route()->parameter('id');
         $r = DB::table('standard_scales')->where('scale_category_id', '=', $sscID)->delete();
+
         //this deletes the course record itself.
         return $this->crud->delete($id);
     }

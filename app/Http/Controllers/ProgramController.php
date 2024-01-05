@@ -17,6 +17,7 @@ use App\Models\StandardCategory;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,10 +44,8 @@ class ProgramController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): RedirectResponse
     {
         return redirect()->back();
     }
@@ -64,10 +63,8 @@ class ProgramController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -114,10 +111,9 @@ class ProgramController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         //
 
@@ -126,10 +122,9 @@ class ProgramController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         //
 
@@ -139,9 +134,8 @@ class ProgramController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $program_id)
+    public function update(Request $request, $program_id): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -182,9 +176,8 @@ class ProgramController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $program_id)
+    public function destroy(Request $request, $program_id): RedirectResponse
     {
         // find the program to delete
         $program = Program::find($program_id);
@@ -206,7 +199,7 @@ class ProgramController extends Controller
         return redirect()->route('home');
     }
 
-    public function submit(Request $request, $program_id)
+    public function submit(Request $request, $program_id): RedirectResponse
     {
         //
         $p = Program::where('program_id', $program_id)->first();
@@ -271,10 +264,9 @@ class ProgramController extends Controller
      * Helper for spreadsheet and pdf summary files which gets images of the charts included in this program
      *
      * @param Request HTTP request
-     * @param  int  $programId
      * @return array $url of pdf
      */
-    private function getImagesOfCharts($programId, $dstFileExt)
+    private function getImagesOfCharts(int $programId, $dstFileExt): array
     {
 
         // find the program
@@ -578,7 +570,7 @@ class ProgramController extends Controller
      * @param  array  $data: data for each category
      * @return string $url of image
      */
-    private function barChartPOST($filename, $title, $xLabel, $yLabel, $categories, $data, $hasLegend = false)
+    private function barChartPOST($filename, $title, $xLabel, $yLabel, $categories, $data, $hasLegend = false): string
     {
 
         // create highcharts configuration object for a bar chart
@@ -858,6 +850,7 @@ class ProgramController extends Controller
             $this->deleteCharts($program_id, $charts);
             // get the url of the document
             $url = Storage::url('pdfs'.DIRECTORY_SEPARATOR.$pdfName);
+
             // return the location of the pdf document on the server
             return $url;
 
@@ -889,10 +882,9 @@ class ProgramController extends Controller
      * Build a spreadsheet file of this program.
      *
      * @param Request HTTP $request
-     * @param  int  $programId
      * @return string $url of spreadsheet file
      */
-    public function spreadsheet(Request $request, $programId)
+    public function spreadsheet(Request $request, int $programId)
     {
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
@@ -946,6 +938,7 @@ class ProgramController extends Controller
             $this->deleteCharts($programId, $charts);
             // get the url of the document
             $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+
             // return the location of the spreadsheet document on the server
             return $url;
 
@@ -964,11 +957,9 @@ class ProgramController extends Controller
     /**
      * Private helper function to create sheets with charts in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $charts: array of urls to charts indexed by their sheet name
      */
-    private function makeChartSheets($spreadsheet, $programId, $charts)
+    private function makeChartSheets(Spreadsheet $spreadsheet, int $programId, $charts)
     {
         try {
             $program = Program::find($programId);
@@ -1002,11 +993,9 @@ class ProgramController extends Controller
      * Private helper function to create the learning outcomes sheet in the program summary spreadsheet
      *
      * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
-    private function makeMinistryStandardsSheet($sheet, $programId)
+    private function makeMinistryStandardsSheet($sheet, int $programId): Worksheet
     {
         try {
             $program = Program::find($programId);
@@ -1188,12 +1177,9 @@ class ProgramController extends Controller
     /**
      * Private helper function to create the learning outcomes sheet in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
-    private function makeLearningOutcomesSheet($spreadsheet, $programId, $styles)
+    private function makeLearningOutcomesSheet(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
     {
         try {
             $program = Program::find($programId);
@@ -1265,12 +1251,9 @@ class ProgramController extends Controller
     /**
      * Private helper function to create the mapping scales sheet in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
-    private function makeMappingScalesSheet($spreadsheet, $programId, $styles)
+    private function makeMappingScalesSheet(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
     {
         try {
             $program = Program::find($programId);
@@ -1313,12 +1296,9 @@ class ProgramController extends Controller
     /**
      * Private helper function to create the program outcome map sheet in the program summary spreadsheet
      *
-     * @param  Spreadsheet  $spreadsheet
-     * @param  int  $programId
      * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
      */
-    private function makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns)
+    private function makeOutcomeMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
     {
         try {
             // find this program
@@ -1487,10 +1467,9 @@ class ProgramController extends Controller
     /**
      * Delete the the temporarily saved charts for this program overview.
      *
-     * @param  int  $programId
      * @param  array  $charts: array of chart urls
      */
-    private function deleteCharts($programId, $charts)
+    private function deleteCharts(int $programId, $charts)
     {
         $program = Program::find($programId);
         try {
@@ -1511,9 +1490,8 @@ class ProgramController extends Controller
      * Delete the saved spreadsheet file for this program if it exists.
      *
      * @param Request HTTP request
-     * @param  int  $programId
      */
-    public function delSpreadsheet(Request $request, $programId)
+    public function delSpreadsheet(Request $request, int $programId)
     {
         try {
             $program = Program::find($programId);
@@ -1683,7 +1661,7 @@ class ProgramController extends Controller
             // check if map_scale_value is in the frequency array and give it the value of 1
             if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
-                // if the value is found again, and is not zero, increment
+            // if the value is found again, and is not zero, increment
             } else {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
             }
@@ -1768,7 +1746,7 @@ class ProgramController extends Controller
             // check if map_scale_value is in the frequency array and give it the value of 1
             if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
-                // if the value is found again, and is not zero, increment
+            // if the value is found again, and is not zero, increment
             } else {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
             }
@@ -1811,7 +1789,7 @@ class ProgramController extends Controller
         return $store;
     }
 
-    public function duplicate(Request $request, $program_id)
+    public function duplicate(Request $request, $program_id): RedirectResponse
     {
         //
         $this->validate($request, [

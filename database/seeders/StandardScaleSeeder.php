@@ -9,10 +9,8 @@ class StandardScaleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         /*
             * this is a workaround to create the N/A standard scale with id 0

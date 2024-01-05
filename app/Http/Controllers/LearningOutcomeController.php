@@ -6,6 +6,7 @@ use App\Helpers\ReadOutcomesFilter;
 use App\Models\Course;
 use App\Models\LearningOutcome;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +26,7 @@ class LearningOutcomeController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -43,10 +44,8 @@ class LearningOutcomeController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // try to update CLOs
         try {
@@ -142,9 +141,8 @@ class LearningOutcomeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\LearningOutcome  $learningOutcome
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $l_outcome_id)
+    public function update(Request $request, $l_outcome_id): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -168,9 +166,8 @@ class LearningOutcomeController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\LearningOutcome  $learningOutcome
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $l_outcome_id)
+    public function destroy(Request $request, $l_outcome_id): RedirectResponse
     {
         //
         $lo = LearningOutcome::where('l_outcome_id', $l_outcome_id)->first();
@@ -267,6 +264,7 @@ class LearningOutcomeController extends Controller
         // before clearing the spreadsheet from memory, "break" the cyclic references to worksheets.
         $spreadsheet->disconnectWorksheets();
         unset($spreadsheet);
+
         // return
         return redirect()->back();
 

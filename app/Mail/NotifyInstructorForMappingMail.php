@@ -36,10 +36,8 @@ class NotifyInstructorForMappingMail extends Mailable
 
     /**
      * Build the message.
-     *
-     * @return $this
      */
-    public function build()
+    public function build(): static
     {
         return $this->markdown('emails.notifyInstructorForMapping', [ // pass public variables (set in __construct) to notifyInstructor.blade
             'program' => $this->program,

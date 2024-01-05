@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Gate;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -52,10 +53,8 @@ class UsersController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
         //
         $user->roles()->sync($request->roles);
@@ -73,10 +72,8 @@ class UsersController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user, Request $request)
+    public function destroy(User $user, Request $request): RedirectResponse
     {
 
         if (Gate::denies('admin-privilege')) {

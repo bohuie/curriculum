@@ -20,11 +20,9 @@ class GoogleRecaptcha implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes(string $attribute, $value): bool
     {
         //
         $client = new Client();
@@ -44,10 +42,8 @@ class GoogleRecaptcha implements Rule
 
     /**
      * Get the validation error message.
-     *
-     * @return string
      */
-    public function message()
+    public function message(): string
     {
         return 'Are you a robot?';
     }

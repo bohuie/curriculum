@@ -128,7 +128,7 @@
                                         </button>
                                     </div>
 
-                                    <form method="POST" action="{{ action('CourseController@update', $course->course_id) }}">
+                                    <form method="POST" action="{{ action([\App\Http\Controllers\CourseController::class, 'update'], $course->course_id) }}">
                                         @csrf
                                         {{method_field('PUT')}}
 

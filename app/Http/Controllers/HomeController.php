@@ -18,10 +18,13 @@ use App\Models\Standard;
 use App\Models\StandardCategory;
 use App\Models\StandardsOutcomeMap;
 use App\Models\User;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
@@ -37,10 +40,8 @@ class HomeController extends Controller
 
     /**
      * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index(Request $request)
+    public function index(Request $request): Renderable
     {
         //Artisan::call('route:clear', []);
 
@@ -189,13 +190,14 @@ class HomeController extends Controller
             $count = 0;
             $progressBarMsg[$courseId]['statusMsg'] .= '</ol>';
         }
+
         // return dashboard view
         return view('pages.home')->with('myCourses', $myCourses)->with('myPrograms', $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)
             ->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg)->with('campuses', $campuses)->with('faculties', $faculties)
             ->with('departments', $departments);
     }
 
-    public function getProgramUsers($program_id)
+    public function getProgramUsers($program_id): View
     {
 
         $programUsers = ProgramUser::join('users', 'program_users.user_id', '=', 'users.id')
@@ -209,9 +211,8 @@ class HomeController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $course_id)
+    public function destroy(Request $request, $course_id): RedirectResponse
     {
         //
         $c = Course::where('course_id', $course_id)->first();
@@ -231,7 +232,7 @@ class HomeController extends Controller
 
     }
 
-    public function submit(Request $request, $course_id)
+    public function submit(Request $request, $course_id): RedirectResponse
     {
         //
         $c = Course::where('course_id', $course_id)->first();

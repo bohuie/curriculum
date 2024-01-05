@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\CourseProgram;
 use App\Models\Program;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,10 +16,8 @@ class CourseProgramController extends Controller
 
     /**
      * Add courses to a program
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function addCoursesToProgram(Request $request)
+    public function addCoursesToProgram(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'program_id' => 'required',
@@ -74,7 +73,7 @@ class CourseProgramController extends Controller
         return redirect()->route('programWizard.step3', $request->input('program_id'));
     }
 
-    public function editCourseRequired(Request $request)
+    public function editCourseRequired(Request $request): RedirectResponse
     {
         $courseId = $request->input('course_id');
         $programId = $request->input('program_id');

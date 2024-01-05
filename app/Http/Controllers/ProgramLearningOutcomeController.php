@@ -10,6 +10,7 @@ use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +31,7 @@ class ProgramLearningOutcomeController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -48,10 +49,8 @@ class ProgramLearningOutcomeController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // validate request data
         $this->validate($request, [
@@ -145,9 +144,8 @@ class ProgramLearningOutcomeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $programLearningOutcomeID)
+    public function update(Request $request, $programLearningOutcomeID): RedirectResponse
     {
         // validate request input
         $this->validate($request, [
@@ -179,11 +177,8 @@ class ProgramLearningOutcomeController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $programLearningOutcome)
+    public function destroy(Request $request, ProgramLearningOutcome $programLearningOutcome): RedirectResponse
     {
         //
         $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome);
@@ -285,6 +280,7 @@ class ProgramLearningOutcomeController extends Controller
         // before clearing the spreadsheet from memory, "break" the cyclic references to worksheets.
         $spreadsheet->disconnectWorksheets();
         unset($spreadsheet);
+
         // return
         return redirect()->back();
 

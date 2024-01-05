@@ -9,6 +9,7 @@ use App\Models\OutcomeMap;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,7 +25,7 @@ class MappingScaleController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -42,10 +43,8 @@ class MappingScaleController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         //
         $this->validate($request, [
@@ -112,9 +111,8 @@ class MappingScaleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Models\MappingScale  $mappingScale
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $map_scale_id)
+    public function update(Request $request, $map_scale_id): RedirectResponse
     {
 
         //
@@ -155,9 +153,8 @@ class MappingScaleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\MappingScale  $mappingScale
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $map_scale_id)
+    public function destroy(Request $request, $map_scale_id): RedirectResponse
     {
         $map_scale = MappingScale::where('map_scale_id', $map_scale_id)->first();
         $mapping_scale_categories_id = $map_scale->mapping_scale_categories_id;
@@ -203,7 +200,7 @@ class MappingScaleController extends Controller
         return redirect()->route('programWizard.step2', $request->input('program_id'));
     }
 
-    public function addDefaultMappingScale(Request $request)
+    public function addDefaultMappingScale(Request $request): RedirectResponse
     {
         $mapping_scale_categories_id = $request->input('mapping_scale_categories_id');
 

@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\DB;
  */
 class CategoriesCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -38,10 +38,8 @@ class CategoriesCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
-     *
-     * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
         $this->crud->addColumn([
             'name' => 'cat_id',
@@ -72,10 +70,8 @@ class CategoriesCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
-     *
-     * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(CategoriesRequest::class);
         // $catId = \DB::table('optional_priority_categories')->count();
@@ -107,10 +103,8 @@ class CategoriesCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
-     *
-     * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->crud->addField([
             'name' => 'cat_id',
@@ -152,6 +146,7 @@ class CategoriesCrudController extends CrudController
 
         //deleting records
         $r = DB::table('optional_priority_subcategories')->where('cat_id', '=', $opcID)->delete();
+
         //this deletes the course record itself.
         return $this->crud->delete($id);
     }

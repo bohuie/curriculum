@@ -29,10 +29,8 @@ class NotifyProgramOwnerMail extends Mailable
 
     /**
      * Build the message.
-     *
-     * @return $this
      */
-    public function build()
+    public function build(): static
     {
         return $this->markdown('emails.notifyProgramOwner', [ // pass public variables (set in __construct) to notifyProgramAdmin.blade
             'program_title' => $this->program_title,

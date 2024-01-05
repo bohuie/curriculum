@@ -22,10 +22,8 @@ class Invitation extends Mailable
 
     /**
      * Build the message.
-     *
-     * @return $this
      */
-    public function build()
+    public function build(): static
     {
         return $this->subject('Invitation from UBC Curriculum Alignment Tool')->markdown('Mails.invitation');
     }

@@ -10,6 +10,7 @@ use App\Models\CourseUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -184,7 +185,7 @@ class CourseUserController extends Controller
                     }
                 }
             }
-            // else the current user does not own this course
+        // else the current user does not own this course
         } else {
             $errorMessages->add('You do not have permission to add collaborators to this course');
         }
@@ -257,7 +258,7 @@ class CourseUserController extends Controller
         }
     }
 
-    public function leave(Request $request)
+    public function leave(Request $request): RedirectResponse
     {
         $course = Course::find($request->input('course_id'));
         $courseUser = CourseUser::where('user_id', $request->input('courseCollaboratorId'))->where('course_id', $request->input('course_id'))->first();
@@ -270,7 +271,7 @@ class CourseUserController extends Controller
         return redirect()->back();
     }
 
-    public function transferOwnership(Request $request)
+    public function transferOwnership(Request $request): RedirectResponse
     {
         $course = Course::find($request->input('course_id'));
         $oldCourseOwner = CourseUser::where('user_id', $request->input('oldOwnerId'))->where('course_id', $request->input('course_id'))->first();

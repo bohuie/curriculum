@@ -10,6 +10,7 @@ use App\Models\syllabus\SyllabusUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -182,7 +183,7 @@ class SyllabusUserController extends Controller
                     }
                 }
             }
-            // else the current user does not own this syllabus
+        // else the current user does not own this syllabus
         } else {
             $errorMessages->add('You do not have permission to add collaborators to this syllabus');
         }
@@ -190,6 +191,7 @@ class SyllabusUserController extends Controller
         if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
             $request->session()->flash('success', 'Successfully updated collaborators on syllabus '.$syllabus->course_code.' '.$syllabus->course_num);
         }
+
         // return to the previous page
         return redirect()->back()->with('errorMessages', $errorMessages)->with('warningMessages', $warningMessages);
     }
@@ -197,7 +199,6 @@ class SyllabusUserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function show(SyllabusUser $syllabusUser)
@@ -208,7 +209,6 @@ class SyllabusUserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function edit(SyllabusUser $syllabusUser)
@@ -219,7 +219,6 @@ class SyllabusUserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function update(SyllabusUser $syllabusUser, $permissions)
@@ -242,7 +241,6 @@ class SyllabusUserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\SyllabusUser  $syllabusUser
      * @return \Illuminate\Http\Response
      */
     public function destroy(SyllabusUser $syllabusUser)
@@ -272,7 +270,7 @@ class SyllabusUserController extends Controller
         return redirect()->route('home');
     }
 
-    public function transferOwnership(Request $request)
+    public function transferOwnership(Request $request): RedirectResponse
     {
         $syllabus = Syllabus::find($request->input('syllabus_id'));
         $oldSyllabusOwner = SyllabusUser::where('user_id', $request->input('oldOwnerId'))->where('syllabus_id', $request->input('syllabus_id'))->first();

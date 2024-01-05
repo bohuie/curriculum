@@ -17,10 +17,7 @@ use Tests\TestCase;
 
 class CourseTest extends TestCase
 {
-    /**
-     * @return void
-     */
-    public function test_storing_new_course()
+    public function test_storing_new_course(): void
     {
 
         $delivery_modalities = ['O', 'B', 'I'];
@@ -65,7 +62,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_download_pdf()
+    public function test_download_pdf(): void
     {
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -73,7 +70,7 @@ class CourseTest extends TestCase
         $response = $this->actingAs($user)->get(route('courses.pdf', $course->course_id))->assertStatus(200);
     }
 
-    public function test_duplicate_course()
+    public function test_duplicate_course(): void
     {
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -91,7 +88,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_create_clo()
+    public function test_create_clo(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -127,7 +124,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_create_la()
+    public function test_create_la(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -163,7 +160,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_create_am()
+    public function test_create_am(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -210,7 +207,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_course_alignment()
+    public function test_course_alignment(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -250,7 +247,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_reorder_am()
+    public function test_reorder_am(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -271,7 +268,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_reorder_la()
+    public function test_reorder_la(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -292,7 +289,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_reorder_clo()
+    public function test_reorder_clo(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -312,7 +309,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_program_outcome_mapping()
+    public function test_program_outcome_mapping(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -392,7 +389,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_optional_priorities_store()
+    public function test_optional_priorities_store(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -412,7 +409,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_delete_clo()
+    public function test_delete_clo(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -440,7 +437,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_delete_am()
+    public function test_delete_am(): void
     {
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -469,7 +466,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_delete_la()
+    public function test_delete_la(): void
     {
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -494,7 +491,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_standardsOutcomeMap_store()
+    public function test_standardsOutcomeMap_store(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -525,7 +522,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_adding_collaborator()
+    public function test_adding_collaborator(): void
     {
         $user = User::where('email', 'test-course@ubc.ca')->first();
         $course = Course::where('course_title', 'Intro to Unit Testing')->orderBy('course_id', 'DESC')->first();
@@ -552,7 +549,7 @@ class CourseTest extends TestCase
 
     }
 
-    public function test_transferring_course()
+    public function test_transferring_course(): void
     {
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -578,7 +575,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_removing_collaborator()
+    public function test_removing_collaborator(): void
     {
 
         $user = User::where('email', 'test-course@ubc.ca')->first();
@@ -597,7 +594,7 @@ class CourseTest extends TestCase
         ]);
     }
 
-    public function test_deleting_course()
+    public function test_deleting_course(): void
     {
 
         $user2 = User::where('email', 'test-course-collab@ubc.ca')->first();

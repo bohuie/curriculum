@@ -11,10 +11,7 @@ use Tests\TestCase;
 
 class ProgramTest extends TestCase
 {
-    /**
-     * @return void
-     */
-    public function test_storing_new_program()
+    public function test_storing_new_program(): void
     {
         DB::table('users')->insert([
             'name' => 'Test Program',
@@ -45,7 +42,7 @@ class ProgramTest extends TestCase
 
     }
 
-    public function test_save_plo()
+    public function test_save_plo(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
@@ -69,7 +66,7 @@ class ProgramTest extends TestCase
 
     }
 
-    public function test_save_plo_category()
+    public function test_save_plo_category(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
@@ -100,7 +97,7 @@ class ProgramTest extends TestCase
 
         }
         */
-    public function test_addDefaultMappingScale()
+    public function test_addDefaultMappingScale(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
@@ -116,7 +113,7 @@ class ProgramTest extends TestCase
 
     }
 
-    public function test_mappingScale_store()
+    public function test_mappingScale_store(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
@@ -135,7 +132,7 @@ class ProgramTest extends TestCase
 
     }
 
-    public function test_addCoursesToProgram()
+    public function test_addCoursesToProgram(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
@@ -164,7 +161,7 @@ class ProgramTest extends TestCase
 
     }
 
-    public function test_editCourseRequired()
+    public function test_editCourseRequired(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
@@ -186,7 +183,7 @@ class ProgramTest extends TestCase
 
     }
 
-    public function test_duplicateProgram()
+    public function test_duplicateProgram(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();
@@ -203,7 +200,7 @@ class ProgramTest extends TestCase
 
     }
 
-    public function test_adding_collaborator()
+    public function test_adding_collaborator(): void
     {
         $user = User::where('email', 'test-program@ubc.ca')->first();
         $program = Program::where('program', 'Bachelor of Testing')->orderBy('program_id', 'DESC')->first();

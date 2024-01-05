@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class SyllabiTest extends TestCase
 {
-    public function test_syllabus_save()
+    public function test_syllabus_save(): void
     {
         DB::table('users')->insert([
             'name' => 'Test Syllabi',
@@ -84,7 +84,7 @@ class SyllabiTest extends TestCase
 
     }
 
-    public function test_syllabus_add_collab()
+    public function test_syllabus_add_collab(): void
     {
         $user = User::where('email', 'test-syllabi@ubc.ca')->first();
         $syllabus = Syllabus::where('course_title', 'Intro to Greatness')->orderBy('id', 'DESC')->first();
@@ -122,7 +122,7 @@ class SyllabiTest extends TestCase
 
     }
 
-    public function test_syllabus_transfer()
+    public function test_syllabus_transfer(): void
     {
         $user = User::where('email', 'test-syllabi@ubc.ca')->first();
         $syllabus = Syllabus::where('course_title', 'Intro to Greatness')->orderBy('id', 'DESC')->first();
@@ -148,7 +148,7 @@ class SyllabiTest extends TestCase
 
     }
 
-    public function test_syllabus_remove_collab()
+    public function test_syllabus_remove_collab(): void
     {
         $user = User::where('email', 'test-syllabi@ubc.ca')->first();
         $syllabus = Syllabus::where('course_title', 'Intro to Greatness')->orderBy('id', 'DESC')->first();
@@ -194,7 +194,7 @@ class SyllabiTest extends TestCase
     }
     */
 
-    public function test_syllabus_leave()
+    public function test_syllabus_leave(): void
     {
         $user = User::where('email', 'test-syllabi@ubc.ca')->first();
         $syllabus = Syllabus::where('course_title', 'Intro to Greatness')->orderBy('id', 'DESC')->first();
@@ -211,7 +211,7 @@ class SyllabiTest extends TestCase
 
     }
 
-    public function test_syllabus_delete()
+    public function test_syllabus_delete(): void
     {
         $user = User::where('email', 'test-syllabi@ubc.ca')->first();
         $syllabus = Syllabus::where('course_title', 'Intro to Greatness')->orderBy('id', 'DESC')->first();

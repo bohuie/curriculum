@@ -9,10 +9,8 @@ class OkanaganSyllabusResourceSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         OkanaganSyllabusResource::create([
             'id_name' => 'land',

@@ -13,10 +13,8 @@ class OptionalPrioritiesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         DB::table('optional_priorities')->truncate();

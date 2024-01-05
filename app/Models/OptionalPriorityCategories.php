@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class OptionalPriorityCategories extends Model
 {
-    use \Backpack\CRUD\app\Models\Traits\HasIdentifiableAttribute;
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
+    use \Backpack\CRUD\app\Models\Traits\HasIdentifiableAttribute;
     use HasFactory;
 
     protected $primaryKey = 'cat_id';

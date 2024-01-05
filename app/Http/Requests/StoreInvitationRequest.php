@@ -8,10 +8,8 @@ class StoreInvitationRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'email' => 'required|email|unique:invitations',
@@ -20,10 +18,8 @@ class StoreInvitationRequest extends FormRequest
 
     /**
      * Custom error messages.
-     *
-     * @return array
      */
-    public function messages()
+    public function messages(): array
     {
         return [
             'email.unique' => 'Invitation with this email address already requested.',

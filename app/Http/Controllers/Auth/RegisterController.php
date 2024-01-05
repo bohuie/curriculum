@@ -47,10 +47,8 @@ class RegisterController extends Controller
 
     /**
      * Get a validator for an incoming registration request.
-     *
-     * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
+    protected function validator(array $data): \Illuminate\Contracts\Validation\Validator
     {
         if (! App::environment('local') && ! App::environment('testing')) {
             return Validator::make($data, [
@@ -73,10 +71,8 @@ class RegisterController extends Controller
 
     /**
      * Create a new user instance after a valid registration.
-     *
-     * @return \App\Models\User
      */
-    protected function create(array $data)
+    protected function create(array $data): User
     {
         $role = Role::where('role', 'user')->first();
 
