@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\DB;
  */
 class SubcategoriesCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -232,6 +232,7 @@ class SubcategoriesCrudController extends CrudController
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
         $opscID = request()->route()->parameter('id');
         $r = DB::table('optional_priorities')->where('subcat_id', '=', $opscID)->delete();
+
         //this deletes the record itself.
         return $this->crud->delete($id);
     }

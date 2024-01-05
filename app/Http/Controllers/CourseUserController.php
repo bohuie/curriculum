@@ -184,7 +184,7 @@ class CourseUserController extends Controller
                     }
                 }
             }
-            // else the current user does not own this course
+        // else the current user does not own this course
         } else {
             $errorMessages->add('You do not have permission to add collaborators to this course');
         }

@@ -267,6 +267,7 @@ class LearningOutcomeController extends Controller
         // before clearing the spreadsheet from memory, "break" the cyclic references to worksheets.
         $spreadsheet->disconnectWorksheets();
         unset($spreadsheet);
+
         // return
         return redirect()->back();
 

@@ -184,7 +184,7 @@ class ProgramUserController extends Controller
                     }
                 }
             }
-            // else the current user does not own this program
+        // else the current user does not own this program
         } else {
             $errorMessages->add('You do not have permission to add collaborators to this program');
         }

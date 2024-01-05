@@ -182,7 +182,7 @@ class SyllabusUserController extends Controller
                     }
                 }
             }
-            // else the current user does not own this syllabus
+        // else the current user does not own this syllabus
         } else {
             $errorMessages->add('You do not have permission to add collaborators to this syllabus');
         }
@@ -190,6 +190,7 @@ class SyllabusUserController extends Controller
         if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
             $request->session()->flash('success', 'Successfully updated collaborators on syllabus '.$syllabus->course_code.' '.$syllabus->course_num);
         }
+
         // return to the previous page
         return redirect()->back()->with('errorMessages', $errorMessages)->with('warningMessages', $warningMessages);
     }

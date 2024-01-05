@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\DB;
  */
 class StandardsScaleCategoryCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -190,6 +190,7 @@ class StandardsScaleCategoryCrudController extends CrudController
         //delete all children starting with the leafmost objects. they have to be accessed using the id's of their parent records however (either the cloID or the courseID in this case)
         $sscID = request()->route()->parameter('id');
         $r = DB::table('standard_scales')->where('scale_category_id', '=', $sscID)->delete();
+
         //this deletes the course record itself.
         return $this->crud->delete($id);
     }

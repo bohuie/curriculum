@@ -171,7 +171,7 @@ class CourseController extends Controller
 
             return redirect()->route('programWizard.step3', $request->input('program_id'));
 
-            // course creation triggered by add new course on dashboard
+        // course creation triggered by add new course on dashboard
         } else {
             // course assigned to course creator
             $course->assigned = 1;
@@ -593,6 +593,7 @@ class CourseController extends Controller
             Storage::put('public/course-'.$course->course_id.'.pdf', $content);
             // get the url of the document
             $url = Storage::url('course-'.$course->course_id.'.pdf');
+
             // return the location of the pdf document on the server
             return $url;
 

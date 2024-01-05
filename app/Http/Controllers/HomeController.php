@@ -189,6 +189,7 @@ class HomeController extends Controller
             $count = 0;
             $progressBarMsg[$courseId]['statusMsg'] .= '</ol>';
         }
+
         // return dashboard view
         return view('pages.home')->with('myCourses', $myCourses)->with('myPrograms', $myPrograms)->with('user', $user)->with('coursesPrograms', $coursesPrograms)->with('standard_categories', $standard_categories)->with('programUsers', $programUsers)
             ->with('courseUsers', $courseUsers)->with('mySyllabi', $mySyllabi)->with('syllabiUsers', $syllabiUsers)->with('progressBar', $progressBar)->with('progressBarMsg', $progressBarMsg)->with('campuses', $campuses)->with('faculties', $faculties)

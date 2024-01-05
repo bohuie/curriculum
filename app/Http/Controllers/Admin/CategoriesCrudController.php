@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\DB;
  */
 class CategoriesCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -152,6 +152,7 @@ class CategoriesCrudController extends CrudController
 
         //deleting records
         $r = DB::table('optional_priority_subcategories')->where('cat_id', '=', $opcID)->delete();
+
         //this deletes the course record itself.
         return $this->crud->delete($id);
     }

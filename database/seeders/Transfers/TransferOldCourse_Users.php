@@ -39,7 +39,7 @@ class TransferOldCourse_Users extends Seeder
                     'created_at' => \Carbon\Carbon::now(),
                     'updated_at' => \Carbon\Carbon::now(),
                 ]);
-                // There exists more than one user for a course
+            // There exists more than one user for a course
             } else {
                 // if there are more than one collaborators per course
                 $collaboratorsPerCourse = [];

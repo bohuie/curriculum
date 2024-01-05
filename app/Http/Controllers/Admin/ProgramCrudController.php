@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\DB;
  */
 class ProgramCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -374,6 +374,7 @@ class ProgramCrudController extends CrudController
         $r = DB::table('course_programs')->where('program_id', $prgID)->delete();
         $r = DB::table('outcome_maps')->whereIn('pl_outcome_id', $setOfPLO)->delete();
         $r = DB::table('program_users')->where('program_id', '=', $prgID)->delete();
+
         //this deletes the program record itself.
         return $this->crud->delete($id);
     }

@@ -858,6 +858,7 @@ class ProgramController extends Controller
             $this->deleteCharts($program_id, $charts);
             // get the url of the document
             $url = Storage::url('pdfs'.DIRECTORY_SEPARATOR.$pdfName);
+
             // return the location of the pdf document on the server
             return $url;
 
@@ -946,6 +947,7 @@ class ProgramController extends Controller
             $this->deleteCharts($programId, $charts);
             // get the url of the document
             $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+
             // return the location of the spreadsheet document on the server
             return $url;
 
@@ -1683,7 +1685,7 @@ class ProgramController extends Controller
             // check if map_scale_value is in the frequency array and give it the value of 1
             if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
-                // if the value is found again, and is not zero, increment
+            // if the value is found again, and is not zero, increment
             } else {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
             }
@@ -1768,7 +1770,7 @@ class ProgramController extends Controller
             // check if map_scale_value is in the frequency array and give it the value of 1
             if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
-                // if the value is found again, and is not zero, increment
+            // if the value is found again, and is not zero, increment
             } else {
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
             }

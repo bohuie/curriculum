@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\DB;
  */
 class CourseCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -590,7 +590,7 @@ class CourseCrudController extends CrudController
         //code to CrUD the program lo mapping . should still work with multiple prgrams
         if ($req && count($req)) {
             $chk = array_filter($_POST, function ($element) {
-                return ! (false === strpos($element, 'map'));
+                return ! (strpos($element, 'map') === false);
             }, ARRAY_FILTER_USE_KEY);
             $setDelcp = DB::table('outcome_maps')->whereIn('l_outcome_id', $setOfCLO)->get()->toArray();
             foreach ($chk as $key => $val) {
@@ -670,7 +670,7 @@ class CourseCrudController extends CrudController
         //****************
         if ($req && count($req)) {
             $chk = array_filter($_POST, function ($element) {
-                return ! (false === strpos($element, 'min'));
+                return ! (strpos($element, 'min') === false);
             }, ARRAY_FILTER_USE_KEY);
             foreach ($chk as $key => $val) {
                 $exKey = explode('_', $key);
@@ -733,7 +733,7 @@ class CourseCrudController extends CrudController
         if ($req && count($req)) {
             $chkOP = [];
             $chk = array_filter($_POST, function ($element) {
-                return ! (false === strpos($element, 'opp'));
+                return ! (strpos($element, 'opp') === false);
             }, ARRAY_FILTER_USE_KEY);
             foreach ($chk as $key => $val) {
                 $exKey = explode('_', $key);
@@ -838,6 +838,7 @@ class CourseCrudController extends CrudController
         $r = DB::table('learning_activities')->where('course_id', '=', $crsID)->delete();
         $r = DB::table('course_programs')->where('course_id', '=', $crsID)->delete();
         $r = DB::table('course_users')->where('course_id', '=', $crsID)->delete();
+
         //this deletes the course record itself.
         return $this->crud->delete($id);
     }

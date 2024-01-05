@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MappingScale extends Model
 {
-    use \Backpack\CRUD\app\Models\Traits\HasIdentifiableAttribute;
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
+    use \Backpack\CRUD\app\Models\Traits\HasIdentifiableAttribute;
     use HasFactory;
 
     protected $table = 'mapping_scales';

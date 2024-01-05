@@ -68,11 +68,11 @@ class Program extends Model
         $ploCats = \App\Models\PLOCategory::where('program_id', '=', $prgID)->get()->toArray();
         for ($i = 0; $i < count($ploCats); $i++) {
             $ploCats[$i]['programOutcome'] = json_encode(\App\Models\ProgramLearningOutcome::where('plo_category_id', '=', $ploCats[$i]['plo_category_id'])
-                        ->get()->toArray());
+                ->get()->toArray());
         }
         //this gets the uncategorized records
         $ploCats[count($ploCats)]['programOutcome'] = json_encode(\App\Models\ProgramLearningOutcome::where('plo_category_id', '=', null)->where('program_id', '=', $prgID)
-                        ->get()->toArray());
+            ->get()->toArray());
         $ploCats[count($ploCats) - 1]['plo_category'] = 'Uncategorized';
 
         return json_encode($ploCats);
@@ -173,7 +173,7 @@ class Program extends Model
                             ->update(['plo_shortphrase' => $row['plo_shortphrase'], 'pl_outcome' => $row['pl_outcome'], 'plo_category_id' => $row['plo_category_id']]);
                     } else {
                         ProgramLearningOutcome::where('pl_outcome_id', $id)
-                                ->update(['plo_shortphrase' => $row['plo_shortphrase'], 'pl_outcome' => $row['pl_outcome'], 'plo_category_id' => null]);
+                            ->update(['plo_shortphrase' => $row['plo_shortphrase'], 'pl_outcome' => $row['pl_outcome'], 'plo_category_id' => null]);
                     }
                 }
             } else {

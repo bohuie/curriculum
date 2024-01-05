@@ -39,7 +39,7 @@ class TransferOldProgram_Users extends Seeder
                     'created_at' => \Carbon\Carbon::now(),
                     'updated_at' => \Carbon\Carbon::now(),
                 ]);
-                // There exists more than one user for a program
+            // There exists more than one user for a program
             } else {
                 // if there are more than one collaborators per program
                 $collaboratorsPerProgram = [];
