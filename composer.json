@@ -13,7 +13,7 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "consoletvs/charts": "^6.6",
         "doctrine/dbal": "^3.5",
-        "dompdf/dompdf": "^1.0",
+        "dompdf/dompdf": "2.0.4",
         "google/recaptcha": "1.2.*",
         "guzzlehttp/guzzle": "^7.2",
         "laminas/laminas-escaper": "^2.11",

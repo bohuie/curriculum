@@ -968,7 +968,7 @@ class SyllabusController extends Controller
      * @param  string  $ext: the file extension
      * @return a download response
      */
-    public function download(int $syllabusId, $ext): a
+    public function download(int $syllabusId, $ext)
     {
 
         $syllabus = Syllabus::find($syllabusId);
