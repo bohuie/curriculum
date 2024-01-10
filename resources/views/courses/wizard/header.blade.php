@@ -1,10 +1,4 @@
-<div class="alert alert-warning">
-            <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
-            <button type="button" class="close" data-dismiss="alert">×</button>  
-            <div>
-            The tool will be undergoing planned maintenance on <b>January 5th between 8:30 - 9:30 AM</b>. Please try again later if you experience any usability issues during this time.
-            </div>  
-</div>
+
 <div class="mt-4 mb-5">
     <div class="row">
         <div class="col">
