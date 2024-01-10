@@ -1,13 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="alert alert-warning">
-            <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
-            <button type="button" class="close" data-dismiss="alert">×</button>  
-            <div>
-            The tool will be undergoing planned maintenance on <b>January 5th between 8:30 - 9:30 AM</b>. Please try again later if you experience any usability issues during this time.
-            </div>  
-</div>
 <!-- Browser Notification -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
     <div id="browser-notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
