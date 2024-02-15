@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
-
 <!-- Notification -->
 <div aria-live="polite" aria-atomic="true" class="position-relative">
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:11">
@@ -44,21 +42,18 @@
             @include('programs.wizard.header')
 
             <!-- TEST CARD FOR NEW LAYOUT -->
-
-            <div class="alert alert-warning">
-                <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
-                <button type="button" class="close" data-dismiss="alert">×</button>  
-                <div>
-                    There is currently an issue with the Program Overview download function that was caused by our recent system upgrade. Our development team is actively looking into the problem. Please email <a href="ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a> if you have any questions.
-                </div>  
-            </div>
-
             <div class="card">
                 <!-- Include download progress subview for PDF -->
                 @include('modals.confirmDownloadModal', ['program' => $program])
                 @include('modals.setContentPDF', ['program' => $program])
                 @include('modals.downloadProgressModal', ['program' => $program])
-    
+
+                <li class="nav-item">
+                                <a href="{{route('programs.pdf', $program->program_id)}}">test charts</a>
+                            
+                                
+                </li>
+                
                 <h3 class="card-header wizard">
                     <div class="row">
                         <div class="col text-left">
@@ -77,7 +72,7 @@
                         <div class="col">
                             Program Overview
                         </div>
-                        
+
                         <div class="col text-right"> 
                             <button id="programOverviewHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>

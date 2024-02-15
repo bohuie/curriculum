@@ -267,9 +267,8 @@ class ProgramController extends Controller
      * @param Request HTTP request
      * @return array $url of pdf
      */
-    private function getImagesOfCharts(int $programId, $dstFileExt): array
+    private function getImagesOfCharts($programId, $dstFileExt)
     {
-
         // find the program
         $program = Program::find($programId);
         // get all the courses this program belongs to
@@ -484,6 +483,14 @@ class ProgramController extends Controller
             }
         }
 
+        return $this->handleChart('plosToClosCluster-'.$program->program_id.'.jpeg',
+        'Number of Course Outcomes per Program Learning Outcomes',
+        'Program Learning Outcomes',
+        '# of Outcomes',
+        $plosInOrder,
+        $seriesPLOCLO,
+        true);
+
         $plosToClosClusterChartImgURL = $this->barChartPOST(
             'plosToClosCluster-'.$program->program_id.'.jpeg',
             'Number of Course Outcomes per Program Learning Outcomes',
@@ -571,6 +578,35 @@ class ProgramController extends Controller
      * @param  array  $data: data for each category
      * @return string $url of image
      */
+    public function handleChart($filename, $title, $xLabel, $yLabel, $categories, $data, $hasLegend = false)
+    {
+        $users = User::select(DB::raw("COUNT(*) as count"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("Month(created_at)"))
+                    ->pluck('count');
+        
+
+        $view= view('highchart')->with(compact('users'))
+                                ->with(compact('title'))
+                                ->with(compact('xLabel'))
+                                ->with(compact('yLabel'))
+                                ->with(compact('categories'))
+                                ->with(compact('data'))
+                                ->with(compact('hasLegend'));
+
+        return $view;
+
+        
+
+        return view('chartTest')->with('xLabel', $xLabel)
+            ->with('yLabel', $yLabel)
+            ->with('title', $title)
+            ->with('categories', $categories)
+            ->with('hasLegend', $hasLegend)
+            ->with('data', $data); 
+            
+    }
+
     private function barChartPOST($filename, $title, $xLabel, $yLabel, $categories, $data, $hasLegend = false): string
     {
 
@@ -812,7 +848,7 @@ class ProgramController extends Controller
             }
 
             // get array of urls to charts in this program
-            $charts = $this->getImagesOfCharts($program_id, '.pdf');
+            return $this->getImagesOfCharts($program_id, '.pdf');
 
             //get defaultShortForms based on PLO Category, then Creation Order
             $defaultShortForms = [];

@@ -23,6 +23,7 @@ use App\Http\Controllers\ProgramLearningOutcomeController;
 use App\Http\Controllers\ProgramUserController;
 use App\Http\Controllers\ProgramWizardController;
 use App\Http\Controllers\StandardsOutcomeMapController;
+use App\Http\Controllers\HighChartController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\SyllabusUserController;
 use App\Http\Controllers\TermsController;
@@ -94,6 +95,10 @@ Route::delete('/programs/{program}/pdf', [ProgramController::class, 'deletePDF']
 // Program Summary Spreadsheet routes
 Route::get('/programs/{program}/spreadsheet', [ProgramController::class, 'spreadsheet'])->name('programs.spreadsheet');
 Route::delete('/programs/{program}/spreadsheet', [ProgramController::class, 'delSpreadsheet'])->name('programs.delete.spreadsheet');
+
+//Creating charts for program summary
+//Route::get('/chart', [ProgramController::class, 'handleChart'])->name('handleChart');
+Route::get('highchart', [ProgramController::class, 'handleChart']);
 
 Route::get('/programs/{program}/duplicate', [ProgramController::class, 'duplicate'])->name('programs.duplicate');
 
