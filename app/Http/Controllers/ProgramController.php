@@ -612,7 +612,7 @@ class ProgramController extends Controller
         // set URL and other appropriate options for POST
         $options = [
             // endpoint is the highcharts export server
-            CURLOPT_URL => 'http://export.highcharts.com/',
+            CURLOPT_URL => 'https://export.highcharts.com/',
             CURLOPT_HEADER => false,
             // return the transfer as a string
             CURLOPT_RETURNTRANSFER => 1,
