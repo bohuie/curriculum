@@ -45,13 +45,6 @@
 
             <!-- TEST CARD FOR NEW LAYOUT -->
 
-            <div class="alert alert-warning">
-                <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
-                <button type="button" class="close" data-dismiss="alert">×</button>  
-                <div>
-                    There is currently an issue with the Program Overview download function that was caused by our recent system upgrade. Our development team is actively looking into the problem. Please email <a href="ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a> if you have any questions.
-                </div>  
-            </div>
 
             <div class="card">
                 <!-- Include download progress subview for PDF -->
