@@ -31,12 +31,12 @@ use PhpOffice\PhpWord\SimpleType\TblWidth;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 define('INPUT_TIPS', [
-    'otherCourseStaff' => 'If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?',
-    'learningOutcomes' => 'Tell students what changes in their knowledge, skills, or attitudes should occur during the course. Knowing these, students will have a framework within which to put individual components of the course and they will be primed for the kinds of assessments of learning that will come.',
-    'learningAssessments' => 'Identify the various ways you will assess achievement of stated learning outcomes or objectives, when each will occur, and the weighting of each component in the final grade. Sometimes your assessment plan will need to be adjusted, you must discuss the proposal with the class and provide a rationale and then update the syllabus. A new, dated electronic syllabus must be provided',
+    'otherCourseStaff' => 'At the discretion of the course instructor, the names of any other student-facing members of teaching staff such as teaching assistants involved in the offering of the course (if not available on the Student Service Centre or on Workday), and details of when and by what means students may contact them.',
+    'learningOutcomes' => 'i.e., what is to be achieved and assessed in the course.',
+    'learningAssessments' => 'The methods used to assess achievement of stated learning outcomes or objectives, including the weighting of each component in the final grade.',
     'learningActivities' => 'Do you expect students to participate in class? In what ways? (e.g., case studies, using “clickers” to answer questions, working in small groups, etc.) Is participation in on-line discussions required? Are readings required in advance with answers to be submitted to discussion questions or problem sets? 
     Is an oral presentation required? Is there a field excursion?',
-    'learningMaterials' => 'List of required learning materials for your course and where they might be obtained (e.g. the Bookstore if you ordered a text or a reading package, your department office if an in-house resource is available, the Library through their <a href="https://library.ok.ubc.ca/services/course-reserves/" target="_blank" rel="noopener noreferrer">course-reserve system</a>). Providing students with at least an estimate of the costs of materials is expected. Explanation of any on-line learning management system used (e.g.Canvas).',
+    'learningMaterials' => 'List of required learning materials for your course (including textbooks, reading packages, on-line assessment tools, lab and field trip manuals) and where they might be obtained (e.g. the Bookstore if you ordered a text or a reading package, your department office if an in-house resource is available, the Library through their <a href="https://library.ok.ubc.ca/services/course-reserves/" target="_blank" rel="noopener noreferrer">course-reserve system</a>). Providing students with at least an estimate of the costs of materials is expected. Explanation of any on-line learning management system used (e.g.Canvas).',
     'latePolicy' => 'State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?',
     'missedActivityPolicy' => 'In accordance with policy on <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,41,90,1014" target="_blank" rel="noopener noreferrer">Grading Practices</a> and <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,48,1127,0" target="_blank" rel="noopener noreferrer">Academic Concessions</a>, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight marks from a missed test onto later assessments?)',
     'courseDescription' => 'As in the Academic Calendar or, for courses without a published description, include a brief representative one.',
@@ -44,7 +44,7 @@ define('INPUT_TIPS', [
     'coursePrereqs' => 'Is there a course that students must have passed before taking this course?',
     'courseCoreqs' => 'Is there a course that students must take concurrently (if not before)?',
     'courseContacts' => 'Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?',
-    'officeHours' => 'Do you have set office hours or can students make appointments? Do you hold “office hours” online? If so, how do students access you?',
+    'officeHours' => 'Details of when, and by what means students may contact the course instructor(s).',
     'courseStructure' => 'First, the basic components: lecture, lab, discussion, tutorial. Typically the locations are on the Student Service Centre but you may wish to include them. Then a description of how your classes are structured: Do you use traditional lecturing? Do you provide notes (outlines)? Do you combine on-line and in-class activity? You may wish to combine this section and Learning Outcomes below to provide an opportunity to introduce students to your philosophy of learning, to the culture of your discipline and how this course fits in the larger context.',
     'courseSchedule' => 'This may be a weekly schedule, it may be class by class, but let students know that if changes occur, they will be informed.',
     'instructorBioStatement' => 'You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.',
@@ -56,6 +56,7 @@ define('INPUT_TIPS', [
     'customResource' => 'Include any additional information or resources that have not been provided.',
     'saveWarning' => 'Be sure to save your content regularly by clicking the save button <i class="bi bi-clipboard2-check-fill"></i> at the top and bottom of this page.',
     'crossListed' => 'Is this a Cross-Listed Course? Per <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Curriculum Guidelines</a>.',
+    'courseStructureOK' =>'A description of the course structure such as, for example, lecture, lab, tutorial, flipped classroom, mixed-mode, contact hours per week; day, time, and location of classes, or other activities that may not be available on the Student Service Centre or on Workday.'
 ]);
 
 class SyllabusController extends Controller
@@ -574,6 +575,9 @@ class SyllabusController extends Controller
         $importCourseSettings = $request->input('import_course_settings', null);
         $syllabus->cross_listed_code = $request->input('courseCodeCL');
         $syllabus->cross_listed_num = $request->input('courseNumberCL');
+        $syllabus->course_section = $request->input('courseSection');
+        $syllabus->prerequisites = $request->input('prerequisites');
+        $syllabus->corequisites = $request->input('corequisites');
 
         if ($request->input('crossListed') == 1) {
             $syllabus->cross_listed_code = $request->input('courseCodeCL');
