@@ -40,7 +40,7 @@ define('INPUT_TIPS', [
     'latePolicy' => 'State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?',
     'missedActivityPolicy' => 'In accordance with policy on <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,41,90,1014" target="_blank" rel="noopener noreferrer">Grading Practices</a> and <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,48,1127,0" target="_blank" rel="noopener noreferrer">Academic Concessions</a>, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight marks from a missed test onto later assessments?)',
     'courseDescription' => 'As in the Academic Calendar or, for courses without a published description, include a brief representative one.',
-    'okanaganCourseDescription' => 'Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar</a>.',
+    'okanaganCourseDescription' => 'Course descriptions are provided in the UBCO Okanagan <a href="https://okanagan.calendar.ubc.ca/course-descriptions" target="_blank" rel="noopener noreferrer">Academic Calendar</a>.',
     'coursePrereqs' => 'Is there a course that students must have passed before taking this course?',
     'courseCoreqs' => 'Is there a course that students must take concurrently (if not before)?',
     'courseContacts' => 'Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?',

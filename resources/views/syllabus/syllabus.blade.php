@@ -613,9 +613,6 @@
                 id="learningMaterials" name="learningMaterials" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
         </div>
-
-        <!-- learning analytics and learning resources OK -->
-        <div class="col-12" id="LROkanagan"></div>
         
     
         <div class="col-12">
@@ -820,8 +817,22 @@
         @else 
             <div class="p-0 m-0" id="outcomeMapsDiv"></div>    
         @endif
-        <!--learning resources vancouver -->
-        <div class="col-12" id="LRVancouver"></div>
+
+        <!-- learning analytics and learning resources OK -->
+        <div class="col-12">
+                    <!-- Course Learning Resources -->
+                    <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
+            <span class="requiredBySenate"></span>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+            <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div> 
+            <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
+                id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
+                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>`
+        </div>
 
         <!-- University Policies -->
         <div class="col-12" id="uniPolicy"></div>
@@ -2635,7 +2646,6 @@
             $('#courseInstructorBio').removeClass('m-0 p-0');
             $('#courseDescription').html(courseDescription);
             $('#learningAnalytics').html(learningAnalytics);
-            $('#LRVancouver').html(LearningResources_LearningAnalytics);
             $('#uniPolicy').html(uniPolicyVan);
             //$('#crStatement').html(crStatement);
             $('#landAcknowledgement').html(landAcknowledgementV);
@@ -2648,7 +2658,6 @@
             $('#courseOverview').empty();
             $('#courseDesc').empty();
             $('#courseOverview').addClass('m-0 p-0');
-            $('#LROkanagan').empty();
             $('#optionalStatements').empty();
             $('#courseSectionOK').empty();
             $('.requiredBySenateOK').empty();
@@ -2666,7 +2675,6 @@
             $('#courseOverview').html(courseOverview);
             $('#courseDesc').html(okanaganCourseDescription);
             $('#courseOverview').removeClass('m-0 p-0');
-            $('#LROkanagan').html(LearningResources_LearningAnalytics);
             $('#courseSectionOK').html(courseSectionOK);
             $('.requiredBySenateOK').html(requiredBySenateLabelOK);
 
@@ -2686,7 +2694,6 @@
             $('#courseDescription').empty();
             $('#learningAnalytics').empty();
             $('.requiredBySenate').empty();
-            $('#LRVancouver').empty();
             $('#uniPolicy').empty();
             $('#crStatement').empty();
             $('#landAcknowledgement').html(landAcknowledgementO);
