@@ -2331,7 +2331,7 @@
          <!-- Course Learning Resources -->
             <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
             <span class="requiredBySenate"></span>
-            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+            <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningResources'] !!}</p>
             <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                     on a new line for the best formatting
@@ -2495,7 +2495,8 @@
                 <textarea data-formatnoteid="formatLAnal" style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
             `;
         var courseFormat = `
-                <label for="courseFormat"><h5 class="fw-bold">Course Structure</h5></label><span class="requiredBySenateOK"></span><i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseStructureOK']}}"></i>
+                <label for="courseFormat"><h5 class="fw-bold">Course Structure</h5></label><span class="requiredBySenateOK"></span>
+                <p class="inputFieldDescription">{!! $inputFieldDescriptions['courseStructureOK'] !!}</p>
                 <div id="formatFormat" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                     on a new line for the best formatting
