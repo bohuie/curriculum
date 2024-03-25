@@ -1123,6 +1123,59 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NoLearningActivities', 0);
                 }
 
+                
+                // tell template processor to include prerequisites if user completed the field(s)
+                if ($syllabus->prerequisites) {
+                    $prerequisitesArr = explode("\n", $syllabus->prerequisites);
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($prerequisitesArr as $index => $prereqs) {
+                            $templateProcessor->cloneBlock('NoPrerequisites');
+                            $templateProcessor->setValue('prerequisites'.$i, $prereqs.'</w:t><w:br/><w:t>');
+                            $i++;
+                        }
+
+                        for ($i; $i <= 20; $i++) {
+                            $templateProcessor->setValue('prerequisites'.$i, '');
+                        }
+                    } else {
+                        $templateProcessor->cloneBlock('NoPrerequisites');
+                        $templateProcessor->setValue('prerequisites0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->prerequisites));
+                        $i++;
+                        for ($i; $i <= 20; $i++) {
+                            $templateProcessor->setValue('prerequisites'.$i, '');
+                        }
+                    }
+
+                } else {
+                    $templateProcessor->cloneBlock('NoPrerequisites', 0);
+                }
+                // tell template processor to include corequisites if user completed the field(s)
+                if ($syllabus->corequisites) {
+                    $corequisitesArr = explode("\n", $syllabus->corequisites);
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($corequisitesArr as $index => $coreqs) {
+                            $templateProcessor->cloneBlock('NoCorequisites');
+                            $templateProcessor->setValue('corequisites'.$i, $coreqs.'</w:t><w:br/><w:t>');
+                            $i++;
+                        }
+
+                        for ($i; $i <= 20; $i++) {
+                            $templateProcessor->setValue('corequisites'.$i, '');
+                        }
+                    } else {
+                        $templateProcessor->cloneBlock('NoCorequisites');
+                        $templateProcessor->setValue('corequisites0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->corequisites));
+                        $i++;
+                        for ($i; $i <= 20; $i++) {
+                            $templateProcessor->setValue('corequisites'.$i, '');
+                        }
+                    }
+
+                } else {
+                    $templateProcessor->cloneBlock('NoCorequisites', 0);
+                }
                 // tell template processor to include other course staff if user completed the field(s)
                 if ($syllabus->other_instructional_staff) {
                     $otherCourseStaffArr = explode("\n", $syllabus->other_instructional_staff);
@@ -1872,6 +1925,13 @@ class SyllabusController extends Controller
             $templateProcessor->setValue('faculty', $faculty);
         } else {
             $templateProcessor->cloneBlock('NoFaculty', 0);
+        }
+
+        if ($courseSection = $syllabus->course_section) {
+            $templateProcessor->cloneBlock('NoCourseSection');
+            $templateProcessor->setValue('courseSection', $courseSection);
+        } else {
+            $templateProcessor->cloneBlock('NoCourseSection', 0);
         }
 
         if ($department = $syllabus->department) {

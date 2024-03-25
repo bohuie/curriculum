@@ -97,7 +97,7 @@
     <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
         <div>
-            To assist faculty and instructors in preparing their syllabi, this generator follows the policies and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/policies/policy-o-130-content-and-distribution-of-course-syllabi-2/">UBC Okanagan</a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver</a> senates. 
+            To assist faculty and instructors in preparing their syllabi, this generator follows the policies and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/policies/policy-o-130-content-and-distribution-of-course-syllabi-2/">UBC Okanagan</a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver</a> Senates. 
         </div>
     </div>
 
@@ -140,6 +140,8 @@
                 Please enter the course number.
             </div>
         </div>
+
+        
         
                <!--
              <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
@@ -202,8 +204,7 @@
                 <div id="crossListedCode" class="col-3"></div>
             <div id="crossListedNumber" class="col-3"></div>
                 @endif
-        
-
+    
         
         
         
@@ -254,6 +255,9 @@
         
         <div id="officeLocation" class="col-3"></div>
 
+                <!-- Okanagan Course Section -->
+                <div class="col-3"id="courseSectionOK"></div>
+                
         <div class="col-3">
             <label for="courseYear">Course Year <span class="requiredField">*</span></label>
             <select id="courseYear" class="form-select" name="courseYear" required>
@@ -288,9 +292,8 @@
                 Please enter the course term.
             </div>
         </div>
-            <!-- Okanagan Course Section -->
-            <div class="col-12"id="courseSectionOK"></div>
 
+        
         <div id="courseSemesterOther" class="col-3">
             @if (!empty($syllabus))
                 @if ($syllabus->course_term != 'W1' && $syllabus->course_term != 'W2' && $syllabus->course_term != 'S1' && $syllabus->course_term != 'S2')
@@ -299,15 +302,6 @@
                 @endif
             @endif
         </div>
-        <div class="col-6">
-            <label for="endTime">Prerequisites</label><span class="requiredBySenateOK"></span>
-            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "prerequisites" name = "prerequisites" class ="form-control" type="text" value="{{ !empty($syllabus) ? $syllabus->prerequisites : ''}}" >
-        </div>
-        <div class="col-6">
-            <label for="endTime">Corequisites</label><span class="requiredBySenateOK"></span>
-            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "corequisites" name = "corequisites" class ="form-control" type="text" value="{{ !empty($syllabus) ? $syllabus->corequisites : ''}}" >
-        </div>
-        
 
 
         <div class="col-3">
@@ -358,6 +352,15 @@
             </div>
         </div>
 
+        <div class="col-6">
+            <label for="endTime">Prerequisites</label><span class="requiredBySenateOK"></span>
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "prerequisites" name = "prerequisites" class ="form-control" type="text" value="{{ !empty($syllabus) ? $syllabus->prerequisites : ''}}" >
+        </div>
+        <div class="col-6">
+            <label for="endTime">Corequisites</label><span class="requiredBySenateOK"></span>
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "corequisites" name = "corequisites" class ="form-control" type="text" value="{{ !empty($syllabus) ? $syllabus->corequisites : ''}}" >
+        </div>
+        
         <!-- Land Acknowledgement Statement -->
         <div class="col-12" id="landAcknowledgement"></div>
         
@@ -2606,10 +2609,9 @@
                 <div class="row" id="optionalSyllabus"></div>
             </div>
             `;
-        var courseSectionOK =  `<div class="col-3">
+        var courseSectionOK =  `
             <label for="endTime">Course Section</label>
-            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "courseSection" name = "courseSection" class ="form-control" type="text" placeholder="E.g. 001" value="{{ !empty($syllabus) ? $syllabus->course_section : ''}}" >
-        </div>`;
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "courseSection" name = "courseSection" class ="form-control" type="text" placeholder="E.g. 001" value="{{ !empty($syllabus) ? $syllabus->course_section : ''}}" >`;
         
         // get campus select element
         var campus = $('#campus');
