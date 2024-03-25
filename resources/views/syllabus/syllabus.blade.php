@@ -831,7 +831,7 @@
                 </div> 
             <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
                 id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
-                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>`
+                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
         </div>
 
         <!-- University Policies -->
@@ -2337,21 +2337,6 @@
 
        
         //different statements for each campus
-        var LearningResources_LearningAnalytics = `
-
-         <!-- Course Learning Resources -->
-            <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
-            <span class="requiredBySenate"></span>
-            <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningResources'] !!}</p>
-            <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
-                    on a new line for the best formatting
-                    results.</span>
-                </div> 
-            <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
-                id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
-                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>`
-        ;
         var okanaganCourseDescription = `
             
                 <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label><span class="requiredBySenateOK"></span>
