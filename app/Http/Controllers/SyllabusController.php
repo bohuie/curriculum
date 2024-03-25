@@ -356,6 +356,9 @@ class SyllabusController extends Controller
         $syllabus->course_year = $request->input('courseYear');
         $courseInstructors = $request->input('courseInstructor');
         $courseInstructorEmails = $request->input('courseInstructorEmail');
+        $syllabus->course_section = $request->input('courseSection');
+        $syllabus->prerequisites = $request->input('prerequisites');
+        $syllabus->corequisites = $request->input('corequisites');
 
         if ($request->input('crossListed') == 1) {
             $syllabus->cross_listed_code = $request->input('courseCodeCL');
