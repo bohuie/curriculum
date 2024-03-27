@@ -365,7 +365,7 @@
         <div class="col-12" id="landAcknowledgement"></div>
         
         <div class="col-12">
-            <label for="officeHour">Office Hours</label><span class="requiredBySenateOK"></span>
+            <label for="officeHour"> <h5 class="fw-bold">Office Hours</h5></label><span class="requiredBySenateOK"></span>
             <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="2500" spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
         </div>
@@ -375,8 +375,7 @@
         <div class="col-12" id="coursePrereqs"></div>
         <!-- Course Corequisites -->
         <div class="col-12" id="courseCoreqs"></div>
-        <h5 class="col-12 fw-bold">Course Instructor(s)</h5><span class="requiredBySenateOK"></span>
-
+        <div class="col-3"><label for="courseInstructors"><h5 class="fw-bold">Course Instructor(s)</h5></label></div><div class="col-9"><span class="requiredBySenateOK"></span></div>
 @if (!empty($syllabus) && $syllabusInstructors->count() > 0)
     @foreach ($syllabusInstructors as $syllabusInstructor)
         <div class="instructor row g-3 align-items-end m-0 p-0">
@@ -468,7 +467,12 @@
         <!-- course schedule table -->
         <div class="col mb-3">
             <label for="courseSchedule">
-                <h5 class="fw-bold">Schedule of Topics</h5><span class="requiredBySenateOK"></span>
+                <table>
+                    <tr>
+                        <td><div><h5 class="fw-bold">Schedule of Topics</h5></td>
+                        <td><span class="requiredBySenateOK"></span></td>
+                    </tr>
+                </table>
             </label>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="Create Course Schedule Table">
                 <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount> 0) hidden @endif @endif id="createTableBtn" type="button" class="btn btn-light rounded-pill m-2" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal" style="font-color:#002145">
