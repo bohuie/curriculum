@@ -4,8 +4,8 @@
     <div class="row p-md-5 justify-content-center text-light bg-primary mt-3">
         <div class="col-md-12">
             <div class="container">
-                <h1>Curriculum MAP</h1>                                                  
-                <p class="lead">A tool to support curriculum mapping, analysis, and planning.</p>
+                <h1>Curriculum MAP & Syllabus Generator</h1>                                                  
+                <p class="lead">A free tool to support curriculum mapping, analysis, and planning, and the creation of UBC syllabi. Anybody can create an account to use any of these features!</p>
                 
                 <div class="row">
                     <div class="col-sm"> 
