@@ -474,6 +474,7 @@
                     </tr>
                 </table>
             </label>
+            <br>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="Create Course Schedule Table">
                 <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount> 0) hidden @endif @endif id="createTableBtn" type="button" class="btn btn-light rounded-pill m-2" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal" style="font-color:#002145">
                     <i class="bi bi-plus"></i>
