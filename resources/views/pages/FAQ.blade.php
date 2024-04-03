@@ -108,7 +108,7 @@
                                 <li>Fill in all other fields that are relevant to your course (or click the <i class="text-secondary bi bi-box-arrow-in-down-left"></i> icon to "Import" an existing course from your Dashboard)
                                     <ol type="a">
                                         <li>Required fields are marked with a <span class="requiredField">*</span>.</li>
-                                        <li>For Vancouver syllabi, some fields are required by <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">Vancouver Senate policy V-130</a>. These fields are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
+                                        <li>Fields required by Senate policy are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
                                     </ol>
                                 </li>
                                 <li>Select your campus.</li>
