@@ -471,6 +471,7 @@
                     <tr>
                         <td><div><h5 class="fw-bold">Schedule of Topics</h5></td>
                         <td><span class="requiredBySenateOK"></span></td>
+                        <td><i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i></td>
                     </tr>
                 </table>
             </label>
@@ -481,7 +482,6 @@
                     <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
                 </button>
             </span>
-            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
 
         </div>
 
