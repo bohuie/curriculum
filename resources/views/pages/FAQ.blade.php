@@ -100,7 +100,7 @@
                     <!-- FAQ Accordion body -->
                     <div id="collapseFAQAccordion5" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader5" data-bs-parent="FAQAccordion5">
                         <div class="accordion-body lh-lg">
-                            <p>The <a href="{{ url('/') }}" target="_BLANK" rel="noopener noreferrer">UBC Curriculum MAP</a> Syllabus Generator aims to assist faculty in preparing their syllabi. The generator follows the policies, guidelines and templates provided by the <a href="https://senate.ubc.ca/okanagan/curriculum/forms" target="_BLANK" rel="noopener noreferrer">UBC Okanagan</a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">UBC Vancouver senates</a>.</p>
+                            <p>The <a href="{{ url('/') }}" target="_BLANK" rel="noopener noreferrer">UBC Curriculum MAP</a> Syllabus Generator aims to assist faculty in preparing their syllabi. The generator follows the policies, guidelines and templates provided by the <a href="https://senate.ubc.ca/okanagan/consultations-surveys/policy-v-130-syllabus-policy/" target="_BLANK" rel="noopener noreferrer">UBC Okanagan</a> and <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">UBC Vancouver senates</a>.</p>
                             <p class="fw-bold">How do I use the Curriculum MAP Syllabus Generator?</p>
                             <ol>
                                 <li>Create a Curriculum MAP account by <a href="{{ route('register') }}" target="_BLANK" rel="noopener noreferrer">registering</a> with the site. After you register or if you already have an account, sign in to your Curriculum MAP account using the <a href="{{ route('login') }}" target="_BLANK" rel="noopener noreferrer">login</a> page.</li>
@@ -108,7 +108,7 @@
                                 <li>Fill in all other fields that are relevant to your course (or click the <i class="text-secondary bi bi-box-arrow-in-down-left"></i> icon to "Import" an existing course from your Dashboard)
                                     <ol type="a">
                                         <li>Required fields are marked with a <span class="requiredField">*</span>.</li>
-                                        <li>For Vancouver syllabi, some fields are required by <a href="https://senate.ubc.ca/policies-resources-support-student-success" target="_BLANK" rel="noopener noreferrer">Vancouver Senate policy V-130</a>. These fields are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
+                                        <li>Fields required by Senate policy are marked with a red label reading <span class="d-inline-block has-tooltip" tabindex="0" data-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus by Vancouver Senate policy V-130"><button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button></span>.</li>
                                     </ol>
                                 </li>
                                 <li>Select your campus.</li>

@@ -4,8 +4,8 @@
     <div class="row p-md-5 justify-content-center text-light bg-primary mt-3">
         <div class="col-md-12">
             <div class="container">
-                <h1>Curriculum MAP</h1>                                                  
-                <p class="lead">A tool to support curriculum mapping, analysis, and planning.</p>
+                <h1>Curriculum MAP & Syllabus Generator</h1>                                                  
+                <p class="lead">A free tool to support curriculum mapping, analysis, and planning, and the creation of UBC syllabi. Anybody can create an account to use any of these features!</p>
                 
                 <div class="row">
                     <div class="col-sm"> 
@@ -157,7 +157,7 @@
         <div class="container">
                 <div class="col-md font-weight-bold">
 
-                    <h1><strong>How to Use Curriculum MAP?</strong></h1>
+                    <h1><strong>How to Use Curriculum MAP and Syllabus Generator?</strong></h1>
                     
                     <p class="lead">
                         To use this website, users must:
@@ -165,7 +165,7 @@
 
                     <ol>
                         <li class="lead">Register on the website (registration button can be found on the top banner).</li>
-                        <li class="lead">Choose whether to create a course or a program for curriculum mapping.</li>
+                        <li class="lead">Choose whether to create a course or a program or a syllabus.</li>
                         <li class="lead">Follow the prompts and steps shown on the website.</li>
                         <li class="lead">Save or print the results.</li>
                         <li class="lead">Log back in to review or edit your work.</li>
