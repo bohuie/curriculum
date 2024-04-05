@@ -104,7 +104,7 @@
                                     </table>                                    
                                 </div>
                             </div>
-                            <form method="POST" id="saveLearningActivityChanges" action="{{ action('LearningActivityController@store') }}">
+                            <form method="POST" id="saveLearningActivityChanges" action="{{ action([\App\Http\Controllers\LearningActivityController::class, 'store']) }}">
                                 @csrf
                                 <div class="modal-footer">
                                     <input type="hidden" name="course_id" value="{{$course->course_id}}" form="saveLearningActivityChanges">

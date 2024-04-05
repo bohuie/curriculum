@@ -1,21 +1,23 @@
 <?php
 
 namespace App\Http\Controllers;
+
 // composer generates this autoload.php file so you can start using the classes in dependencies without any extra work
 
+use App\Helpers\ReadOutcomesFilter;
 use App\Models\CourseProgram;
+use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\User;
-use App\Models\PLOCategory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Throwable;
-use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use App\Helpers\ReadOutcomesFilter;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Throwable;
 
 class ProgramLearningOutcomeController extends Controller
 {
@@ -28,8 +30,8 @@ class ProgramLearningOutcomeController extends Controller
     {
         $this->middleware(['auth', 'verified']);
     }
-    
-    public function index()
+
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -47,15 +49,12 @@ class ProgramLearningOutcomeController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        // validate request data 
+        // validate request data
         $this->validate($request, [
-            'program_id'=> 'required',
+            'program_id' => 'required',
         ]);
 
         try {
@@ -67,11 +66,11 @@ class ProgramLearningOutcomeController extends Controller
             $currentPLOShortphrases = $request->input('current_pl_outcome_short_phrase');
             $currentPLOCategories = $request->input('current_plo_category');
             // get the new plos, their shortphrases and their categories
-            $newPLOs = $request->input('new_pl_outcome');    
+            $newPLOs = $request->input('new_pl_outcome');
             $newPLOShortphrases = $request->input('new_pl_outcome_short_phrase');
             $newPLOCategories = $request->input('new_plo_category');
             // case: delete all program learning outcomes
-            if (!$currentPLOs && !$newPLOs) {
+            if (! $currentPLOs && ! $newPLOs) {
                 $program->programLearningOutcomes()->delete();
             }
             // get the saved plos for this program
@@ -79,13 +78,13 @@ class ProgramLearningOutcomeController extends Controller
             // update current plos
             foreach ($plos as $plo) {
                 if (array_key_exists($plo->pl_outcome_id, $currentPLOs)) {
-                    // save and update plo 
+                    // save and update plo
                     $plo->pl_outcome = $currentPLOs[$plo->pl_outcome_id];
                     $plo->plo_shortphrase = $currentPLOShortphrases[$plo->pl_outcome_id];
                     $plo->plo_category_id = $currentPLOCategories[$plo->pl_outcome_id];
                     $plo->save();
                 } else {
-                    // remove plo from program 
+                    // remove plo from program
                     $plo->delete();
                 }
             }
@@ -106,16 +105,16 @@ class ProgramLearningOutcomeController extends Controller
             $user = User::find(Auth::id());
             $program->last_modified_user = $user->name;
             $program->save();
-            $request->session()->flash('success','Your program learning outcomes were updated successfully!');
+            $request->session()->flash('success', 'Your program learning outcomes were updated successfully!');
         } catch (Throwable $exception) {
             $message = 'There was an error updating your program learning outcomes';
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
             $request->session()->flash('error', $message);
-        } finally { 
+        } finally {
             return redirect()->route('programWizard.step1', $request->input('program_id'));
         }
 
@@ -124,7 +123,6 @@ class ProgramLearningOutcomeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
      * @return \Illuminate\Http\Response
      */
     public function show(ProgramLearningOutcome $programLearningOutcome)
@@ -135,7 +133,6 @@ class ProgramLearningOutcomeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
      * @return \Illuminate\Http\Response
      */
     public function edit(ProgramLearningOutcome $programLearningOutcome)
@@ -146,24 +143,22 @@ class ProgramLearningOutcomeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $programLearningOutcomeID)
+    public function update(Request $request, $programLearningOutcomeID): RedirectResponse
     {
-        // validate request input 
+        // validate request input
         $this->validate($request, [
             'program_id' => 'required',
-            'plo'=> 'required',
-            ]);
+            'plo' => 'required',
+        ]);
 
         $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcomeID)->first();
         $plo->pl_outcome = $request->input('plo');
         $plo->plo_shortphrase = $request->input('title');
         $plo->plo_category_id = $request->input('category');
 
-        if($plo->save()){
+        if ($plo->save()) {
             // update courses 'updated_at' field
             $program = Program::find($request->input('program_id'));
             $program->touch();
@@ -173,7 +168,7 @@ class ProgramLearningOutcomeController extends Controller
             $program->save();
 
             $request->session()->flash('success', 'Program learning outcome updated');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error updating the program learning outcome');
         }
 
@@ -182,11 +177,8 @@ class ProgramLearningOutcomeController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ProgramLearningOutcome  $programLearningOutcome
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $programLearningOutcome)
+    public function destroy(Request $request, ProgramLearningOutcome $programLearningOutcome): RedirectResponse
     {
         //
         $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome);
@@ -196,22 +188,22 @@ class ProgramLearningOutcomeController extends Controller
         $user = User::find(Auth::id());
         $program->last_modified_user = $user->name;
         $program->save();
-        
-        if($plo->delete()){
+
+        if ($plo->delete()) {
             // update courses 'updated_at' field
             $program = Program::find($request->input('program_id'));
             $program->touch();
-            
-            $request->session()->flash('success','Program learning outcome has been deleted');
-        }else{
+
+            $request->session()->flash('success', 'Program learning outcome has been deleted');
+        } else {
             $request->session()->flash('error', 'There was an error deleting the program learning outcome');
         }
 
-        return redirect()->route('programWizard.step1',$request->input('program_id'));
-    }   
+        return redirect()->route('programWizard.step1', $request->input('program_id'));
+    }
 
     public function import(Request $request)
-    {   
+    {
         // $this->validate($request, [
         //     'upload'=> 'required|mimes:csv,xlsx,xlx,xls|max:2048',
         // ]);
@@ -221,32 +213,34 @@ class ProgramLearningOutcomeController extends Controller
         $path = $file->storeAs(
             'temporary', $clientFileName
         );
-        $absolutePath = storage_path('app' . DIRECTORY_SEPARATOR . 'temporary' . DIRECTORY_SEPARATOR . $clientFileName);
+        $absolutePath = storage_path('app'.DIRECTORY_SEPARATOR.'temporary'.DIRECTORY_SEPARATOR.$clientFileName);
 
         /**  Create a new reader of the type defined by $clientFileName extension  **/
         $reader = IOFactory::createReaderForFile($absolutePath);
         /**  Advise the reader that we only want to load cell data, not cell formatting info  **/
         $reader->setReadDataOnly(true);
         // a read filter can be used to set rules on which cells should be read from a file
-        $reader->setReadFilter( new ReadOutcomesFilter(0, 30, ['A', 'B']) );
+        $reader->setReadFilter(new ReadOutcomesFilter(0, 30, ['A', 'B']));
         /**  Load $inputFileName to a Spreadsheet Object  **/
-        $spreadsheet = $reader->load($absolutePath);  
+        $spreadsheet = $reader->load($absolutePath);
         $worksheets = $spreadsheet->getAllSheets();
         foreach ($worksheets as $worksheet) {
             // create a program learning outcome category
             $worksheetTitle = $worksheet->getTitle();
-            Log::debug('Add PLO category: ' . $worksheetTitle);
+            Log::debug('Add PLO category: '.$worksheetTitle);
             $ploCategory = PLOCategory::create([
                 'plo_category' => $worksheetTitle,
-                'program_id' => $programId
+                'program_id' => $programId,
             ]);
             foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
                 // skip header row
-                if ($rowIndex == 1) continue;
+                if ($rowIndex == 1) {
+                    continue;
+                }
                 // get cell iterator
                 $cellIterator = $row->getCellIterator();
                 // loop through cells only when value is set
-                $cellIterator->setIterateOnlyExistingCells(TRUE); 
+                $cellIterator->setIterateOnlyExistingCells(true);
                 $plo = new ProgramLearningOutcome;
                 // set plo program id
                 $plo->program_id = $programId;
@@ -257,15 +251,19 @@ class ProgramLearningOutcomeController extends Controller
                     // get column index of cell
                     $cellColumnIndex = Coordinate::columnIndexFromString($cell->getColumn());
                     switch ($cellColumnIndex) {
-                        case 1: 
+                        case 1:
                             // set PLO value
                             $ploValue = $cell->getValue();
-                            if ($ploValue) $plo->pl_outcome = $ploValue;
+                            if ($ploValue) {
+                                $plo->pl_outcome = $ploValue;
+                            }
                             break;
                         case 2:
                             // set PLO Short Phrase
                             $ploShortPhrase = $cell->getValue();
-                            if ($ploShortPhrase) $plo->plo_shortphrase = $ploShortPhrase;
+                            if ($ploShortPhrase) {
+                                $plo->plo_shortphrase = $ploShortPhrase;
+                            }
                             break;
                         default:
                             break;
@@ -277,12 +275,13 @@ class ProgramLearningOutcomeController extends Controller
                 }
             }
         }
-        // delete file on server        
+        // delete file on server
         Storage::delete($path);
         // before clearing the spreadsheet from memory, "break" the cyclic references to worksheets.
         $spreadsheet->disconnectWorksheets();
         unset($spreadsheet);
-        // return 
+
+        // return
         return redirect()->back();
 
     }

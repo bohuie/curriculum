@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class FAQController extends Controller
 {
@@ -13,15 +13,13 @@ class FAQController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth',['except'=>['index']]);
+        $this->middleware('auth', ['except' => ['index']]);
     }
 
     /**
      * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(): View
     {
         return view('pages.FAQ');
     }

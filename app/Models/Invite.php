@@ -17,7 +17,8 @@ class Invite extends Model
     ];
 
     // Generate Token
-    public function generateToken() {
+    public function generateToken()
+    {
         $token = random_bytes(32);
         $token = bin2hex($token);
         $this->invitation_token = $token;
@@ -27,6 +28,4 @@ class Invite extends Model
     {
         return 'invitation_token';
     }
-
-
 }

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+
+
 <!-- Notification -->
 <div aria-live="polite" aria-atomic="true" class="position-relative">
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:11">
@@ -42,12 +44,14 @@
             @include('programs.wizard.header')
 
             <!-- TEST CARD FOR NEW LAYOUT -->
+
+
             <div class="card">
                 <!-- Include download progress subview for PDF -->
                 @include('modals.confirmDownloadModal', ['program' => $program])
                 @include('modals.setContentPDF', ['program' => $program])
                 @include('modals.downloadProgressModal', ['program' => $program])
-
+    
                 <h3 class="card-header wizard">
                     <div class="row">
                         <div class="col text-left">
@@ -66,7 +70,7 @@
                         <div class="col">
                             Program Overview
                         </div>
-
+                        
                         <div class="col text-right"> 
                             <button id="programOverviewHelp" style="border: none; background: none; outline: none;" data-bs-toggle="modal" href="#guideModal">
                                 <i class="bi bi-question-circle" style="color:#002145;"></i>

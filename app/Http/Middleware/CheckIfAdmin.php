@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckIfAdmin
 {
@@ -23,7 +25,6 @@ class CheckIfAdmin
      * (again - users, not admins).
      *
      * @param [type] $user [description]
-     *
      * @return bool [description]
      */
     private function checkIfUserIsAdmin($user)
@@ -36,7 +37,6 @@ class CheckIfAdmin
      * Answer to unauthorized access request.
      *
      * @param [type] $request [description]
-     *
      * @return [type] [description]
      */
     private function respondToUnauthorizedRequest($request)
@@ -50,13 +50,8 @@ class CheckIfAdmin
 
     /**
      * Handle an incoming request.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (backpack_auth()->guest()) {
             return $this->respondToUnauthorizedRequest($request);

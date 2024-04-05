@@ -9,10 +9,8 @@ class StandardCategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $msc = new StandardCategory;
         $msc->standard_category_id = 1;
@@ -26,7 +24,7 @@ class StandardCategorySeeder extends Seeder
 
         $msc3 = new StandardCategory;
         $msc3->standard_category_id = 3;
-        $msc3->sc_name = "Doctoral degree level standards";
+        $msc3->sc_name = 'Doctoral degree level standards';
         $msc3->save();
     }
 }

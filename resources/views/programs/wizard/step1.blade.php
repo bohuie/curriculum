@@ -55,7 +55,7 @@
                     </table>                                    
                 </div>
             </div>
-            <form method="POST" id="savePLOCategoryChanges" action="{{ action('PLOCategoryController@store') }}">
+            <form method="POST" id="savePLOCategoryChanges" action="{{ action([\App\Http\Controllers\PLOCategoryController::class, 'store']) }}">
                 @csrf
                 <div class="modal-footer">
                     <input type="hidden" name="program_id" value="{{$program->program_id}}" form="savePLOCategoryChanges">
@@ -166,7 +166,7 @@
                 </div>
             </div>
 
-            <form method="POST" id="savePLOChanges" action="{{ action('ProgramLearningOutcomeController@store') }}">
+            <form method="POST" id="savePLOChanges" action="{{ action([\App\Http\Controllers\ProgramLearningOutcomeController::class, 'store']) }}">
                 @csrf
                 <div class="modal-footer">
                     <input type="hidden" name="program_id" value="{{$program->program_id}}" form="savePLOChanges">
@@ -212,7 +212,7 @@
                         </div>
                     </div>
 
-                    <form method="POST" class="col-6 ml-1" action="{{ action('ProgramLearningOutcomeController@import') }}" enctype="multipart/form-data">
+                    <form method="POST" class="col-6 ml-1" action="{{ action([\App\Http\Controllers\ProgramLearningOutcomeController::class, 'import']) }}" enctype="multipart/form-data">
                         @csrf
                         <a href="{{asset('import_samples/import-plos-template.xlsx')}}" download><i class="bi bi-download mb-1"></i> import-plos-template.xlsx</a>
                         <div class="input-group">
@@ -268,10 +268,9 @@
                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
 
-                                                            <form method="POST"
-                                                                action="{{ action('PLOCategoryController@update', $category->plo_category_id) }}">
+                                                            <form action="{{route('program.category.update', $category->plo_category_id)}}" method="POST">
                                                                 @csrf
-                                                                {{method_field('PUT')}}
+                                                                {{method_field('POST')}}
 
                                                                 <div class="modal-body">
                                                                     <div class="form-floating mb-3">
@@ -305,7 +304,7 @@
                                                             Are you sure you want to delete category: {{$category->plo_category}}?
                                                             </div>
 
-                                                            <form action="{{route('ploCategory.destroy', $category->plo_category_id)}}" method="POST">
+                                                            <form action="{{route('program.category.destroy', $category->plo_category_id)}}" method="POST">
                                                                 @csrf
                                                                 {{method_field('DELETE')}}
                                                                 <input type="hidden" class="form-check-input " name="program_id"
@@ -428,9 +427,10 @@
                                                                 <h5 class="modal-title" id="editPLOModalLabel">Edit Program Learning Outcome (PLO)</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
-                                                            <form method="POST" action="{{ action('ProgramLearningOutcomeController@update', $ploCat->pl_outcome_id) }}">
+                                                            
+                                                            <form action="{{route('plo.update', $ploCat->pl_outcome_id)}}" method="POST">
                                                                 @csrf
-                                                                {{method_field('PUT')}}
+                                                                {{method_field('POST')}}
                                                                 <div class="modal-body">
                                                                     <div class="form-floating mb-3">
                                                                         <textarea id="editPLOinput{{$ploCat->pl_outcome_id}}" name="plo" class="form-control" placeholder="E.g. Develop..."  style="height: 100px" required>{{$ploCat->pl_outcome}}</textarea>
@@ -540,9 +540,10 @@
                                                             <h5 class="modal-title" id="editPLOModalLabel">Edit Program Learning Outcome (PLO)</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <form method="POST" action="{{ action('ProgramLearningOutcomeController@update', $unCatplo->pl_outcome_id) }}">
+                                                        
+                                                        <form action="{{route('plo.update', $unCatplo->pl_outcome_id)}}" method="POST">
                                                             @csrf
-                                                            {{method_field('PUT')}}
+                                                            {{method_field('POST')}}
                                                             <div class="modal-body">
                                                                 <div class="form-floating mb-3">
                                                                     <textarea id="editPLOinput{{$unCatplo->pl_outcome_id}}" name="plo" class="form-control" placeholder="E.g. Develop..."  style="height: 100px" required>{{$unCatplo->pl_outcome}}</textarea>

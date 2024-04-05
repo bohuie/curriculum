@@ -42,35 +42,41 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function roles(){
-        return $this->belongsToMany('App\Models\Role');
+    public function roles()
+    {
+        return $this->belongsToMany(\App\Models\Role::class);
     }
 
-    public function courses(){
-        return $this->belongsToMany('App\Models\Course', 'course_users', 'user_id', 'course_id')->withPivot('permission');
+    public function courses()
+    {
+        return $this->belongsToMany(\App\Models\Course::class, 'course_users', 'user_id', 'course_id')->withPivot('permission');
     }
 
-    public function programs(){
-        return $this->belongsToMany('App\Models\Program', 'program_users', 'user_id', 'program_id',)->withPivot('permission');
+    public function programs()
+    {
+        return $this->belongsToMany(\App\Models\Program::class, 'program_users', 'user_id', 'program_id')->withPivot('permission');
     }
 
-    public function syllabi(){
-        return $this->belongsToMany('App\Models\syllabus\Syllabus', 'syllabi_users', 'user_id', 'syllabus_id')->withPivot('permission');
+    public function syllabi()
+    {
+        return $this->belongsToMany(\App\Models\syllabus\Syllabus::class, 'syllabi_users', 'user_id', 'syllabus_id')->withPivot('permission');
     }
 
-    public function hasAnyRoles($roles){
-        if($this->roles()->whereIn('role', $roles)->first()){
+    public function hasAnyRoles($roles)
+    {
+        if ($this->roles()->whereIn('role', $roles)->first()) {
             return true;
         }
+
         return false;
     }
 
-    public function hasRole($role){
-        if($this->roles()->where('role', $role)->first()){
+    public function hasRole($role)
+    {
+        if ($this->roles()->where('role', $role)->first()) {
             return true;
         }
+
         return false;
     }
-
-
 }

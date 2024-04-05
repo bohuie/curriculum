@@ -668,7 +668,7 @@
         <button class="btn btn-primary dropdown-toggle m-2 col-4 float-right" type="button" data-bs-toggle="dropdown" aria-expanded="false">Download</button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                 <li>
-                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'pdf']) }}">
+                    <form method="POST" action="{{ action([\App\Http\Controllers\SyllabusController::class, 'download'], [$syllabus->id, 'pdf']) }}">
                     @csrf        
                         <button type="submit" name="download" value="pdf" class="dropdown-item" type="button">
                             <i class="bi-file-pdf-fill text-danger"></i> PDF
@@ -676,7 +676,7 @@
                     </form>
                 </li>
                 <li>
-                    <form method="POST" action="{{ action('SyllabusController@download', [$syllabus->id, 'word']) }}">
+                    <form method="POST" action="{{ action([\App\Http\Controllers\SyllabusController::class, 'download'], [$syllabus->id, 'word']) }}">
                     @csrf        
                         <button type="submit" name="download" value="word" class="dropdown-item" type="button">
                             <i class="bi-file-earmark-word-fill text-primary"></i> Word

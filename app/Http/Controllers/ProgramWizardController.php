@@ -4,41 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\AssessmentMethod;
 use App\Models\Campus;
-use Illuminate\Http\Request;
-use App\Models\Program;
-use App\Models\ProgramUser;
-use App\Models\CourseUser;
-use App\Models\User;
-use App\Models\PLOCategory;
-use App\Models\ProgramLearningOutcome;
 use App\Models\Course;
 use App\Models\CourseOptionalPriorities;
 use App\Models\CourseProgram;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\LearningActivity;
-use App\Models\MappingScale;
 use App\Models\LearningOutcome;
-use App\Models\MappingScaleCategory;
-use App\Models\MappingScaleProgram;
-use App\Models\OutcomeMap;
+use App\Models\MappingScale;
 use App\Models\OptionalPriorities;
 use App\Models\OptionalPrioritySubcategories;
+use App\Models\OutcomeMap;
+use App\Models\PLOCategory;
+use App\Models\Program;
+use App\Models\ProgramLearningOutcome;
 use App\Models\Standard;
 use App\Models\StandardCategory;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
+use App\Models\User;
 use Doctrine\DBAL\Schema\Index;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Sabberworm\CSS\Value\Size;
-use SebastianBergmann\Environment\Console;
-
-use function PHPUnit\Framework\isNull;
+use Illuminate\View\View;
 
 class ProgramWizardController extends Controller
-{   
+{
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
@@ -57,15 +50,15 @@ class ProgramWizardController extends Controller
         }
 
         //header
-        $campuses =  Campus::all();
-        $faculties =  Faculty::all();
-        $departments =  Department::all();
-        $levels = array("Undergraduate", "Graduate", "Other");
-        $user = User::where('id',Auth::id())->first();
+        $campuses = Campus::all();
+        $faculties = Faculty::all();
+        $departments = Department::all();
+        $levels = ['Undergraduate', 'Graduate', 'Other'];
+        $user = User::where('id', Auth::id())->first();
         // get my programs
         $myPrograms = $user->programs;
         // returns a collection of programs associated with users Collaborators
-        $programUsers = array();
+        $programUsers = [];
         foreach ($myPrograms as $program) {
             $programsUsers = $program->users()->get();
             $programUsers[$program->program_id] = $programsUsers;
@@ -81,52 +74,52 @@ class ProgramWizardController extends Controller
 
         //progress bar
         $ploCount = count($plos);
-        $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)->count();
+        $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', '=', 'mapping_scale_programs.map_scale_id')
+            ->where('mapping_scale_programs.program_id', $program_id)->count();
         $courseCount = CourseProgram::where('program_id', $program_id)->count();
 
         // returns true if there exists a plo without a category
         $hasUncategorized = false;
         foreach ($plos as $plo) {
-            if ($plo->plo_category == NULL) {
+            if ($plo->plo_category == null) {
                 $hasUncategorized = true;
             }
         }
-        
+
         //dd($ploCategories);
         // get UnCategorized PLO's
         $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
 
         //get defaultShortForms based on PLO Category, then Creation Order
-        $defaultShortForms=[];
-        $defaultShortFormsIndex=[];
-        $plosInOrderCat=[];
-        
-        foreach($ploCategories as $ploCat){
-            $plosByCat=ProgramLearningOutcome::where('plo_category_id', $ploCat["plo_category_id"])->get();
+        $defaultShortForms = [];
+        $defaultShortFormsIndex = [];
+        $plosInOrderCat = [];
+
+        foreach ($ploCategories as $ploCat) {
+            $plosByCat = ProgramLearningOutcome::where('plo_category_id', $ploCat['plo_category_id'])->get();
             array_push($plosInOrderCat, $plosByCat);
-                        
+
         }
-        
-        $ploDefaultCount=0;
-        for($i=0; $i<count($plosInOrderCat); $i++){
-            for($j=0; $j<count($plosInOrderCat[$i]); $j++){
-                $defaultShortForms[$plosInOrderCat[$i][$j]["pl_outcome_id"]]="PLO #".($ploDefaultCount+1);
-                $defaultShortFormsIndex[$plosInOrderCat[$i][$j]["pl_outcome_id"]]=$ploDefaultCount+1;
+
+        $ploDefaultCount = 0;
+        for ($i = 0; $i < count($plosInOrderCat); $i++) {
+            for ($j = 0; $j < count($plosInOrderCat[$i]); $j++) {
+                $defaultShortForms[$plosInOrderCat[$i][$j]['pl_outcome_id']] = 'PLO #'.($ploDefaultCount + 1);
+                $defaultShortFormsIndex[$plosInOrderCat[$i][$j]['pl_outcome_id']] = $ploDefaultCount + 1;
                 $ploDefaultCount++;
             }
         }
 
-        foreach($unCategorizedPLOS as $unCatPLO){
-            $defaultShortForms[$unCatPLO->pl_outcome_id]="PLO #".($ploDefaultCount+1);
-            $defaultShortFormsIndex[$unCatPLO->pl_outcome_id]=$ploDefaultCount+1;
+        foreach ($unCategorizedPLOS as $unCatPLO) {
+            $defaultShortForms[$unCatPLO->pl_outcome_id] = 'PLO #'.($ploDefaultCount + 1);
+            $defaultShortFormsIndex[$unCatPLO->pl_outcome_id] = $ploDefaultCount + 1;
             $ploDefaultCount++;
         }
-        
+
         return view('programs.wizard.step1')->with('plos', $plos)->with('program', $program)->with('ploCategories', $ploCategories)
-                                            ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('ploProgramCategories', $ploProgramCategories)
-                                            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('defaultShortForms',$defaultShortForms)->with('defaultShortFormsIndex',$defaultShortFormsIndex);
+            ->with('faculties', $faculties)->with('departments', $departments)->with('campuses', $campuses)->with('levels', $levels)->with('user', $user)->with('programUsers', $programUsers)
+            ->with('ploCount', $ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('ploProgramCategories', $ploProgramCategories)
+            ->with('hasUncategorized', $hasUncategorized)->with('unCategorizedPLOS', $unCategorizedPLOS)->with('isEditor', $isEditor)->with('isViewer', $isViewer)->with('defaultShortForms', $defaultShortForms)->with('defaultShortFormsIndex', $defaultShortFormsIndex);
     }
 
     public function step2($program_id, Request $request)
@@ -140,23 +133,23 @@ class ProgramWizardController extends Controller
             return redirect()->route('programWizard.step4', $program_id);
         }
         //header
-        $campuses =  Campus::all();
-        $faculties =  Faculty::all();
-        $departments =  Department::all();
-        $levels = array("Undergraduate", "Graduate", "Other");
-        $user = User::where('id',Auth::id())->first();
+        $campuses = Campus::all();
+        $faculties = Faculty::all();
+        $departments = Department::all();
+        $levels = ['Undergraduate', 'Graduate', 'Other'];
+        $user = User::where('id', Auth::id())->first();
         // get my programs
         $myPrograms = $user->programs;
         // returns a collection of programs associated with users Collaborators
-        $programUsers = array();
+        $programUsers = [];
         foreach ($myPrograms as $program) {
             $programsUsers = $program->users()->get();
             $programUsers[$program->program_id] = $programsUsers;
         }
 
         //
-        $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)->get();
+        $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', '=', 'mapping_scale_programs.map_scale_id')
+            ->where('mapping_scale_programs.program_id', $program_id)->get();
 
         // checks if user has created a custom mapping scale
         $hasCustomMS = false;
@@ -173,7 +166,7 @@ class ProgramWizardController extends Controller
             }
         }
 
-        // Returns all mapping scale categories 
+        // Returns all mapping scale categories
         $msCategories = DB::table('mapping_scale_categories')->get();
         // Returns all mapping scales
         $mscScale = DB::table('mapping_scales')->get();
@@ -185,11 +178,10 @@ class ProgramWizardController extends Controller
         $msCount = count($mappingScales);
         $courseCount = CourseProgram::where('program_id', $program_id)->count();
 
-
         return view('programs.wizard.step2')->with('mappingScales', $mappingScales)->with('program', $program)
-                                            ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('msCategories', $msCategories)->with('mscScale', $mscScale)
-                                            ->with('hasCustomMS', $hasCustomMS)->with('hasImportedMS', $hasImportedMS)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
+            ->with('faculties', $faculties)->with('departments', $departments)->with('campuses', $campuses)->with('levels', $levels)->with('user', $user)->with('programUsers', $programUsers)
+            ->with('ploCount', $ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('msCategories', $msCategories)->with('mscScale', $mscScale)
+            ->with('hasCustomMS', $hasCustomMS)->with('hasImportedMS', $hasImportedMS)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
     public function step3($program_id, Request $request)
@@ -203,22 +195,22 @@ class ProgramWizardController extends Controller
             return redirect()->route('programWizard.step4', $program_id);
         }
         //header
-        $campuses =  Campus::all();
-        $faculties =  Faculty::all();
-        $departments =  Department::all();
-        $levels = array("Undergraduate", "Graduate", "Other");
-        $user = User::where('id',Auth::id())->first();
+        $campuses = Campus::all();
+        $faculties = Faculty::all();
+        $departments = Department::all();
+        $levels = ['Undergraduate', 'Graduate', 'Other'];
+        $user = User::where('id', Auth::id())->first();
         // get my programs
         $myPrograms = $user->programs;
         // returns a collection of programs associated with users Collaborators
-        $programUsers = array();
+        $programUsers = [];
         foreach ($myPrograms as $program) {
             $programsUsers = $program->users()->get();
             $programUsers[$program->program_id] = $programsUsers;
         }
 
         // get the current user
-        $user = User::where('id',Auth::id())->first();
+        $user = User::where('id', Auth::id())->first();
         // get the program
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses that belong to this program
@@ -232,27 +224,27 @@ class ProgramWizardController extends Controller
         // get all courses that belong to this user that don't yet belong to this program
         $userCoursesNotInProgram = $user->courses()->whereNotIn('courses.course_id', $programCourseIds)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
 
-        $programCoursesUsers = array();
+        $programCoursesUsers = [];
         foreach ($programCourses as $programCourse) {
             $programCoursesUsers[$programCourse->course_id] = $programCourse->users()->get();
         }
 
         // progress bar
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)->count();
+        $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', '=', 'mapping_scale_programs.map_scale_id')
+            ->where('mapping_scale_programs.program_id', $program_id)->count();
 
         // Returns all standard categories in the DB
         $standard_categories = DB::table('standard_categories')->get();
 
         // All Learning Outcomes for program courses
-        $LearningOutcomesForProgramCourses = array();
+        $LearningOutcomesForProgramCourses = [];
         foreach ($programCourses as $programCourse) {
             $LearningOutcomesForProgramCourses[$programCourse->course_id] = LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray();
         }
 
         // ploCount * cloCount = number of outcome map results for course and program
-        $expectedTotalOutcomes = array();
+        $expectedTotalOutcomes = [];
         foreach ($programCourses as $programCourse) {
             $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
         }
@@ -261,8 +253,8 @@ class ProgramWizardController extends Controller
         $arrayPLOutcomeIds = ProgramLearningOutcome::where('program_id', $program_id)->pluck('pl_outcome_id')->toArray();
 
         // Loop through All Learning Outcomes for program courses
-        $actualTotalOutcomes = array();
-        foreach($LearningOutcomesForProgramCourses as $courseId => $courseLOs) {
+        $actualTotalOutcomes = [];
+        foreach ($LearningOutcomesForProgramCourses as $courseId => $courseLOs) {
             // Loop through each of the CLO IDs
             $count = 0;
             foreach ($courseLOs as $lo_Id) {
@@ -274,35 +266,35 @@ class ProgramWizardController extends Controller
                     }
                 }
             }
-            // stores total count 
+            // stores total count
             $actualTotalOutcomes[$courseId] = $count;
         }
 
         return view('programs.wizard.step3')->with('program', $program)->with('programCoursesUsers', $programCoursesUsers)
-                                            ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('programCourses', $programCourses)->with('userCoursesNotInProgram', $userCoursesNotInProgram)->with('standard_categories', $standard_categories)
-                                            ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
+            ->with('faculties', $faculties)->with('departments', $departments)->with('campuses', $campuses)->with('levels', $levels)->with('user', $user)->with('programUsers', $programUsers)
+            ->with('ploCount', $ploCount)->with('msCount', $msCount)->with('programCourses', $programCourses)->with('userCoursesNotInProgram', $userCoursesNotInProgram)->with('standard_categories', $standard_categories)
+            ->with('actualTotalOutcomes', $actualTotalOutcomes)->with('expectedTotalOutcomes', $expectedTotalOutcomes)->with('isEditor', $isEditor)->with('isViewer', $isViewer);
     }
 
-    public function step4($program_id, Request $request)
+    public function step4($program_id, Request $request): View
     {
         $isEditor = false;
         $isViewer = false;
         if ($request->isEditor) {
             $isEditor = true;
-        }else if ($request->isViewer) {
+        } elseif ($request->isViewer) {
             $isViewer = true;
         }
         //header
-        $campuses =  Campus::all();
-        $faculties =  Faculty::all();
-        $departments =  Department::all();
-        $levels = array("Undergraduate", "Graduate", "Other");
-        $user = User::where('id',Auth::id())->first();
+        $campuses = Campus::all();
+        $faculties = Faculty::all();
+        $departments = Department::all();
+        $levels = ['Undergraduate', 'Graduate', 'Other'];
+        $user = User::where('id', Auth::id())->first();
         // get my programs
         $myPrograms = $user->programs;
         // returns a collection of programs associated with users Collaborators
-        $programUsers = array();
+        $programUsers = [];
         foreach ($myPrograms as $program) {
             $programsUsers = $program->users()->get();
             $programUsers[$program->program_id] = $programsUsers;
@@ -313,35 +305,35 @@ class ProgramWizardController extends Controller
 
         //progress bar
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-        $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)->count();
+        $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', '=', 'mapping_scale_programs.map_scale_id')
+            ->where('mapping_scale_programs.program_id', $program_id)->count();
         //
         $courseCount = CourseProgram::where('program_id', $program_id)->count();
         //
-        $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                    ->where('mapping_scale_programs.program_id', $program_id)->get();
+        $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', '=', 'mapping_scale_programs.map_scale_id')
+            ->where('mapping_scale_programs.program_id', $program_id)->get();
 
         // get all the courses this program belongs to
         $programCourses = $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
 
         // All Learning Outcomes for program courses
-        $LearningOutcomesForProgramCourses = array();
+        $LearningOutcomesForProgramCourses = [];
         foreach ($programCourses as $programCourse) {
             $LearningOutcomesForProgramCourses[$programCourse->course_id] = LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray();
         }
 
         // ploCount * cloCount = number of outcome map results for course and program
-        $expectedTotalOutcomes = array();
+        $expectedTotalOutcomes = [];
         foreach ($programCourses as $programCourse) {
             $expectedTotalOutcomes[$programCourse->course_id] = (count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) == 0) ? $ploCount : count(LearningOutcome::where('course_id', $programCourse->course_id)->pluck('l_outcome_id')->toArray()) * $ploCount;
         }
 
-                // Get all PLO Id's
+        // Get all PLO Id's
         $arrayPLOutcomeIds = ProgramLearningOutcome::where('program_id', $program_id)->pluck('pl_outcome_id')->toArray();
 
         // Loop through All Learning Outcomes for program courses
-        $actualTotalOutcomes = array();
-        foreach($LearningOutcomesForProgramCourses as $courseId => $courseLOs) {
+        $actualTotalOutcomes = [];
+        foreach ($LearningOutcomesForProgramCourses as $courseId => $courseLOs) {
             // Loop through each of the CLO IDs
             $count = 0;
             foreach ($courseLOs as $lo_Id) {
@@ -353,14 +345,14 @@ class ProgramWizardController extends Controller
                     }
                 }
             }
-            // stores total count 
+            // stores total count
             $actualTotalOutcomes[$courseId] = $count;
         }
 
-        $hasUnMappedCourses = FALSE;
+        $hasUnMappedCourses = false;
         foreach ($expectedTotalOutcomes as $courseID => $expectedTotalOutcome) {
             if ($expectedTotalOutcome != $actualTotalOutcomes[$courseID]) {
-                $hasUnMappedCourses = TRUE;
+                $hasUnMappedCourses = true;
                 break;
             }
         }
@@ -371,16 +363,16 @@ class ProgramWizardController extends Controller
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get UnCategorized PLO's
         $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
 
         // returns the number of Categories that contain at least one PLO
         $numCatUsed = 0;
-        $uniqueCategories = array();
+        $uniqueCategories = [];
         foreach ($ploProgramCategories as $ploInCategory) {
-            if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
+            if (! in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
                 $uniqueCategories[] += $ploInCategory->plo_category_id;
                 $numCatUsed++;
             }
@@ -389,7 +381,7 @@ class ProgramWizardController extends Controller
         // returns true if there exists a plo without a category
         $hasUncategorized = false;
         foreach ($plos as $plo) {
-            if ($plo->plo_category == NULL) {
+            if ($plo->plo_category == null) {
                 $hasUncategorized = true;
             }
         }
@@ -404,7 +396,7 @@ class ProgramWizardController extends Controller
         $freqOfMSIds = [];          // used in a later step
         for ($i = 0; $i < count($programMappingScalesIds); $i++) {
             $freqOfMSIds[$programMappingScalesIds[$i]] = [];
-            $programMappingScalesColours[$i] = (strtolower(MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first());
+            $programMappingScalesColours[$i] = (strtolower(MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first()) == '#ffffff' || strtolower(MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first()) == '#fff' ? '#6c757d' : MappingScale::where('map_scale_id', $programMappingScalesIds[$i])->pluck('colour')->first());
         }
         // get categorized plo's for the program (ordered by category then outcome id)
         $plos_order = ProgramLearningOutcome::where('program_id', $program_id)->whereNotNull('plo_category_id')->orderBy('plo_category_id', 'ASC')->orderBy('pl_outcome_id', 'ASC')->get();
@@ -417,63 +409,62 @@ class ProgramWizardController extends Controller
         // loop through $freqOfMSIds then
         // loop through PLOs ($ploInOrderIds) and get array [countOfAbvFor(plo1), countOfAbvFor(plo2), ... , countOfAbvFor(plo7)]
         $plosInOrderIds = $all_plos->pluck('pl_outcome_id')->toArray();
-        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
-            foreach($plosInOrderIds as $plosInOrderId) {
+        foreach ($freqOfMSIds as $ms_id => $freqOfMSId) {
+            foreach ($plosInOrderIds as $plosInOrderId) {
                 array_push($freqOfMSIds[$ms_id], OutcomeMap::where('pl_outcome_id', $plosInOrderId)->where('map_scale_id', $ms_id)->count());
             }
         }
-        // Change key so that order isn't messed up when data is used in highcharts 
+        // Change key so that order isn't messed up when data is used in highcharts
         $index = 0;
         $freqForMS = [];
-        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+        foreach ($freqOfMSIds as $ms_id => $freqOfMSId) {
             $freqForMS[$index] = $freqOfMSId;
             $index++;
         }
-        
-        $i=0;
-        foreach($plosInOrder as $plo){
-                if($plo==NULL){
-                    $plosInOrder[$i]="PLO #".($i+1);
-                }
-        $i+=1;
-        }
-        
 
+        $i = 0;
+        foreach ($plosInOrder as $plo) {
+            if ($plo == null) {
+                $plosInOrder[$i] = 'PLO #'.($i + 1);
+            }
+            $i += 1;
+        }
 
         //get defaultShortForms based on PLO Category, then Creation Order
-        $defaultShortForms=[];
-        $defaultShortFormsIndex=[];
-        $plosInOrderCat=[];
+        $defaultShortForms = [];
+        $defaultShortFormsIndex = [];
+        $plosInOrderCat = [];
 
-        foreach($ploCategories as $ploCat){
-            $plosByCat=ProgramLearningOutcome::where('plo_category_id', $ploCat["plo_category_id"])->get();
+        foreach ($ploCategories as $ploCat) {
+            $plosByCat = ProgramLearningOutcome::where('plo_category_id', $ploCat['plo_category_id'])->get();
             array_push($plosInOrderCat, $plosByCat);
-            
+
         }
-        $ploDefaultCount=0;
-        for($i=0; $i<count($plosInOrderCat); $i++){
-            for($j=0; $j<count($plosInOrderCat[$i]); $j++){
-                $defaultShortForms[$plosInOrderCat[$i][$j]["pl_outcome_id"]]="PLO #".($ploDefaultCount+1);
-                $defaultShortFormsIndex[$plosInOrderCat[$i][$j]["pl_outcome_id"]]=$ploDefaultCount+1;
+        $ploDefaultCount = 0;
+        for ($i = 0; $i < count($plosInOrderCat); $i++) {
+            for ($j = 0; $j < count($plosInOrderCat[$i]); $j++) {
+                $defaultShortForms[$plosInOrderCat[$i][$j]['pl_outcome_id']] = 'PLO #'.($ploDefaultCount + 1);
+                $defaultShortFormsIndex[$plosInOrderCat[$i][$j]['pl_outcome_id']] = $ploDefaultCount + 1;
                 $ploDefaultCount++;
             }
         }
 
-        foreach($unCategorizedPLOS as $unCatPLO){
-                $defaultShortForms[$unCatPLO->pl_outcome_id]="PLO #".($ploDefaultCount+1);
-                $defaultShortFormsIndex[$unCatPLO->pl_outcome_id]=$ploDefaultCount+1;
-                $ploDefaultCount++;
+        foreach ($unCategorizedPLOS as $unCatPLO) {
+            $defaultShortForms[$unCatPLO->pl_outcome_id] = 'PLO #'.($ploDefaultCount + 1);
+            $defaultShortFormsIndex[$unCatPLO->pl_outcome_id] = $ploDefaultCount + 1;
+            $ploDefaultCount++;
         }
 
         return view('programs.wizard.step4')->with('program', $program)
-                                            ->with("faculties", $faculties)->with("departments", $departments)->with('campuses', $campuses)->with("levels",$levels)->with('user', $user)->with('programUsers',$programUsers)
-                                            ->with('ploCount',$ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
-                                            ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
-                                            ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
-                                            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)->with('defaultShortForms',$defaultShortForms)->with('defaultShortFormsIndex',$defaultShortFormsIndex);
+            ->with('faculties', $faculties)->with('departments', $departments)->with('campuses', $campuses)->with('levels', $levels)->with('user', $user)->with('programUsers', $programUsers)
+            ->with('ploCount', $ploCount)->with('msCount', $msCount)->with('courseCount', $courseCount)->with('programCourses', $programCourses)->with('numCatUsed', $numCatUsed)->with('unCategorizedPLOS', $unCategorizedPLOS)
+            ->with('ploCategories', $ploCategories)->with('plos', $plos)->with('hasUncategorized', $hasUncategorized)->with('ploProgramCategories', $ploProgramCategories)
+            ->with('mappingScales', $mappingScales)->with('isEditor', $isEditor)->with('isViewer', $isViewer)
+            ->with(compact('programMappingScales'))->with(compact('programMappingScalesColours'))->with(compact('plosInOrder'))->with(compact('freqForMS'))->with('hasUnMappedCourses', $hasUnMappedCourses)->with('defaultShortForms', $defaultShortForms)->with('defaultShortFormsIndex', $defaultShortFormsIndex);
     }
 
-    public function resetKeys($array) {
+    public function resetKeys($array)
+    {
         $newArray = [];
         // Reset Keys for High-charts
         $i = 0;
@@ -485,18 +476,20 @@ class ProgramWizardController extends Controller
             }
             $i++;
         }
+
         return $newArray;
     }
 
-    public function getMinistryStandards($program_id) {
+    public function getMinistryStandards($program_id): JsonResponse
+    {
         $program = Program::where('program_id', $program_id)->first();
-        
+
         // Get all Standard Categories for courses in the program
-        if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
+        if ($program->level == 'Undergraduate' || $program->level == 'Bachelors') {
             $standardCategory = StandardCategory::find(1);
-        } elseif($program->level == "Masters") {
+        } elseif ($program->level == 'Masters') {
             $standardCategory = StandardCategory::find(2);
-        } elseif($program->level == "Doctoral") {
+        } elseif ($program->level == 'Doctoral') {
             $standardCategory = StandardCategory::find(3);
         } else {
             $standardCategory = StandardCategory::find(0);
@@ -508,11 +501,11 @@ class ProgramWizardController extends Controller
         // Get the names of the standards for the categories (x-axis)
         $namesStandards = [];
         $descriptionsStandards = [];
-        for($i = 0; $i < count($standards); $i++) {
+        for ($i = 0; $i < count($standards); $i++) {
             $namesStandards[$i] = $standards[$i]->s_shortphrase;
             $descriptionsStandards[$i] = $standards[$i]->s_outcome;
         }
-        
+
         // Get Standards Mapping Scales for high-chart
         $standardsMappingScales = StandardScale::where('scale_category_id', 1)->pluck('abbreviation')->toArray();
         $standardsMappingScales[count($standardsMappingScales)] = 'N/A';
@@ -527,9 +520,9 @@ class ProgramWizardController extends Controller
         $coursesOfMinistryStandardIds = [];
         for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
             $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
-            $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+            $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#ffffff' || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#fff' ? '#6c757d' : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
         }
-        foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+        foreach ($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
             foreach ($standards as $standard) {
                 $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
                 $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
@@ -552,43 +545,44 @@ class ProgramWizardController extends Controller
         $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
         $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
 
-        $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards); 
-        
+        $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards);
+
         return response()->json([$programCoursesFiltered, $namesStandards, $outputStandardOutcomeMaps, $standardsMappingScales, $standardMappingScalesColours, $frequencyOfMinistryStandardIds, $tableMS], 200);
     }
 
-    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards) {
+    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards)
+    {
         $output = '';
 
-        if (!count($namesStandards) < 1) {
+        if (! count($namesStandards) < 1) {
             $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses</th></tr>';
             $i = 0;
             foreach ($namesStandards as $standard) {
-                $output .= '<tr><td class="col col-md-5"><b>'. $standard .'</b> - ' . $descriptionsStandards[$i] . '</td><td>';
+                $output .= '<tr><td class="col col-md-5"><b>'.$standard.'</b> - '.$descriptionsStandards[$i].'</td><td>';
                 $j = 0;
-                    foreach ($standardsMappingScalesTitles as $standardsMappingScale) {
-                        $output .= '<table class="table table-light table-bordered table-sm"><tr><td>';
+                foreach ($standardsMappingScalesTitles as $standardsMappingScale) {
+                    $output .= '<table class="table table-light table-bordered table-sm"><tr><td>';
 
-                        $output .='<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-right"><div style="background-color:'. $standardMappingScalesColours[$j] .'; height: 12px; width: 12px; border-radius: 6px;"></div></div>';
-                        $output .= '<div class="col col-md-3 text-md-left">'.$standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i] .'</div>';
+                    $output .= '<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-right"><div style="background-color:'.$standardMappingScalesColours[$j].'; height: 12px; width: 12px; border-radius: 6px;"></div></div>';
+                    $output .= '<div class="col col-md-3 text-md-left">'.$standardsMappingScale.': '.$frequencyOfMinistryStandardIds[$j][$i].'</div>';
 
-                        $output .= '<div class="col col-md-7 text-md-left">';
-                        $k = 0;
-                        foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
-                            $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
-                            $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
-                            if ($k != 0) {
-                                $output .= ', '. $code. ' ' . $num;
-                            } else {
-                                $output .= ' '. $code. ' ' . $num;
-                            }
-                            $k++;
+                    $output .= '<div class="col col-md-7 text-md-left">';
+                    $k = 0;
+                    foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
+                        $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
+                        $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
+                        if ($k != 0) {
+                            $output .= ', '.$code.' '.$num;
+                        } else {
+                            $output .= ' '.$code.' '.$num;
                         }
-                        $output .='</div></div>';
-                        $j++;
-
-                        $output .= '</td></tr></table>';
+                        $k++;
                     }
+                    $output .= '</div></div>';
+                    $j++;
+
+                    $output .= '</td></tr></table>';
+                }
                 $output .= '</td></tr>';
                 $i++;
             }
@@ -599,36 +593,36 @@ class ProgramWizardController extends Controller
 
         return $output;
     }
-    
 
-    public function getOptionalPriorities($program_id) {
+    public function getOptionalPriorities($program_id): JsonResponse
+    {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
         $programCourses = $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
 
         $tempOptionalPriorities = [];
         foreach ($programCourses as $programCourse) {
-            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck('op_id')->toArray();
         }
 
         $opFrequencies = [];
         $opFrequenciesSubcategories = [];
-        foreach($tempOptionalPriorities as $courseID => $op_ids) {
+        foreach ($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
             foreach ($op_ids as $op_id) {
                 $subcat_id = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 // add to opFrequencies if not already in array
-                if (!array_key_exists($op_id, $opFrequencies)) {
+                if (! array_key_exists($op_id, $opFrequencies)) {
                     $opFrequencies[$op_id]['freq'] = 1;
-                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
+                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck('optional_priority')->first();
+                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code.' '.$course_num];
                     $opFrequencies[$op_id]['subcat_id'] = $subcat_id;
                     $opFrequenciesSubcategories[$subcat_id] = OptionalPrioritySubcategories::where('subcat_id', $subcat_id)->pluck('subcat_name')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
-                    $opFrequencies[$op_id]['freq'] += 1; 
-                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+                    $opFrequencies[$op_id]['freq'] += 1;
+                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.' '.$course_num];
                 }
             }
         }
@@ -640,7 +634,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesFirstYear($program_id) {
+    public function getOptionalPrioritiesFirstYear($program_id): JsonResponse
+    {
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
@@ -652,27 +647,27 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($firstYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck('op_id')->toArray();
         }
-        
+
         $opFrequencies = [];
         $opFrequenciesSubcategories = [];
-        foreach($tempOptionalPriorities as $courseID => $op_ids) {
+        foreach ($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
             foreach ($op_ids as $op_id) {
                 $subcat_id = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 // add to opFrequencies if not already in array
-                if (!array_key_exists($op_id, $opFrequencies)) {
+                if (! array_key_exists($op_id, $opFrequencies)) {
                     $opFrequencies[$op_id]['freq'] = 1;
-                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
+                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck('optional_priority')->first();
+                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code.' '.$course_num];
                     $opFrequencies[$op_id]['subcat_id'] = $subcat_id;
                     $opFrequenciesSubcategories[$subcat_id] = OptionalPrioritySubcategories::where('subcat_id', $subcat_id)->pluck('subcat_name')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
-                    $opFrequencies[$op_id]['freq'] += 1; 
-                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+                    $opFrequencies[$op_id]['freq'] += 1;
+                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.' '.$course_num];
                 }
             }
         }
@@ -684,7 +679,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesSecondYear($program_id) {
+    public function getOptionalPrioritiesSecondYear($program_id): JsonResponse
+    {
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
@@ -696,27 +692,27 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($secondYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck('op_id')->toArray();
         }
-        
+
         $opFrequencies = [];
         $opFrequenciesSubcategories = [];
-        foreach($tempOptionalPriorities as $courseID => $op_ids) {
+        foreach ($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
             foreach ($op_ids as $op_id) {
                 $subcat_id = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 // add to opFrequencies if not already in array
-                if (!array_key_exists($op_id, $opFrequencies)) {
+                if (! array_key_exists($op_id, $opFrequencies)) {
                     $opFrequencies[$op_id]['freq'] = 1;
-                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
+                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck('optional_priority')->first();
+                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code.' '.$course_num];
                     $opFrequencies[$op_id]['subcat_id'] = $subcat_id;
                     $opFrequenciesSubcategories[$subcat_id] = OptionalPrioritySubcategories::where('subcat_id', $subcat_id)->pluck('subcat_name')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
-                    $opFrequencies[$op_id]['freq'] += 1; 
-                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+                    $opFrequencies[$op_id]['freq'] += 1;
+                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.' '.$course_num];
                 }
             }
         }
@@ -728,7 +724,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesThirdYear($program_id) {
+    public function getOptionalPrioritiesThirdYear($program_id): JsonResponse
+    {
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
@@ -740,27 +737,27 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($thirdYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck('op_id')->toArray();
         }
-        
+
         $opFrequencies = [];
         $opFrequenciesSubcategories = [];
-        foreach($tempOptionalPriorities as $courseID => $op_ids) {
+        foreach ($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
             foreach ($op_ids as $op_id) {
                 $subcat_id = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 // add to opFrequencies if not already in array
-                if (!array_key_exists($op_id, $opFrequencies)) {
+                if (! array_key_exists($op_id, $opFrequencies)) {
                     $opFrequencies[$op_id]['freq'] = 1;
-                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
+                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck('optional_priority')->first();
+                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code.' '.$course_num];
                     $opFrequencies[$op_id]['subcat_id'] = $subcat_id;
                     $opFrequenciesSubcategories[$subcat_id] = OptionalPrioritySubcategories::where('subcat_id', $subcat_id)->pluck('subcat_name')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
-                    $opFrequencies[$op_id]['freq'] += 1; 
-                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+                    $opFrequencies[$op_id]['freq'] += 1;
+                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.' '.$course_num];
                 }
             }
         }
@@ -772,7 +769,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesFourthYear($program_id) {
+    public function getOptionalPrioritiesFourthYear($program_id): JsonResponse
+    {
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
@@ -784,27 +782,27 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($fourthYearProgramCourses as $programCourse) {
-            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck('op_id')->toArray();
         }
-        
+
         $opFrequencies = [];
         $opFrequenciesSubcategories = [];
-        foreach($tempOptionalPriorities as $courseID => $op_ids) {
+        foreach ($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
             foreach ($op_ids as $op_id) {
                 $subcat_id = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 // add to opFrequencies if not already in array
-                if (!array_key_exists($op_id, $opFrequencies)) {
+                if (! array_key_exists($op_id, $opFrequencies)) {
                     $opFrequencies[$op_id]['freq'] = 1;
-                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
+                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck('optional_priority')->first();
+                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code.' '.$course_num];
                     $opFrequencies[$op_id]['subcat_id'] = $subcat_id;
                     $opFrequenciesSubcategories[$subcat_id] = OptionalPrioritySubcategories::where('subcat_id', $subcat_id)->pluck('subcat_name')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
-                    $opFrequencies[$op_id]['freq'] += 1; 
-                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+                    $opFrequencies[$op_id]['freq'] += 1;
+                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.' '.$course_num];
                 }
             }
         }
@@ -816,7 +814,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getOptionalPrioritiesGraduate($program_id) {
+    public function getOptionalPrioritiesGraduate($program_id): JsonResponse
+    {
         $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
         foreach ($graduateProgramCourses as $graduateProgramCourse) {
@@ -828,27 +827,27 @@ class ProgramWizardController extends Controller
 
         $tempOptionalPriorities = [];
         foreach ($graduateProgramCourses as $programCourse) {
-            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck("op_id")->toArray();
+            $tempOptionalPriorities[$programCourse->course_id] = CourseOptionalPriorities::where('course_id', $programCourse->course_id)->pluck('op_id')->toArray();
         }
-        
+
         $opFrequencies = [];
         $opFrequenciesSubcategories = [];
-        foreach($tempOptionalPriorities as $courseID => $op_ids) {
+        foreach ($tempOptionalPriorities as $courseID => $op_ids) {
             $course_code = Course::where('course_id', $courseID)->pluck('course_code')->first();
             $course_num = Course::where('course_id', $courseID)->pluck('course_num')->first();
             foreach ($op_ids as $op_id) {
                 $subcat_id = OptionalPriorities::where('op_id', $op_id)->pluck('subcat_id')->first();
                 // add to opFrequencies if not already in array
-                if (!array_key_exists($op_id, $opFrequencies)) {
+                if (! array_key_exists($op_id, $opFrequencies)) {
                     $opFrequencies[$op_id]['freq'] = 1;
-                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck("optional_priority")->first();
-                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code. ' ' .$course_num];
+                    $opFrequencies[$op_id]['title'] = OptionalPriorities::where('op_id', $op_id)->pluck('optional_priority')->first();
+                    $opFrequencies[$op_id]['courses'] = [$courseID => $course_code.' '.$course_num];
                     $opFrequencies[$op_id]['subcat_id'] = $subcat_id;
                     $opFrequenciesSubcategories[$subcat_id] = OptionalPrioritySubcategories::where('subcat_id', $subcat_id)->pluck('subcat_name')->first();
                 } else {
                     // otherwise increment if key (op_id) in array already
-                    $opFrequencies[$op_id]['freq'] += 1; 
-                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.  ' '  .$course_num]; 
+                    $opFrequencies[$op_id]['freq'] += 1;
+                    $opFrequencies[$op_id]['courses'] += [$courseID => $course_code.' '.$course_num];
                 }
             }
         }
@@ -860,22 +859,23 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function generateHTMLOptionalPriorities($opFrequencies, $opFrequenciesSubcategories) {
+    public function generateHTMLOptionalPriorities($opFrequencies, $opFrequenciesSubcategories)
+    {
         $output = '';
 
-        if (!count($opFrequencies) < 1) {
+        if (! count($opFrequencies) < 1) {
             $output .= '<table class="table table-light table-bordered"><tbody><tr class="table-primary"><th>Strategic Priorities</th><th>Courses</th></tr>';
             // loop through categories and add them to the output
-            foreach($opFrequenciesSubcategories as $subcat_id => $opFrequenciesSubcategory) {
-                $output .= '<tr class="table-secondary"><td colspan="2"><b>'. $opFrequenciesSubcategory .'</b></td></tr>';
+            foreach ($opFrequenciesSubcategories as $subcat_id => $opFrequenciesSubcategory) {
+                $output .= '<tr class="table-secondary"><td colspan="2"><b>'.$opFrequenciesSubcategory.'</b></td></tr>';
                 // loop through the optional priorities and add them to the output
-                foreach($opFrequencies as $op_id => $opFrequency) {
+                foreach ($opFrequencies as $op_id => $opFrequency) {
                     if ($subcat_id == $opFrequency['subcat_id']) {
-                        $output .= '<tr><td>'. $opFrequency['title'] .'</td><td class="text-center" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
-                        foreach($opFrequency['courses'] as $course) {
+                        $output .= '<tr><td>'.$opFrequency['title'].'</td><td class="text-center" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                        foreach ($opFrequency['courses'] as $course) {
                             $output .= '<li>'.$course.'</li>';
                         }
-                        $output .= '">'. $opFrequency['freq'] .'</td></tr>';
+                        $output .= '">'.$opFrequency['freq'].'</td></tr>';
                     }
                 }
             }
@@ -883,17 +883,19 @@ class ProgramWizardController extends Controller
         } else {
             $output = '<div class="alert alert-warning wizard"><i class="bi bi-exclamation-circle-fill"></i>There are no strategic priorities for the courses belonging to this program, or there are no courses matching the criteria.</div>';
         }
+
         return $output;
     }
 
-    public function getAssessmentMethods($program_id) {
+    public function getAssessmentMethods($program_id): JsonResponse
+    {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
         $programCourses = $program->courses;
-        
+
         $assessmentMethods = [];
         foreach ($programCourses as $programCourse) {
-            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck('a_method'));
         }
         $allAM = [];
         foreach ($assessmentMethods as $ams) {
@@ -908,21 +910,23 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
                 } else {
-                    $amFrequencies += [ $allAM[$i] => 1 ];
+                    $amFrequencies += [$allAM[$i] => 1];
                 }
             }
 
-            // Special Case (Might be removed in the future) 
+            // Special Case (Might be removed in the future)
             // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
             if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
                 $amFrequencies['Final Exam'] += $amFrequencies['Final'];
                 unset($amFrequencies['Final']);
             }
         }
+
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsFirstYear($program_id) {
+    public function getAssessmentMethodsFirstYear($program_id): JsonResponse
+    {
         // get all the courses this program belongs to
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -932,10 +936,10 @@ class ProgramWizardController extends Controller
             }
             $count++;
         }
-        
+
         $assessmentMethods = [];
         foreach ($firstYearProgramCourses as $programCourse) {
-            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck('a_method'));
         }
         $allAM = [];
         foreach ($assessmentMethods as $ams) {
@@ -950,7 +954,7 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
                 } else {
-                    $amFrequencies += [ $allAM[$i] => 1 ];
+                    $amFrequencies += [$allAM[$i] => 1];
                 }
             }
 
@@ -961,10 +965,12 @@ class ProgramWizardController extends Controller
                 unset($amFrequencies['Final']);
             }
         }
+
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsSecondYear($program_id) {
+    public function getAssessmentMethodsSecondYear($program_id): JsonResponse
+    {
         // get all the courses this program belongs to
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -974,10 +980,10 @@ class ProgramWizardController extends Controller
             }
             $count++;
         }
-        
+
         $assessmentMethods = [];
         foreach ($secondYearProgramCourses as $programCourse) {
-            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck('a_method'));
         }
         $allAM = [];
         foreach ($assessmentMethods as $ams) {
@@ -992,7 +998,7 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
                 } else {
-                    $amFrequencies += [ $allAM[$i] => 1 ];
+                    $amFrequencies += [$allAM[$i] => 1];
                 }
             }
 
@@ -1003,10 +1009,12 @@ class ProgramWizardController extends Controller
                 unset($amFrequencies['Final']);
             }
         }
+
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsThirdYear($program_id) {
+    public function getAssessmentMethodsThirdYear($program_id): JsonResponse
+    {
         // get all the courses this program belongs to
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1016,10 +1024,10 @@ class ProgramWizardController extends Controller
             }
             $count++;
         }
-        
+
         $assessmentMethods = [];
         foreach ($thirdYearProgramCourses as $programCourse) {
-            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck('a_method'));
         }
         $allAM = [];
         foreach ($assessmentMethods as $ams) {
@@ -1034,7 +1042,7 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
                 } else {
-                    $amFrequencies += [ $allAM[$i] => 1 ];
+                    $amFrequencies += [$allAM[$i] => 1];
                 }
             }
 
@@ -1045,10 +1053,12 @@ class ProgramWizardController extends Controller
                 unset($amFrequencies['Final']);
             }
         }
+
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsFourthYear($program_id) {
+    public function getAssessmentMethodsFourthYear($program_id): JsonResponse
+    {
         // get all the courses this program belongs to
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1058,10 +1068,10 @@ class ProgramWizardController extends Controller
             }
             $count++;
         }
-        
+
         $assessmentMethods = [];
         foreach ($fourthYearProgramCourses as $programCourse) {
-            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck('a_method'));
         }
         $allAM = [];
         foreach ($assessmentMethods as $ams) {
@@ -1076,7 +1086,7 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
                 } else {
-                    $amFrequencies += [ $allAM[$i] => 1 ];
+                    $amFrequencies += [$allAM[$i] => 1];
                 }
             }
 
@@ -1087,10 +1097,12 @@ class ProgramWizardController extends Controller
                 unset($amFrequencies['Final']);
             }
         }
+
         return response()->json($amFrequencies, 200);
     }
 
-    public function getAssessmentMethodsGraduate($program_id) {
+    public function getAssessmentMethodsGraduate($program_id): JsonResponse
+    {
         // get all the courses this program belongs to
         $GraduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
@@ -1100,10 +1112,10 @@ class ProgramWizardController extends Controller
             }
             $count++;
         }
-        
+
         $assessmentMethods = [];
         foreach ($GraduateProgramCourses as $programCourse) {
-            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck('a_method'));
         }
         $allAM = [];
         foreach ($assessmentMethods as $ams) {
@@ -1118,7 +1130,7 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
                 } else {
-                    $amFrequencies += [ $allAM[$i] => 1 ];
+                    $amFrequencies += [$allAM[$i] => 1];
                 }
             }
 
@@ -1129,17 +1141,19 @@ class ProgramWizardController extends Controller
                 unset($amFrequencies['Final']);
             }
         }
+
         return response()->json($amFrequencies, 200);
     }
 
-    public function getLearningActivities($program_id) {
+    public function getLearningActivities($program_id): JsonResponse
+    {
         $program = Program::where('program_id', $program_id)->first();
         // get all the courses this program belongs to
         $programCourses = $program->courses;
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($programCourses as $programCourse) {
-            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck('l_activity'));
         }
         $allLA = [];
         foreach ($learningActivities as $lAS) {
@@ -1154,14 +1168,16 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
                 } else {
-                    $laFrequencies += [ $allLA[$i] => 1 ];
+                    $laFrequencies += [$allLA[$i] => 1];
                 }
             }
         }
+
         return response()->json($laFrequencies, 200);
     }
 
-    public function getFirstYearLearningActivities($program_id) {
+    public function getFirstYearLearningActivities($program_id): JsonResponse
+    {
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
         foreach ($firstYearProgramCourses as $firstYearProgramCourse) {
@@ -1173,7 +1189,7 @@ class ProgramWizardController extends Controller
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($firstYearProgramCourses as $programCourse) {
-            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck('l_activity'));
         }
         $allLA = [];
         foreach ($learningActivities as $lAS) {
@@ -1188,14 +1204,16 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
                 } else {
-                    $laFrequencies += [ $allLA[$i] => 1 ];
+                    $laFrequencies += [$allLA[$i] => 1];
                 }
             }
         }
+
         return response()->json($laFrequencies, 200);
     }
 
-    public function getSecondYearLearningActivities($program_id) {
+    public function getSecondYearLearningActivities($program_id): JsonResponse
+    {
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
         foreach ($secondYearProgramCourses as $secondYearProgramCourse) {
@@ -1207,7 +1225,7 @@ class ProgramWizardController extends Controller
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($secondYearProgramCourses as $programCourse) {
-            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck('l_activity'));
         }
         $allLA = [];
         foreach ($learningActivities as $lAS) {
@@ -1222,14 +1240,16 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
                 } else {
-                    $laFrequencies += [ $allLA[$i] => 1 ];
+                    $laFrequencies += [$allLA[$i] => 1];
                 }
             }
         }
+
         return response()->json($laFrequencies, 200);
     }
 
-    public function getThirdYearLearningActivities($program_id) {
+    public function getThirdYearLearningActivities($program_id): JsonResponse
+    {
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
         foreach ($thirdYearProgramCourses as $thirdYearProgramCourse) {
@@ -1241,7 +1261,7 @@ class ProgramWizardController extends Controller
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($thirdYearProgramCourses as $programCourse) {
-            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck('l_activity'));
         }
         $allLA = [];
         foreach ($learningActivities as $lAS) {
@@ -1256,14 +1276,16 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
                 } else {
-                    $laFrequencies += [ $allLA[$i] => 1 ];
+                    $laFrequencies += [$allLA[$i] => 1];
                 }
             }
         }
+
         return response()->json($laFrequencies, 200);
     }
 
-    public function getFourthYearLearningActivities($program_id) {
+    public function getFourthYearLearningActivities($program_id): JsonResponse
+    {
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
         foreach ($fourthYearProgramCourses as $fourthYearProgramCourse) {
@@ -1275,7 +1297,7 @@ class ProgramWizardController extends Controller
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($fourthYearProgramCourses as $programCourse) {
-            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck('l_activity'));
         }
         $allLA = [];
         foreach ($learningActivities as $lAS) {
@@ -1290,14 +1312,16 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
                 } else {
-                    $laFrequencies += [ $allLA[$i] => 1 ];
+                    $laFrequencies += [$allLA[$i] => 1];
                 }
             }
         }
+
         return response()->json($laFrequencies, 200);
     }
 
-    public function getGraduateLearningActivities($program_id) {
+    public function getGraduateLearningActivities($program_id): JsonResponse
+    {
         $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->get();
         $count = 0;
         foreach ($graduateProgramCourses as $graduateProgramCourse) {
@@ -1309,7 +1333,7 @@ class ProgramWizardController extends Controller
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($graduateProgramCourses as $programCourse) {
-            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck('l_activity'));
         }
         $allLA = [];
         foreach ($learningActivities as $lAS) {
@@ -1324,23 +1348,27 @@ class ProgramWizardController extends Controller
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
                 } else {
-                    $laFrequencies += [ $allLA[$i] => 1 ];
+                    $laFrequencies += [$allLA[$i] => 1];
                 }
             }
         }
+
         return response()->json($laFrequencies, 200);
     }
 
-    public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
+    public function getCoursesOutcomes($coursesOutcomes, $programCourses)
+    {
         // get all CLO's for each course in the program
         foreach ($programCourses as $programCourse) {
             $learningOutcomes = $programCourse->learningOutcomes;
             $coursesOutcomes[$programCourse->course_id] = $learningOutcomes;
         }
+
         return $coursesOutcomes;
     }
 
-    public function getOutcomeMaps ($allPLO, $coursesOutcomes, $arr) {
+    public function getOutcomeMaps($allPLO, $coursesOutcomes, $arr)
+    {
         // retrieves all the outcome mapping values for every clo and plo
         $count = 0;
         foreach ($allPLO as $plo) {
@@ -1348,48 +1376,52 @@ class ProgramWizardController extends Controller
             foreach ($coursesOutcomes as $clos) {
                 foreach ($clos as $clo) {
                     // Check if record exists in the db
-                    if (!OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->exists()) {
+                    if (! OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->exists()) {
                         // if nothing is found then do nothing
                         // else if record (mapping_scale_id) is found then store it in the array
                     } else {
                         $count++;
                         $mapScaleValue = OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->value('map_scale_id');
-                        $arr[$count] = array(
+                        $arr[$count] = [
                             'pl_outcome_id' => $plo->pl_outcome_id,
                             'course_id' => $clo->course_id,
                             'map_scale_id' => $mapScaleValue,
                             'l_outcome_id' => $clo->l_outcome_id,
-                        );
+                        ];
                     }
                 }
             }
         }
+
         return $arr;
     }
 
-    public function createCDFArray($arr, $store) {
+    public function createCDFArray($arr, $store)
+    {
         // Initialize array for each pl_outcome_id with the value of null
         foreach ($arr as $ar) {
             $store[$ar['pl_outcome_id']] = null;
         }
-        // Initialize Array for Storing 
+        // Initialize Array for Storing
         foreach ($arr as $ar) {
             if ($store[$ar['pl_outcome_id']] == null || $store[$ar['pl_outcome_id']] == $ar['pl_outcome_id']) {
-                $store[$ar['pl_outcome_id']] = array(
-                    $ar['course_id'] => array(
-                    ),
-                );
+                $store[$ar['pl_outcome_id']] = [
+                    $ar['course_id'] => [
+                    ],
+                ];
             } else {
-                $store[$ar['pl_outcome_id']][$ar['course_id']] = array();
-                $store[$ar['pl_outcome_id']][$ar['course_id']]['frequencies'] = array();
+                $store[$ar['pl_outcome_id']][$ar['course_id']] = [];
+                $store[$ar['pl_outcome_id']][$ar['course_id']]['frequencies'] = [];
             }
         }
+
         return $store;
     }
 
-    public function frequencyDistribution($arr, $store) {
+    public function frequencyDistribution($arr, $store)
+    {
         //Initialize Array for Frequency Distribution
-        $freq = array();
+        $freq = [];
         foreach ($arr as $map) {
             $pl_outcome_id = $map['pl_outcome_id'];
             $course_id = $map['course_id'];
@@ -1411,13 +1443,13 @@ class ProgramWizardController extends Controller
             }
         }
         // loop through the frequencies of the mapping values
-        foreach($freq as $plOutcomeId => $dist) {
-            foreach($dist as $courseId => $d) {
+        foreach ($freq as $plOutcomeId => $dist) {
+            foreach ($dist as $courseId => $d) {
                 $weight = 0;
-                $tieResults = array();
-                $id = NULL;
-                //count the number of times a mapping scales appears for a program learning outcome 
-                foreach($d as $ms_Id => $mapScaleWeight) {
+                $tieResults = [];
+                $id = null;
+                //count the number of times a mapping scales appears for a program learning outcome
+                foreach ($d as $ms_Id => $mapScaleWeight) {
                     //check if the current ($mapScaleWeight) > than the previously stored value
                     if ($weight < $mapScaleWeight) {
                         $weight = $mapScaleWeight;
@@ -1425,12 +1457,12 @@ class ProgramWizardController extends Controller
                     }
                 }
                 // Check if the largest weighted value ties with another value
-                foreach($d as $ms_Id => $mapScaleWeight) {
+                foreach ($d as $ms_Id => $mapScaleWeight) {
                     if ($weight == $mapScaleWeight && $id != $ms_Id) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
                         $tieResults = array_keys($d, $weight);
                     }
                 }
-                // if A tie is found.. 
+                // if A tie is found..
                 if ($tieResults != null) {
                     $stringResults = '';
                     $numItems = count($tieResults);
@@ -1439,40 +1471,42 @@ class ProgramWizardController extends Controller
                     foreach ($tieResults as $tieResult) {
                         // appends '/' only if it's not at the last index in the array
                         if (++$i !== $numItems) {
-                            $stringResults .= "" .MappingScale::where('map_scale_id', $tieResult)->value('abbreviation'). " / "; 
+                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation').' / ';
                         } else {
-                            $stringResults .= "" .MappingScale::where('map_scale_id', $tieResult)->value('abbreviation');
+                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation');
                         }
                     }
                     // Store the results array as the map_scale_value key
-                    $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_abv' => $stringResults 
-                    );
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_abv' => $stringResults,
+                    ];
                     // Store a new array to be able to determine if the mapping scale value comes from the result of a tie
-                    $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_id_tie' => True
-                    );
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_id_tie' => true,
+                    ];
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
                 } else {
-                    // If no tie is present, store the strongest weighted map_scale_value 
-                    $store[$plOutcomeId][$courseId] = array(
-                        'map_scale_id' => array_search($weight, $d)
-                    );
-                    $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_abv' => MappingScale::where('map_scale_id', array_search($weight, $d))->value('abbreviation')
-                    );
+                    // If no tie is present, store the strongest weighted map_scale_value
+                    $store[$plOutcomeId][$courseId] = [
+                        'map_scale_id' => array_search($weight, $d),
+                    ];
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_abv' => MappingScale::where('map_scale_id', array_search($weight, $d))->value('abbreviation'),
+                    ];
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
                 }
             }
         }
+
         return $store;
     }
 
-    public function replaceIdsWithAbv($store, $arr) {
+    public function replaceIdsWithAbv($store, $arr)
+    {
         //Initialize Array for Frequency Distribution
-        $freq = array();
+        $freq = [];
         foreach ($arr as $map) {
             $pl_outcome_id = $map['pl_outcome_id'];
             $course_id = $map['course_id'];
@@ -1493,49 +1527,53 @@ class ProgramWizardController extends Controller
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
             }
         }
-        foreach($freq as $plOutcomeId => $dist) {
-            foreach($dist as $courseId => $d) {
+        foreach ($freq as $plOutcomeId => $dist) {
+            foreach ($dist as $courseId => $d) {
                 // Store the frequencies
                 $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
             }
         }
+
         return $store;
     }
 
-    public function assignColours($store){
+    public function assignColours($store)
+    {
         // Assign a colour to store based
         foreach ($store as $plOutcomeId => $s) {
             foreach ($s as $courseId => $msv) {
                 // If a tie exists assign it the colour white
-                if (array_key_exists("map_scale_id_tie",$msv)) {
+                if (array_key_exists('map_scale_id_tie', $msv)) {
                     $mapScaleColour = '#FFFFFF';
-                    $store[$plOutcomeId][$courseId] += array(
-                        'colour' => $mapScaleColour
-                    );
+                    $store[$plOutcomeId][$courseId] += [
+                        'colour' => $mapScaleColour,
+                    ];
                 } else {
                     // Search for the mapping scale colour in the db, then assign it to the array
                     $mapScaleColour = MappingScale::where('map_scale_id', $msv['map_scale_id'])->value('colour');
-                
-                if ($mapScaleColour == null) {
-                    $mapScaleColour = '#FFFFFF';
-                }
-                    $store[$plOutcomeId][$courseId] += array(
-                        'colour' => $mapScaleColour
-                    );
+
+                    if ($mapScaleColour == null) {
+                        $mapScaleColour = '#FFFFFF';
+                    }
+                    $store[$plOutcomeId][$courseId] += [
+                        'colour' => $mapScaleColour,
+                    ];
                 }
             }
         }
+
         return $store;
     }
 
     private $numCatUsed;
 
-    public function getNumCatUsed($ploProgramCategories) {
+    public function getNumCatUsed($ploProgramCategories)
+    {
         // returns the number of Categories that contain at least one PLO
         $numCatUsed = 0;
-        $uniqueCategories = array();
+        $uniqueCategories = [];
         foreach ($ploProgramCategories as $ploInCategory) {
-            if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
+            if (! in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
                 $uniqueCategories[] += $ploInCategory->plo_category_id;
                 $numCatUsed++;
             }
@@ -1545,14 +1583,15 @@ class ProgramWizardController extends Controller
 
     private $plosPerCategory;
 
-    public function getPlosPerCategory($ploProgramCategories) {
+    public function getPlosPerCategory($ploProgramCategories)
+    {
         // plosPerCategory returns the number of plo's belonging to each category
         // used for setting the colspan in the view
-        $plosPerCategory = array();
-        foreach($ploProgramCategories as $ploCategory) {
+        $plosPerCategory = [];
+        foreach ($ploProgramCategories as $ploCategory) {
             $plosPerCategory[$ploCategory->plo_category_id] = 0;
         }
-        foreach($ploProgramCategories as $ploCategory) {
+        foreach ($ploProgramCategories as $ploCategory) {
             $plosPerCategory[$ploCategory->plo_category_id] += 1;
         }
         $this->plosPerCategory = $plosPerCategory;
@@ -1560,11 +1599,12 @@ class ProgramWizardController extends Controller
 
     private $hasUncategorized;
 
-    public function getHasUncategorized($plos) {
+    public function getHasUncategorized($plos)
+    {
         // returns true if there exists a plo without a category
         $hasUncategorized = false;
         foreach ($plos as $plo) {
-            if ($plo->plo_category == NULL) {
+            if ($plo->plo_category == null) {
                 $hasUncategorized = true;
             }
         }
@@ -1573,20 +1613,21 @@ class ProgramWizardController extends Controller
 
     private $numUncategorizedPLOS;
 
-    public function getNumUncategorizedPLOS($allPLO) {
+    public function getNumUncategorizedPLOS($allPLO)
+    {
         // Used for setting colspan in view
         $numUncategorizedPLOS = 0;
         foreach ($allPLO as $plo) {
-            if ($plo->plo_category_id == null){
-                $numUncategorizedPLOS ++;
+            if ($plo->plo_category_id == null) {
+                $numUncategorizedPLOS++;
             }
         }
         $this->numUncategorizedPLOS = $numUncategorizedPLOS;
     }
 
-
     // called when requested by ajax on step 4
-    public function getCourses($program_id) {
+    public function getCourses($program_id): JsonResponse
+    {
         $program = Program::find($program_id);
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all the courses this program belongs to
@@ -1595,7 +1636,7 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
@@ -1607,11 +1648,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // All Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
-        $arr = array();
+        $arr = [];
         $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
-        $store = array();
+        $store = [];
         $store = $this->createCDFArray($arr, $store);
         $store = $this->frequencyDistribution($arr, $store);
         $store = $this->replaceIdsWithAbv($store, $arr);
@@ -1622,7 +1663,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getRequiredCourses($program_id) {
+    public function getRequiredCourses($program_id): JsonResponse
+    {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all of the required courses this program belongs to
         $requiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 1)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
@@ -1630,11 +1672,11 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
-        
+
         // set global variables
         $this->getHasUncategorized($plos);
         $this->getNumCatUsed($ploProgramCategories);
@@ -1642,11 +1684,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // Required Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $requiredProgramCourses);
-        $arrRequired = array();
+        $arrRequired = [];
         $arrRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrRequired);
-        $storeRequired = array();
+        $storeRequired = [];
         $storeRequired = $this->createCDFArray($arrRequired, $storeRequired);
         $storeRequired = $this->frequencyDistribution($arrRequired, $storeRequired);
         $storeRequired = $this->replaceIdsWithAbv($storeRequired, $arrRequired);
@@ -1657,7 +1699,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getNonRequiredCourses($program_id) {
+    public function getNonRequiredCourses($program_id): JsonResponse
+    {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         // get all of the non-required courses this program belongs to
         $nonRequiredProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->where('course_programs.course_required', 0)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
@@ -1665,7 +1708,7 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
@@ -1677,11 +1720,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // Non Required Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $nonRequiredProgramCourses);
-        $arrNonRequired = array();
+        $arrNonRequired = [];
         $arrNonRequired = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrNonRequired);
-        $storeNonRequired = array();
+        $storeNonRequired = [];
         $storeNonRequired = $this->createCDFArray($arrNonRequired, $storeNonRequired);
         $storeNonRequired = $this->frequencyDistribution($arrNonRequired, $storeNonRequired);
         $storeNonRequired = $this->replaceIdsWithAbv($storeNonRequired, $arrNonRequired);
@@ -1692,7 +1735,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getFirstCourses($program_id) {
+    public function getFirstCourses($program_id): JsonResponse
+    {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $firstYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -1706,7 +1750,7 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
@@ -1718,11 +1762,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // First Year Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $firstYearProgramCourses);
-        $arrFirst = array();
+        $arrFirst = [];
         $arrFirst = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFirst);
-        $storeFirst = array();
+        $storeFirst = [];
         $storeFirst = $this->createCDFArray($arrFirst, $storeFirst);
         $storeFirst = $this->frequencyDistribution($arrFirst, $storeFirst);
         $storeFirst = $this->replaceIdsWithAbv($storeFirst, $arrFirst);
@@ -1733,7 +1777,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getSecondCourses($program_id) {
+    public function getSecondCourses($program_id): JsonResponse
+    {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $secondYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -1747,7 +1792,7 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
@@ -1759,11 +1804,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // Second Year Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $secondYearProgramCourses);
-        $arrSecond = array();
+        $arrSecond = [];
         $arrSecond = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrSecond);
-        $storeSecond = array();
+        $storeSecond = [];
         $storeSecond = $this->createCDFArray($arrSecond, $storeSecond);
         $storeSecond = $this->frequencyDistribution($arrSecond, $storeSecond);
         $storeSecond = $this->replaceIdsWithAbv($storeSecond, $arrSecond);
@@ -1774,7 +1819,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getThirdCourses($program_id) {
+    public function getThirdCourses($program_id): JsonResponse
+    {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $thirdYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -1788,7 +1834,7 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
@@ -1800,11 +1846,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // Third Year Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $thirdYearProgramCourses);
-        $arrThird = array();
+        $arrThird = [];
         $arrThird = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrThird);
-        $storeThird = array();
+        $storeThird = [];
         $storeThird = $this->createCDFArray($arrThird, $storeThird);
         $storeThird = $this->frequencyDistribution($arrThird, $storeThird);
         $storeThird = $this->replaceIdsWithAbv($storeThird, $arrThird);
@@ -1815,7 +1861,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getFourthCourses($program_id) {
+    public function getFourthCourses($program_id): JsonResponse
+    {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $fourthYearProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -1829,7 +1876,7 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
@@ -1841,11 +1888,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // fourth Year Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $fourthYearProgramCourses);
-        $arrFourth = array();
+        $arrFourth = [];
         $arrFourth = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrFourth);
-        $storeFourth = array();
+        $storeFourth = [];
         $storeFourth = $this->createCDFArray($arrFourth, $storeFourth);
         $storeFourth = $this->frequencyDistribution($arrFourth, $storeFourth);
         $storeFourth = $this->replaceIdsWithAbv($storeFourth, $arrFourth);
@@ -1856,7 +1903,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function getGraduateCourses($program_id) {
+    public function getGraduateCourses($program_id): JsonResponse
+    {
         $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
         $graduateProgramCourses = Course::join('course_programs', 'courses.course_id', '=', 'course_programs.course_id')->where('course_programs.program_id', $program_id)->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get();
         $count = 0;
@@ -1870,7 +1918,7 @@ class ProgramWizardController extends Controller
         $ploCategories = PLOCategory::where('program_id', $program_id)->get();
         // get plo categories for program
         $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
-        // get plo's for the program 
+        // get plo's for the program
         $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
         // get all plo's
         $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
@@ -1882,11 +1930,11 @@ class ProgramWizardController extends Controller
         $this->getNumUncategorizedPLOS($allPLO);
 
         // graduate Courses Frequency Distribution
-        $coursesOutcomes = array();
+        $coursesOutcomes = [];
         $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $graduateProgramCourses);
-        $arrGraduate = array();
+        $arrGraduate = [];
         $arrGraduate = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arrGraduate);
-        $storeGraduate = array();
+        $storeGraduate = [];
         $storeGraduate = $this->createCDFArray($arrGraduate, $storeGraduate);
         $storeGraduate = $this->frequencyDistribution($arrGraduate, $storeGraduate);
         $storeGraduate = $this->replaceIdsWithAbv($storeGraduate, $arrGraduate);
@@ -1897,7 +1945,8 @@ class ProgramWizardController extends Controller
         return response()->json($output, 200);
     }
 
-    public function generateHTML($programCourses, $ploCount, $plos, $ploCategories, $ploProgramCategories, $store) {
+    public function generateHTML($programCourses, $ploCount, $plos, $ploCategories, $ploProgramCategories, $store)
+    {
         $output = '';
 
         if (count($programCourses) < 1) {
@@ -1920,8 +1969,8 @@ class ProgramWizardController extends Controller
                                             <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);"></th>
                                             <!-- Displays Categories -->';
 
-            foreach ($ploCategories as $index =>$plo) {
-                if ($plo->plo_category != NULL) {
+            foreach ($ploCategories as $index => $plo) {
+                if ($plo->plo_category != null) {
                     // Use short name for category if there are more than 3
                     // if (($this->numCatUsed > 3) && ($plo->plos->count() > 0)) {
                     //     $output .= '<th colspan=" '.$this->plosPerCategory[$plo->plo_category_id].' " style="background-color: rgba(0, 0, 0, 0.03);">C - '.($index + 1).'</th>';
@@ -1940,9 +1989,9 @@ class ProgramWizardController extends Controller
 
             if (count($plos) < 7) {
                 //Categorized PLOs
-                foreach($ploProgramCategories as $index => $plo) {
-                    if ($plo->plo_category != NULL) {
-                        if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
+                foreach ($ploProgramCategories as $index => $plo) {
+                    if ($plo->plo_category != null) {
+                        if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == null) {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO #'.($index + 1).'</th>';
                         } else {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
@@ -1951,18 +2000,18 @@ class ProgramWizardController extends Controller
                 }
                 //Uncategorized PLOs
                 $uncatIndex = 0;
-                foreach($plos as $plo) {
-                    if ($plo->plo_category == NULL) {
+                foreach ($plos as $plo) {
+                    if ($plo->plo_category == null) {
                         $uncatIndex++;
-                        if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == NULL) {
-                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO #'.( count($ploProgramCategories) + $uncatIndex).'</th>';
+                        if ($plo->plo_shortphrase == '' || $plo->plo_shortphrase == null) {
+                            $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO #'.(count($ploProgramCategories) + $uncatIndex).'</th>';
                         } else {
                             $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">'.htmlspecialchars($plo->plo_shortphrase).'</th>';
                         }
                     }
                 }
             } else {
-                foreach($plos as $index => $plo) {
+                foreach ($plos as $index => $plo) {
                     $output .= '<th style="background-color: rgba(0, 0, 0, 0.03);">PLO #'.($index + 1).'</th>';
                 }
             }
@@ -1975,81 +2024,81 @@ class ProgramWizardController extends Controller
                                 <br>
                                 '.htmlspecialchars($course->semester).' '.htmlspecialchars($course->year).'
                                 </th>';
-                                // Frequency distribution from each course 
-                                // For Each Categorized PLO
-                                foreach ($ploProgramCategories as $index => $plo) {
-                                    if ($plo->plo_category != NULL) {
-                                        // Check if ['pl_outcome_id']['course_id'] are in the array
-                                        if(isset($store[$plo->pl_outcome_id][$course->course_id])) {
-                                            // Check if a Tie is present
-                                            if(isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie'])) {
-                                                $output .= '<td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
-                                                                                                // this loop is for the tool tip
-                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) { 
-                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
-                                                                                                }
-                                                                                                $output .= '">';
+                // Frequency distribution from each course
+                // For Each Categorized PLO
+                foreach ($ploProgramCategories as $index => $plo) {
+                    if ($plo->plo_category != null) {
+                        // Check if ['pl_outcome_id']['course_id'] are in the array
+                        if (isset($store[$plo->pl_outcome_id][$course->course_id])) {
+                            // Check if a Tie is present
+                            if (isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie'])) {
+                                $output .= '<td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                // this loop is for the tool tip
+                                foreach ($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {
+                                    $output .= ''.$index.': '.$freq.'<br>';
+                                }
+                                $output .= '">';
 
-                                                                                                $output .= '<span style="color: black;">
-                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv'].'
                                                                                                 </span>
                                                                                             </td>';
-                                            } else {
-                                                $output .= '<td class="text-center align-middle" style="background-color: '.$store[$plo->pl_outcome_id][$course->course_id]["colour"].';" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
-                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) {
-                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
-                                                                                                }
-                                                                                                $output .='">';
-                                                                                                
-                                                                                                $output .= '<span style="color: black;">
-                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                            } else {
+                                $output .= '<td class="text-center align-middle" style="background-color: '.$store[$plo->pl_outcome_id][$course->course_id]['colour'].';" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                foreach ($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {
+                                    $output .= ''.$index.': '.$freq.'<br>';
+                                }
+                                $output .= '">';
+
+                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv'].'
                                                                                                 </span>
                                                                                             </td>';
-                                            }
-                                        } else {
-                                            $output .= '<td class="text-center align-middle" style="background-color: white;">
+                            }
+                        } else {
+                            $output .= '<td class="text-center align-middle" style="background-color: white;">
                                                             <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                         </td>';
-                                        }
-                                    }
+                        }
+                    }
+                }
+                // For Each Uncategorized PLO
+                foreach ($plos as $plo) {
+                    if ($plo->plo_category == null) {
+                        // Check if ['pl_outcome_id']['course_id'] are in the array
+                        if (isset($store[$plo->pl_outcome_id][$course->course_id])) {
+                            // Check if a Tie is present
+                            if (isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie'])) {
+                                $output .= '<td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                // this loop is for the tool tip
+                                foreach ($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {
+                                    $output .= ''.$index.': '.$freq.'<br>';
                                 }
-                                // For Each Uncategorized PLO
-                                foreach ($plos as $plo) {
-                                    if ($plo->plo_category == NULL) {
-                                        // Check if ['pl_outcome_id']['course_id'] are in the array
-                                        if(isset($store[$plo->pl_outcome_id][$course->course_id])) {
-                                            // Check if a Tie is present
-                                            if(isset($store[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie'])) {
-                                                $output .= '<td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
-                                                                                                // this loop is for the tool tip
-                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) { 
-                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
-                                                                                                }
-                                                                                                $output .= '">';
+                                $output .= '">';
 
-                                                                                                $output .= '<span style="color: black;">
-                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv'].'
                                                                                                 </span>
                                                                                             </td>';
-                                            } else {
-                                                $output .= '<td class="text-center align-middle" style="background-color: '.$store[$plo->pl_outcome_id][$course->course_id]["colour"].';" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
-                                                                                                foreach($store[$plo->pl_outcome_id][$course->course_id]["frequencies"] as $index => $freq) {
-                                                                                                    $output .= ''.$index.': '.$freq.'<br>';
-                                                                                                }
-                                                                                                $output .='">';
-                                                                                                
-                                                                                                $output .= '<span style="color: black;">
-                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]["map_scale_abv"].'
+                            } else {
+                                $output .= '<td class="text-center align-middle" style="background-color: '.$store[$plo->pl_outcome_id][$course->course_id]['colour'].';" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="';
+                                foreach ($store[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {
+                                    $output .= ''.$index.': '.$freq.'<br>';
+                                }
+                                $output .= '">';
+
+                                $output .= '<span style="color: black;">
+                                                                                                    '.$store[$plo->pl_outcome_id][$course->course_id]['map_scale_abv'].'
                                                                                                 </span>
                                                                                             </td>';
-                                            }
-                                        }else {
-                                            $output .= '<td class="text-center align-middle" style="background-color: white;">
+                            }
+                        } else {
+                            $output .= '<td class="text-center align-middle" style="background-color: white;">
                                                             <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
                                                         </td>';
-                                        } 
-                                    }
-                                }
+                        }
+                    }
+                }
                 $output .= '</tr>';
             }
             $output .= '
@@ -2062,134 +2111,134 @@ class ProgramWizardController extends Controller
     }
     // Sample for generating HTML. ( OLD CODE USED BEFORE, now we load this using ajax)
     // <!-- ALL COURSES frequency distribution table -->
-        //             <div class="card-body">
-        //                 <h5 class="card-title">
-        //                     Curriculum Map
-        //                 </h5>
-        //                 @if( $programCourses < 1 )
-        //                     <div class="alert alert-warning wizard">
-        //                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.                   
-        //                     </div>
-        //                 @elseif ($ploCount < 1) 
-        //                     <div class="alert alert-warning wizard">
-        //                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.                   
-        //                     </div>
-        //                 @else
-        //                     <p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
+    //             <div class="card-body">
+    //                 <h5 class="card-title">
+    //                     Curriculum Map
+    //                 </h5>
+    //                 @if( $programCourses < 1 )
+    //                     <div class="alert alert-warning wizard">
+    //                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no courses set for this program yet.
+    //                     </div>
+    //                 @elseif ($ploCount < 1)
+    //                     <div class="alert alert-warning wizard">
+    //                         <i class="bi bi-exclamation-circle-fill pr-2 fs-5"></i>There are no program learning outcomes for this program.
+    //                     </div>
+    //                 @else
+    //                     <p>This chart shows the alignment of courses to program learning outcomes for this program.</p>
 
-        //                     <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
-        //                         <tr class="table-primary">
-        //                             <th colspan='1' class="w-auto">Courses</th>
-        //                             <th class="text-left" colspan='{{ count($plos) }}'>Program-level Learning Outcomes</th>
-        //                         </tr>
-        //                         <tr>
-        //                             <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
-        //                             <!-- Displays Categories -->
-        //                             @foreach($ploCategories as $index =>$plo)
-        //                                 @if ($plo->plo_category != NULL)
-        //                                     <!-- Use short name for category if there are more than 3 -->
-        //                                     @if (($numCatUsed > 3) && ($plo->plos->count() > 0))
-        //                                         <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">C - {{$index + 1}}</th>
-        //                                     @elseif ($plo->plos->count() > 0)
-        //                                         <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
-        //                                     @endif
-        //                                 @endif
-        //                             @endforeach
-        //                             <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
-        //                             @if($hasUncategorized)
-        //                                 <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
-        //                             @endif
-        //                         </tr>
+    //                     <table class="table table-bordered table-sm" style="width: 95%; margin:auto; table-layout: fixed; border: 1px solid white; color: black;">
+    //                         <tr class="table-primary">
+    //                             <th colspan='1' class="w-auto">Courses</th>
+    //                             <th class="text-left" colspan='{{ count($plos) }}'>Program-level Learning Outcomes</th>
+    //                         </tr>
+    //                         <tr>
+    //                             <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
+    //                             <!-- Displays Categories -->
+    //                             @foreach($ploCategories as $index =>$plo)
+    //                                 @if ($plo->plo_category != NULL)
+    //                                     <!-- Use short name for category if there are more than 3 -->
+    //                                     @if (($numCatUsed > 3) && ($plo->plos->count() > 0))
+    //                                         <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">C - {{$index + 1}}</th>
+    //                                     @elseif ($plo->plos->count() > 0)
+    //                                         <th colspan='{{ $plosPerCategory[$plo->plo_category_id] }}' style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_category}}</th>
+    //                                     @endif
+    //                                 @endif
+    //                             @endforeach
+    //                             <!-- Heading appended at the end, if there are Uncategorized PLOs  -->
+    //                             @if($hasUncategorized)
+    //                                 <th colspan="{{$numUncategorizedPLOS}}" style="background-color: rgba(0, 0, 0, 0.03);">Uncategorized PLOs</th>
+    //                             @endif
+    //                         </tr>
 
-        //                         <tr>
-        //                             <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
-        //                             <!-- If there are less than 7 PLOs, use the short-phrase, else use PLO at index + 1 -->
-        //                             @if (count($plos) < 7) 
-        //                                 <!-- Categorized PLOs -->
-        //                                 @foreach($ploProgramCategories as $plo)
-        //                                     @if ($plo->plo_category != NULL)
-        //                                         <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
-        //                                     @endif
-        //                                 @endforeach
-        //                                 <!-- Uncategorized PLOs -->
-        //                                 @foreach($plos as $plo)
-        //                                     @if ($plo->plo_category == NULL)
-        //                                         <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
-        //                                     @endif
-        //                                 @endforeach
-        //                             @else
-        //                                 @foreach($plos as $index => $plo)
-        //                                     <th style="background-color: rgba(0, 0, 0, 0.03);">PLO: {{$index + 1}}</th>
-        //                                 @endforeach
-        //                             @endif
-        //                         </tr>
-        //                         <!-- Show all courses associated to the program -->
-        //                         @foreach($programCourses as $course)
-        //                             <tr>
-        //                                 <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
-        //                                 {{$course->course_code}} {{$course->course_num}} {{$course->section}}
-        //                                 <br>
-        //                                 {{$course->semester}} {{$course->year}}
-        //                                 </th>
-        //                                 <!-- Frequency distribution from each course -->
-        //                                 <!-- For Each Categorized PLO -->
-        //                                 @foreach($ploProgramCategories as $index => $plo)
-        //                                     @if ($plo->plo_category != NULL)
-        //                                     <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-        //                                         @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
-        //                                             <!-- Check if a Tie is present -->
-        //                                             @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-        //                                                 <td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-        //                                                     <span style="color: black;">
-        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-        //                                                     </span>
-        //                                                 </td>
-        //                                             @else
-        //                                                 <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-        //                                                     <span style="color: black;">
-        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-        //                                                     </span>
-        //                                                 </td>
-        //                                             @endif
+    //                         <tr>
+    //                             <th colspan='1' style="background-color: rgba(0, 0, 0, 0.03);"></th>
+    //                             <!-- If there are less than 7 PLOs, use the short-phrase, else use PLO at index + 1 -->
+    //                             @if (count($plos) < 7)
+    //                                 <!-- Categorized PLOs -->
+    //                                 @foreach($ploProgramCategories as $plo)
+    //                                     @if ($plo->plo_category != NULL)
+    //                                         <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
+    //                                     @endif
+    //                                 @endforeach
+    //                                 <!-- Uncategorized PLOs -->
+    //                                 @foreach($plos as $plo)
+    //                                     @if ($plo->plo_category == NULL)
+    //                                         <th style="background-color: rgba(0, 0, 0, 0.03);">{{$plo->plo_shortphrase}}</th>
+    //                                     @endif
+    //                                 @endforeach
+    //                             @else
+    //                                 @foreach($plos as $index => $plo)
+    //                                     <th style="background-color: rgba(0, 0, 0, 0.03);">PLO: {{$index + 1}}</th>
+    //                                 @endforeach
+    //                             @endif
+    //                         </tr>
+    //                         <!-- Show all courses associated to the program -->
+    //                         @foreach($programCourses as $course)
+    //                             <tr>
+    //                                 <th colspan="1" style="background-color: rgba(0, 0, 0, 0.03);">
+    //                                 {{$course->course_code}} {{$course->course_num}} {{$course->section}}
+    //                                 <br>
+    //                                 {{$course->semester}} {{$course->year}}
+    //                                 </th>
+    //                                 <!-- Frequency distribution from each course -->
+    //                                 <!-- For Each Categorized PLO -->
+    //                                 @foreach($ploProgramCategories as $index => $plo)
+    //                                     @if ($plo->plo_category != NULL)
+    //                                     <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+    //                                         @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
+    //                                             <!-- Check if a Tie is present -->
+    //                                             @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+    //                                                 <td class="text-center align-middle" style="background:repeating-linear-gradient(45deg, transparent, transparent 8px, #ccc 8px, #ccc 16px), linear-gradient( to bottom, #fff, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+    //                                                     <span style="color: black;">
+    //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+    //                                                     </span>
+    //                                                 </td>
+    //                                             @else
+    //                                                 <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+    //                                                     <span style="color: black;">
+    //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+    //                                                     </span>
+    //                                                 </td>
+    //                                             @endif
 
-        //                                         @else
-        //                                             <td class="text-center align-middle" style="background-color: white;">
-        //                                                 <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
-        //                                             </td>
-        //                                         @endif
-        //                                     @endif
-        //                                 @endforeach
-        //                                 <!-- For Each Uncategorized PLO-->
-        //                                 @foreach($plos as $plo)
-        //                                     @if ($plo->plo_category == NULL)
-        //                                         <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
-        //                                         @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
-        //                                             <!-- Check if a Tie is present -->
-        //                                             @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
-        //                                                 <td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 10px, #ccc 10px, #ccc 20px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-        //                                                     <span style="color: black;">
-        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-        //                                                     </span>
-        //                                                 </td>
-        //                                             @else
-        //                                                 <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
-        //                                                     <span style="color: black;">
-        //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
-        //                                                     </span>
-        //                                                 </td>
-        //                                             @endif
+    //                                         @else
+    //                                             <td class="text-center align-middle" style="background-color: white;">
+    //                                                 <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+    //                                             </td>
+    //                                         @endif
+    //                                     @endif
+    //                                 @endforeach
+    //                                 <!-- For Each Uncategorized PLO-->
+    //                                 @foreach($plos as $plo)
+    //                                     @if ($plo->plo_category == NULL)
+    //                                         <!-- Check if ['pl_outcome_id']['course_id'] are in the array -->
+    //                                         @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]))
+    //                                             <!-- Check if a Tie is present -->
+    //                                             @if(isset($testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_id_tie']))
+    //                                                 <td class="text-center align-middle" style="background:repeating-linear-gradient( 45deg, transparent, transparent 10px, #ccc 10px, #ccc 20px), linear-gradient( to bottom, #eee, #999);" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+    //                                                     <span style="color: black;">
+    //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+    //                                                     </span>
+    //                                                 </td>
+    //                                             @else
+    //                                                 <td class="text-center align-middle" style="background-color: {{ $testArr[$plo->pl_outcome_id][$course->course_id]['colour'] }};" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="@foreach($testArr[$plo->pl_outcome_id][$course->course_id]['frequencies'] as $index => $freq) {{$index}}: {{$freq}}<br> @endforeach">
+    //                                                     <span style="color: black;">
+    //                                                         {{$testArr[$plo->pl_outcome_id][$course->course_id]['map_scale_abv']}}
+    //                                                     </span>
+    //                                                 </td>
+    //                                             @endif
 
-        //                                         @else
-        //                                             <td class="text-center align-middle" style="background-color: white;">
-        //                                                 <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
-        //                                             </td>
-        //                                         @endif
-        //                                     @endif
-        //                                 @endforeach
-        //                             </tr>
-        //                         @endforeach
-        //                     </table>
-        //                 @endif
-        //             </div>  
-        //             <!-- end Courses to PLOs frequency Distribution card -->
+    //                                         @else
+    //                                             <td class="text-center align-middle" style="background-color: white;">
+    //                                                 <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-html="true" data-bs-placement="right" title="Incomplete"></i>
+    //                                             </td>
+    //                                         @endif
+    //                                     @endif
+    //                                 @endforeach
+    //                             </tr>
+    //                         @endforeach
+    //                     </table>
+    //                 @endif
+    //             </div>
+    //             <!-- end Courses to PLOs frequency Distribution card -->
 }

@@ -3,41 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssessmentMethod;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Program;
-use App\Models\User;
-use App\Models\Role;
 use App\Models\Course;
 use App\Models\CourseProgram;
-use App\Models\CourseUser;
 use App\Models\LearningActivity;
 use App\Models\MappingScale;
 use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\PLOCategory;
+use App\Models\Program;
 use App\Models\ProgramLearningOutcome;
 use App\Models\ProgramUser;
 use App\Models\StandardCategory;
 use App\Models\StandardScale;
 use App\Models\StandardsOutcomeMap;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use PDF;
-use PhpOffice\PhpSpreadsheet\Reader\Xls\Color as XlsColor;
-use Response;
-use Throwable;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Color as StyleColor;
-use PhpOffice\PhpSpreadsheet\Style\Conditional;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\ConditionalFormatting\Wizard;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Throwable;
 
 class ProgramController extends Controller
 {
@@ -45,14 +42,11 @@ class ProgramController extends Controller
     {
         $this->middleware(['auth', 'verified']);
     }
-    
+
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-
-    public function index()
+    public function index(): RedirectResponse
     {
         return redirect()->back();
     }
@@ -65,28 +59,25 @@ class ProgramController extends Controller
     public function create()
     {
         //
-        
+
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         //
         $this->validate($request, [
-            'program'=> 'required',
-            'level'=> 'required',
+            'program' => 'required',
+            'level' => 'required',
             // 'faculty'=> 'required',
-            ]);
+        ]);
 
         $program = new Program;
         $program->program = $request->input('program');
 
-        if ($request->input('level') != "Bachelors" && $request->input('level') != "Masters" && $request->input('level') != "Doctoral" && $request->input('level') != "Other") {
+        if ($request->input('level') != 'Bachelors' && $request->input('level') != 'Masters' && $request->input('level') != 'Doctoral' && $request->input('level') != 'Other') {
             $program->level = 'Other';
         } else {
             $program->level = $request->input('level');
@@ -95,14 +86,14 @@ class ProgramController extends Controller
         $program->department = $request->input('department');
         $program->campus = $request->input('campus');
         $program->status = -1;
-        
+
         // get users name for last_modified_user
         $user = User::find(Auth::id());
         $program->last_modified_user = $user->name;
-        
-        if($program->save()){
+
+        if ($program->save()) {
             $request->session()->flash('success', 'New program added');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error Adding the program');
         }
 
@@ -113,7 +104,7 @@ class ProgramController extends Controller
         // assign the creator of the program the owner permission
         $programUser->permission = 1;
         $programUser->save();
-        
+
         return redirect()->route('programWizard.step1', $program->program_id);
 
     }
@@ -121,48 +112,42 @@ class ProgramController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         //
-    
-        
+
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         //
 
-        
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $program_id)
+    public function update(Request $request, $program_id): RedirectResponse
     {
         //
         $this->validate($request, [
-            'program'=> 'required',
-            'level'=> 'required',
+            'program' => 'required',
+            'level' => 'required',
             // 'faculty'=> 'required',
-            ]);
+        ]);
 
         $program = Program::where('program_id', $program_id)->first();
         $program->program = $request->input('program');
-        if ($request->input('level') != "Bachelors" && $request->input('level') != "Masters" && $request->input('level') != "Doctoral" && $request->input('level') != "Other") {
+        if ($request->input('level') != 'Bachelors' && $request->input('level') != 'Masters' && $request->input('level') != 'Doctoral' && $request->input('level') != 'Other') {
             $program->level = 'Other';
         } else {
             $program->level = $request->input('level');
@@ -175,13 +160,13 @@ class ProgramController extends Controller
         $user = User::find(Auth::id());
         $program->last_modified_user = $user->name;
 
-        if($program->save()){
+        if ($program->save()) {
             // update courses 'updated_at' field
             $program = Program::find($program_id);
             $program->touch();
 
             $request->session()->flash('success', 'Program updated');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error updating the program');
         }
 
@@ -192,9 +177,8 @@ class ProgramController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $program_id)
+    public function destroy(Request $request, $program_id): RedirectResponse
     {
         // find the program to delete
         $program = Program::find($program_id);
@@ -204,26 +188,27 @@ class ProgramController extends Controller
         $currentUserPermission = $currentUser->programs->where('program_id', $program_id)->first()->pivot->permission;
         // if the current user own the program, then try to delete it
         if ($currentUserPermission == 1) {
-            if($program->delete()){
-                $request->session()->flash('success','Program has been deleted');
-            }else{
+            if ($program->delete()) {
+                $request->session()->flash('success', 'Program has been deleted');
+            } else {
                 $request->session()->flash('error', 'There was an error deleting the program');
             }
         } else {
-            $request->session()->flash('error','You do not have permission to delete this program');
+            $request->session()->flash('error', 'You do not have permission to delete this program');
         }
+
         return redirect()->route('home');
     }
 
-    public function submit(Request $request, $program_id)
+    public function submit(Request $request, $program_id): RedirectResponse
     {
         //
         $p = Program::where('program_id', $program_id)->first();
         $p->status = 1;
-        
-        if($p->save()){
-            $request->session()->flash('success','Program settings have been submitted');
-        }else{
+
+        if ($p->save()) {
+            $request->session()->flash('success', 'Program settings have been submitted');
+        } else {
             $request->session()->flash('error', 'There was an error submitting the program settings');
         }
 
@@ -232,56 +217,59 @@ class ProgramController extends Controller
 
     /**
      * Get 2D array of courses indexed by their level for the program with $programId.
+     *
      * @param Request HTTP request
      * @param  int  $prorgamId
-     * @return Array
-     */    
-    function getCoursesByLevel($programId) {
+     * @return array
+     */
+    public function getCoursesByLevel($programId)
+    {
         $program = Program::find($programId);
-        $coursesByLevels["100 Level"] = collect();
-        $coursesByLevels["200 Level"] = collect();
-        $coursesByLevels["300 Level"] = collect();
-        $coursesByLevels["400 Level"] = collect();
-        $coursesByLevels["500 Level"] = collect();
-        $coursesByLevels["600 Level"] = collect();
-        $coursesByLevels["Other"] = collect();
+        $coursesByLevels['100 Level'] = collect();
+        $coursesByLevels['200 Level'] = collect();
+        $coursesByLevels['300 Level'] = collect();
+        $coursesByLevels['400 Level'] = collect();
+        $coursesByLevels['500 Level'] = collect();
+        $coursesByLevels['600 Level'] = collect();
+        $coursesByLevels['Other'] = collect();
 
         foreach ($program->courses as $course) {
             switch ($course->course_num[0]) {
                 case 1:
-                    $coursesByLevels["100 Level"]->push($course);
+                    $coursesByLevels['100 Level']->push($course);
                     break;
-                case 2: 
-                    $coursesByLevels["200 Level"]->push($course);
+                case 2:
+                    $coursesByLevels['200 Level']->push($course);
                     break;
                 case 3:
-                    $coursesByLevels["300 Level"]->push($course);
+                    $coursesByLevels['300 Level']->push($course);
                     break;
                 case 4:
-                    $coursesByLevels["400 Level"]->push($course);
+                    $coursesByLevels['400 Level']->push($course);
                     break;
-                case 5: 
-                    $coursesByLevels["500 Level"]->push($course);
+                case 5:
+                    $coursesByLevels['500 Level']->push($course);
                     break;
                 case 6:
-                    $coursesByLevels["600 Level"]->push($course);
+                    $coursesByLevels['600 Level']->push($course);
                     break;
                 default:
-                $coursesByLevels["Other"]->push($course);
+                    $coursesByLevels['Other']->push($course);
             }
         }
+
         return $coursesByLevels;
     }
 
-
     /**
      * Helper for spreadsheet and pdf summary files which gets images of the charts included in this program
+     *
      * @param Request HTTP request
-     * @param  int  $programId
-     * @return array $url of pdf 
-     */ 
-    private function getImagesOfCharts($programId, $dstFileExt) {
-        
+     * @return array $url of pdf
+     */
+    private function getImagesOfCharts(int $programId, $dstFileExt): array
+    {
+
         // find the program
         $program = Program::find($programId);
         // get all the courses this program belongs to
@@ -289,8 +277,8 @@ class ProgramController extends Controller
         // get program mapping scales of this program
         $mappingScales = $program->mappingScaleLevels;
 
-        // TODO: refactor and clean up the code BELOW to reduce its cognitive complexity. 
-        // It was taken from ProgramWizardController.php which also needs to be refactored 
+        // TODO: refactor and clean up the code BELOW to reduce its cognitive complexity.
+        // It was taken from ProgramWizardController.php which also needs to be refactored
 
         // get array of mapping scale abbreviations and add N/A
         $mappingScalesAbbrevArr = $mappingScales->pluck('abbreviation')->toArray();
@@ -302,10 +290,10 @@ class ProgramController extends Controller
         // create array of mapping scale colors
         $programMappingScalesColors = [];
         // create an array of mapping scale frequencies in course alignment
-        $freqOfMSIds = [];          
+        $freqOfMSIds = [];
         for ($index = 0; $index < count($mappingScaleIdsArr); $index++) {
             $freqOfMSIds[$mappingScaleIdsArr[$index]] = [];
-            $programMappingScalesColors[$index] = (strtolower(MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first()) == "#ffffff" || strtolower(MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first()) == "#fff" ? "#6c757d" : MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first());
+            $programMappingScalesColors[$index] = (strtolower(MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first()) == '#ffffff' || strtolower(MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first()) == '#fff' ? '#6c757d' : MappingScale::where('map_scale_id', $mappingScaleIdsArr[$index])->pluck('colour')->first());
         }
         // get categorized plo's for the program (ordered by category then outcome id)
         $plosInCatOrdered = ProgramLearningOutcome::where('program_id', $programId)->whereNotNull('plo_category_id')->orderBy('plo_category_id', 'ASC')->orderBy('pl_outcome_id', 'ASC')->get();
@@ -317,32 +305,32 @@ class ProgramController extends Controller
         $plosInOrder = $allPlos->pluck('plo_shortphrase')->toArray();
         // get array of all plo ids
         $plosInOrderIds = $allPlos->pluck('pl_outcome_id')->toArray();
-        
+
         // loop through $freqOfMSIds then
         // loop through PLOs ($ploInOrderIds) and get array [countOfAbvFor(plo1), countOfAbvFor(plo2), ... , countOfAbvFor(plo7)]
-        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
-            foreach($plosInOrderIds as $plosInOrderId) {
+        foreach ($freqOfMSIds as $ms_id => $freqOfMSId) {
+            foreach ($plosInOrderIds as $plosInOrderId) {
                 array_push($freqOfMSIds[$ms_id], OutcomeMap::where('pl_outcome_id', $plosInOrderId)->where('map_scale_id', $ms_id)->count());
             }
         }
-        // Change key so that order isn't messed up when data is used in highcharts 
+        // Change key so that order isn't messed up when data is used in highcharts
         $index = 0;
         $freqForMS = [];
-        foreach($freqOfMSIds as $ms_id => $freqOfMSId) {
+        foreach ($freqOfMSIds as $ms_id => $freqOfMSId) {
             $freqForMS[$index] = $freqOfMSId;
             $index++;
-        }     
-        // create series array for highcharts 
-        $seriesPLOCLO = array();
-        for ($count = 0; $count < count($mappingScalesAbbrevArr); $count++) {
-            array_push($seriesPLOCLO, array("name" => $mappingScalesAbbrevArr[$count], "data" => $freqForMS[$count], "colour" => $programMappingScalesColors[$count]));
         }
-    
+        // create series array for highcharts
+        $seriesPLOCLO = [];
+        for ($count = 0; $count < count($mappingScalesAbbrevArr); $count++) {
+            array_push($seriesPLOCLO, ['name' => $mappingScalesAbbrevArr[$count], 'data' => $freqForMS[$count], 'colour' => $programMappingScalesColors[$count]]);
+        }
+
         // DATA FOR ASSESSMENT METHODS
-        
+
         $assessmentMethods = [];
         foreach ($programCourses as $programCourse) {
-            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck("a_method"));
+            array_push($assessmentMethods, AssessmentMethod::where('course_id', $programCourse->course_id)->pluck('a_method'));
         }
         $allAM = [];
         foreach ($assessmentMethods as $ams) {
@@ -357,11 +345,11 @@ class ProgramController extends Controller
                 if (array_key_exists($allAM[$i], $amFrequencies)) {
                     $amFrequencies[$allAM[$i]] += 1;
                 } else {
-                    $amFrequencies += [ $allAM[$i] => 1 ];
+                    $amFrequencies += [$allAM[$i] => 1];
                 }
             }
 
-            // Special Case (Might be removed in the future) 
+            // Special Case (Might be removed in the future)
             // if there exists 'Final' and 'Final Exam' then combine them into 'Final Exam'
             if (array_key_exists('Final Exam', $amFrequencies) && array_key_exists('Final', $amFrequencies)) {
                 $amFrequencies['Final Exam'] += $amFrequencies['Final'];
@@ -369,18 +357,18 @@ class ProgramController extends Controller
             }
         }
         $amTitles = array_keys($amFrequencies);
-        $amData = array(
+        $amData = [
             [
-            "name" => "# of Occurrences",
-            "data" => array_values($amFrequencies),
-            "colorByPoint" => true,
-            ]
-        );
-        
+                'name' => '# of Occurrences',
+                'data' => array_values($amFrequencies),
+                'colorByPoint' => true,
+            ],
+        ];
+
         // Get frequencies for all learning activities
         $learningActivities = [];
         foreach ($programCourses as $programCourse) {
-            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck("l_activity"));
+            array_push($learningActivities, LearningActivity::where('course_id', $programCourse->course_id)->pluck('l_activity'));
         }
         $allLA = [];
         foreach ($learningActivities as $lAS) {
@@ -395,43 +383,43 @@ class ProgramController extends Controller
                 if (array_key_exists($allLA[$i], $laFrequencies)) {
                     $laFrequencies[$allLA[$i]] += 1;
                 } else {
-                    $laFrequencies += [ $allLA[$i] => 1 ];
+                    $laFrequencies += [$allLA[$i] => 1];
                 }
             }
         }
 
         $laTitles = array_keys($laFrequencies);
-        $laData = array(
+        $laData = [
             [
-            "name" => "# of Occurrences",
-            "data" => array_values($laFrequencies),
-            "colorByPoint" => true,
-            ]
-        );
+                'name' => '# of Occurrences',
+                'data' => array_values($laFrequencies),
+                'colorByPoint' => true,
+            ],
+        ];
 
         // Code to generate ministry standards chart
         $hasNoMS = false;
 
         // Get all Standard Categories for courses in the program
-        if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
+        if ($program->level == 'Undergraduate' || $program->level == 'Bachelors') {
             $standardCategory = StandardCategory::find(1);
-        } elseif($program->level == "Masters") {
+        } elseif ($program->level == 'Masters') {
             $standardCategory = StandardCategory::find(2);
-        } elseif($program->level == "Doctoral") {
+        } elseif ($program->level == 'Doctoral') {
             $standardCategory = StandardCategory::find(3);
         } else {
             $hasNoMS = true;
             $standardCategory = StandardCategory::find(0);
         }
 
-        if (!$hasNoMS) {
+        if (! $hasNoMS) {
             // Get all Standards for courses in the program
             $standards = $standardCategory->standards;
 
             // Get the names of the standards for the categories (x-axis)
             $namesStandards = [];
             $descriptionsStandards = [];
-            for($i = 0; $i < count($standards); $i++) {
+            for ($i = 0; $i < count($standards); $i++) {
                 $namesStandards[$i] = $standards[$i]->s_shortphrase;
                 $descriptionsStandards[$i] = $standards[$i]->s_outcome;
             }
@@ -450,9 +438,9 @@ class ProgramController extends Controller
             $coursesOfMinistryStandardIds = [];
             for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
                 $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
-                $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+                $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#ffffff' || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#fff' ? '#6c757d' : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
             }
-            foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+            foreach ($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
                 foreach ($standards as $standard) {
                     $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
                     $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
@@ -475,194 +463,197 @@ class ProgramController extends Controller
             $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
             $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
 
-            $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards); 
+            $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards);
 
-            // create series array for highcharts 
-            $seriesMS = array();
+            // create series array for highcharts
+            $seriesMS = [];
             for ($count = 0; $count < count($standardsMappingScales); $count++) {
-                array_push($seriesMS, array("name" => $standardsMappingScales[$count], "data" => $frequencyOfMinistryStandardIds[$count], "color" => $standardMappingScalesColours[$count]));
+                array_push($seriesMS, ['name' => $standardsMappingScales[$count], 'data' => $frequencyOfMinistryStandardIds[$count], 'color' => $standardMappingScalesColours[$count]]);
             }
         }
-        
 
-        // TODO: refactor and clean up the code ABOVE to reduce its cognitive complexity. 
-        // It was taken from ProgramWizardController.php which also needs to be refactored 
+        // TODO: refactor and clean up the code ABOVE to reduce its cognitive complexity.
+        // It was taken from ProgramWizardController.php which also needs to be refactored
 
         // get url of plos to clos cluster chart
 
         //setting default shorthands for PLOs so chart doesn't use index
-        for($i=0; $i<count($plosInOrder); $i++){
-            if($plosInOrder[$i]==NULL){
-                $plosInOrder[$i]="PLO #".($i+1);
+        for ($i = 0; $i < count($plosInOrder); $i++) {
+            if ($plosInOrder[$i] == null) {
+                $plosInOrder[$i] = 'PLO #'.($i + 1);
             }
         }
 
         $plosToClosClusterChartImgURL = $this->barChartPOST(
-            "plosToClosCluster-" . $program->program_id . ".jpeg",
-            "Number of Course Outcomes per Program Learning Outcomes", 
-            "Program Learning Outcomes",
-            "# of Outcomes",
+            'plosToClosCluster-'.$program->program_id.'.jpeg',
+            'Number of Course Outcomes per Program Learning Outcomes',
+            'Program Learning Outcomes',
+            '# of Outcomes',
             $plosInOrder,
             $seriesPLOCLO,
             true
         );
         // get url of assessment methods chart
         $assessmentMethodsChartImgUrl = $this->barChartPOST(
-            "all-am-" . $program->program_id . ".jpeg",
-            "Assessment Methods", 
-            "Assessment Method",
-            "Frequency",
+            'all-am-'.$program->program_id.'.jpeg',
+            'Assessment Methods',
+            'Assessment Method',
+            'Frequency',
             $amTitles,
             $amData
         );
         // get url of learning activities chart
         $learningActivitiesChartImgUrl = $this->barChartPOST(
-            "all-la-" . $program->program_id . ".jpeg",
-            "Learning Activities", 
-            "Learning Activity",
-            "Frequency",
+            'all-la-'.$program->program_id.'.jpeg',
+            'Learning Activities',
+            'Learning Activity',
+            'Frequency',
             $laTitles,
             $laData
         );
-        if (!$hasNoMS) {
+        if (! $hasNoMS) {
             // get url of ministry standards cluster chart
             $ministryStandardsClusterChartImgURL = $this->barChartPOST(
-                "ministryStandardsCluster-" . $program->program_id . ".jpeg",
-                "Alignment with Ministry Standards", 
-                "Ministry Standards Outcomes",
-                "# of Outcomes",
+                'ministryStandardsCluster-'.$program->program_id.'.jpeg',
+                'Alignment with Ministry Standards',
+                'Ministry Standards Outcomes',
+                '# of Outcomes',
                 $namesStandards,
                 $seriesMS,
                 true
             );
         }
 
-        $chartsBaseURL = config('app.url') . '/storage/charts/';
-        $chartsBasePath = Storage::path('public' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR);
-        if (!$hasNoMS) { 
+        $chartsBaseURL = config('app.url').'/storage/charts/';
+        $chartsBasePath = Storage::path('public'.DIRECTORY_SEPARATOR.'charts'.DIRECTORY_SEPARATOR);
+        if (! $hasNoMS) {
             if ($dstFileExt == 'pdf') {
-                return array(
-                    "Program MAP Chart" => $chartsBaseURL . $plosToClosClusterChartImgURL,
-                    "Assessment Methods Chart" => $chartsBaseURL . $assessmentMethodsChartImgUrl, 
-                    "Learning Activities Chart" => $chartsBaseURL . $learningActivitiesChartImgUrl,
-                    "Ministry Standards Chart" => $chartsBaseURL . $ministryStandardsClusterChartImgURL,
-                );
+                return [
+                    'Program MAP Chart' => $chartsBaseURL.$plosToClosClusterChartImgURL,
+                    'Assessment Methods Chart' => $chartsBaseURL.$assessmentMethodsChartImgUrl,
+                    'Learning Activities Chart' => $chartsBaseURL.$learningActivitiesChartImgUrl,
+                    'Ministry Standards Chart' => $chartsBaseURL.$ministryStandardsClusterChartImgURL,
+                ];
             } else {
-                return array(
-                    "Program MAP Chart" => $chartsBasePath . $plosToClosClusterChartImgURL,
-                    "Assessment Methods Chart" => $chartsBasePath . $assessmentMethodsChartImgUrl, 
-                    "Learning Activities Chart" => $chartsBasePath . $learningActivitiesChartImgUrl,
-                    "Ministry Standards Chart" => $chartsBasePath . $ministryStandardsClusterChartImgURL,
-                );
+                return [
+                    'Program MAP Chart' => $chartsBasePath.$plosToClosClusterChartImgURL,
+                    'Assessment Methods Chart' => $chartsBasePath.$assessmentMethodsChartImgUrl,
+                    'Learning Activities Chart' => $chartsBasePath.$learningActivitiesChartImgUrl,
+                    'Ministry Standards Chart' => $chartsBasePath.$ministryStandardsClusterChartImgURL,
+                ];
             }
         } else {
             if ($dstFileExt == 'pdf') {
-                return array(
-                    "Program MAP Chart" => $chartsBaseURL . $plosToClosClusterChartImgURL,
-                    "Assessment Methods Chart" => $chartsBaseURL . $assessmentMethodsChartImgUrl, 
-                    "Learning Activities Chart" => $chartsBaseURL . $learningActivitiesChartImgUrl,
-                );
+                return [
+                    'Program MAP Chart' => $chartsBaseURL.$plosToClosClusterChartImgURL,
+                    'Assessment Methods Chart' => $chartsBaseURL.$assessmentMethodsChartImgUrl,
+                    'Learning Activities Chart' => $chartsBaseURL.$learningActivitiesChartImgUrl,
+                ];
             } else {
-                return array(
-                    "Program MAP Chart" => $chartsBasePath . $plosToClosClusterChartImgURL,
-                    "Assessment Methods Chart" => $chartsBasePath . $assessmentMethodsChartImgUrl, 
-                    "Learning Activities Chart" => $chartsBasePath . $learningActivitiesChartImgUrl,
-                );
+                return [
+                    'Program MAP Chart' => $chartsBasePath.$plosToClosClusterChartImgURL,
+                    'Assessment Methods Chart' => $chartsBasePath.$assessmentMethodsChartImgUrl,
+                    'Learning Activities Chart' => $chartsBasePath.$learningActivitiesChartImgUrl,
+                ];
             }
         }
     }
 
     /**
      * Helper for spreadsheet and pdf summary files which fetches and saves an image of a highcharts bar chart used in this program
-     * @param string $filename: filename of saved image
-     * @param string $title: title of bar chart
-     * @param  string $xLabel: x axis label
-     * @param  string $yLabel: y axis label
-     * @param  array $categories: x axis categories
-     * @param  bool $hasLegend: include legend
-     * @param  array $data: data for each category
-     * @return String $url of image 
+     *
+     * @param  string  $filename: filename of saved image
+     * @param  string  $title: title of bar chart
+     * @param  string  $xLabel: x axis label
+     * @param  string  $yLabel: y axis label
+     * @param  array  $categories: x axis categories
+     * @param  bool  $hasLegend: include legend
+     * @param  array  $data: data for each category
+     * @return string $url of image
      */
-    private function barChartPOST($filename, $title, $xLabel, $yLabel, $categories, $data, $hasLegend = false) {
-        
+    private function barChartPOST($filename, $title, $xLabel, $yLabel, $categories, $data, $hasLegend = false): string
+    {
+
         // create highcharts configuration object for a bar chart
-        $config =  json_encode(
-            array(
-                "chart" => [
-                    "type" => "column"
+        $config = json_encode(
+            [
+                'chart' => [
+                    'type' => 'column',
                 ],
-                "title" => [
-                    "text" => $title
+                'title' => [
+                    'text' => $title,
                 ],
-                "xAxis" => [
-                    "title" => [
-                        "text" => $xLabel,
-                        "margin" => 20,
-                        "style" => [
-                            "fontWeight" => "bold"
-                        ]
+                'xAxis' => [
+                    'title' => [
+                        'text' => $xLabel,
+                        'margin' => 20,
+                        'style' => [
+                            'fontWeight' => 'bold',
+                        ],
                     ],
-                    "categories" => $categories
+                    'categories' => $categories,
                 ],
-                "yAxis" => [
-                    "title" => [
-                        "text" => $yLabel,
-                        "margin" => 20
+                'yAxis' => [
+                    'title' => [
+                        'text' => $yLabel,
+                        'margin' => 20,
                     ],
-                    "allowDecimals" => false
+                    'allowDecimals' => false,
                 ],
-                "legend" => [
-                    "enabled" => $hasLegend
+                'legend' => [
+                    'enabled' => $hasLegend,
                 ],
-                "series" => $data        
-            )
+                'series' => $data,
+            ]
         );
-        
+
         // create curl resource for POST request
         $ch = curl_init();
         // set URL and other appropriate options for POST
-        $options = array(
+        $options = [
             // endpoint is the highcharts export server
-            CURLOPT_URL => 'http://export.highcharts.com/',
-            CURLOPT_HEADER => false,        
+            CURLOPT_URL => 'https://export.highcharts.com/',
+            CURLOPT_HEADER => false,
             // return the transfer as a string
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => array("type" => "image/jpeg", "width" => 600, "options" => $config),
+            CURLOPT_POSTFIELDS => ['type' => 'image/jpeg', 'width' => 600, 'options' => $config],
 
-        );   
-        curl_setopt_array($ch, $options);     
+        ];
+        curl_setopt_array($ch, $options);
         // $output contains the output string
         $output = curl_exec($ch);
         // save the image to the storage/public/charts directory which is accessible via public folder due to a symbolic link
-        Storage::put('public' . DIRECTORY_SEPARATOR . 'charts' . DIRECTORY_SEPARATOR . $filename, $output);
+        Storage::put('public'.DIRECTORY_SEPARATOR.'charts'.DIRECTORY_SEPARATOR.$filename, $output);
         // close curl resource to free up system resources
-        curl_close($ch); 
-        
+        curl_close($ch);
+
         return $filename;
     }
 
     /**
      * Create and save a pdf summary for this program.
+     *
      * @param Request HTTP request
      * @param  int  $programId
-     * @return String $url of pdf 
-     */ 
-    public function pdf(Request $request, $program_id) {
+     * @return string $url of pdf
+     */
+    public function pdf(Request $request, $program_id)
+    {
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
-            $user = User::where('id',Auth::id())->first();
+            $user = User::where('id', Auth::id())->first();
             $program = Program::where('program_id', $program_id)->first();
 
             //set array of flags to determine what content to include in downloadSummary.blade.php
-            $programContent = array();
-    
-            if($request->input('formFilled')==null){
-                $programContent=[1,1,1,1,1,1,1];
+            $programContent = [];
 
-            }else{
-                
+            if ($request->input('formFilled') == null) {
+                $programContent = [1, 1, 1, 1, 1, 1, 1];
+
+            } else {
+
                 $programContent[0] = $request->input('PLOs');
                 $programContent[1] = $request->input('mapping_scales');
                 $programContent[2] = $request->input('freq_dist_tables');
@@ -676,18 +667,18 @@ class ProgramController extends Controller
             $coursesByLevels = $this->getCoursesByLevel($program_id);
             //progress bar
             $ploCount = ProgramLearningOutcome::where('program_id', $program_id)->count();
-            $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                        ->where('mapping_scale_programs.program_id', $program_id)->count();
+            $msCount = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', '=', 'mapping_scale_programs.map_scale_id')
+                ->where('mapping_scale_programs.program_id', $program_id)->count();
             //
             $courseCount = CourseProgram::where('program_id', $program_id)->count();
             //
-            $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', "=", 'mapping_scale_programs.map_scale_id')
-                                        ->where('mapping_scale_programs.program_id', $program_id)->get();
+            $mappingScales = MappingScale::join('mapping_scale_programs', 'mapping_scales.map_scale_id', '=', 'mapping_scale_programs.map_scale_id')
+                ->where('mapping_scale_programs.program_id', $program_id)->get();
             // ploIndexArray[$plo->pl_outcome_id] = $index
-            $ploIndexArray = array();
+            $ploIndexArray = [];
             foreach ($program->programLearningOutcomes as $index => $plo) {
-                $ploIndexArray[$plo->pl_outcome_id] =  $index + 1;  
-            } 
+                $ploIndexArray[$plo->pl_outcome_id] = $index + 1;
+            }
             // get all the courses this program belongs to
             $programCourses = $program->courses;
             // get all of the required courses this program belongs to
@@ -698,81 +689,80 @@ class ProgramController extends Controller
             $ploProgramCategories = PLOCategory::where('p_l_o_categories.program_id', $program_id)->join('program_learning_outcomes', 'p_l_o_categories.plo_category_id', '=', 'program_learning_outcomes.plo_category_id')->get();
             // get all plo's
             $allPLO = ProgramLearningOutcome::where('program_id', $program_id)->get();
-            // get plo's for the program 
+            // get plo's for the program
             $plos = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->get();
             // get UnCategorized PLO's
             $unCategorizedPLOS = DB::table('program_learning_outcomes')->leftJoin('p_l_o_categories', 'program_learning_outcomes.plo_category_id', '=', 'p_l_o_categories.plo_category_id')->where('program_learning_outcomes.program_id', $program_id)->where('program_learning_outcomes.plo_category_id', null)->get();
 
             // returns the number of Categories that contain at least one PLO
             $numCatUsed = 0;
-            $uniqueCategories = array();
+            $uniqueCategories = [];
             foreach ($ploProgramCategories as $ploInCategory) {
-                if (!in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
+                if (! in_array($ploInCategory->plo_category_id, $uniqueCategories)) {
                     $uniqueCategories[] += $ploInCategory->plo_category_id;
                     $numCatUsed++;
                 }
             }
-            
+
             // plosPerCategory returns the number of plo's belonging to each category
             // used for setting the colspan in the view
-            $plosPerCategory = array();
-            foreach($ploProgramCategories as $ploCategory) {
+            $plosPerCategory = [];
+            foreach ($ploProgramCategories as $ploCategory) {
                 $plosPerCategory[$ploCategory->plo_category_id] = 0;
             }
-            foreach($ploProgramCategories as $ploCategory) {
+            foreach ($ploProgramCategories as $ploCategory) {
                 $plosPerCategory[$ploCategory->plo_category_id] += 1;
             }
-            
+
             // Used for setting colspan in view
             $numUncategorizedPLOS = 0;
             foreach ($allPLO as $plo) {
-                if ($plo->plo_category_id == null){
-                    $numUncategorizedPLOS ++;
+                if ($plo->plo_category_id == null) {
+                    $numUncategorizedPLOS++;
                 }
             }
-
 
             // returns true if there exists a plo without a category
             $hasUncategorized = false;
             foreach ($plos as $plo) {
-                if ($plo->plo_category == NULL) {
+                if ($plo->plo_category == null) {
                     $hasUncategorized = true;
                 }
             }
 
             // All Courses Frequency Distribution
-            $coursesOutcomes = array();
+            $coursesOutcomes = [];
             $coursesOutcomes = $this->getCoursesOutcomes($coursesOutcomes, $programCourses);
-            $arr = array();
+            $arr = [];
             $arr = $this->getOutcomeMaps($allPLO, $coursesOutcomes, $arr);
-            $store = array();
+            $store = [];
             $store = $this->createCDFArray($arr, $store);
             $store = $this->frequencyDistribution($arr, $store);
             $store = $this->replaceIdsWithAbv($store, $arr);
             $store = $this->assignColours($store);
 
-                    // Code to generate ministry standards chart
+            // Code to generate ministry standards chart
             $hasNoMS = false;
 
             // Get all Standard Categories for courses in the program
-            if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
+            if ($program->level == 'Undergraduate' || $program->level == 'Bachelors') {
                 $standardCategory = StandardCategory::find(1);
-            } elseif($program->level == "Masters") {
+            } elseif ($program->level == 'Masters') {
                 $standardCategory = StandardCategory::find(2);
-            } elseif($program->level == "Doctoral") {
+            } elseif ($program->level == 'Doctoral') {
                 $standardCategory = StandardCategory::find(3);
             } else {
                 $hasNoMS = true;
                 $standardCategory = StandardCategory::find(0);
             }
-            if (!$hasNoMS) {
+            if (! $hasNoMS) {
                 // Get all Standards for courses in the program
                 $standards = $standardCategory->standards;
 
                 // Get the names of the standards for the categories (x-axis)
                 $namesStandards = [];
                 $descriptionsStandards = [];
-                for($i = 0; $i < count($standards); $i++) {
+                for ($i = 0; $i < count($standards); $i++) {
                     $namesStandards[$i] = $standards[$i]->s_shortphrase;
                     $descriptionsStandards[$i] = $standards[$i]->s_outcome;
                 }
@@ -791,9 +781,9 @@ class ProgramController extends Controller
                 $coursesOfMinistryStandardIds = [];
                 for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
                     $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
-                    $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+                    $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#ffffff' || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#fff' ? '#6c757d' : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
                 }
-                foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+                foreach ($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
                     foreach ($standards as $standard) {
                         $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
                         $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
@@ -816,7 +806,7 @@ class ProgramController extends Controller
                 $frequencyOfMinistryStandardIds = $this->resetKeys($freqOfMinistryStandardIds);
                 $coursesOfMinistryStandardResetKeys = $this->resetKeys($coursesOfMinistryStandardIds);
 
-                $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards); 
+                $tableMS = $this->generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards);
             } else {
                 $tableMS = [];
             }
@@ -825,75 +815,78 @@ class ProgramController extends Controller
             $charts = $this->getImagesOfCharts($program_id, '.pdf');
 
             //get defaultShortForms based on PLO Category, then Creation Order
-            $defaultShortForms=[];
-            $defaultShortFormsIndex=[];
-            $plosInOrderCat=[];
+            $defaultShortForms = [];
+            $defaultShortFormsIndex = [];
+            $plosInOrderCat = [];
 
-            foreach($ploCategories as $ploCat){
-                $plosByCat=ProgramLearningOutcome::where('plo_category_id', $ploCat["plo_category_id"])->get();
+            foreach ($ploCategories as $ploCat) {
+                $plosByCat = ProgramLearningOutcome::where('plo_category_id', $ploCat['plo_category_id'])->get();
                 array_push($plosInOrderCat, $plosByCat);
-                
+
             }
 
-            $ploDefaultCount=0;
-            for($i=0; $i<count($plosInOrderCat); $i++){
-                for($j=0; $j<count($plosInOrderCat[$i]); $j++){
-                    $defaultShortForms[$plosInOrderCat[$i][$j]["pl_outcome_id"]]="PLO #".($ploDefaultCount+1);
-                    $defaultShortFormsIndex[$plosInOrderCat[$i][$j]["pl_outcome_id"]]=$ploDefaultCount+1;
+            $ploDefaultCount = 0;
+            for ($i = 0; $i < count($plosInOrderCat); $i++) {
+                for ($j = 0; $j < count($plosInOrderCat[$i]); $j++) {
+                    $defaultShortForms[$plosInOrderCat[$i][$j]['pl_outcome_id']] = 'PLO #'.($ploDefaultCount + 1);
+                    $defaultShortFormsIndex[$plosInOrderCat[$i][$j]['pl_outcome_id']] = $ploDefaultCount + 1;
                     $ploDefaultCount++;
                 }
             }
-        
-            foreach($unCategorizedPLOS as $unCatPLO){
-                $defaultShortForms[$unCatPLO->pl_outcome_id]="PLO #".($ploDefaultCount+1);
-                $defaultShortFormsIndex[$unCatPLO->pl_outcome_id]=$ploDefaultCount+1;
+
+            foreach ($unCategorizedPLOS as $unCatPLO) {
+                $defaultShortForms[$unCatPLO->pl_outcome_id] = 'PLO #'.($ploDefaultCount + 1);
+                $defaultShortFormsIndex[$unCatPLO->pl_outcome_id] = $ploDefaultCount + 1;
                 $ploDefaultCount++;
             }
 
-            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels','ploIndexArray','program','ploCount','msCount','courseCount','mappingScales','programCourses','ploCategories','ploProgramCategories','allPLO','plos','unCategorizedPLOS','numCatUsed','uniqueCategories','plosPerCategory','numUncategorizedPLOS','hasUncategorized','store', 'tableMS','programContent','defaultShortForms','defaultShortFormsIndex'));
+            $pdf = PDF::loadView('programs.downloadSummary', compact('charts', 'coursesByLevels', 'ploIndexArray', 'program', 'ploCount', 'msCount', 'courseCount', 'mappingScales', 'programCourses', 'ploCategories', 'ploProgramCategories', 'allPLO', 'plos', 'unCategorizedPLOS', 'numCatUsed', 'uniqueCategories', 'plosPerCategory', 'numUncategorizedPLOS', 'hasUncategorized', 'store', 'tableMS', 'programContent', 'defaultShortForms', 'defaultShortFormsIndex'));
             // get the content of the pdf document
             $content = $pdf->output();
             // set name of pdf
-            $pdfName = 'summary-' . $program->program_id . '.pdf';
+            $pdfName = 'summary-'.$program->program_id.'.pdf';
             // store the pdf document in storage/app/public folder
-            Storage::put('public' . DIRECTORY_SEPARATOR . 'pdfs' . DIRECTORY_SEPARATOR . $pdfName, $content);
-            // delete charts 
+            Storage::put('public'.DIRECTORY_SEPARATOR.'pdfs'.DIRECTORY_SEPARATOR.$pdfName, $content);
+            // delete charts
             $this->deleteCharts($program_id, $charts);
             // get the url of the document
-            $url = Storage::url('pdfs' . DIRECTORY_SEPARATOR . $pdfName);
+            $url = Storage::url('pdfs'.DIRECTORY_SEPARATOR.$pdfName);
+
             // return the location of the pdf document on the server
             return $url;
-            
+
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading program overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error downloading program overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
+
             return -1;
         }
     }
 
     /**
      * Delete the saved spreadsheet file for this program if it exists.
+     *
      * @param Request HTTP request
      * @param  int  $programId
-     * @return String $url of spreadsheet file 
-     */ 
+     * @return string $url of spreadsheet file
+     */
     public function deletePDF(Request $request, $program_id)
-    {  
-        Storage::delete('public/program-' . $program_id . '.pdf');
+    {
+        Storage::delete('public/program-'.$program_id.'.pdf');
     }
-    
 
     /**
      * Build a spreadsheet file of this program.
+     *
      * @param Request HTTP $request
-     * @param  int  $programId
-     * @return String $url of spreadsheet file 
-     */  
-    public function spreadsheet(Request $request, $programId) {
+     * @return string $url of spreadsheet file
+     */
+    public function spreadsheet(Request $request, int $programId)
+    {
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
@@ -904,31 +897,31 @@ class ProgramController extends Controller
             $columns = range('A', 'Z');
             // create array of styles for spreadsheet
             $styles = [
-                "primaryHeading" => [
+                'primaryHeading' => [
                     'font' => ['bold' => true],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
-                        'color' => ['rgb' => 'C6E0F5'], 
+                        'color' => ['rgb' => 'C6E0F5'],
                     ],
-                ], 
-                "secondaryHeading" => [
+                ],
+                'secondaryHeading' => [
                     'font' => ['bold' => true],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
-                        'color' => ['rgb' => 'ced4da'], 
+                        'color' => ['rgb' => 'ced4da'],
                     ],
                 ],
             ];
             // create each sheet in summary
-            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles); 
+            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
-            
+
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ( $plosSheet, $mapSheet, $mappingScalesSheet){
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet) {
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -937,43 +930,46 @@ class ProgramController extends Controller
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
             // set the spreadsheets name
-            $spreadsheetName = 'summary-' . $program->program_id . '.xlsx';
+            $spreadsheetName = 'summary-'.$program->program_id.'.xlsx';
             // create absolute filename
-            $storagePath = storage_path('app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'spreadsheets' . DIRECTORY_SEPARATOR . $spreadsheetName);
-            // save the spreadsheet document 
+            $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+            // save the spreadsheet document
             $writer->save($storagePath);
-            // delete charts 
+            // delete charts
             $this->deleteCharts($programId, $charts);
             // get the url of the document
-            $url = Storage::url('spreadsheets' . DIRECTORY_SEPARATOR . $spreadsheetName);
+            $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+
             // return the location of the spreadsheet document on the server
             return $url;
-    
+
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
+
             return -1;
         }
     }
-    /** 
-    * Private helper function to create sheets with charts in the program summary spreadsheet
-    * @param Spreadsheet $spreadsheet
-    * @param int $programId
-    * @param array $charts: array of urls to charts indexed by their sheet name
-    */
-    private function makeChartSheets($spreadsheet, $programId, $charts) {
+
+    /**
+     * Private helper function to create sheets with charts in the program summary spreadsheet
+     *
+     * @param  array  $charts: array of urls to charts indexed by their sheet name
+     */
+    private function makeChartSheets(Spreadsheet $spreadsheet, int $programId, $charts)
+    {
         try {
             $program = Program::find($programId);
-            
+
             foreach ($charts as $chartName => $chartUrl) {
                 $sheet = $spreadsheet->createSheet();
                 $sheet->setTitle($chartName);
                 $imageDrawing = new Drawing;
-                $imageDrawing->setPath($chartUrl); 
+                $imageDrawing->setPath($chartUrl);
                 $imageDrawing->setCoordinates('A1');
                 $imageDrawing->setWorksheet($sheet);
                 // Add ministry standards table to Ministry standards sheet
@@ -983,45 +979,46 @@ class ProgramController extends Controller
             }
 
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
+
             return -1;
-        } 
+        }
     }
 
-        /**
+    /**
      * Private helper function to create the learning outcomes sheet in the program summary spreadsheet
-     * @param Spreadsheet $spreadsheet
-     * @param int $programId
-     * @param Array $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
+     *
+     * @param  Spreadsheet  $spreadsheet
+     * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
      */
-    private function makeMinistryStandardsSheet($sheet, $programId) { 
+    private function makeMinistryStandardsSheet($sheet, int $programId): Worksheet
+    {
         try {
             $program = Program::find($programId);
             $outputMS = $this->getMinistryStandards($programId);
             $styles = [
-                "primaryHeading" => [
+                'primaryHeading' => [
                     'font' => ['bold' => true],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
-                        'color' => ['rgb' => 'C6E0F5'], 
-                    ],
-                ], 
-                "secondaryHeading" => [
-                    'font' => ['bold' => true],
-                    'fill' => [
-                        'fillType' => Fill::FILL_SOLID,
-                        'color' => ['rgb' => 'ced4da'], 
+                        'color' => ['rgb' => 'C6E0F5'],
                     ],
                 ],
-                "textBold" => [
+                'secondaryHeading' => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'ced4da'],
+                    ],
+                ],
+                'textBold' => [
                     'font' => [
-                        'bold' => true, 
+                        'bold' => true,
                     ],
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
@@ -1029,9 +1026,9 @@ class ProgramController extends Controller
                         'wrapText' => true,
                     ],
                 ],
-                "text" => [
+                'text' => [
                     'font' => [
-                        'bold' => false, 
+                        'bold' => false,
                     ],
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
@@ -1040,50 +1037,50 @@ class ProgramController extends Controller
                     ],
                 ],
             ];
-            if (!$outputMS[6]) {
-                
+            if (! $outputMS[6]) {
+
                 $sheet->setCellValue('K1', 'Ministry Standards');
-                $sheet->mergeCells('K1:P1'); 
+                $sheet->mergeCells('K1:P1');
                 $sheet->setCellValue('Q1', 'Courses');
                 $sheet->mergeCells('Q1:Z1');
-                $sheet->getStyle('K1')->applyFromArray($styles["primaryHeading"]);
-                $sheet->getStyle('Q1')->applyFromArray($styles["primaryHeading"]);
+                $sheet->getStyle('K1')->applyFromArray($styles['primaryHeading']);
+                $sheet->getStyle('Q1')->applyFromArray($styles['primaryHeading']);
                 foreach ($outputMS[0] as $index => $standards) {
                     // add standards and descriptions
                     $sheet->setCellValue('K'.strval(($index * 8) + 2), $standards);
                     $sheet->mergeCells('K'.strval(($index * 8) + 2).':P'.strval(($index * 8) + 2).'');
-                    $sheet->getStyle('K'.strval(($index * 8) + 2).'')->applyFromArray($styles["secondaryHeading"]);
+                    $sheet->getStyle('K'.strval(($index * 8) + 2).'')->applyFromArray($styles['secondaryHeading']);
                     $sheet->setCellValue('K'.strval(($index * 8) + 3), strip_tags(preg_replace('~[\r\n\t]+~', '', $outputMS[5][$index])));
                     $sheet->mergeCells('K'.strval(($index * 8) + 3).':P'.strval(($index * 8) + 9).'');
-                    $sheet->getStyle('K'.strval(($index * 8) + 3).'')->applyFromArray($styles["text"]);
+                    $sheet->getStyle('K'.strval(($index * 8) + 3).'')->applyFromArray($styles['text']);
 
                     $count = 0;
                     foreach ($outputMS[1] as $indexMS => $titleMS) {
                         // add mapping scale titles
                         $sheet->mergeCells('Q'.strval((($index * 8) + 2)).':Z'.strval((($index * 8) + 2)).'');
-                        $sheet->getStyle('Q'.strval(($index * 8) + 2).'')->applyFromArray($styles["secondaryHeading"]);
-                        $sheet->setCellValue('Q'.strval( 3 + $count + ($index * 8)), ($titleMS. ': '. $outputMS[2][$indexMS][$index]));
-                        $sheet->getStyle('Q'.strval( 3 + $count + ($index * 8)))->applyFromArray($styles["textBold"]);
+                        $sheet->getStyle('Q'.strval(($index * 8) + 2).'')->applyFromArray($styles['secondaryHeading']);
+                        $sheet->setCellValue('Q'.strval(3 + $count + ($index * 8)), ($titleMS.': '.$outputMS[2][$indexMS][$index]));
+                        $sheet->getStyle('Q'.strval(3 + $count + ($index * 8)))->applyFromArray($styles['textBold']);
                         $sheet->mergeCells('Q'.strval((3 + $count + ($index * 8))).':R'.strval((3 + $count + ($index * 8))).'');
                         $k = 0;
                         $output = '';
                         $sheet->mergeCells('S'.strval((3 + $count + ($index * 8))).':Z'.strval((3 + $count + ($index * 8))).'');
-                        $sheet->getStyle('S'.strval( 3 + $count + ($index * 8)))->applyFromArray($styles["text"]);
+                        $sheet->getStyle('S'.strval(3 + $count + ($index * 8)))->applyFromArray($styles['text']);
                         foreach ($outputMS[3][$indexMS][$index] as $indexCourse => $courseId) {
                             $code = Course::where('course_id', $courseId)->pluck('course_code')->first();
                             $num = Course::where('course_id', $courseId)->pluck('course_num')->first();
                             if ($k != 0) {
-                                $output .= ', '. $code. ' ' . $num;
+                                $output .= ', '.$code.' '.$num;
                             } else {
-                                $output .= ' '. $code. ' ' . $num;
+                                $output .= ' '.$code.' '.$num;
                             }
                             $k++;
                         }
-                        $sheet->setCellValue('S'.strval( 3 + $count + ($index * 8)), ($output));
+                        $sheet->setCellValue('S'.strval(3 + $count + ($index * 8)), ($output));
                         $count++;
                     }
                     // style remaining cells
-                    $remainingCells = 8 - count($outputMS[1]); 
+                    $remainingCells = 8 - count($outputMS[1]);
                     if ($remainingCells > 0) {
                         for ($i = 1; $i < $remainingCells; $i++) {
                             $sheet->mergeCells('Q'.strval((($index * 8) + 2) + ($i + count($outputMS[1]))).':R'.strval((($index * 8) + 2) + ($i + count($outputMS[1]))));
@@ -1092,31 +1089,32 @@ class ProgramController extends Controller
                     }
                 }
             }
-    
-            return $sheet; 
+
+            return $sheet;
 
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
-            
+
             return $exception;
         }
     }
 
-    public function getMinistryStandards($program_id) {
+    public function getMinistryStandards($program_id)
+    {
         $program = Program::where('program_id', $program_id)->first();
         $hasNoMS = false;
-        
+
         // Get all Standard Categories for courses in the program
-        if ($program->level == "Undergraduate" || $program->level == "Bachelors") {
+        if ($program->level == 'Undergraduate' || $program->level == 'Bachelors') {
             $standardCategory = StandardCategory::find(1);
-        } elseif($program->level == "Masters") {
+        } elseif ($program->level == 'Masters') {
             $standardCategory = StandardCategory::find(2);
-        } elseif($program->level == "Doctoral") {
+        } elseif ($program->level == 'Doctoral') {
             $standardCategory = StandardCategory::find(3);
         } else {
             $hasNoMS = true;
@@ -1129,11 +1127,11 @@ class ProgramController extends Controller
         // Get the names of the standards for the categories (x-axis)
         $namesStandards = [];
         $descriptionsStandards = [];
-        for($i = 0; $i < count($standards); $i++) {
+        for ($i = 0; $i < count($standards); $i++) {
             $namesStandards[$i] = $standards[$i]->s_shortphrase;
             $descriptionsStandards[$i] = $standards[$i]->s_outcome;
         }
-        
+
         // Get Standards Mapping Scales for high-chart
         $standardsMappingScales = StandardScale::where('scale_category_id', 1)->pluck('abbreviation')->toArray();
         $standardsMappingScales[count($standardsMappingScales)] = 'N/A';
@@ -1148,9 +1146,9 @@ class ProgramController extends Controller
         $coursesOfMinistryStandardIds = [];
         for ($i = 0; $i < count($standardMappingScalesIds); $i++) {
             $freqOfMinistryStandardIds[$standardMappingScalesIds[$i]] = [];
-            $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#ffffff" || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == "#fff" ? "#6c757d" : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
+            $standardMappingScalesColours[$i] = (strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#ffffff' || strtolower(StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first()) == '#fff' ? '#6c757d' : StandardScale::where('standard_scale_id', $standardMappingScalesIds[$i])->pluck('colour')->first());
         }
-        foreach($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
+        foreach ($freqOfMinistryStandardIds as $ms => $freqOfMinistryStandardId) {
             foreach ($standards as $standard) {
                 $freqOfMinistryStandardIds[$ms][$standard->standard_id] = 0;
                 $coursesOfMinistryStandardIds[$ms][$standard->standard_id] = [];
@@ -1179,42 +1177,42 @@ class ProgramController extends Controller
 
     /**
      * Private helper function to create the learning outcomes sheet in the program summary spreadsheet
-     * @param Spreadsheet $spreadsheet
-     * @param int $programId
-     * @param Array $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
+     *
+     * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
      */
-    private function makeLearningOutcomesSheet($spreadsheet, $programId, $styles) { 
+    private function makeLearningOutcomesSheet(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+    {
         try {
             $program = Program::find($programId);
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->setTitle('Learning Outcomes');
-            $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', NULL)->values();
-            
+            $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', null)->values();
+
             // keeps track of which row to put each category in the learning outcomes sheet
-            $categoryRowInPLOsSheet = 1; 
+            $categoryRowInPLOsSheet = 1;
             foreach ($program->ploCategories as $index => $category) {
                 if ($plosInCategory = $category->plos()->get()) {
                     // add category title to learning outcomes sheet
                     $sheet->setCellValue('A'.strval($categoryRowInPLOsSheet), $category->plo_category);
                     // span category title over secondary headings
                     $sheet->mergeCells('A'.strval($categoryRowInPLOsSheet).':B'.strval($categoryRowInPLOsSheet));
-                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles["secondaryHeading"]);
+                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles['secondaryHeading']);
 
                     // add secondary header titles to learning outcomes sheet after the category title
-                    $sheet->fromArray(['Learning Outcome', 'Short Phrase'], NULL, 'A'.strval($categoryRowInPLOsSheet + 1));
-                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles["primaryHeading"]);
+                    $sheet->fromArray(['Learning Outcome', 'Short Phrase'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
+                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles['primaryHeading']);
 
                     foreach ($plosInCategory as $index => $plo) {
                         // create row to add to learning outcomes sheet with shortphrase and outcome
                         $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
                         // add plo row to learning outcome sheets under secondary headings
-                        $sheet->fromArray($ploArr, NULL, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
+                        $sheet->fromArray($ploArr, null, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
                     }
 
                     // if it's not the last increment position of next category heading by the number of plos in the current category
-                    if ($index != $program->ploCategories->count() - 1)
+                    if ($index != $program->ploCategories->count() - 1) {
                         $categoryRowInPLOsSheet = $categoryRowInPLOsSheet + $category->plos->count() + 3;
+                    }
                 }
             }
 
@@ -1223,57 +1221,56 @@ class ProgramController extends Controller
                 $sheet->setCellValue('A'.strval($categoryRowInPLOsSheet), 'Uncategorized');
                 // span uncategorized category title over secondary headings
                 $sheet->mergeCells('A'.strval($categoryRowInPLOsSheet).':B'.strval($categoryRowInPLOsSheet));
-                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles["secondaryHeading"]);
-                
+                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles['secondaryHeading']);
+
                 // add secondary header titles to learning outcomes sheet after the category title
-                $sheet->fromArray(['Short Phrase', 'Learning Outcome'], NULL, 'A'.strval($categoryRowInPLOsSheet + 1));
-                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles["primaryHeading"]);
+                $sheet->fromArray(['Short Phrase', 'Learning Outcome'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
+                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles['primaryHeading']);
 
                 foreach ($uncategorizedPLOs as $index => $plo) {
                     // create row to add to learning outcomes sheet with shortphrase and outcome
                     $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
                     // add plo row to learning outcome sheets under secondary headings
-                    $sheet->fromArray($ploArr, NULL, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
+                    $sheet->fromArray($ploArr, null, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
                 }
             }
-    
-            return $sheet; 
+
+            return $sheet;
 
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
-            
+
             return $exception;
         }
     }
 
     /**
      * Private helper function to create the mapping scales sheet in the program summary spreadsheet
-     * @param Spreadsheet $spreadsheet
-     * @param int $programId
-     * @param Array $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
+     *
+     * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
      */
-    private function makeMappingScalesSheet($spreadsheet, $programId, $styles) { 
+    private function makeMappingScalesSheet(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+    {
         try {
             $program = Program::find($programId);
             $sheet = $spreadsheet->createSheet();
             $sheet->setTitle('Mapping Scale');
             $mappingScaleLevels = $program->mappingScaleLevels;
-            
+
             if ($mappingScaleLevels->count() > 0) {
-                $sheet->fromArray(['Colour', 'Mapping Scale', 'Abbreviation', 'Description'], NULL, 'A1');
-                $sheet->getStyle('A1:D1')->applyFromArray($styles["primaryHeading"]);
+                $sheet->fromArray(['Colour', 'Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
+                $sheet->getStyle('A1:D1')->applyFromArray($styles['primaryHeading']);
 
                 foreach ($mappingScaleLevels as $index => $level) {
                     // create arr of scale values to add to mapping scales sheet
-                    $scaleArr = [NULL,  $level->title, $level->abbreviation, $level->description];
+                    $scaleArr = [null,  $level->title, $level->abbreviation, $level->description];
                     // add arr of scale values to mapping scales sheet
-                    $sheet->fromArray($scaleArr, NULL, 'A'.strval($index + 2));
+                    $sheet->fromArray($scaleArr, null, 'A'.strval($index + 2));
                     // add the color for the map scale to the mapping scales sheet
                     $sheet->getStyle('A'.strval($index + 2))->getFill()
                         ->setFillType(Fill::FILL_SOLID)
@@ -1282,29 +1279,28 @@ class ProgramController extends Controller
                         ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
                 }
             }
-    
-            return $sheet; 
+
+            return $sheet;
 
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
-            
+
             return $exception;
         }
     }
 
     /**
      * Private helper function to create the program outcome map sheet in the program summary spreadsheet
-     * @param Spreadsheet $spreadsheet
-     * @param int $programId
-     * @param Array $primaryHeaderStyleArr is the style to use for primary headings
-     * @return Worksheet
+     *
+     * @param  array  $primaryHeaderStyleArr is the style to use for primary headings
      */
-    private function makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns) { 
+    private function makeOutcomeMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+    {
         try {
             // find this program
             $program = Program::find($programId);
@@ -1319,31 +1315,32 @@ class ProgramController extends Controller
             // get this programs courses
             $courses = $program->courses;
             // if there are no PLOs or courses in this program, return an empty sheet
-            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1)
+            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
                 return $sheet;
+            }
 
             // add primary headings (courses and program learning outcomes) to program outcome map sheet
-            $sheet->fromArray(['Courses', 'Program Learning Outcomes'], NULL, 'A1');
+            $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
             // apply styling to the primary headings
-            $sheet->getStyle('A1:B1')->applyFromArray($styles["primaryHeading"]);
+            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
             // span program learning outcomes header over the number of learning outcomes
-            $sheet->mergeCells('B1:' . $columns[$program->programLearningOutcomes->count()] . '1');
+            $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
             // create courses array to add to the outcome maps sheet
-            $courses = array();
+            $courses = [];
             foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
-                $courses[$course->course_id] = $course->course_code . ' ' . $course->course_num;
+                $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
             }
-            // add courses to their column in the sheet  
-            $sheet->fromArray(array_chunk($courses, 1), NULL, 'A4');
-            // apply a secondary header style and 
-            $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles["secondaryHeading"]);
+            // add courses to their column in the sheet
+            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+            // apply a secondary header style and
+            $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
             // make courses font bold
             $sheet->getStyle('A4:A100')->getFont()->setBold(true);
 
             // for each plo, get the outcome map from its course mapping $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$course->course_id] = map
-            $coursesToCLOs = $this->getCoursesOutcomes(array(), $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
-            $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, array());
-            $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, array());
+            $coursesToCLOs = $this->getCoursesOutcomes([], $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
+            $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, []);
+            $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, []);
             $PLOsToCoursesToOutcomeMap = $this->frequencyDistribution($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
             $PLOsToCoursesToOutcomeMap = $this->replaceIdsWithAbv($PLOsToCoursesToOutcomeMap, $programOutcomeMaps);
             $PLOsToCoursesToOutcomeMap = $this->assignColours($PLOsToCoursesToOutcomeMap);
@@ -1351,161 +1348,167 @@ class ProgramController extends Controller
             // $categoryColInMapSheet keeps track of which column to put each category in the program outcome map sheet. $alphabetUpper[1] = 'B'
             $categoryColInMapSheet = 1;
             foreach ($program->ploCategories as $category) {
-                
+
                 if ($category->plos->count() > 0) {
                     $plosInCategory = $category->plos()->get();
-                    // add category to outcome map sheet 
-                    $sheet->setCellValue($columns[$categoryColInMapSheet] . '2', $category->plo_category);
+                    // add category to outcome map sheet
+                    $sheet->setCellValue($columns[$categoryColInMapSheet].'2', $category->plo_category);
                     // apply a secondary header style to category heading
-                    $sheet->getStyle($columns[$categoryColInMapSheet] . '2')->applyFromArray($styles["secondaryHeading"]);
+                    $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
                     // span category over the number of plos in the category
-                    $sheet->mergeCells($columns[$categoryColInMapSheet] . '2:' . $columns[$categoryColInMapSheet + $plosInCategory->count() - 1] . '2');
-                    
+                    $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $plosInCategory->count() - 1].'2');
+
                     // create an array of plos in this category to add to the sheet under its category
                     $plosInCategoryArr = $plosInCategory->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
                         // create array of map scale abv
-                        $ploToCourseMapArr = array();
+                        $ploToCourseMapArr = [];
                         // check if there is a map value for this plo and each course
                         foreach ($courses as $courseId => $courseCode) {
-                            if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]))
+                            if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
                                 array_push($ploToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
-                            else 
+                            } else {
                                 array_push($ploToCourseMapArr, '');
+                            }
                         }
 
                         // add array of map scale abv to the plo entry
-                        $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), NULL, $columns[$categoryColInMapSheet + $index] . '4');
-                    
+                        $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
                         // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
-                        if ($plo->plo_shortphrase) 
+                        if ($plo->plo_shortphrase) {
                             return $plo->plo_shortphrase;
-                        else 
+                        } else {
                             return $plo->pl_outcome;
-                        
+                        }
+
                     })->toArray();
-    
+
                     // add plos in this category to the sheet
-                    $sheet->fromArray($plosInCategoryArr, NULL, $columns[$categoryColInMapSheet] . '3');
+                    $sheet->fromArray($plosInCategoryArr, null, $columns[$categoryColInMapSheet].'3');
                     // update category position trackers for learning outcome sheet and outcome map sheet
                     $categoryColInMapSheet = $categoryColInMapSheet + $plosInCategory->count();
                 }
             }
 
             // get uncategorized PLOs
-            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', NULL)->values();
+            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', null)->values();
             if ($uncategorizedPLOs->count() > 0) {
-                // add uncategorized category to sheet 
-                $sheet->setCellValue($columns[$categoryColInMapSheet] . '2', 'Uncategorized');
+                // add uncategorized category to sheet
+                $sheet->setCellValue($columns[$categoryColInMapSheet].'2', 'Uncategorized');
                 // apply secondary heading to uncategorized header
-                $sheet->getStyle($columns[$categoryColInMapSheet] . '2')->applyFromArray($styles["secondaryHeading"]);
+                $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
                 // span uncategorized header over the number of uncategorized plos
-                $sheet->mergeCells($columns[$categoryColInMapSheet] . '2:' . $columns[$categoryColInMapSheet + $uncategorizedPLOs->count() - 1] . '2');
-                
+                $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $uncategorizedPLOs->count() - 1].'2');
+
                 // create an array of uncategorized plos to add to the sheet under the uncategorized heading
                 $uncategorizedPLOsArr = $uncategorizedPLOs->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
                     // create array of map scale abv
-                    $uncategorizedPLOsToCourseMapArr = array();
+                    $uncategorizedPLOsToCourseMapArr = [];
                     // check if there is a map value for this plo and each course
                     foreach ($courses as $courseId => $courseCode) {
-                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]))
+                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
                             array_push($uncategorizedPLOsToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
-                        else 
+                        } else {
                             array_push($uncategorizedPLOsToCourseMapArr, '');
+                        }
                     }
-                    
+
                     // add array of map scale abv to the plo entry
-                    $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), NULL, $columns[$categoryColInMapSheet + $index] . '4');
+                    $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
 
                     // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
-                    if ($plo->plo_shortphrase) 
+                    if ($plo->plo_shortphrase) {
                         return $plo->plo_shortphrase;
-                    else 
+                    } else {
                         return $plo->pl_outcome;
-                
+                    }
+
                 })->toArray();
-                    
+
                 // add plos in this category to the sheet
-                $sheet->fromArray($uncategorizedPLOsArr, NULL, $columns[$categoryColInMapSheet] . '3');
+                $sheet->fromArray($uncategorizedPLOsArr, null, $columns[$categoryColInMapSheet].'3');
             }
-                
+
             // make the list of categories in the program outcome map sheet bold
             $sheet->getStyle('B2:Z2')->getFont()->setBold(true);
             // make the list of plos in the program outcome map sheet bold
             $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
-                
+
             // create a wizard factory for creating new conditional formatting rules
             $wizardFactory = new Wizard('B4:Z50');
             foreach ($mappingScaleLevels as $level) {
                 // create a new conditional formatting rule based on the map scale level
                 $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
-                $levelStyle = new Style(false, true);    
+                $levelStyle = new Style(false, true);
                 $levelStyle->getFill()
                     ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
                 $levelStyle->getFill()
                     ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
-                $wizard->equals($level->abbreviation)->setStyle($levelStyle); 
+                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
                 $conditionalStyles[] = $wizard->getConditional();
                 // add conditional formatting rule to the outcome maps sheet
-                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);       
-            }            
-            
-            return $sheet; 
+                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+            }
+
+            return $sheet;
 
         } catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
-            
+
             return $exception;
         }
     }
 
     /**
      * Delete the the temporarily saved charts for this program overview.
-     * @param  int  $programId
-     * @param array $charts: array of chart urls
-     */ 
-    private function deleteCharts($programId, $charts) {
+     *
+     * @param  array  $charts: array of chart urls
+     */
+    private function deleteCharts(int $programId, $charts)
+    {
         $program = Program::find($programId);
         try {
             foreach ($charts as $chartUrl) {
                 File::delete($chartUrl);
             }
         } catch (Throwable $exception) {
-            $message = 'There was an error deleting the charts for the spreadsheet overview of: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error deleting the charts for the spreadsheet overview of: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
         }
     }
 
     /**
      * Delete the saved spreadsheet file for this program if it exists.
+     *
      * @param Request HTTP request
-     * @param  int  $programId
-     */ 
-    public function delSpreadsheet(Request $request, $programId)
-    {  
+     */
+    public function delSpreadsheet(Request $request, int $programId)
+    {
         try {
             $program = Program::find($programId);
-            Storage::delete('public/program-' . $program->program_id . '.xlsx');
+            Storage::delete('public/program-'.$program->program_id.'.xlsx');
         } catch (Throwable $exception) {
-            $message = 'There was an error deleting the saved spreadsheet overview for: ' . $program->program;
-            Log::error($message . ' ...\n');
-            Log::error('Code - ' . $exception->getCode());
-            Log::error('File - ' . $exception->getFile());
-            Log::error('Line - ' . $exception->getLine());
+            $message = 'There was an error deleting the saved spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
             Log::error($exception->getMessage());
         }
     }
 
-    public function resetKeysSingle($array) {
+    public function resetKeysSingle($array)
+    {
         $newArray = [];
         // Reset Keys for High-charts
         $i = 0;
@@ -1513,10 +1516,12 @@ class ProgramController extends Controller
             $newArray[$i] = $a;
             $i++;
         }
+
         return $newArray;
     }
-    
-    public function resetKeys($array) {
+
+    public function resetKeys($array)
+    {
         $newArray = [];
         // Reset Keys for High-charts
         $i = 0;
@@ -1528,41 +1533,43 @@ class ProgramController extends Controller
             }
             $i++;
         }
+
         return $newArray;
     }
 
-    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards) {
+    public function generateHTMLTableMinistryStandards($namesStandards, $standardsMappingScalesTitles, $frequencyOfMinistryStandardIds, $coursesOfMinistryStandardResetKeys, $standardMappingScalesColours, $descriptionsStandards)
+    {
         $output = '';
 
-        if (!count($namesStandards) < 1) {
+        if (! count($namesStandards) < 1) {
             $output .= '<table class="table table-light table-bordered table-sm"><tbody><tr class="table-primary"><th>Ministry Standards</th><th>Courses</th></tr>';
             $i = 0;
             foreach ($namesStandards as $standard) {
-                $output .= '<tr><td class="col col-md-5"><b>'. $standard .'</b> - ' . $descriptionsStandards[$i] . '</td><td>';
+                $output .= '<tr><td class="col col-md-5"><b>'.$standard.'</b> - '.$descriptionsStandards[$i].'</td><td>';
                 $j = 0;
-                    foreach ($standardsMappingScalesTitles as $standardsMappingScale) {
-                        $output .= '<table class="table table-light table-bordered table-sm"><tr><td>';
+                foreach ($standardsMappingScalesTitles as $standardsMappingScale) {
+                    $output .= '<table class="table table-light table-bordered table-sm"><tr><td>';
 
-                        $output .='<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-right"><div style="background-color:'. $standardMappingScalesColours[$j] .'; height: 12px; width: 12px; border-radius: 6px;"></div></div>';
-                        $output .= '<div class="col col-md-3 text-md-left">'.$standardsMappingScale .': '. $frequencyOfMinistryStandardIds[$j][$i] .'</div>';
+                    $output .= '<div class="row d-flex align-items-center justify-content-center"><div class="col col-md-1 text-md-right"><div style="background-color:'.$standardMappingScalesColours[$j].'; height: 12px; width: 12px; border-radius: 6px;"></div></div>';
+                    $output .= '<div class="col col-md-3 text-md-left">'.$standardsMappingScale.': '.$frequencyOfMinistryStandardIds[$j][$i].'</div>';
 
-                        $output .= '<div class="col col-md-7 text-md-left">';
-                        $k = 0;
-                        foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
-                            $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
-                            $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
-                            if ($k != 0) {
-                                $output .= ', '. $code. ' ' . $num;
-                            } else {
-                                $output .= ' '. $code. ' ' . $num;
-                            }
-                            $k++;
+                    $output .= '<div class="col col-md-7 text-md-left">';
+                    $k = 0;
+                    foreach ($coursesOfMinistryStandardResetKeys[$j][$i] as $course_id) {
+                        $code = Course::where('course_id', $course_id)->pluck('course_code')->first();
+                        $num = Course::where('course_id', $course_id)->pluck('course_num')->first();
+                        if ($k != 0) {
+                            $output .= ', '.$code.' '.$num;
+                        } else {
+                            $output .= ' '.$code.' '.$num;
                         }
-                        $output .='</div></div>';
-                        $j++;
-
-                        $output .= '</td></tr></table>';
+                        $k++;
                     }
+                    $output .= '</div></div>';
+                    $j++;
+
+                    $output .= '</td></tr></table>';
+                }
                 $output .= '</td></tr>';
                 $i++;
             }
@@ -1574,16 +1581,19 @@ class ProgramController extends Controller
         return $output;
     }
 
-    public function getCoursesOutcomes($coursesOutcomes, $programCourses) {
+    public function getCoursesOutcomes($coursesOutcomes, $programCourses)
+    {
         // get all CLO's for each course in the program
         foreach ($programCourses as $programCourse) {
             $learningOutcomes = $programCourse->learningOutcomes;
             $coursesOutcomes[$programCourse->course_id] = $learningOutcomes;
         }
+
         return $coursesOutcomes;
     }
 
-    public function getOutcomeMaps ($allPLO, $coursesOutcomes, $arr) {
+    public function getOutcomeMaps($allPLO, $coursesOutcomes, $arr)
+    {
         // retrieves all the outcome mapping values for every clo and plo
         $count = 0;
         foreach ($allPLO as $plo) {
@@ -1591,48 +1601,52 @@ class ProgramController extends Controller
             foreach ($coursesOutcomes as $clos) {
                 foreach ($clos as $clo) {
                     // Check if record exists in the db
-                    if (!OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->exists()) {
+                    if (! OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->exists()) {
                         // if nothing is found then do nothing
                         // else if record (mapping_scale_id) is found then store it in the array
                     } else {
                         $count++;
                         $mapScaleValue = OutcomeMap::where(['l_outcome_id' => $clo->l_outcome_id, 'pl_outcome_id' => $plo->pl_outcome_id])->value('map_scale_id');
-                        $arr[$count] = array(
+                        $arr[$count] = [
                             'pl_outcome_id' => $plo->pl_outcome_id,
                             'course_id' => $clo->course_id,
                             'map_scale_id' => $mapScaleValue,
                             'l_outcome_id' => $clo->l_outcome_id,
-                        );
+                        ];
                     }
                 }
             }
         }
+
         return $arr;
     }
 
-    public function createCDFArray($arr, $store) {
+    public function createCDFArray($arr, $store)
+    {
         // Initialize array for each pl_outcome_id with the value of null
         foreach ($arr as $ar) {
             $store[$ar['pl_outcome_id']] = null;
         }
-        // Initialize Array for Storing 
+        // Initialize Array for Storing
         foreach ($arr as $ar) {
             if ($store[$ar['pl_outcome_id']] == null || $store[$ar['pl_outcome_id']] == $ar['pl_outcome_id']) {
-                $store[$ar['pl_outcome_id']] = array(
-                    $ar['course_id'] => array(
-                    ),
-                );
+                $store[$ar['pl_outcome_id']] = [
+                    $ar['course_id'] => [
+                    ],
+                ];
             } else {
-                $store[$ar['pl_outcome_id']][$ar['course_id']] = array();
-                $store[$ar['pl_outcome_id']][$ar['course_id']]['frequencies'] = array();
+                $store[$ar['pl_outcome_id']][$ar['course_id']] = [];
+                $store[$ar['pl_outcome_id']][$ar['course_id']]['frequencies'] = [];
             }
         }
+
         return $store;
     }
 
-    public function frequencyDistribution($arr, $store) {
+    public function frequencyDistribution($arr, $store)
+    {
         //Initialize Array for Frequency Distribution
-        $freq = array();
+        $freq = [];
         foreach ($arr as $map) {
             $pl_outcome_id = $map['pl_outcome_id'];
             $course_id = $map['course_id'];
@@ -1654,13 +1668,13 @@ class ProgramController extends Controller
             }
         }
         // loop through the frequencies of the mapping values
-        foreach($freq as $plOutcomeId => $dist) {
-            foreach($dist as $courseId => $d) {
+        foreach ($freq as $plOutcomeId => $dist) {
+            foreach ($dist as $courseId => $d) {
                 $weight = 0;
-                $tieResults = array();
-                $id = NULL;
-                //count the number of times a mapping scales appears for a program learning outcome 
-                foreach($d as $ms_Id => $mapScaleWeight) {
+                $tieResults = [];
+                $id = null;
+                //count the number of times a mapping scales appears for a program learning outcome
+                foreach ($d as $ms_Id => $mapScaleWeight) {
                     //check if the current ($mapScaleWeight) > than the previously stored value
                     if ($weight < $mapScaleWeight) {
                         $weight = $mapScaleWeight;
@@ -1668,12 +1682,12 @@ class ProgramController extends Controller
                     }
                 }
                 // Check if the largest weighted value ties with another value
-                foreach($d as $ms_Id => $mapScaleWeight) {
+                foreach ($d as $ms_Id => $mapScaleWeight) {
                     if ($weight == $mapScaleWeight && $id != $ms_Id) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
                         $tieResults = array_keys($d, $weight);
                     }
                 }
-                // if A tie is found.. 
+                // if A tie is found..
                 if ($tieResults != null) {
                     $stringResults = '';
                     $numItems = count($tieResults);
@@ -1682,40 +1696,42 @@ class ProgramController extends Controller
                     foreach ($tieResults as $tieResult) {
                         // appends '/' only if it's not at the last index in the array
                         if (++$i !== $numItems) {
-                            $stringResults .= "" .MappingScale::where('map_scale_id', $tieResult)->value('abbreviation'). " / "; 
+                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation').' / ';
                         } else {
-                            $stringResults .= "" .MappingScale::where('map_scale_id', $tieResult)->value('abbreviation');
+                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation');
                         }
                     }
                     // Store the results array as the map_scale_value key
-                    $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_abv' => $stringResults 
-                    );
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_abv' => $stringResults,
+                    ];
                     // Store a new array to be able to determine if the mapping scale value comes from the result of a tie
-                    $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_id_tie' => True
-                    );
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_id_tie' => true,
+                    ];
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
                 } else {
-                    // If no tie is present, store the strongest weighted map_scale_value 
-                    $store[$plOutcomeId][$courseId] = array(
-                        'map_scale_id' => array_search($weight, $d)
-                    );
-                    $store[$plOutcomeId][$courseId] += array(
-                        'map_scale_abv' => MappingScale::where('map_scale_id', array_search($weight, $d))->value('abbreviation')
-                    );
+                    // If no tie is present, store the strongest weighted map_scale_value
+                    $store[$plOutcomeId][$courseId] = [
+                        'map_scale_id' => array_search($weight, $d),
+                    ];
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_abv' => MappingScale::where('map_scale_id', array_search($weight, $d))->value('abbreviation'),
+                    ];
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
                 }
             }
         }
+
         return $store;
     }
 
-    public function replaceIdsWithAbv($store, $arr) {
+    public function replaceIdsWithAbv($store, $arr)
+    {
         //Initialize Array for Frequency Distribution
-        $freq = array();
+        $freq = [];
         foreach ($arr as $map) {
             $pl_outcome_id = $map['pl_outcome_id'];
             $course_id = $map['course_id'];
@@ -1736,47 +1752,51 @@ class ProgramController extends Controller
                 $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
             }
         }
-        foreach($freq as $plOutcomeId => $dist) {
-            foreach($dist as $courseId => $d) {
+        foreach ($freq as $plOutcomeId => $dist) {
+            foreach ($dist as $courseId => $d) {
                 // Store the frequencies
                 $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
             }
         }
+
         return $store;
     }
 
-    public function assignColours($store){
+    public function assignColours($store)
+    {
         // Assign a colour to store based
         foreach ($store as $plOutcomeId => $s) {
             foreach ($s as $courseId => $msv) {
                 // If a tie exists assign it the colour white
-                if (array_key_exists("map_scale_id_tie",$msv)) {
+                if (array_key_exists('map_scale_id_tie', $msv)) {
                     $mapScaleColour = '#FFFFFF';
-                    $store[$plOutcomeId][$courseId] += array(
-                        'colour' => $mapScaleColour
-                    );
+                    $store[$plOutcomeId][$courseId] += [
+                        'colour' => $mapScaleColour,
+                    ];
                 } else {
                     // Search for the mapping scale colour in the db, then assign it to the array
                     $mapScaleColour = MappingScale::where('map_scale_id', $msv['map_scale_id'])->value('colour');
-                
-                if ($mapScaleColour == null) {
-                    $mapScaleColour = '#FFFFFF';
-                }
-                    $store[$plOutcomeId][$courseId] += array(
-                        'colour' => $mapScaleColour
-                    );
+
+                    if ($mapScaleColour == null) {
+                        $mapScaleColour = '#FFFFFF';
+                    }
+                    $store[$plOutcomeId][$courseId] += [
+                        'colour' => $mapScaleColour,
+                    ];
                 }
             }
         }
+
         return $store;
     }
 
-    public function duplicate(Request $request, $program_id) {
+    public function duplicate(Request $request, $program_id): RedirectResponse
+    {
         //
         $this->validate($request, [
-            'program'=> 'required',
-            ]);
-        
+            'program' => 'required',
+        ]);
+
         $oldProgram = Program::find($program_id);
 
         $program = new Program;
@@ -1794,7 +1814,7 @@ class ProgramController extends Controller
 
         // This array is used to keep track of the id's for each category duplicated
         // This is used for the program learning outcomes step to determine which plo belongs to which category
-        $historyCategories = array();
+        $historyCategories = [];
         // duplicate plo categories
         $ploCategories = $oldProgram->ploCategories;
         foreach ($ploCategories as $ploCategory) {
@@ -1812,8 +1832,8 @@ class ProgramController extends Controller
             $newProgramLearningOutcome->plo_shortphrase = $plo->plo_shortphrase;
             $newProgramLearningOutcome->pl_outcome = $plo->pl_outcome;
             $newProgramLearningOutcome->program_id = $program->program_id;
-            if ($plo->plo_category_id == NULL) {
-                $newProgramLearningOutcome->plo_category_id = NULL;
+            if ($plo->plo_category_id == null) {
+                $newProgramLearningOutcome->plo_category_id = null;
             } else {
                 $newProgramLearningOutcome->plo_category_id = $historyCategories[$plo->plo_category_id];
             }
@@ -1825,7 +1845,7 @@ class ProgramController extends Controller
         foreach ($mapScalesProgram as $mapScaleProgram) {
             $mapScale = MappingScale::find($mapScaleProgram->map_scale_id);
             // if mapping scale category is NULL then it is a custom mapping scale. This means we will need to duplicate it in order to add it to the new program.
-            if ($mapScale->mapping_scale_categories_id == NULL) {
+            if ($mapScale->mapping_scale_categories_id == null) {
                 // create new mapping scale
                 $newMappingScale = new MappingScale;
                 $newMappingScale->title = $mapScale->title;
@@ -1847,7 +1867,7 @@ class ProgramController extends Controller
                 $newMappingScaleProgram->save();
             }
         }
-        
+
         $user = User::find(Auth::id());
         $programUser = new ProgramUser;
         $programUser->user_id = $user->id;
@@ -1855,13 +1875,12 @@ class ProgramController extends Controller
         $programUser->program_id = $program->program_id;
         // assign the creator of the program the owner permission
         $programUser->permission = 1;
-        if($programUser->save()){
+        if ($programUser->save()) {
             $request->session()->flash('success', 'Program has been successfully duplicated');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error duplicating the program');
         }
 
         return redirect()->route('home');
     }
-
 }

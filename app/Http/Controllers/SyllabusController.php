@@ -2,66 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
 use App\Models\CourseSchedule;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\MappingScale;
 use App\Models\Program;
-use PhpOffice\PhpWord\TemplateProcessor;
-use PhpOffice\PhpWord\Element\Table;
-use Illuminate\Support\Facades\Log;
-use App\Models\syllabus\Syllabus;
 use App\Models\syllabus\OkanaganSyllabus;
 use App\Models\syllabus\OkanaganSyllabusResource;
+use App\Models\syllabus\Syllabus;
 use App\Models\syllabus\SyllabusResourceOkanagan;
 use App\Models\syllabus\SyllabusResourceVancouver;
-use App\Models\syllabus\VancouverSyllabus;
 use App\Models\syllabus\SyllabusUser;
+use App\Models\syllabus\VancouverSyllabus;
 use App\Models\syllabus\VancouverSyllabusResource;
 use App\Models\SyllabusInstructor;
 use App\Models\SyllabusProgram;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
-Use \PhpOffice\PhpWord\SimpleType\TblWidth;
-use \PhpOffice\PhpWord\Shared\Converter;
+use PhpOffice\PhpWord\Shared\Converter;
+use PhpOffice\PhpWord\SimpleType\TblWidth;
+use PhpOffice\PhpWord\TemplateProcessor;
 
-define("INPUT_TIPS", array(
-    "otherCourseStaff" => "If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?",
-    "learningOutcomes" => "Tell students what changes in their knowledge, skills, or attitudes should occur during the course. Knowing these, students will have a framework within which to put individual components of the course and they will be primed for the kinds of assessments of learning that will come.",
-    "learningAssessments" => "Identify the various ways you will assess achievement of stated learning outcomes or objectives, when each will occur, and the weighting of each component in the final grade. Sometimes your assessment plan will need to be adjusted, you must discuss the proposal with the class and provide a rationale and then update the syllabus. A new, dated electronic syllabus must be provided",
-    "learningActivities" => "Do you expect students to participate in class? In what ways? (e.g., case studies, using “clickers” to answer questions, working in small groups, etc.) Is participation in on-line discussions required? Are readings required in advance with answers to be submitted to discussion questions or problem sets? 
-    Is an oral presentation required? Is there a field excursion?",
-    "learningMaterials" => 'List of required learning materials for your course and where they might be obtained (e.g. the Bookstore if you ordered a text or a reading package, your department office if an in-house resource is available, the Library through their <a href="https://library.ok.ubc.ca/services/course-reserves/" target="_blank" rel="noopener noreferrer">course-reserve system</a>). Providing students with at least an estimate of the costs of materials is expected. Explanation of any on-line learning management system used (e.g.Canvas).',
-    "latePolicy" => "State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?",
-    "missedActivityPolicy" => 'In accordance with policy on <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,41,90,1014" target="_blank" rel="noopener noreferrer">Grading Practices</a> and <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,48,1127,0" target="_blank" rel="noopener noreferrer">Academic Concessions</a>, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight marks from a missed test onto later assessments?)',
-    "courseDescription" => "As in the Academic Calendar or, for courses without a published description, include a brief representative one.", 
-    "okanaganCourseDescription" => 'Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar</a>.', 
-    "coursePrereqs" => "Is there a course that students must have passed before taking this course?",
-    "courseCoreqs" => "Is there a course that students must take concurrently (if not before)?",
-    "courseContacts" => "Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?", 
-    "officeHours" => "Do you have set office hours or can students make appointments? Do you hold “office hours” online? If so, how do students access you?",
-    "courseStructure" => "First, the basic components: lecture, lab, discussion, tutorial. Typically the locations are on the Student Service Centre but you may wish to include them. Then a description of how your classes are structured: Do you use traditional lecturing? Do you provide notes (outlines)? Do you combine on-line and in-class activity? You may wish to combine this section and Learning Outcomes below to provide an opportunity to introduce students to your philosophy of learning, to the culture of your discipline and how this course fits in the larger context.",
-    "courseSchedule" => "This may be a weekly schedule, it may be class by class, but let students know that if changes occur, they will be informed.",
-    "instructorBioStatement" => "You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.",
-    "learningResources" => "Include information on any resources to support student learning that are supported by the academic unit responsible for the course.",
-    "learningAnalytics" => "If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?",
-    "officeLocation" => "Building & Room Number",
-    "creativeCommons" => 'Include a copyright statement or include a Creative Commons Open Copyright license of your choosing. Visit the <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">Creative Commons Website</a> for options and more information. Need help deciding? Try using the <a href="https://creativecommons.org/choose/" target="_blank" rel="noopener noreferrer">Creative Commons License Chooser</a>.',
-    "uniPolicy" => 'Hearing from each course instructor about University policies and values can help to emphasize their importance to students. To fulfil the policy, you need only to present the following paragraph with the link to the web page that provides details and links to specific policies and resources. You may wish to take the opportunity to relate the ideas to your own course as part of your students’ education. This policy is <b>always included</b> in a generated Vancouver syllabus.',
-    "customResource" => 'Include any additional information or resources that have not been provided.',
-    "saveWarning" => 'Be sure to save your content regularly by clicking the save button <i class="bi bi-clipboard2-check-fill"></i> at the top and bottom of this page.',
-    "crossListed" => 'Is this a Cross-Listed Course? Per <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Curriculum Guidelines</a>.',
-));
-
+define('INPUT_TIPS', [
+    'otherCourseStaff' => 'If others lead face-to-face components such as tutorials or labs, let students know that they will meet them and be introduced in those sessions. Are others involved in marking homework? If so, do you want to identify them and provide contact information to students or have inquiries come to you?',
+    'learningOutcomes' => 'Tell students what changes in their knowledge, skills, or attitudes should occur during the course. Knowing these, students will have a framework within which to put individual components of the course and they will be primed for the kinds of assessments of learning that will come.',
+    'learningAssessments' => 'Identify the various ways you will assess achievement of stated learning outcomes or objectives, when each will occur, and the weighting of each component in the final grade. Sometimes your assessment plan will need to be adjusted, you must discuss the proposal with the class and provide a rationale and then update the syllabus. A new, dated electronic syllabus must be provided',
+    'learningActivities' => 'Do you expect students to participate in class? In what ways? (e.g., case studies, using “clickers” to answer questions, working in small groups, etc.) Is participation in on-line discussions required? Are readings required in advance with answers to be submitted to discussion questions or problem sets? 
+    Is an oral presentation required? Is there a field excursion?',
+    'learningMaterials' => 'List of required learning materials for your course and where they might be obtained (e.g. the Bookstore if you ordered a text or a reading package, your department office if an in-house resource is available, the Library through their <a href="https://library.ok.ubc.ca/services/course-reserves/" target="_blank" rel="noopener noreferrer">course-reserve system</a>). Providing students with at least an estimate of the costs of materials is expected. Explanation of any on-line learning management system used (e.g.Canvas).',
+    'latePolicy' => 'State your policies on re-grading of marked work and on late submissions. What are the penalties for late assignments?',
+    'missedActivityPolicy' => 'In accordance with policy on <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,41,90,1014" target="_blank" rel="noopener noreferrer">Grading Practices</a> and <a href="https://www.calendar.ubc.ca/okanagan/index.cfm?tree=3,48,1127,0" target="_blank" rel="noopener noreferrer">Academic Concessions</a>, state how you deal with missed in-class assessments (e.g., are make-up tests offered for missed in-class tests, do you count the best X of Y assignments/tests, do you re-weight marks from a missed test onto later assessments?)',
+    'courseDescription' => 'As in the Academic Calendar or, for courses without a published description, include a brief representative one.',
+    'okanaganCourseDescription' => 'Course descriptions are provided in the UBCO Okanagan <a href="https://www.calendar.ubc.ca/okanagan/courses.cfm?go=name" target="_blank" rel="noopener noreferrer">Academic Calendar</a>.',
+    'coursePrereqs' => 'Is there a course that students must have passed before taking this course?',
+    'courseCoreqs' => 'Is there a course that students must take concurrently (if not before)?',
+    'courseContacts' => 'Include any and all contact information you are willing to have students use. If you have a preferred mode, state it. For example, do you accept email inquiries? What is your typical response time?',
+    'officeHours' => 'Do you have set office hours or can students make appointments? Do you hold “office hours” online? If so, how do students access you?',
+    'courseStructure' => 'First, the basic components: lecture, lab, discussion, tutorial. Typically the locations are on the Student Service Centre but you may wish to include them. Then a description of how your classes are structured: Do you use traditional lecturing? Do you provide notes (outlines)? Do you combine on-line and in-class activity? You may wish to combine this section and Learning Outcomes below to provide an opportunity to introduce students to your philosophy of learning, to the culture of your discipline and how this course fits in the larger context.',
+    'courseSchedule' => 'This may be a weekly schedule, it may be class by class, but let students know that if changes occur, they will be informed.',
+    'instructorBioStatement' => 'You may wish to include your department/faculty/school and other information about your academic qualifications, interests, etc.',
+    'learningResources' => 'Include information on any resources to support student learning that are supported by the academic unit responsible for the course.',
+    'learningAnalytics' => 'If your course or department has a learning resource centre (physical or virtual), inform your students. Who will students encounter there? Are the staff knowledgeable about this course?',
+    'officeLocation' => 'Building & Room Number',
+    'creativeCommons' => 'Include a copyright statement or include a Creative Commons Open Copyright license of your choosing. Visit the <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">Creative Commons Website</a> for options and more information. Need help deciding? Try using the <a href="https://creativecommons.org/choose/" target="_blank" rel="noopener noreferrer">Creative Commons License Chooser</a>.',
+    'uniPolicy' => 'Hearing from each course instructor about University policies and values can help to emphasize their importance to students. To fulfil the policy, you need only to present the following paragraph with the link to the web page that provides details and links to specific policies and resources. You may wish to take the opportunity to relate the ideas to your own course as part of your students’ education. This policy is <b>always included</b> in a generated Vancouver syllabus.',
+    'customResource' => 'Include any additional information or resources that have not been provided.',
+    'saveWarning' => 'Be sure to save your content regularly by clicking the save button <i class="bi bi-clipboard2-check-fill"></i> at the top and bottom of this page.',
+    'crossListed' => 'Is this a Cross-Listed Course? Per <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Curriculum Guidelines</a>.',
+]);
 
 class SyllabusController extends Controller
 {
-
     //
     public function __construct()
     {
@@ -69,10 +67,18 @@ class SyllabusController extends Controller
         $this->middleware('hasAccess');
     }
 
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         // get the current user
         $user = User::find(Auth::id());
-        $syllabusId = $request->input("syllabus_id");
+        $syllabusId = $request->input('syllabus_id');
+
+        $url = parse_url($_SERVER['REQUEST_URI']);
+        if ($syllabusId == null) {
+            $pathArr = explode('/', $url['path']);
+            $syllabusId = $pathArr[count($pathArr) - 1];
+        }
+
         // get this users courses
         $myCourses = $user->courses;
         // get vancouver campus resources
@@ -80,67 +86,68 @@ class SyllabusController extends Controller
         // get okanagan campus resources
         $okanaganSyllabusResources = OkanaganSyllabusResource::all();
         // get faculties
-        $faculties =  Faculty::orderBy('faculty')->get();
+        $faculties = Faculty::orderBy('faculty')->get();
         // get departments
-        $departments =  Department::orderBy('department')->get();
-        
+        $departments = Department::orderBy('department')->get();
+
         $courseAlignment = null;
         $outcomeMaps = null;
-        if ($syllabusId != null) {
+        if ($syllabusId != null && $syllabusId != 'syllabusGenerator') {
             $syllabus = Syllabus::find($syllabusId);
-            // get this users permission level 
+            // get this users permission level
             $userPermission = $user->syllabi->where('id', $syllabusId)->first()->pivot->permission;
             // check for user settings
             if (isset($syllabus->course_id)) {
                 $importCourse = Course::find($syllabus->course_id);
                 if ($syllabus->include_alignment) {
-                    
+
                     $courseAlignment = $importCourse->learningOutcomes;
                     foreach ($courseAlignment as $clo) {
                         $clo->assessmentMethods;
                         $clo->learningActivities;
                     }
                 }
-                $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id)->pluck('program_id')->toArray(); 
-                if (count($syllabusProgramIds) > 0)
-                    $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $importCourse->course_id);   
+                $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id)->pluck('program_id')->toArray();
+                if (count($syllabusProgramIds) > 0) {
+                    $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $importCourse->course_id);
+                }
             }
 
-        // get  Vancouver Syllabus
-        $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id);
+            // get  Vancouver Syllabus
+            $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id);
 
-        // get  Okanagan Syllabus
-        $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id);
+            // get  Okanagan Syllabus
+            $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id);
 
             // show view based on user permission
             switch ($userPermission) {
                 // owner
                 case 1:
-                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
+                    return $this->syllabusEditor($syllabus, ['user' => $user, 'myCourses' => $myCourses, 'vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'faculties' => $faculties, 'departments' => $departments, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps]);
 
-                break;
+                    break;
                 case 2:
                     // editor
-                    return $this->syllabusEditor($syllabus, array("user" => $user, "myCourses" => $myCourses, "vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "faculties" => $faculties, "departments" => $departments, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps));
-                break;
-                // viewer
+                    return $this->syllabusEditor($syllabus, ['user' => $user, 'myCourses' => $myCourses, 'vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'faculties' => $faculties, 'departments' => $departments, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps]);
+                    break;
+                    // viewer
                 case 3:
-                    return $this->syllabusViewer($syllabus, array("vancouverSyllabusResources" => $vancouverSyllabusResources, "okanaganSyllabusResources" => $okanaganSyllabusResources, "courseAlignment" => $courseAlignment, "outcomeMaps" => $outcomeMaps, "vancouverSyllabus" => $vancouverSyllabus, "okanaganSyllabus" => $okanaganSyllabus));
+                    return $this->syllabusViewer($syllabus, ['vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps, 'vancouverSyllabus' => $vancouverSyllabus, 'okanaganSyllabus' => $okanaganSyllabus]);
 
-                break;
-                // return view to create a syllabus as default
+                    break;
+                    // return view to create a syllabus as default
                 default:
-                    return view("syllabus.syllabusGenerator")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
+                    return view('syllabus.syllabusGenerator')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
             }
 
         // return view to create a syllabus
         } else {
-            return view("syllabus.syllabus")->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
+            return view('syllabus.syllabus')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
         }
     }
 
-
-    public function syllabusEditor($syllabus, $data) {
+    public function syllabusEditor($syllabus, $data)
+    {
         // get this syllabus
         $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabus->id)->get();
         $courseScheduleTblRowsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('col', 0)->get()->count();
@@ -148,31 +155,33 @@ class SyllabusController extends Controller
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
         $courseScheduleTbl['numCols'] = $courseScheduleTblColsCount;
         $courseScheduleTbl['numRows'] = $courseScheduleTblRowsCount;
-        
+
         switch ($syllabus->campus) {
             case 'O':
                 // get data specific to okanagan campus
                 $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
+
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
-            break;
+                return view('syllabus.syllabus')->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
+                break;
             case 'V':
                 // get data specific to vancouver campus
                 $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id)->first();
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
+
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabus")->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
-            break;
-                
+                return view('syllabus.syllabus')->with('user', $data['user'])->with('myCourses', $data['myCourses'])->with('syllabusInstructors', $syllabusInstructors)->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('faculties', $data['faculties'])->with('departments', $data['departments'])->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
+                break;
+
         }
 
     }
 
-
-    public function syllabusViewer($syllabus, $data) {
+    public function syllabusViewer($syllabus, $data)
+    {
         $courseScheduleTblRowsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('col', 0)->get()->count();
         $courseScheduleTblColsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('row', 0)->get()->count();
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
@@ -186,23 +195,24 @@ class SyllabusController extends Controller
                 $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
                 // get selected okanagan syllabus resource
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
+
                 // return view with okanagan syllabus data
-                return view("syllabus.syllabusViewerOkanagan")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
-            break;
+                return view('syllabus.syllabusViewerOkanagan')->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $data['okanaganSyllabusResources'])->with('syllabus', $syllabus)->with('okanaganSyllabus', $okanaganSyllabus)->with('selectedOkanaganSyllabusResourceIds', $selectedOkanaganSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
+                break;
             case 'V':
                 // get data specific to vancouver campus
                 $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id)->first();
                 // get selected vancouver syllabus resource
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
+
                 // return view with vancouver syllabus data
-                return view("syllabus.syllabusViewerVancouver")->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);        
+                return view('syllabus.syllabusViewerVancouver')->with('myCourseScheduleTbl', $courseScheduleTbl)->with('courseScheduleTblRowsCount', $courseScheduleTblRowsCount)->with('inputFieldDescriptions', INPUT_TIPS)->with('vancouverSyllabusResources', $data['vancouverSyllabusResources'])->with('syllabus', $syllabus)->with('vancouverSyllabus', $vancouverSyllabus)->with('selectedVancouverSyllabusResourceIds', $selectedVancouverSyllabusResourceIds)->with('syllabusInstructors', $syllabusInstructors)->with('courseAlignment', $data['courseAlignment'])->with('outcomeMaps', $data['outcomeMaps']);
         }
     }
 
     /**
      * Save syllabus.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function save(Request $request, $syllabusId = null)
@@ -221,16 +231,16 @@ class SyllabusController extends Controller
 
         // $courseScheduleOutline['headings'] = $request->input('courseScheduleTblHeadings');
         // $courseScheduleOutline['rows'] = $request->input('courseScheduleTblRows');
-        
+
         // if syllabus already exists, update it
         if ($syllabusId) {
-            
+
             // update syllabus
             $syllabus = $this->update($request, $syllabusId);
         // else create a new syllabus
         } else {
             // create a new syllabus
-            
+
             $syllabus = $this->create($request);
         }
         // set updated_at time
@@ -242,7 +252,7 @@ class SyllabusController extends Controller
         // save syllabus
         if ($syllabus->save()) {
             $request->session()->flash('success', 'Your syllabus was successfully saved!');
-            
+
         } else {
             $request->session()->flash('error', 'There was an error saving your syllabus!');
         }
@@ -253,18 +263,81 @@ class SyllabusController extends Controller
             return $this->download($syllabus->id, $request->input('download'));
         }
 
-        return redirect()->route('syllabus', [
-            'syllabusId' => $syllabus->id,
-        ]);
+        $syllabusId = $syllabus->id;
+        // get this users courses
+        $myCourses = $user->courses;
+        // get vancouver campus resources
+        $vancouverSyllabusResources = VancouverSyllabusResource::all();
+        // get okanagan campus resources
+        $okanaganSyllabusResources = OkanaganSyllabusResource::all();
+        // get faculties
+        $faculties = Faculty::orderBy('faculty')->get();
+        // get departments
+        $departments = Department::orderBy('department')->get();
+
+        $courseAlignment = null;
+        $outcomeMaps = null;
+        if ($syllabusId != null) {
+            $syllabus = Syllabus::find($syllabusId);
+            // get this users permission level
+            $userPermission = $user->syllabi->where('id', $syllabusId)->first()->pivot->permission;
+            // check for user settings
+            if (isset($syllabus->course_id)) {
+                $importCourse = Course::find($syllabus->course_id);
+                if ($syllabus->include_alignment) {
+
+                    $courseAlignment = $importCourse->learningOutcomes;
+                    foreach ($courseAlignment as $clo) {
+                        $clo->assessmentMethods;
+                        $clo->learningActivities;
+                    }
+                }
+                $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabus->id)->pluck('program_id')->toArray();
+                if (count($syllabusProgramIds) > 0) {
+                    $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $importCourse->course_id);
+                }
+            }
+
+            // get  Vancouver Syllabus
+            $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id);
+
+            // get  Okanagan Syllabus
+            $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id);
+
+            // show view based on user permission
+            switch ($userPermission) {
+                // owner
+                case 1:
+                    return $this->syllabusEditor($syllabus, ['user' => $user, 'myCourses' => $myCourses, 'vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'faculties' => $faculties, 'departments' => $departments, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps]);
+
+                    break;
+                case 2:
+                    // editor
+                    return $this->syllabusEditor($syllabus, ['user' => $user, 'myCourses' => $myCourses, 'vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'faculties' => $faculties, 'departments' => $departments, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps]);
+                    break;
+                    // viewer
+                case 3:
+                    return $this->syllabusViewer($syllabus, ['vancouverSyllabusResources' => $vancouverSyllabusResources, 'okanaganSyllabusResources' => $okanaganSyllabusResources, 'courseAlignment' => $courseAlignment, 'outcomeMaps' => $outcomeMaps, 'vancouverSyllabus' => $vancouverSyllabus, 'okanaganSyllabus' => $okanaganSyllabus]);
+
+                    break;
+                    // return view to create a syllabus as default
+                default:
+                    return view('syllabus.syllabusGenerator')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
+            }
+
+        // return view to create a syllabus
+        } else {
+            return view('syllabus.syllabus')->with('user', $user)->with('myCourses', $myCourses)->with('inputFieldDescriptions', INPUT_TIPS)->with('okanaganSyllabusResources', $okanaganSyllabusResources)->with('vancouverSyllabusResources', $vancouverSyllabusResources)->with('faculties', $faculties)->with('departments', $departments)->with('syllabus', []);
+        }
     }
 
     /**
      * Create a new syllabus resource.
-     * @param  \Illuminate\Http\Request  $request
+     *
      * @return \Illuminate\Http\Response
      */
-    public function create($request)
-    {        
+    public function create(Request $request)
+    {
         // get current user
         $user = User::where('id', Auth::id())->first();
         $campus = $request->input('campus');
@@ -283,7 +356,7 @@ class SyllabusController extends Controller
         $courseInstructors = $request->input('courseInstructor');
         $courseInstructorEmails = $request->input('courseInstructorEmail');
 
-        if($request->input('crossListed')==1){
+        if ($request->input('crossListed') == 1) {
             $syllabus->cross_listed_code = $request->input('courseCodeCL');
             $syllabus->cross_listed_num = $request->input('courseNumberCL');
         } else {
@@ -291,24 +364,23 @@ class SyllabusController extends Controller
             $syllabus->cross_listed_num = null;
         }
 
-        if ($request->input("copyright")==1){
-            $syllabus->cc_license=null;
-            $syllabus->copyright=true;
-        }else{
-        $syllabus->cc_license=$request->input("creativeCommons");
-        $syllabus->copyright=false;
+        if ($request->input('copyright') == 1) {
+            $syllabus->cc_license = null;
+            $syllabus->copyright = true;
+        } else {
+            $syllabus->cc_license = $request->input('creativeCommons');
+            $syllabus->copyright = false;
         }
         //Land Acknowledgement
-        if($request->input("landAck")==null){
-            $syllabus->land_acknow=null;
-            }else{
-                $syllabus->land_acknow=true;
+        if ($request->input('landAck') == null) {
+            $syllabus->land_acknow = null;
+        } else {
+            $syllabus->land_acknow = true;
         }
-    
-        
+
         $syllabus->save();
 
-        // set optional syllabus fields common to both campuses 
+        // set optional syllabus fields common to both campuses
         $syllabus->faculty = $request->input('faculty', null);
         $syllabus->department = $request->input('department', null);
         $syllabus->course_location = $request->input('courseLocation', null);
@@ -316,13 +388,13 @@ class SyllabusController extends Controller
         $syllabus->class_start_time = $request->input('startTime', null);
         $syllabus->class_end_time = $request->input('endTime', null);
         if ($classMeetingDays = $request->input('schedule', null)) {
-            $classSchedule = "";
-            foreach($classMeetingDays as $day) {
-                $classSchedule = ($classSchedule == "" ? $day : $classSchedule . '/' . $day);
+            $classSchedule = '';
+            foreach ($classMeetingDays as $day) {
+                $classSchedule = ($classSchedule == '' ? $day : $classSchedule.'/'.$day);
             }
 
             $syllabus->class_meeting_days = $classSchedule;
-        }        
+        }
         $syllabus->learning_outcomes = $request->input('learningOutcome', null);
         $syllabus->learning_assessments = $request->input('learningAssessments', null);
         $syllabus->learning_activities = $request->input('learningActivities', null);
@@ -331,13 +403,14 @@ class SyllabusController extends Controller
         $syllabus->missed_activity_policy = $request->input('missingActivity', null);
         $syllabus->passing_criteria = $request->input('passingCriteria', null);
         $syllabus->learning_materials = $request->input('learningMaterials', null);
-        $syllabus->learning_resources = $request->input('learningResources', );
-        $importCourseSettings = $request->input('import_course_settings', null); 
+        $syllabus->learning_resources = $request->input('learningResources');
+        $importCourseSettings = $request->input('import_course_settings', null);
 
-        if ($importCourseSettings)      
+        if ($importCourseSettings) {
             $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
+        }
 
-        // save syllabus instructors 
+        // save syllabus instructors
         foreach ($courseInstructors as $index => $courseInstructor) {
             $syllabusInstructor = new SyllabusInstructor();
             $syllabusInstructor->syllabus_id = $syllabus->id;
@@ -347,10 +420,10 @@ class SyllabusController extends Controller
         }
         // save course schedule table
         if ($courseScheduleTblHeadings = $request->input('courseScheduleTblHeadings')) {
-            foreach($courseScheduleTblHeadings as $colIndex => $courseScheduleTblHeading) {
-                // create a new course schedule object 
+            foreach ($courseScheduleTblHeadings as $colIndex => $courseScheduleTblHeading) {
+                // create a new course schedule object
                 $courseScheduleTbl = new CourseSchedule;
-                // set the course schedule entries attributes 
+                // set the course schedule entries attributes
                 $courseScheduleTbl->syllabus_id = $syllabus->id;
                 $courseScheduleTbl->col = $colIndex;
                 $courseScheduleTbl->row = 0;
@@ -363,21 +436,21 @@ class SyllabusController extends Controller
 
                 foreach ($rows as $rowIndex => $row) {
                     foreach ($row as $colIndex => $rowItem) {
-                        // create a new course schedule object 
+                        // create a new course schedule object
                         $courseScheduleTbl = new CourseSchedule;
-                        // set the course schedule entries attributes 
+                        // set the course schedule entries attributes
                         $courseScheduleTbl->syllabus_id = $syllabus->id;
                         $courseScheduleTbl->col = $colIndex;
                         $courseScheduleTbl->row = $rowIndex + 1;
                         $courseScheduleTbl->val = $rowItem;
-                        // save course schedule entry 
+                        // save course schedule entry
                         $courseScheduleTbl->save();
                     }
                 }
             }
         }
 
-        switch($campus) {
+        switch ($campus) {
             case 'O':
                 // create okanagan syllabus record
                 $okanaganSyllabus = new OkanaganSyllabus;
@@ -386,7 +459,7 @@ class SyllabusController extends Controller
                 $okanaganSyllabus->course_format = $request->input('courseFormat');
                 $okanaganSyllabus->course_overview = $request->input('courseOverview');
                 $okanaganSyllabus->course_description = $request->input('courseDesc');
-                
+
                 // save okanagan syllabus record
                 $okanaganSyllabus->save();
                 // check if a list of okanagan syllabus resources to include was provided
@@ -395,10 +468,10 @@ class SyllabusController extends Controller
                         // create a record for each resource selected for this syllabus
                         SyllabusResourceOkanagan::create(
                             ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $resourceId],
-                        );            
+                        );
                     }
                 }
-            break;
+                break;
             case 'V':
                 // validate request
                 $request->validate([
@@ -411,7 +484,7 @@ class SyllabusController extends Controller
                 // set optional syllabus fields for Vancouver campus
                 $vancouverSyllabus->office_location = $request->input('officeLocation');
                 $vancouverSyllabus->course_description = $request->input('courseDescription');
-                $vancouverSyllabus->course_contacts = $request->input('courseContacts');                    
+                $vancouverSyllabus->course_contacts = $request->input('courseContacts');
                 $vancouverSyllabus->course_prereqs = $request->input('coursePrereqs');
                 $vancouverSyllabus->course_coreqs = $request->input('courseCoreqs');
                 $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
@@ -426,10 +499,10 @@ class SyllabusController extends Controller
                         // create a record for each resource selected for this syllabus
                         SyllabusResourceVancouver::create(
                             ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $resourceId],
-                        );            
+                        );
                     }
                 }
-            break;
+                break;
         }
         // save syllabus
         $syllabus->save();
@@ -447,43 +520,42 @@ class SyllabusController extends Controller
     /**
      * Helper to create the import course settings (e.g. import course alignment and program outcome maps)
      *
-     * @param Array specifying what information needs to be imported/linked from a course to a syllabus
+     * @param array specifying what information needs to be imported/linked from a course to a syllabus
      */
-    private function createImportCourseSettings($syllabusId, $settings) {
+    private function createImportCourseSettings($syllabusId, $settings)
+    {
         $syllabus = Syllabus::find($syllabusId);
         // reset previous syllabi import settings
         $syllabus->course_id = null;
         $syllabus->include_alignment = 0;
         SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
         // check if course alignment table was included
-        if (array_key_exists("importCourseAlignment", $settings)) {
-            $syllabus->course_id = $settings["courseId"];
+        if (array_key_exists('importCourseAlignment', $settings)) {
+            $syllabus->course_id = $settings['courseId'];
             $syllabus->include_alignment = 1;
         }
         // check if program outcome maps were included
-        if (array_key_exists("programs", $settings)) {
+        if (array_key_exists('programs', $settings)) {
             $syllabus->course_id = $settings['courseId'];
-            $programIds = $settings["programs"];
-            foreach($programIds as $programId) {
+            $programIds = $settings['programs'];
+            foreach ($programIds as $programId) {
                 $syllabiProgram = new SyllabusProgram;
                 $syllabiProgram->syllabus_id = $syllabusId;
                 $syllabiProgram->program_id = $programId;
                 $syllabiProgram->save();
             }
-        } 
+        }
         $syllabus->save();
     }
 
-    
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($request, $syllabusId)
-    {       
+    public function update(Request $request, $syllabusId)
+    {
         // get the syllabus, and start updating it
         $syllabus = Syllabus::find($syllabusId);
         $campus = $request->input('campus');
@@ -503,7 +575,7 @@ class SyllabusController extends Controller
         $syllabus->cross_listed_code = $request->input('courseCodeCL');
         $syllabus->cross_listed_num = $request->input('courseNumberCL');
 
-        if($request->input('crossListed')==1){
+        if ($request->input('crossListed') == 1) {
             $syllabus->cross_listed_code = $request->input('courseCodeCL');
             $syllabus->cross_listed_num = $request->input('courseNumberCL');
         } else {
@@ -511,37 +583,34 @@ class SyllabusController extends Controller
             $syllabus->cross_listed_num = null;
         }
 
-
         //Creative Commons or Copyright
-        if($request->input("copyright")==null){
-            $syllabus->cc_license=null;
-            $syllabus->copyright=null;
-            }elseif($request->input("copyright")==1){
-                $syllabus->cc_license=null;
-                $syllabus->copyright=true;
-            }else{
-                $syllabus->cc_license=$request->input("creativeCommons");
-                $syllabus->copyright=false;
-            }  
+        if ($request->input('copyright') == null) {
+            $syllabus->cc_license = null;
+            $syllabus->copyright = null;
+        } elseif ($request->input('copyright') == 1) {
+            $syllabus->cc_license = null;
+            $syllabus->copyright = true;
+        } else {
+            $syllabus->cc_license = $request->input('creativeCommons');
+            $syllabus->copyright = false;
+        }
         //Land Acknowledgement
-        if($request->input("landAck")==null){
-            $syllabus->land_acknow=null;
-            }else{
-                $syllabus->land_acknow=true;
-            }
-       
+        if ($request->input('landAck') == null) {
+            $syllabus->land_acknow = null;
+        } else {
+            $syllabus->land_acknow = true;
+        }
+
         // check if user set import settings and update them
 
-            
-        if ($importCourseSettings)
-            
+        if ($importCourseSettings) {
+
             $this->createImportCourseSettings($syllabus->id, $importCourseSettings);
-        else {
+        } else {
             // reset import course settings
             $syllabus->course_id = null;
             SyllabusProgram::where('syllabus_id', $syllabus->id)->delete();
         }
-
 
         // update optional syllabus fields common to both campuses
         $syllabus->course_location = $request->input('courseLocation', null);
@@ -552,9 +621,9 @@ class SyllabusController extends Controller
         $syllabus->faculty = $request->input('faculty', null);
         $syllabus->department = $request->input('department', null);
         if ($classMeetingDays = $request->input('schedule', null)) {
-            $classSchedule = "";
-            foreach($classMeetingDays as $day) {
-                $classSchedule = ($classSchedule == "" ? $day : $classSchedule . '/' . $day);
+            $classSchedule = '';
+            foreach ($classMeetingDays as $day) {
+                $classSchedule = ($classSchedule == '' ? $day : $classSchedule.'/'.$day);
             }
             $syllabus->class_meeting_days = $classSchedule;
         } else {
@@ -573,7 +642,7 @@ class SyllabusController extends Controller
 
         // delete all the previous syllabus instructor entries (TODO: optimize)
         SyllabusInstructor::where('syllabus_id', $syllabus->id)->delete();
-        // save syllabus instructors 
+        // save syllabus instructors
         foreach ($courseInstructors as $index => $courseInstructor) {
             $syllabusInstructor = new SyllabusInstructor();
             $syllabusInstructor->syllabus_id = $syllabus->id;
@@ -585,12 +654,12 @@ class SyllabusController extends Controller
         // delete all the previous course schedule table entries (TODO: optimize)
         $courseScheduleTbl = CourseSchedule::where('syllabus_id', $syllabus->id)->delete();
         // save the updated course schedule table
-        
+
         if ($courseScheduleTblHeadings = $request->input('courseScheduleTblHeadings')) {
-            foreach($courseScheduleTblHeadings as $colIndex => $courseScheduleTblHeading) {
-                // create a new course schedule object 
+            foreach ($courseScheduleTblHeadings as $colIndex => $courseScheduleTblHeading) {
+                // create a new course schedule object
                 $courseScheduleTbl = new CourseSchedule;
-                // set the course schedule entries attributes 
+                // set the course schedule entries attributes
                 $courseScheduleTbl->syllabus_id = $syllabus->id;
                 $courseScheduleTbl->col = $colIndex;
                 $courseScheduleTbl->row = 0;
@@ -602,26 +671,26 @@ class SyllabusController extends Controller
                 $rows = array_chunk($courseScheduleTblRows, count($courseScheduleTblHeadings));
                 foreach ($rows as $rowIndex => $row) {
                     foreach ($row as $colIndex => $rowItem) {
-                        // create a new course schedule object 
+                        // create a new course schedule object
                         $courseScheduleTbl = new CourseSchedule;
-                        // set the course schedule entries attributes 
+                        // set the course schedule entries attributes
                         $courseScheduleTbl->syllabus_id = $syllabus->id;
                         $courseScheduleTbl->col = $colIndex;
                         $courseScheduleTbl->row = $rowIndex + 1;
                         $courseScheduleTbl->val = $rowItem;
-                        // save course schedule entry 
+                        // save course schedule entry
                         $courseScheduleTbl->save();
                     }
                 }
             }
         }
-        
+
         switch ($campus) {
             case 'O':
                 // campus was not changed
                 if ($syllabus->getOriginal('campus') == 'O') {
                     // get the related Okanagan syllabus
-                    
+
                     $okanaganSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabus->id)->first();
                     // update optional fields for okanagan syllabus
                     $okanaganSyllabus->course_format = $request->input('courseFormat');
@@ -636,16 +705,16 @@ class SyllabusController extends Controller
                         // update or create records for selected okanagan syllabus resources
                         foreach ($okanaganSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
                             SyllabusResourceOkanagan::updateOrCreate(
-                                ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $selectedResourceId], 
+                                ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $selectedResourceId],
                             );
-                        }   
+                        }
                     } else {
                         // delete all resources previously selected for the given syllabus
                         SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->delete();
                     }
                 // campus was changed from 'V' to 'O'
                 } else {
-                    // delete vancouver syllabus record 
+                    // delete vancouver syllabus record
                     VancouverSyllabus::where('syllabus_id', $syllabus->id)->delete();
                     // create a new okanagan syllabus
                     $okanaganSyllabus = new OkanaganSyllabus;
@@ -662,12 +731,12 @@ class SyllabusController extends Controller
                         // update or create records for selected okanagan syllabus resources
                         foreach ($okanaganSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
                             SyllabusResourceOkanagan::updateOrCreate(
-                                ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $selectedResourceId], 
+                                ['syllabus_id' => $syllabus->id, 'o_syllabus_resource_id' => $selectedResourceId],
                             );
-                        }   
-                    } 
+                        }
+                    }
                 }
-            break;
+                break;
             case 'V':
                 // campus was not changed
                 if ($syllabus->getOriginal('campus') == 'V') {
@@ -696,7 +765,7 @@ class SyllabusController extends Controller
                         // update or create records for selected vancouver syllabus resources
                         foreach ($vancouverSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
                             SyllabusResourceVancouver::updateOrCreate(
-                                ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $selectedResourceId], 
+                                ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $selectedResourceId],
                             );
                         }
                     } else {
@@ -705,7 +774,7 @@ class SyllabusController extends Controller
                     }
                 // campus was changed from 'O' to 'V'
                 } else {
-                    // delete okanagan syllabus record 
+                    // delete okanagan syllabus record
                     OkanaganSyllabus::where('syllabus_id', $syllabusId)->delete();
                     // validate request
                     $request->validate([
@@ -718,7 +787,7 @@ class SyllabusController extends Controller
                     // set optional syllabus fields for Vancouver campus
                     $vancouverSyllabus->office_location = $request->input('officeLocation');
                     $vancouverSyllabus->course_description = $request->input('courseDescription');
-                    $vancouverSyllabus->course_contacts = $request->input('courseContacts');                    
+                    $vancouverSyllabus->course_contacts = $request->input('courseContacts');
                     $vancouverSyllabus->course_prereqs = $request->input('coursePrereqs');
                     $vancouverSyllabus->course_coreqs = $request->input('courseCoreqs');
                     $vancouverSyllabus->instructor_bio = $request->input('courseInstructorBio');
@@ -734,25 +803,25 @@ class SyllabusController extends Controller
                         // update or create records for selected vancouver syllabus resources
                         foreach ($vancouverSyllabusResources as $selectedResourceId => $selectedResourceIdName) {
                             SyllabusResourceVancouver::updateOrCreate(
-                                ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $selectedResourceId], 
+                                ['syllabus_id' => $syllabus->id, 'v_syllabus_resource_id' => $selectedResourceId],
                             );
                         }
                     }
                 }
-            break;
+                break;
         }
 
         $syllabus->save();
+
         return $syllabus;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $syllabusId
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $syllabusId)
+    public function destroy(Request $request, int $syllabusId)
     {
         // find the syllabus to delete
         $syllabus = Syllabus::find($syllabusId);
@@ -762,14 +831,14 @@ class SyllabusController extends Controller
         $currentUserPermission = $currentUser->syllabi->where('id', $syllabusId)->first()->pivot->permission;
         // if the current user owns the syllabus, try delete it
         if ($currentUserPermission == 1) {
-            if($syllabus->delete()){
-                $request->session()->flash('success','Your syllabus has been deleted');
-            }else{
+            if ($syllabus->delete()) {
+                $request->session()->flash('success', 'Your syllabus has been deleted');
+            } else {
                 $request->session()->flash('error', 'There was an error deleting your syllabus');
             }
         // else the current user does not own the syllabus, flash an error
         } else {
-            $request->session()->flash('error','You do not have permission to delete this syllabus');
+            $request->session()->flash('error', 'You do not have permission to delete this syllabus');
         }
 
         // return to the dashboard
@@ -782,32 +851,33 @@ class SyllabusController extends Controller
         * @return 2D array[$clos][plos] = $mappingScales
     */
 
-    private function getOutcomeMaps($programIds, $courseId) {
-        $programsOutcomeMaps = array();
+    private function getOutcomeMaps($programIds, $courseId)
+    {
+        $programsOutcomeMaps = [];
         foreach ($programIds as $programId) {
             $program = Program::find($programId);
-            $programsOutcomeMaps[$programId]["program"] = $program;
-            $programsOutcomeMaps[$programId]["clos"] = Course::find($courseId)->learningOutcomes;
+            $programsOutcomeMaps[$programId]['program'] = $program;
+            $programsOutcomeMaps[$programId]['clos'] = Course::find($courseId)->learningOutcomes;
             foreach ($program->programLearningOutcomes as $programLearningOutcome) {
                 $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $courseId);
-                foreach($outcomeMaps as $outcomeMap){
-                    $programsOutcomeMaps[$programId]["outcomeMap"][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
-                } 
+                foreach ($outcomeMaps as $outcomeMap) {
+                    $programsOutcomeMaps[$programId]['outcomeMap'][$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
+                }
 
             }
         }
+
         return $programsOutcomeMaps;
     }
 
-    
-
     // get existing course information
     // Ajax to get course infomation
-    public function getCourseInfo(Request $request) {
+    public function getCourseInfo(Request $request)
+    {
         // validate request data
         $this->validate($request, [
-            'course_id'=> 'required',
-            ]);
+            'course_id' => 'required',
+        ]);
         $courseId = $request->course_id;
         // get the corresponding course
         $course = Course::find($courseId);
@@ -815,10 +885,11 @@ class SyllabusController extends Controller
         $importCourseSettings = $request->input('importCourseSettings', []);
         // reduce user requested info array to a 1D array
         $importCourseSettings = array_reduce($importCourseSettings, function ($acc, $setting) {
-            $temp = [$setting["name"]];
+            $temp = [$setting['name']];
+
             return array_merge($acc, $temp);
         }, []);
-        // create return data object with basic course info 
+        // create return data object with basic course info
         $data['c_title'] = $course->course_title;
         $data['c_code'] = $course->course_code;
         $data['c_num'] = $course->course_num;
@@ -826,19 +897,19 @@ class SyllabusController extends Controller
         $data['c_year'] = $course->year;
         $data['c_term'] = $course->semester;
         // check if clos were requested
-        if (in_array("importLearningOutcomes", $importCourseSettings)) {
+        if (in_array('importLearningOutcomes', $importCourseSettings)) {
             $data['l_outcomes'] = $course->learningOutcomes;
         }
         // check if assessment methods were requested
-        if (in_array("importAssessmentMethods", $importCourseSettings)) {
+        if (in_array('importAssessmentMethods', $importCourseSettings)) {
             $data['a_methods'] = $course->assessmentMethods;
         }
         // check if teaching and learning activities were requested
-        if (in_array("importLearningActivities", $importCourseSettings)) {
+        if (in_array('importLearningActivities', $importCourseSettings)) {
             $data['l_activities'] = $course->learningActivities;
         }
         // check if course alignment was requested
-        if (in_array("importCourseAlignment", $importCourseSettings)) {
+        if (in_array('importCourseAlignment', $importCourseSettings)) {
             $data['course_alignment'] = $course->learningOutcomes;
             foreach ($data['course_alignment'] as $clo) {
                 $clo->assessmentMethods;
@@ -849,7 +920,7 @@ class SyllabusController extends Controller
         $data['closForOutcomeMaps'] = null;
         foreach ($course->programs as $program) {
             if (in_array($program->program_id, $importCourseSettings)) {
-                if (!isset($data['closForOutcomeMaps'])) {
+                if (! isset($data['closForOutcomeMaps'])) {
                     $data['closForOutcomeMaps'] = $course->learningOutcomes;
                 }
                 $data['programs'][$program->program_id]['programId'] = $program->program_id;
@@ -874,34 +945,37 @@ class SyllabusController extends Controller
 
     /**
      * Create program outcome map data structure
-     * @param 
+     *
      * @return 2-D array[$ploId][$cloId] = MappingScale
      */
-    public function getProgramOutcomeMap($programId, $courseId) {
+    public function getProgramOutcomeMap($programId, $courseId)
+    {
         $program = Program::find($programId);
-        $programOutcomeMap = array();
+        $programOutcomeMap = [];
         foreach ($program->programLearningOutcomes as $programLearningOutcome) {
             $outcomeMaps = $programLearningOutcome->learningOutcomes->where('course_id', $courseId);
-            foreach($outcomeMaps as $outcomeMap) {
+            foreach ($outcomeMaps as $outcomeMap) {
                 $programOutcomeMap[$programLearningOutcome->pl_outcome_id][$outcomeMap->l_outcome_id] = MappingScale::find($outcomeMap->pivot->map_scale_id);
-            } 
+            }
         }
+
         return $programOutcomeMap;
     }
 
     /**
      * Download the given syllabus $syllabusId in $ext format
-     * @param Integer $syllabusId
-     * @param String $ext: the file extension
+     *
+     * @param  string  $ext: the file extension
      * @return a download response
      */
-    public function download($syllabusId, $ext) {
-        
+    public function download(int $syllabusId, $ext)
+    {
+
         $syllabus = Syllabus::find($syllabusId);
-        $tableStyle = array('borderSize'=> 8, 'borderColor' => 'DCDCDC', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50, 'cellMargin' => Converter::cmToTwip(0.25));
-        $tableHeaderRowStyle = array('bgColor' => 'c6e0f5', 'borderBottomColor' => '000000');
-        $secondaryTableHeaderRowStyle = array('bgColor' => 'dfe0e1', 'borderBottomColor' => '000000');
-        $tableHeaderFontStyle = array('bold' => true);
+        $tableStyle = ['borderSize' => 8, 'borderColor' => 'DCDCDC', 'unit' => TblWidth::PERCENT, 'width' => 100 * 50, 'cellMargin' => Converter::cmToTwip(0.25)];
+        $tableHeaderRowStyle = ['bgColor' => 'c6e0f5', 'borderBottomColor' => '000000'];
+        $secondaryTableHeaderRowStyle = ['bgColor' => 'dfe0e1', 'borderBottomColor' => '000000'];
+        $tableHeaderFontStyle = ['bold' => true];
 
         switch ($syllabus->campus) {
             case 'O':
@@ -912,90 +986,89 @@ class SyllabusController extends Controller
 
                 //Course Description Okanagan
 
-                if($okanaganSyllabus->course_description){
-                    
+                if ($okanaganSyllabus->course_description) {
+
                     $CDArr = explode("\n", $okanaganSyllabus->course_description);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($CDArr as $index => $courseDesc){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($CDArr as $index => $courseDesc) {
                             $templateProcessor->cloneBlock('NocourseDescription');
-                            $templateProcessor->setValue('courseDescriptionOK'.$i, $courseDesc."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('courseDescriptionOK'.$i, $courseDesc.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseDescriptionOK'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NocourseDescription');
-                        $templateProcessor->setValue('courseDescriptionOK0', str_replace("\n","</w:t><w:br/><w:t>",$okanaganSyllabus->course_description));
+                        $templateProcessor->setValue('courseDescriptionOK0', str_replace("\n", '</w:t><w:br/><w:t>', $okanaganSyllabus->course_description));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseDescriptionOK'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NocourseDescription',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NocourseDescription', 0);
                 }
 
-                
                 //Course Format Okanagan
 
-                if($okanaganSyllabus->course_format){
+                if ($okanaganSyllabus->course_format) {
                     $CFArr = explode("\n", $okanaganSyllabus->course_format);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($CFArr as $index => $courseForm){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($CFArr as $index => $courseForm) {
                             $templateProcessor->cloneBlock('NocourseFormat');
-                            $templateProcessor->setValue('courseFormat'.$i, $courseForm."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('courseFormat'.$i, $courseForm.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseFormat'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NocourseFormat');
-                        $templateProcessor->setValue('courseFormat0', str_replace("\n","</w:t><w:br/><w:t>",$okanaganSyllabus->course_format));
+                        $templateProcessor->setValue('courseFormat0', str_replace("\n", '</w:t><w:br/><w:t>', $okanaganSyllabus->course_format));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseFormat'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NocourseFormat',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NocourseFormat', 0);
                 }
-                
+
                 //Course Overview Okanagan
 
-                if($okanaganSyllabus->course_overview){
+                if ($okanaganSyllabus->course_overview) {
                     $COArr = explode("\n", $okanaganSyllabus->course_overview);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($COArr as $index => $courseOver){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($COArr as $index => $courseOver) {
                             $templateProcessor->cloneBlock('NocourseOverview');
-                            $templateProcessor->setValue('courseOverview'.$i, $courseOver."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('courseOverview'.$i, $courseOver.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=30;$i++){
+
+                        for ($i; $i <= 30; $i++) {
                             $templateProcessor->setValue('courseOverview'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NocourseOverview');
-                        $templateProcessor->setValue('courseOverview0', str_replace("\n","</w:t><w:br/><w:t>",$okanaganSyllabus->course_overview));
+                        $templateProcessor->setValue('courseOverview0', str_replace("\n", '</w:t><w:br/><w:t>', $okanaganSyllabus->course_overview));
                         $i++;
-                        for($i;$i<=30;$i++){
+                        for ($i; $i <= 30; $i++) {
                             $templateProcessor->setValue('courseOverview'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NocourseOverview',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NocourseOverview', 0);
                 }
-            
+
                 /*
                 // tell template processor to include learning activities if user completed the field(s)
                 if($learningActivities = $syllabus->learning_activities){
@@ -1020,72 +1093,72 @@ class SyllabusController extends Controller
                 }
                 */
 
-                if($syllabus->learning_activities){
+                if ($syllabus->learning_activities) {
                     $LearnActArr = explode("\n", $syllabus->learning_activities);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LearnActArr as $index => $learnAct){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LearnActArr as $index => $learnAct) {
                             $templateProcessor->cloneBlock('NoLearningActivities');
-                            $templateProcessor->setValue('learningActivities'.$i, $learnAct."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('learningActivities'.$i, $learnAct.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningActivities'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoLearningActivities');
-                        $templateProcessor->setValue('learningActivities0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_activities));
+                        $templateProcessor->setValue('learningActivities0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->learning_activities));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningActivities'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoLearningActivities',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoLearningActivities', 0);
                 }
-                
+
                 // tell template processor to include other course staff if user completed the field(s)
-                if($syllabus->other_instructional_staff){
+                if ($syllabus->other_instructional_staff) {
                     $otherCourseStaffArr = explode("\n", $syllabus->other_instructional_staff);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($otherCourseStaffArr as $index => $otherCourseStaff){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($otherCourseStaffArr as $index => $otherCourseStaff) {
                             $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
-                            $templateProcessor->setValue('otherInstructionalStaff'.$i, $otherCourseStaff."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, $otherCourseStaff.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
-                        $templateProcessor->setValue('otherInstructionalStaff0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->other_instructional_staff));
+                        $templateProcessor->setValue('otherInstructionalStaff0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->other_instructional_staff));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff', 0);
                 }
                 // tell template processor to include course location if user completed the field(s)
                 if ($courseLocation = $syllabus->course_location) {
                     $templateProcessor->cloneBlock('NoCourseLocation');
-                    $templateProcessor->setValue('courseLocation',$courseLocation);
+                    $templateProcessor->setValue('courseLocation', $courseLocation);
                 } else {
-                    $templateProcessor->cloneBlock('NoCourseLocation',0);
+                    $templateProcessor->cloneBlock('NoCourseLocation', 0);
                 }
-                
+
                 // tell template processor to include class hours if user completed the field(s)
                 if ($classStartTime = $syllabus->class_start_time && $classEndTime = $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
-                    $templateProcessor->setValues(array('classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time));
+                    $templateProcessor->setValues(['classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time]);
                 } else {
-                    $templateProcessor->cloneBlock('NoClassHours',0);
+                    $templateProcessor->cloneBlock('NoClassHours', 0);
                 }
                 // tell template processor to include course schedule if user completed the field(s)
                 if ($syllabus->class_meeting_days) {
@@ -1097,31 +1170,31 @@ class SyllabusController extends Controller
                 // tell template processor to include office hours if user completed the field(s)
                 if ($syllabus->office_hours) {
                     $templateProcessor->cloneBlock('NoOfficeHours');
-                    $templateProcessor->setValue('officeHour',$syllabus->office_hours);
+                    $templateProcessor->setValue('officeHour', $syllabus->office_hours);
                 } else {
                     $templateProcessor->cloneBlock('NoOfficeHours', 0);
                 }
 
-                switch($syllabus->course_term){
-                    case("W1"):
-                        $templateProcessor->setValue('season',"Winter");
-                        $templateProcessor->setValue('term',"Term 1");
-                    break;
-                    case("W2"):
-                        $templateProcessor->setValue('season',"Winter");
-                        $templateProcessor->setValue('term',"Term 2");
-                    break;
-                    case("S1"):
-                        $templateProcessor->setValue('season',"Summer");
-                        $templateProcessor->setValue('term',"Term 1");
-                    break;
-                    case("S2"):
-                        $templateProcessor->setValue('season',"Summer");
-                        $templateProcessor->setValue('term',"Term 2");
-                    break;
-                    default: 
+                switch ($syllabus->course_term) {
+                    case 'W1':
+                        $templateProcessor->setValue('season', 'Winter');
+                        $templateProcessor->setValue('term', 'Term 1');
+                        break;
+                    case 'W2':
+                        $templateProcessor->setValue('season', 'Winter');
+                        $templateProcessor->setValue('term', 'Term 2');
+                        break;
+                    case 'S1':
+                        $templateProcessor->setValue('season', 'Summer');
+                        $templateProcessor->setValue('term', 'Term 1');
+                        break;
+                    case 'S2':
+                        $templateProcessor->setValue('season', 'Summer');
+                        $templateProcessor->setValue('term', 'Term 2');
+                        break;
+                    default:
                         $templateProcessor->setValue('term', $syllabus->course_term);
-                        $templateProcessor->setValue('season',"");
+                        $templateProcessor->setValue('season', '');
                 }
                 /*
                 if($learningOutcome = $syllabus->learning_outcomes){
@@ -1145,130 +1218,128 @@ class SyllabusController extends Controller
                     $templateProcessor->cloneBlock('NolearningOutcomes',0);
                 }
                 */
-                if($syllabus->learning_outcomes){
+                if ($syllabus->learning_outcomes) {
                     $LOutArr = explode("\n", $syllabus->learning_outcomes);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LOutArr as $index => $courseLOut){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LOutArr as $index => $courseLOut) {
                             $templateProcessor->cloneBlock('NolearningOutcomes');
-                            $templateProcessor->setValue('learningOutcomes'.$i, $courseLOut."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('learningOutcomes'.$i, $courseLOut.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningOutcomes'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NolearningOutcomes');
-                        $templateProcessor->setValue('learningOutcomes0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_outcomes));
+                        $templateProcessor->setValue('learningOutcomes0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->learning_outcomes));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningOutcomes'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NolearningOutcomes',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NolearningOutcomes', 0);
                 }
 
-
-                if($syllabus->learning_assessments){
+                if ($syllabus->learning_assessments) {
                     $LAssArr = explode("\n", $syllabus->learning_assessments);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LAssArr as $index => $courseLAss){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LAssArr as $index => $courseLAss) {
                             $templateProcessor->cloneBlock('NolearningAssessments');
-                            $templateProcessor->setValue('learningAssessments'.$i, $courseLAss."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('learningAssessments'.$i, $courseLAss.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningAssessments'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NolearningAssessments');
-                        $templateProcessor->setValue('learningAssessments0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_assessments));
+                        $templateProcessor->setValue('learningAssessments0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->learning_assessments));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningAssessments'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NolearningAssessments',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NolearningAssessments', 0);
                 }
-                
+
                 //Learning Resources
 
-                if($syllabus->learning_resources){
+                if ($syllabus->learning_resources) {
                     $LRArr = explode("\n", $syllabus->learning_resources);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LRArr as $index => $courseLR){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LRArr as $index => $courseLR) {
                             $templateProcessor->cloneBlock('NocourseLearningResources');
-                            $templateProcessor->setValue('courseLearningResources'.$i, $courseLR."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('courseLearningResources'.$i, $courseLR.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseLearningResources'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NocourseLearningResources');
-                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->learning_resources));
+                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->learning_resources));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseLearningResources'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NocourseLearningResources',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NocourseLearningResources', 0);
                 }
 
-                
                 //Learning Materials
 
-                if($learningMaterials = $syllabus->learning_materials){
+                if ($learningMaterials = $syllabus->learning_materials) {
                     $LMArr = explode("\n", $learningMaterials);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LMArr as $index => $courseLM){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LMArr as $index => $courseLM) {
                             $templateProcessor->cloneBlock('NoLearningMaterials');
-                            $templateProcessor->setValue('learningMaterials'.$i, $courseLM."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('learningMaterials'.$i, $courseLM.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningMaterials'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoLearningMaterials');
-                        $templateProcessor->setValue('learningMaterials0', str_replace("\n","</w:t><w:br/><w:t>",$learningMaterials));
+                        $templateProcessor->setValue('learningMaterials0', str_replace("\n", '</w:t><w:br/><w:t>', $learningMaterials));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningMaterials'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoLearningMaterials',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoLearningMaterials', 0);
                 }
-                
+
                 $allOkanaganSyllabusResources = OkanaganSyllabusResource::all();
                 $selectedOkanaganSyllabusResourceIds = SyllabusResourceOkanagan::where('syllabus_id', $syllabus->id)->pluck('o_syllabus_resource_id')->toArray();
-                
+
                 foreach ($allOkanaganSyllabusResources as $resource) {
                     if (in_array($resource->id, $selectedOkanaganSyllabusResourceIds)) {
                         $templateProcessor->cloneBlock($resource->id_name);
-                        $templateProcessor->setValue($resource->id_name . '-title', $resource->title);
-                        // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
+                        $templateProcessor->setValue($resource->id_name.'-title', $resource->title);
+                    // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
                     } else {
                         $templateProcessor->cloneBlock($resource->id_name, 0);
                     }
-                }  
+                }
 
-            break;
+                break;
             case 'V':
                 // get data specific to the okanagan campus
                 $vancouverSyllabus = VancouverSyllabus::where('syllabus_id', $syllabus->id)->first();
@@ -1277,42 +1348,40 @@ class SyllabusController extends Controller
                 // add data to the vancouver syllabus template
                 $courseCredit = $vancouverSyllabus->course_credit;
                 // add required form fields specific to Vancouver campus to template
-                $templateProcessor->setValues(array('courseCredit' => $courseCredit,));
+                $templateProcessor->setValues(['courseCredit' => $courseCredit]);
 
                 //removed if statement in attempt to solve bug
                 $templateProcessor->setValue('officeLocation', $vancouverSyllabus->office_location);
-                
 
                 //Vancouver Course Description
 
-
-                if($courseDescription = $vancouverSyllabus->course_description){
+                if ($courseDescription = $vancouverSyllabus->course_description) {
                     $CDVArr = explode("\n", $courseDescription);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($CDVArr as $index => $courseCDV){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($CDVArr as $index => $courseCDV) {
                             $templateProcessor->cloneBlock('NoCourseDescription');
-                            $templateProcessor->setValue('courseDescription'.$i, $courseCDV."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('courseDescription'.$i, $courseCDV.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseDescription'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoCourseDescription');
-                        $templateProcessor->setValue('courseDescription0', str_replace("\n","</w:t><w:br/><w:t>",$courseDescription));
+                        $templateProcessor->setValue('courseDescription0', str_replace("\n", '</w:t><w:br/><w:t>', $courseDescription));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseDescription'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoCourseDescription',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoCourseDescription', 0);
                 }
 
-                if($contacts = $vancouverSyllabus->course_contacts){
+                if ($contacts = $vancouverSyllabus->course_contacts) {
                     $templateProcessor->cloneBlock('NoContacts', 0);
                     // split contacts string on newline char
                     $contactsArr = explode("\n", $contacts);
@@ -1321,41 +1390,41 @@ class SyllabusController extends Controller
                     //$contactsTable->addRow();
                     //$contactsTable->addCell(10, $tableHeaderRowStyle);                    $contactsTable->addCell(null, $tableHeaderRowStyle)->addText('Contact', $tableHeaderFontStyle);
                     // add a new row and cell to table for each contact
-                    foreach($contactsArr as $index => $contact){
+                    foreach ($contactsArr as $index => $contact) {
                         $contactsTable->addRow();
                         $contactsTable->addCell()->addText(strval($index + 1));
                         $contactsTable->addCell()->addText($contact);
                     }
                     // add contacts table to word doc
                     $templateProcessor->setComplexBlock('contacts', $contactsTable);
-                    
-                }else{
+
+                } else {
                     $templateProcessor->cloneBlock('NoContacts');
                     $templateProcessor->setValue('contacts', '');
                 }
 
-                if($coursePrereqs = $vancouverSyllabus->course_prereqs){
+                if ($coursePrereqs = $vancouverSyllabus->course_prereqs) {
                     $templateProcessor->cloneBlock('NoPrerequisites', 0);
                     // split course prereqs string on newline char
                     $coursePrereqsArr = explode("\n", $coursePrereqs);
                     // create a table for course prereqs (workaround for no list option)
                     $coursePrereqsTable = new Table($tableStyle);
-                   // $coursePrereqsTable->addRow();
-                   // $coursePrereqsTable->addCell(10, $tableHeaderRowStyle);                    $coursePrereqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Prerequisites', $tableHeaderFontStyle);
+                    // $coursePrereqsTable->addRow();
+                    // $coursePrereqsTable->addCell(10, $tableHeaderRowStyle);                    $coursePrereqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Prerequisites', $tableHeaderFontStyle);
                     // add a new row and cell to table for each prereq
-                    foreach($coursePrereqsArr as $index => $prereq){
+                    foreach ($coursePrereqsArr as $index => $prereq) {
                         $coursePrereqsTable->addRow();
                         $coursePrereqsTable->addCell()->addText(strval($index + 1));
                         $coursePrereqsTable->addCell()->addText($prereq);
                     }
                     // add course prereqs table to word doc
                     $templateProcessor->setComplexBlock('prerequisites', $coursePrereqsTable);
-                }else{
+                } else {
                     $templateProcessor->cloneBlock('NoPrerequisites');
                     $templateProcessor->setValue('prerequisites', '');
                 }
 
-                if($courseCoreqs = $vancouverSyllabus->course_coreqs){
+                if ($courseCoreqs = $vancouverSyllabus->course_coreqs) {
                     $templateProcessor->cloneBlock('NoCorequisites', 0);
                     // split course coreqs string on newline char
                     $courseCoreqsArr = explode("\n", $courseCoreqs);
@@ -1364,432 +1433,427 @@ class SyllabusController extends Controller
                     //$courseCoreqsTable->addRow();
                     //$courseCoreqsTable->addCell(10, $tableHeaderRowStyle);                    $courseCoreqsTable->addCell(null, $tableHeaderRowStyle)->addText('Course Corequisites', $tableHeaderFontStyle);
                     // add a new row and cell to table for each coreq
-                    foreach($courseCoreqsArr as $index => $coreq){
+                    foreach ($courseCoreqsArr as $index => $coreq) {
                         $courseCoreqsTable->addRow();
                         $courseCoreqsTable->addCell()->addText(strval($index + 1));
                         $courseCoreqsTable->addCell()->addText($coreq);
                     }
                     // add course coreqs table to word doc
                     $templateProcessor->setComplexBlock('corequisites', $courseCoreqsTable);
-                }else{
+                } else {
                     $templateProcessor->cloneBlock('NoCorequisites');
                     $templateProcessor->setValue('corequisites', '');
                 }
 
                 //Course Instructor Biographical Statement Vancouver
 
-                if($courseInstructorBio = $vancouverSyllabus->instructor_bio){
+                if ($courseInstructorBio = $vancouverSyllabus->instructor_bio) {
                     $CIBArr = explode("\n", $courseInstructorBio);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($CIBArr as $index => $courseCIB){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($CIBArr as $index => $courseCIB) {
                             $templateProcessor->cloneBlock('NoInstructorBio');
-                            $templateProcessor->setValue('instructorBio'.$i, $courseCIB."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('instructorBio'.$i, $courseCIB.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('instructorBio'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoInstructorBio');
-                        $templateProcessor->setValue('instructorBio0', str_replace("\n","</w:t><w:br/><w:t>",$courseInstructorBio));
+                        $templateProcessor->setValue('instructorBio0', str_replace("\n", '</w:t><w:br/><w:t>', $courseInstructorBio));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('instructorBio'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoInstructorBio',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoInstructorBio', 0);
                 }
 
                 //Course Structure Vancouver
-        
-                if($courseStructure = $vancouverSyllabus->course_structure){
+
+                if ($courseStructure = $vancouverSyllabus->course_structure) {
                     $CStructArr = explode("\n", $courseStructure);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($CStructArr as $index => $courseStruct){
-                            $templateProcessor->cloneBlock('NoCourseStructureDesc',0);
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($CStructArr as $index => $courseStruct) {
+                            $templateProcessor->cloneBlock('NoCourseStructureDesc', 0);
                             $templateProcessor->cloneBlock('NoCourseStructure');
-                            $templateProcessor->setValue('courseStructure'.$i, $courseStruct."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('courseStructure'.$i, $courseStruct.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseStructure'.$i, '');
                         }
-                    }else{
-                        $templateProcessor->cloneBlock('NoCourseStructureDesc',0);
+                    } else {
+                        $templateProcessor->cloneBlock('NoCourseStructureDesc', 0);
                         $templateProcessor->cloneBlock('NoCourseStructure');
-                        $templateProcessor->setValue('courseStructure0', str_replace("\n","</w:t><w:br/><w:t>",$courseStructure));
+                        $templateProcessor->setValue('courseStructure0', str_replace("\n", '</w:t><w:br/><w:t>', $courseStructure));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseStructure'.$i, '');
                         }
                     }
-                    
-                }else{
+
+                } else {
                     $templateProcessor->cloneBlock('NoCourseStructureDesc');
-                    $templateProcessor->cloneBlock('NoCourseStructure',0);
+                    $templateProcessor->cloneBlock('NoCourseStructure', 0);
                 }
 
-                if($courseSchedule = $vancouverSyllabus->course_schedule){
+                if ($courseSchedule = $vancouverSyllabus->course_schedule) {
                     $templateProcessor->setValue('courseSchedule', $courseSchedule);
-                }else{
+                } else {
                     $templateProcessor->setValue('courseSchedule', '');
                 }
-                
 
-                if($learningActivities = $syllabus->learning_activities){
+                if ($learningActivities = $syllabus->learning_activities) {
                     $LearnActArr = explode("\n", $learningActivities);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LearnActArr as $index => $learnAct){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LearnActArr as $index => $learnAct) {
                             $templateProcessor->cloneBlock('NoLearningActivities');
-                            $templateProcessor->cloneBlock('NoLearningActivitiesDesc',0);
-                            $templateProcessor->setValue('learningActivities'.$i, $learnAct."</w:t><w:br/><w:t>");
+                            $templateProcessor->cloneBlock('NoLearningActivitiesDesc', 0);
+                            $templateProcessor->setValue('learningActivities'.$i, $learnAct.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningActivities'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoLearningActivities');
-                        $templateProcessor->cloneBlock('NoLearningActivitiesDesc',0);
-                        $templateProcessor->setValue('learningActivities0', str_replace("\n","</w:t><w:br/><w:t>",$learningActivities));
+                        $templateProcessor->cloneBlock('NoLearningActivitiesDesc', 0);
+                        $templateProcessor->setValue('learningActivities0', str_replace("\n", '</w:t><w:br/><w:t>', $learningActivities));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningActivities'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoLearningActivities',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoLearningActivities', 0);
                     $templateProcessor->cloneBlock('NoLearningActivitiesDesc');
                 }
-               
+
                 // tell template processor to include other course staff if user completed the field(s)
-                if($syllabus->other_instructional_staff){
+                if ($syllabus->other_instructional_staff) {
                     $otherCourseStaffArr = explode("\n", $syllabus->other_instructional_staff);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($otherCourseStaffArr as $index => $otherCourseStaff){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($otherCourseStaffArr as $index => $otherCourseStaff) {
                             $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
-                            $templateProcessor->setValue('otherInstructionalStaff'.$i, $otherCourseStaff."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('otherInstructionalStaff'.$i, $otherCourseStaff.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoOtherInstructionalStaff');
-                        $templateProcessor->setValue('otherInstructionalStaff0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->other_instructional_staff));
+                        $templateProcessor->setValue('otherInstructionalStaff0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->other_instructional_staff));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('otherInstructionalStaff'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoOtherInstructionalStaff', 0);
                 }
                 // tell template processor to include course location if user completed the field(s)
-                if ($courseLocation =  $syllabus->course_location) {
+                if ($courseLocation = $syllabus->course_location) {
                     $templateProcessor->cloneBlock('NoCourseLocation');
-                    $templateProcessor->setValue('courseLocation',$courseLocation);
+                    $templateProcessor->setValue('courseLocation', $courseLocation);
                 } else {
-                    $templateProcessor->cloneBlock('NoCourseLocation',0);
+                    $templateProcessor->cloneBlock('NoCourseLocation', 0);
                 }
-                
+
                 // tell template processor to include class hours if user completed the field(s)
-                if ($classStartTime =  $syllabus->class_start_time && $classEndTime =  $syllabus->class_end_time) {
+                if ($classStartTime = $syllabus->class_start_time && $classEndTime = $syllabus->class_end_time) {
                     $templateProcessor->cloneBlock('NoClassHours');
-                    $templateProcessor->setValues(array('classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time));
+                    $templateProcessor->setValues(['classStartTime' => $syllabus->class_start_time, 'classEndTime' => $syllabus->class_end_time]);
                 } else {
-                    $templateProcessor->cloneBlock('NoClassHours',0);
+                    $templateProcessor->cloneBlock('NoClassHours', 0);
                 }
 
                 // tell template processor to include course schedule if user completed the field(s)
-                if ($schedule =  $syllabus->class_meeting_days) {
+                if ($schedule = $syllabus->class_meeting_days) {
                     $templateProcessor->cloneBlock('NoCourseDays');
-                    $templateProcessor->setValue('schedule',$schedule);
+                    $templateProcessor->setValue('schedule', $schedule);
                 } else {
                     $templateProcessor->cloneBlock('NoCourseDays', 0);
                 }
 
                 // tell template processor to include office hours if user completed the field(s)
-                if ($officeHour =  $syllabus->office_hours) {
+                if ($officeHour = $syllabus->office_hours) {
                     $templateProcessor->cloneBlock('NoOfficeHours');
-                    $templateProcessor->setValue('officeHour',$officeHour);
+                    $templateProcessor->setValue('officeHour', $officeHour);
                 } else {
                     $templateProcessor->cloneBlock('NoOfficeHours', 0);
                 }
 
-                switch($syllabus->course_term){
-                    case("W1"):
-                        $templateProcessor->setValue('season',"Winter");
-                        $templateProcessor->setValue('term',"Term 1");
-                    break;
-                    case("W2"):
-                        $templateProcessor->setValue('season',"Winter");
-                        $templateProcessor->setValue('term',"Term 2");
-                    break;
-                    case("S1"):
-                        $templateProcessor->setValue('season',"Summer");
-                        $templateProcessor->setValue('term',"Term 1");
-                    break;
-                    case("S2"):
-                        $templateProcessor->setValue('season',"Summer");
-                        $templateProcessor->setValue('term',"Term 2");
-                    break;
-                    default: 
+                switch ($syllabus->course_term) {
+                    case 'W1':
+                        $templateProcessor->setValue('season', 'Winter');
+                        $templateProcessor->setValue('term', 'Term 1');
+                        break;
+                    case 'W2':
+                        $templateProcessor->setValue('season', 'Winter');
+                        $templateProcessor->setValue('term', 'Term 2');
+                        break;
+                    case 'S1':
+                        $templateProcessor->setValue('season', 'Summer');
+                        $templateProcessor->setValue('term', 'Term 1');
+                        break;
+                    case 'S2':
+                        $templateProcessor->setValue('season', 'Summer');
+                        $templateProcessor->setValue('term', 'Term 2');
+                        break;
+                    default:
                         $templateProcessor->setValue('term', $syllabus->course_term);
-                        $templateProcessor->setValue('season',"");
+                        $templateProcessor->setValue('season', '');
                 }
 
-                
-
-                if($learningOutcome = $syllabus->learning_outcomes){
+                if ($learningOutcome = $syllabus->learning_outcomes) {
                     $LOutArr = explode("\n", $learningOutcome);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LOutArr as $index => $courseLOut){
-                            $templateProcessor->cloneBlock('NolearningOutcomesDesc',0);
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LOutArr as $index => $courseLOut) {
+                            $templateProcessor->cloneBlock('NolearningOutcomesDesc', 0);
                             $templateProcessor->cloneBlock('NolearningOutcomes');
-                            $templateProcessor->setValue('learningOutcomes'.$i, $courseLOut."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('learningOutcomes'.$i, $courseLOut.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningOutcomes'.$i, '');
                         }
-                    }else{
-                        $templateProcessor->cloneBlock('NolearningOutcomesDesc',0);
+                    } else {
+                        $templateProcessor->cloneBlock('NolearningOutcomesDesc', 0);
                         $templateProcessor->cloneBlock('NolearningOutcomes');
-                        $templateProcessor->setValue('learningOutcomes0', str_replace("\n","</w:t><w:br/><w:t>",$learningOutcome));
+                        $templateProcessor->setValue('learningOutcomes0', str_replace("\n", '</w:t><w:br/><w:t>', $learningOutcome));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningOutcomes'.$i, '');
                         }
                     }
-                    
-                }else{
+
+                } else {
                     $templateProcessor->cloneBlock('NolearningOutcomesDesc');
-                    $templateProcessor->cloneBlock('NolearningOutcomes',0);
+                    $templateProcessor->cloneBlock('NolearningOutcomes', 0);
                 }
 
-                if($learningAssessments = $syllabus->learning_assessments){
+                if ($learningAssessments = $syllabus->learning_assessments) {
                     $LAssArr = explode("\n", $learningAssessments);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LAssArr as $index => $courseLAss){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LAssArr as $index => $courseLAss) {
                             $templateProcessor->cloneBlock('NolearningAssessmentsDesc', 0);
                             $templateProcessor->cloneBlock('NolearningAssessments');
-                            $templateProcessor->setValue('learningAssessments'.$i, $courseLAss."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('learningAssessments'.$i, $courseLAss.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningAssessments'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NolearningAssessmentsDesc', 0);
                         $templateProcessor->cloneBlock('NolearningAssessments');
-                        $templateProcessor->setValue('learningAssessments0', str_replace("\n","</w:t><w:br/><w:t>",$learningAssessments));
+                        $templateProcessor->setValue('learningAssessments0', str_replace("\n", '</w:t><w:br/><w:t>', $learningAssessments));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningAssessments'.$i, '');
                         }
                     }
-                    
-                }else{
+
+                } else {
                     $templateProcessor->cloneBlock('NolearningAssessmentsDesc');
-                    $templateProcessor->cloneBlock('NolearningAssessments',0);
+                    $templateProcessor->cloneBlock('NolearningAssessments', 0);
                 }
-               
+
                 //Vancouver Course Learning Resources
-                if($learningResources = $syllabus->learning_resources){
+                if ($learningResources = $syllabus->learning_resources) {
                     $LRVArr = explode("\n", $learningResources);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LRVArr as $index => $courseLRV){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LRVArr as $index => $courseLRV) {
                             $templateProcessor->cloneBlock('NoCourseLearningResources');
-                            $templateProcessor->setValue('courseLearningResources'.$i, $courseLRV."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('courseLearningResources'.$i, $courseLRV.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseLearningResources'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoCourseLearningResources');
-                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n","</w:t><w:br/><w:t>",$learningResources));
+                        $templateProcessor->setValue('courseLearningResources0', str_replace("\n", '</w:t><w:br/><w:t>', $learningResources));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('courseLearningResources'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoCourseLearningResources',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoCourseLearningResources', 0);
                 }
-                
+
                 //Learning Materials
 
-                if($learningMaterials = $syllabus->learning_materials){
+                if ($learningMaterials = $syllabus->learning_materials) {
                     $LMVArr = explode("\n", $learningMaterials);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LMVArr as $index => $courseLMV){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LMVArr as $index => $courseLMV) {
                             $templateProcessor->cloneBlock('NoLearningMaterials');
-                            $templateProcessor->cloneBlock('NoLearningMaterialsDesc',0);
-                            $templateProcessor->setValue('learningMaterials'.$i, $courseLMV."</w:t><w:br/><w:t>");
+                            $templateProcessor->cloneBlock('NoLearningMaterialsDesc', 0);
+                            $templateProcessor->setValue('learningMaterials'.$i, $courseLMV.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningMaterials'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoLearningMaterials');
-                        $templateProcessor->cloneBlock('NoLearningMaterialsDesc',0);
-                        $templateProcessor->setValue('learningMaterials0', str_replace("\n","</w:t><w:br/><w:t>",$learningMaterials));
+                        $templateProcessor->cloneBlock('NoLearningMaterialsDesc', 0);
+                        $templateProcessor->setValue('learningMaterials0', str_replace("\n", '</w:t><w:br/><w:t>', $learningMaterials));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningMaterials'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoLearningMaterials',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoLearningMaterials', 0);
                     $templateProcessor->cloneBlock('NoLearningMaterialsDesc');
                 }
 
                 //Learning Analytics
                 //Currently not showing, $learningAnalytics=null every time
 
-                if($learningAnalytics = $vancouverSyllabus->learning_analytics){
-                    
+                if ($learningAnalytics = $vancouverSyllabus->learning_analytics) {
+
                     $LAVArr = explode("\n", $learningAnalytics);
-                    $i=0;
-                    if($ext == 'pdf') {
-                        foreach($LAVArr as $index => $courseLAV){
+                    $i = 0;
+                    if ($ext == 'pdf') {
+                        foreach ($LAVArr as $index => $courseLAV) {
                             $templateProcessor->cloneBlock('NoLearningAnalytics');
-                            $templateProcessor->setValue('learningAnalytics'.$i, $courseLAV."</w:t><w:br/><w:t>");
+                            $templateProcessor->setValue('learningAnalytics'.$i, $courseLAV.'</w:t><w:br/><w:t>');
                             $i++;
                         }
-                        
-                        for($i;$i<=20;$i++){
+
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningAnalytics'.$i, '');
                         }
-                    }else{
+                    } else {
                         $templateProcessor->cloneBlock('NoLearningAnalytics');
-                        $templateProcessor->setValue('learningAnalytics0', str_replace("\n","</w:t><w:br/><w:t>",$learningAnalytics));
+                        $templateProcessor->setValue('learningAnalytics0', str_replace("\n", '</w:t><w:br/><w:t>', $learningAnalytics));
                         $i++;
-                        for($i;$i<=20;$i++){
+                        for ($i; $i <= 20; $i++) {
                             $templateProcessor->setValue('learningAnalytics'.$i, '');
                         }
                     }
-                    
-                }else{
-                    $templateProcessor->cloneBlock('NoLearningAnalytics',0);
+
+                } else {
+                    $templateProcessor->cloneBlock('NoLearningAnalytics', 0);
                 }
-                
 
                 $allVancouverSyllabusResources = VancouverSyllabusResource::all();
                 $selectedVancouverSyllabusResourceIds = SyllabusResourceVancouver::where('syllabus_id', $syllabus->id)->pluck('v_syllabus_resource_id')->toArray();
-                
+
                 foreach ($allVancouverSyllabusResources as $resource) {
                     if (in_array($resource->id, $selectedVancouverSyllabusResourceIds)) {
                         $templateProcessor->cloneBlock($resource->id_name);
-                        $templateProcessor->setValue($resource->id_name . '-title', strtoupper($resource->title));
-                        // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
+                        $templateProcessor->setValue($resource->id_name.'-title', strtoupper($resource->title));
+                    // $templateProcessor->setValue($resource->id_name . '-description', $resource->description);
                     } else {
                         $templateProcessor->cloneBlock($resource->id_name, 0);
                     }
-                }  
+                }
 
-            break;
+                break;
         }
-    
+
         //include Custom Resource
-        if(!empty($syllabus->custom_resource) && !empty($syllabus->custom_resource_title)){
+        if (! empty($syllabus->custom_resource) && ! empty($syllabus->custom_resource_title)) {
             $CRArr = explode("\n", $syllabus->custom_resource);
-            $i=0;
-            if($ext == 'pdf') {
-                foreach($CRArr as $index => $courseCR){
+            $i = 0;
+            if ($ext == 'pdf') {
+                foreach ($CRArr as $index => $courseCR) {
                     $templateProcessor->cloneBlock('NoCustomResource');
-                    $templateProcessor->setValue('custom_resource'.$i, $courseCR."</w:t><w:br/><w:t>");
+                    $templateProcessor->setValue('custom_resource'.$i, $courseCR.'</w:t><w:br/><w:t>');
                     $i++;
                 }
-                
-                for($i;$i<=20;$i++){
+
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('custom_resource'.$i, '');
                 }
 
-                
-            }else{
+            } else {
                 $templateProcessor->cloneBlock('NoCustomResource');
-                $templateProcessor->setValue('custom_resource0', str_replace("\n","</w:t><w:br/><w:t>",$syllabus->custom_resource));
+                $templateProcessor->setValue('custom_resource0', str_replace("\n", '</w:t><w:br/><w:t>', $syllabus->custom_resource));
                 $i++;
-                for($i;$i<=20;$i++){
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('custom_resource'.$i, '');
                 }
             }
-            $templateProcessor->setValue('custom_resource_title',$syllabus->custom_resource_title);
+            $templateProcessor->setValue('custom_resource_title', $syllabus->custom_resource_title);
 
-        }else{
-            $templateProcessor->cloneBlock('NoCustomResource',0);
+        } else {
+            $templateProcessor->cloneBlock('NoCustomResource', 0);
         }
 
         //include creative commons or copyright
         $creativeCommons = $syllabus->cc_license;
-        if($syllabus->campus=='O' && !empty($syllabus->cc_license)){
+        if ($syllabus->campus == 'O' && ! empty($syllabus->cc_license)) {
             $templateProcessor->cloneBlock('NoCreativeCommons');
-            $templateProcessor->setValue('creativeCommons',$creativeCommons);
-            $templateProcessor->setValue('name',$syllabus->course_instructor);
-        }else{
-            $templateProcessor->cloneBlock('NoCreativeCommons',0);
+            $templateProcessor->setValue('creativeCommons', $creativeCommons);
+            $templateProcessor->setValue('name', $syllabus->course_instructor);
+        } else {
+            $templateProcessor->cloneBlock('NoCreativeCommons', 0);
         }
 
-        if($syllabus->copyright){
+        if ($syllabus->copyright) {
             $templateProcessor->cloneBlock('NoCopyright');
-        }else{
-            $templateProcessor->cloneBlock('NoCopyright',0);
+        } else {
+            $templateProcessor->cloneBlock('NoCopyright', 0);
         }
-        
+
         //Land Acknowledgement
 
-        if($syllabus->land_acknow){
+        if ($syllabus->land_acknow) {
             $templateProcessor->cloneBlock('NoLand');
-        }else{
-            $templateProcessor->cloneBlock('NoLand',0);
+        } else {
+            $templateProcessor->cloneBlock('NoLand', 0);
         }
-        
-        $courseName=($syllabus->course_code)." ".($syllabus->course_num);
-        if($syllabus->cross_listed_code!=null){
-            $courseName=$courseName."/".($syllabus->cross_listed_code)." ".($syllabus->cross_listed_num);
+
+        $courseName = ($syllabus->course_code).' '.($syllabus->course_num);
+        if ($syllabus->cross_listed_code != null) {
+            $courseName = $courseName.'/'.($syllabus->cross_listed_code).' '.($syllabus->cross_listed_num);
         }
 
         // add required form fields common to both campuses to template
-        $templateProcessor->setValues(array('courseTitle'=> $syllabus->course_title,'courseCode' => $syllabus->course_code, 'courseNumber'=> $syllabus->course_num, 'courseYear'=> $syllabus->course_year, 'courseCodeCL'=> $syllabus->cross_listed_code, 'courseNumberCL'=> $syllabus->cross_listed_num, 'courseName'=> $courseName));
+        $templateProcessor->setValues(['courseTitle' => $syllabus->course_title, 'courseCode' => $syllabus->course_code, 'courseNumber' => $syllabus->course_num, 'courseYear' => $syllabus->course_year, 'courseCodeCL' => $syllabus->cross_listed_code, 'courseNumberCL' => $syllabus->cross_listed_num, 'courseName' => $courseName]);
 
         $syllabusInstructors = SyllabusInstructor::where('syllabus_id', $syllabus->id)->get();
         $templateProcessor->setValue('courseInstructor', $syllabusInstructors->implode('name', ', '));
         $templateProcessor->setValue('courseInstructorEmail', $syllabusInstructors->implode('email', ', '));
-        
+
         switch ($syllabus->delivery_modality) {
-            case "M" :
+            case 'M' :
                 $templateProcessor->setValue('deliveryModality', 'Multi-Access');
                 break;
-            case "I" :
+            case 'I' :
                 $templateProcessor->setValue('deliveryModality', 'In-Person');
                 break;
-            case "B" :
+            case 'B' :
                 $templateProcessor->setValue('deliveryModality', 'Hybrid');
                 break;
             default:
@@ -1799,142 +1863,141 @@ class SyllabusController extends Controller
         // date the syllabus
         $templateProcessor->setValue('dateGenerated', date('d, M Y'));
 
-        if($faculty = $syllabus->faculty){
+        if ($faculty = $syllabus->faculty) {
             $templateProcessor->cloneBlock('NoFaculty');
             $templateProcessor->setValue('faculty', $faculty);
-        }else{
+        } else {
             $templateProcessor->cloneBlock('NoFaculty', 0);
         }
 
-        if($department = $syllabus->department){
+        if ($department = $syllabus->department) {
             $templateProcessor->cloneBlock('NoDepartment');
             $templateProcessor->setValue('department', $department);
-        }else{
+        } else {
             $templateProcessor->cloneBlock('NoDepartment', 0);
         }
 
-       //Late Policy
+        //Late Policy
 
-        if($latePolicy = $syllabus->late_policy){
+        if ($latePolicy = $syllabus->late_policy) {
             $LPArr = explode("\n", $latePolicy);
-            $i=0;
-            if($ext == 'pdf') {
-                foreach($LPArr as $index => $courseLP){
+            $i = 0;
+            if ($ext == 'pdf') {
+                foreach ($LPArr as $index => $courseLP) {
                     $templateProcessor->cloneBlock('NolatePolicy');
-                    $templateProcessor->setValue('latePolicy'.$i, $courseLP."</w:t><w:br/><w:t>");
+                    $templateProcessor->setValue('latePolicy'.$i, $courseLP.'</w:t><w:br/><w:t>');
                     $i++;
                 }
-                
-                for($i;$i<=20;$i++){
+
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('latePolicy'.$i, '');
                 }
-            }else{
+            } else {
                 $templateProcessor->cloneBlock('NolatePolicy');
-                $templateProcessor->setValue('latePolicy0', str_replace("\n","</w:t><w:br/><w:t>",$latePolicy));
+                $templateProcessor->setValue('latePolicy0', str_replace("\n", '</w:t><w:br/><w:t>', $latePolicy));
                 $i++;
-                for($i;$i<=20;$i++){
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('latePolicy'.$i, '');
                 }
             }
-            
-        }else{
-            $templateProcessor->cloneBlock('NolatePolicy',0);
+
+        } else {
+            $templateProcessor->cloneBlock('NolatePolicy', 0);
         }
 
         //Missing Exam Policy
-       
-        if($missingExam = $syllabus->missed_exam_policy){
+
+        if ($missingExam = $syllabus->missed_exam_policy) {
             $MEArr = explode("\n", $missingExam);
-            $i=0;
-            if($ext == 'pdf') {
-                foreach($MEArr as $index => $courseME){
+            $i = 0;
+            if ($ext == 'pdf') {
+                foreach ($MEArr as $index => $courseME) {
                     $templateProcessor->cloneBlock('NoMissingExam');
-                    $templateProcessor->setValue('missingExam'.$i, $courseME."</w:t><w:br/><w:t>");
+                    $templateProcessor->setValue('missingExam'.$i, $courseME.'</w:t><w:br/><w:t>');
                     $i++;
                 }
-                
-                for($i;$i<=20;$i++){
+
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('missingExam'.$i, '');
                 }
-            }else{
+            } else {
                 $templateProcessor->cloneBlock('NoMissingExam');
-                $templateProcessor->setValue('missingExam0', str_replace("\n","</w:t><w:br/><w:t>",$missingExam));
+                $templateProcessor->setValue('missingExam0', str_replace("\n", '</w:t><w:br/><w:t>', $missingExam));
                 $i++;
-                for($i;$i<=20;$i++){
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('missingExam'.$i, '');
                 }
             }
-            
-        }else{
-            $templateProcessor->cloneBlock('NoMissingExam',0);
+
+        } else {
+            $templateProcessor->cloneBlock('NoMissingExam', 0);
         }
 
-        //Missing Activity Policy 
+        //Missing Activity Policy
 
-        if($missingActivity = $syllabus->missed_activity_policy){
+        if ($missingActivity = $syllabus->missed_activity_policy) {
             $MAArr = explode("\n", $missingActivity);
-            $i=0;
-            if($ext == 'pdf') {
-                foreach($MAArr as $index => $courseMA){
+            $i = 0;
+            if ($ext == 'pdf') {
+                foreach ($MAArr as $index => $courseMA) {
                     $templateProcessor->cloneBlock('NomissingActivity');
-                    $templateProcessor->setValue('missingActivity'.$i, $courseMA."</w:t><w:br/><w:t>");
+                    $templateProcessor->setValue('missingActivity'.$i, $courseMA.'</w:t><w:br/><w:t>');
                     $i++;
                 }
-                
-                for($i;$i<=20;$i++){
+
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('missingActivity'.$i, '');
                 }
-            }else{
+            } else {
                 $templateProcessor->cloneBlock('NomissingActivity');
-                $templateProcessor->setValue('missingActivity0', str_replace("\n","</w:t><w:br/><w:t>",$missingActivity));
+                $templateProcessor->setValue('missingActivity0', str_replace("\n", '</w:t><w:br/><w:t>', $missingActivity));
                 $i++;
-                for($i;$i<=20;$i++){
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('missingActivity'.$i, '');
                 }
             }
-            
-        }else{
-            $templateProcessor->cloneBlock('NomissingActivity',0);
+
+        } else {
+            $templateProcessor->cloneBlock('NomissingActivity', 0);
         }
-    
+
         //Passing Criteria
 
-        if($passingCriteria = $syllabus->passing_criteria){
+        if ($passingCriteria = $syllabus->passing_criteria) {
             $PCArr = explode("\n", $passingCriteria);
-            $i=0;
-            if($ext == 'pdf') {
-                foreach($PCArr as $index => $coursePC){
+            $i = 0;
+            if ($ext == 'pdf') {
+                foreach ($PCArr as $index => $coursePC) {
                     $templateProcessor->cloneBlock('NopassingCriteria');
-                    $templateProcessor->setValue('passingCriteria'.$i, $coursePC."</w:t><w:br/><w:t>");
+                    $templateProcessor->setValue('passingCriteria'.$i, $coursePC.'</w:t><w:br/><w:t>');
                     $i++;
                 }
-                
-                for($i;$i<=20;$i++){
+
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('passingCriteria'.$i, '');
                 }
-            }else{
+            } else {
                 $templateProcessor->cloneBlock('NopassingCriteria');
-                $templateProcessor->setValue('passingCriteria0', str_replace("\n","</w:t><w:br/><w:t>",$passingCriteria));
+                $templateProcessor->setValue('passingCriteria0', str_replace("\n", '</w:t><w:br/><w:t>', $passingCriteria));
                 $i++;
-                for($i;$i<=20;$i++){
+                for ($i; $i <= 20; $i++) {
                     $templateProcessor->setValue('passingCriteria'.$i, '');
                 }
             }
-            
-        }else{
-            $templateProcessor->cloneBlock('NopassingCriteria',0);
-        }
 
+        } else {
+            $templateProcessor->cloneBlock('NopassingCriteria', 0);
+        }
 
         // add course schedule table to word document
         $courseScheduleTblColsCount = CourseSchedule::where('syllabus_id', $syllabus->id)->where('row', 0)->get()->count();
         $courseScheduleTbl['rows'] = CourseSchedule::where('syllabus_id', $syllabus->id)->get()->chunk($courseScheduleTblColsCount);
-        if(count($courseScheduleTbl['rows'])>0) {
-            $templateProcessor->cloneBlock('NoTopicsSchedule',0);
+        if (count($courseScheduleTbl['rows']) > 0) {
+            $templateProcessor->cloneBlock('NoTopicsSchedule', 0);
             $templateProcessor->cloneBlock('NoCourseScheduleTbl');
             $courseScheduleTable = new Table($tableStyle);
             // add a new row and cell to table for each learning activity
-        
+
             foreach ($courseScheduleTbl['rows'] as $rowIndex => $row) {
                 // add a row to the table
                 $courseScheduleTable->addRow();
@@ -1955,56 +2018,60 @@ class SyllabusController extends Controller
 
         } else {
             $templateProcessor->cloneBlock('NoTopicsSchedule');
-            $templateProcessor->cloneBlock('NoCourseScheduleTbl',0);
+            $templateProcessor->cloneBlock('NoCourseScheduleTbl', 0);
             $templateProcessor->setValue('courseScheduleTbl', '');
         }
         //Outcome Maps
         if ($syllabus->course_id) {
-            if ($syllabus->include_alignment)
-                $this->addAlignmentToWordDoc($syllabus->id, $templateProcessor, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle));
-            else
+            if ($syllabus->include_alignment) {
+                $this->addAlignmentToWordDoc($syllabus->id, $templateProcessor, ['tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle]);
+            } else {
                 $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
+            }
 
-            $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabusId)->pluck('program_id')->toArray(); 
-            if (count($syllabusProgramIds) > 0) 
-                $this->addOutcomeMapsToWordDoc($syllabusProgramIds, $templateProcessor, $syllabus->course_id, array('tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle, 'secondaryTableHeaderRowStyle' => $secondaryTableHeaderRowStyle));
-            else 
+            $syllabusProgramIds = SyllabusProgram::where('syllabus_id', $syllabusId)->pluck('program_id')->toArray();
+            if (count($syllabusProgramIds) > 0) {
+                $this->addOutcomeMapsToWordDoc($syllabusProgramIds, $templateProcessor, $syllabus->course_id, ['tableStyle' => $tableStyle, 'tableHeaderRowStyle' => $tableHeaderRowStyle, 'tableHeaderFontStyle' => $tableHeaderFontStyle, 'secondaryTableHeaderRowStyle' => $secondaryTableHeaderRowStyle]);
+            } else {
                 $templateProcessor->cloneBlock('NoOutcomeMaps', 0);
+            }
         } else {
             $templateProcessor->cloneBlock('NoCourseAlignmentTbl', 0);
             $templateProcessor->cloneBlock('NoOutcomeMaps', 0);
         }
 
         // set document name
-        $fileName = 'syllabus';   
+        $fileName = 'syllabus';
         // word file ext
-        $wordFileExt = '.docx';         
+        $wordFileExt = '.docx';
         // save word document on server
-        $templateProcessor->saveAs($fileName . $wordFileExt);
-        
+        $templateProcessor->saveAs($fileName.$wordFileExt);
+
         if ($ext == 'pdf') {
             // pdf file ext
             $pdfFileExt = '.pdf';
-            $pdfRendererPath = base_path(DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dompdf' . DIRECTORY_SEPARATOR . 'dompdf');
+            $pdfRendererPath = base_path(DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'dompdf'.DIRECTORY_SEPARATOR.'dompdf');
             Settings::setPdfRendererPath($pdfRendererPath);
-            Settings::setPdfRendererName('DomPDF');   
+            Settings::setPdfRendererName('DomPDF');
             // get path to word file
-            $wordFilePath = config('app.env') == 'local' ? public_path($fileName . $wordFileExt) : base_path('html' . DIRECTORY_SEPARATOR . $fileName . $wordFileExt);
+            $wordFilePath = config('app.env') == 'local' ? public_path($fileName.$wordFileExt) : base_path('html'.DIRECTORY_SEPARATOR.$fileName.$wordFileExt);
             // load word file
             $wordFileContent = IOFactory::load($wordFilePath);
             $pdfWriter = IOFactory::createWriter($wordFileContent, 'PDF');
-            $pdfWriter->save($fileName . $pdfFileExt);
+            $pdfWriter->save($fileName.$pdfFileExt);
             // delete the word version
-            unlink($fileName . $wordFileExt);        
-            // return pdf download response 
-            return response()->download($fileName . $pdfFileExt)->deleteFileAfterSend(true);
-    
-        } 
+            unlink($fileName.$wordFileExt);
 
-        return response()->download($fileName . $wordFileExt)->deleteFileAfterSend(true);
+            // return pdf download response
+            return response()->download($fileName.$pdfFileExt)->deleteFileAfterSend(true);
+
+        }
+
+        return response()->download($fileName.$wordFileExt)->deleteFileAfterSend(true);
     }
 
-    private function addAlignmentToWordDoc($syllabusId, $docTemplate, $styles) {
+    private function addAlignmentToWordDoc($syllabusId, $docTemplate, $styles)
+    {
         $docTemplate->cloneBlock('NoCourseAlignmentTbl');
         $syllabus = Syllabus::find($syllabusId);
         $importCourse = Course::find($syllabus->course_id);
@@ -2018,40 +2085,44 @@ class SyllabusController extends Controller
         // add a new row and cell to table for each learning outcome and its alignment
         foreach ($importCourse->learningOutcomes as $rowIndex => $clo) {
             $courseAlignmentTable->addRow();
-            isset($clo->clo_shortphrase) ? $shortphrase = $clo->clo_shortphrase . ': ' : $shortphrase = '';
-            $courseAlignmentTable->addCell()->addText($shortphrase . $clo->l_outcome);
+            isset($clo->clo_shortphrase) ? $shortphrase = $clo->clo_shortphrase.': ' : $shortphrase = '';
+            $courseAlignmentTable->addCell()->addText($shortphrase.$clo->l_outcome);
             $courseAlignmentTable->addCell()->addText($clo->assessmentMethods->implode('a_method', ', '));
             $courseAlignmentTable->addCell()->addText($clo->learningActivities->implode('l_activity', ', '));
         }
         // add course schedule table to word doc
-        $docTemplate->setComplexBlock('courseAlignmentTbl', $courseAlignmentTable); 
+        $docTemplate->setComplexBlock('courseAlignmentTbl', $courseAlignmentTable);
     }
 
-    private function addOutcomeMapsToWordDoc($syllabusProgramIds, $docTemplate, $courseId, $styles) {
+    private function addOutcomeMapsToWordDoc($syllabusProgramIds, $docTemplate, $courseId, $styles)
+    {
         $docTemplate->cloneBlock('NoOutcomeMaps');
         $course = Course::find($courseId);
         $outcomeMaps = $this->getOutcomeMaps($syllabusProgramIds, $course->course_id);
         foreach (array_values($outcomeMaps) as $index => $outcomeMap) {
             // limit of 5 outcome maps
-            if ($index > 4) 
+            if ($index > 4) {
                 break;
-            $docTemplate->setValue('programtitle-' . strval($index), strtoupper($outcomeMap['program']->program));
+            }
+            $docTemplate->setValue('programtitle-'.strval($index), strtoupper($outcomeMap['program']->program));
             $this->addMappingScaleTblToWordDoc($outcomeMap['program']->mappingScaleLevels, $docTemplate, $index, $styles);
-            if (isset($outcomeMap['outcomeMap']))
+            if (isset($outcomeMap['outcomeMap'])) {
                 $this->addOutcomeMapTblToWordDoc($outcomeMap['program'], $course->learningOutcomes, $outcomeMap['outcomeMap'], $docTemplate, $index, $styles);
-            else 
-                $docTemplate->setValue('outcomeMap-' . strval($index), '');
+            } else {
+                $docTemplate->setValue('outcomeMap-'.strval($index), '');
+            }
         }
         // remove remaining template tags in word doc
         while ($index < 5) {
-            $docTemplate->setValue('programtitle-' . strval($index), '');
-            $docTemplate->setValue('mappingScale-' . strval($index), '');
-            $docTemplate->setValue('outcomeMap-' . strval($index), '');
+            $docTemplate->setValue('programtitle-'.strval($index), '');
+            $docTemplate->setValue('mappingScale-'.strval($index), '');
+            $docTemplate->setValue('outcomeMap-'.strval($index), '');
             $index++;
         }
     }
 
-    private function addMappingScaleTblToWordDoc($mappingScales, $docTemplate, $index, $styles) {
+    private function addMappingScaleTblToWordDoc($mappingScales, $docTemplate, $index, $styles)
+    {
         $mappingScalesTbl = new Table($styles['tableStyle']);
         // add a header row to the table
         $mappingScalesTbl->addRow();
@@ -2063,15 +2134,16 @@ class SyllabusController extends Controller
         // add a new row and cell to table for each learning outcome and its alignment
         foreach ($mappingScales as $mappingScaleLevel) {
             $mappingScalesTbl->addRow();
-            $mappingScalesTbl->addCell(null, array('bgColor' => substr($mappingScaleLevel->colour, 1)));
-            $mappingScalesTbl->addCell()->addText($mappingScaleLevel->title . ' (' . $mappingScaleLevel->abbreviation . ')');
+            $mappingScalesTbl->addCell(null, ['bgColor' => substr($mappingScaleLevel->colour, 1)]);
+            $mappingScalesTbl->addCell()->addText($mappingScaleLevel->title.' ('.$mappingScaleLevel->abbreviation.')');
             $mappingScalesTbl->addCell()->addText($mappingScaleLevel->description);
-            array('bgColor' => 'c6e0f5', 'borderBottomColor' => '000000');
+            ['bgColor' => 'c6e0f5', 'borderBottomColor' => '000000'];
         }
-        $docTemplate->setComplexBlock('mappingScale-' . strval($index), $mappingScalesTbl);
+        $docTemplate->setComplexBlock('mappingScale-'.strval($index), $mappingScalesTbl);
     }
 
-    private function addOutcomeMapTblToWordDoc($program, $clos, $outcomeMap, $docTemplate, $index, $styles) {
+    private function addOutcomeMapTblToWordDoc($program, $clos, $outcomeMap, $docTemplate, $index, $styles)
+    {
         $outcomeMapTbl = new Table($styles['tableStyle']);
         // add a header row to the table
         $outcomeMapTbl->addRow();
@@ -2080,7 +2152,7 @@ class SyllabusController extends Controller
         $plosHeaderCell = $outcomeMapTbl->addCell(null, $styles['tableHeaderRowStyle']);
         $plosHeaderCell->getStyle()->setGridSpan($program->programLearningOutcomes->count());
         $plosHeaderCell->addText('Program Learning Outcome', $styles['tableHeaderFontStyle']);
-        
+
         $outcomeMapTbl->addRow();
         $outcomeMapTbl->addCell();
         foreach ($program->ploCategories as $category) {
@@ -2100,39 +2172,42 @@ class SyllabusController extends Controller
         foreach ($program->ploCategories as $category) {
             if ($category->plos->count() > 0) {
                 foreach ($category->plos as $plo) {
-                    if (isset($plo->plo_shortphrase)) 
+                    if (isset($plo->plo_shortphrase)) {
                         $outcomeMapTbl->addCell()->addText($plo->plo_shortphrase);
-                    else 
+                    } else {
                         $outcomeMapTbl->addCell()->addText($plo->pl_outcome);
+                    }
                 }
             }
         }
         if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
             foreach ($program->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO) {
-                if (isset($uncategorizedPLO->plo_shortphrase)) 
+                if (isset($uncategorizedPLO->plo_shortphrase)) {
                     $outcomeMapTbl->addCell()->addText($uncategorizedPLO->plo_shortphrase);
-                else 
+                } else {
                     $outcomeMapTbl->addCell()->addText($uncategorizedPLO->pl_outcome);
+                }
             }
-        }   
+        }
         foreach ($clos as $clo) {
             $outcomeMapTbl->addRow();
-            if (isset($clo->clo_shortphrase)) 
+            if (isset($clo->clo_shortphrase)) {
                 $outcomeMapTbl->addCell()->addText($clo->clo_shortphrase);
-            else 
+            } else {
                 $outcomeMapTbl->addCell()->addText($clo->l_outcome);
+            }
 
             foreach ($program->ploCategories as $category) {
                 if ($category->plos->count() > 0) {
                     foreach ($category->plos as $plo) {
-                        if (!array_key_exists($plo->pl_outcome_id, $outcomeMap))
+                        if (! array_key_exists($plo->pl_outcome_id, $outcomeMap)) {
                             $outcomeMapTbl->addCell();
-                        else  {
-                            if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$plo->pl_outcome_id]))
+                        } else {
+                            if (! array_key_exists($clo->l_outcome_id, $outcomeMap[$plo->pl_outcome_id])) {
                                 $outcomeMapTbl->addCell();
-                            else {
+                            } else {
                                 $mappingScale = $outcomeMap[$plo->pl_outcome_id][$clo->l_outcome_id];
-                                $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                                $outcomeMapTbl->addCell(null, ['bgColor' => substr($mappingScale->colour, 1)])->addText($mappingScale->abbreviation);
                             }
                         }
                     }
@@ -2141,24 +2216,24 @@ class SyllabusController extends Controller
 
             if ($program->programLearningOutcomes->where('plo_category_id', null)->count() > 0) {
                 foreach ($program->programLearningOutcomes->where('plo_category_id', null) as $uncategorizedPLO) {
-                    if (!array_key_exists($uncategorizedPLO->pl_outcome_id, $outcomeMap))
+                    if (! array_key_exists($uncategorizedPLO->pl_outcome_id, $outcomeMap)) {
                         $outcomeMapTbl->addCell();
-                    else {
-                        if (!array_key_exists($clo->l_outcome_id, $outcomeMap[$uncategorizedPLO->pl_outcome_id]))
+                    } else {
+                        if (! array_key_exists($clo->l_outcome_id, $outcomeMap[$uncategorizedPLO->pl_outcome_id])) {
                             $outcomeMapTbl->addCell();
-                        else {
+                        } else {
                             $mappingScale = $outcomeMap[$uncategorizedPLO->pl_outcome_id][$clo->l_outcome_id];
-                            $outcomeMapTbl->addCell(null, array('bgColor' => substr($mappingScale->colour, 1)))->addText($mappingScale->abbreviation);
+                            $outcomeMapTbl->addCell(null, ['bgColor' => substr($mappingScale->colour, 1)])->addText($mappingScale->abbreviation);
                         }
                     }
                 }
             }
-        }     
-        $docTemplate->setComplexBlock('outcomeMap-' . strval($index), $outcomeMapTbl);
+        }
+        $docTemplate->setComplexBlock('outcomeMap-'.strval($index), $outcomeMapTbl);
     }
 
-
-    public function duplicate(Request $request, $syllabusId) {
+    public function duplicate(Request $request, $syllabusId): RedirectResponse
+    {
 
         // validate request
         $request->validate([
@@ -2184,7 +2259,7 @@ class SyllabusController extends Controller
             $duplicateSyllabusInstructor->created_at = Carbon::now();
             $duplicateSyllabusInstructor->save();
         }
-        
+
         if ($oldSyllabus->campus == 'O') {
             $oldOkSyllabus = OkanaganSyllabus::where('syllabus_id', $syllabusId)->first();
 

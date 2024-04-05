@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
 <link href=" {{ asset('css/accordions.css') }}" rel="stylesheet" type="text/css" >
 <!--Link for FontAwesome Font for the arrows for the accordions.-->
 <link href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" rel="stylesheet" type="text/css" >

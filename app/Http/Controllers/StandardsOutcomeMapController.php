@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProgramLearningOutcome;
-use App\Models\LearningOutcome;
 use App\Models\Course;
-use App\Models\Program;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,34 +12,31 @@ use Illuminate\Support\Facades\DB;
 class StandardsOutcomeMapController extends Controller
 {
     /**
-    * Display a listing of the resource.
-    *
-    * @return \Illuminate\Http\Response
-    */
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index()
+    public function index(): RedirectResponse
     {
-       //
+        //
         return redirect()->back();
     }
 
     /**
-    * Store a newly created resource in storage.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @return \Illuminate\Http\Response
-    */
-    public function store(Request $request)
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): RedirectResponse
     {
 
         $this->validate($request, [
             'map' => 'required',
-            ]);
-        
+        ]);
+
         $outcomeMap = $request->input('map');
         foreach ($outcomeMap as $courseId => $standardToScaleIds) {
             foreach (array_keys($standardToScaleIds) as $standardId) {
@@ -51,7 +46,6 @@ class StandardsOutcomeMapController extends Controller
                 );
             }
         }
-
 
         // update courses 'updated_at' field
         $course = Course::find($request->input('course_id'));

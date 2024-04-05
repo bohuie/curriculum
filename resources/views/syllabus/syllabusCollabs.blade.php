@@ -102,7 +102,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">Are you sure you want to leave {{$syllabus->course_title}} syllabus?</div>
-                                                    <form action="{{ action('SyllabusUserController@leave') }}" class="float-right">
+                                                    <form action="{{ action([\App\Http\Controllers\SyllabusUserController::class, 'leave']) }}" class="float-right">
                                                         @csrf
 
                                                         <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
@@ -136,7 +136,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">Are you sure you want to give ownership of the syllabus: {{$syllabus->course_title}} to the user: {{$syllabusCollaborator->name}}?</div>
-                                                        <form action="{{ action('SyllabusUserController@transferOwnership') }}">
+                                                        <form action="{{ action([\App\Http\Controllers\SyllabusUserController::class, 'transferOwnership']) }}">
                                                             @csrf
                                                             <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
                                                             <input type="hidden" class="form-check-input " name="newOwnerId" value={{$syllabusCollaborator->id}}>
@@ -163,7 +163,7 @@
                 @endif
             </div>
 
-            <form method="POST" id="saveSyllabusCollabChanges{{$syllabus->id}}" action="{{ action('SyllabusUserController@store', ['syllabusId' => $syllabus->id]) }}">
+            <form method="POST" id="saveSyllabusCollabChanges{{$syllabus->id}}" action="{{ action([\App\Http\Controllers\SyllabusUserController::class, 'store'], ['syllabusId' => $syllabus->id]) }}">
                 @csrf
                 <div class="modal-footer">
                     <button type="button" class="cancelSyllabusCollabChanges btn btn-secondary col-3" data-bs-dismiss="modal" data-syllabus_id="{{$syllabus->id}}">Cancel</button>

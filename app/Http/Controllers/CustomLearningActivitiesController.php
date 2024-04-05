@@ -30,24 +30,23 @@ class CustomLearningActivitiesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'custom_activities'=> 'required',
-            ]);
+            'custom_activities' => 'required',
+        ]);
 
         $custom_activity = $request->custom_activities;
 
-        foreach($custom_activity as $activity) {
+        foreach ($custom_activity as $activity) {
             $la = new Custom_learning_activities;
             $la->custom_activities = $activity;
 
-            if($la->save()){
+            if ($la->save()) {
                 $request->session()->flash('success', 'New teaching/learning activity added');
-            }else{
+            } else {
                 $request->session()->flash('error', 'There was an error adding the teaching/learning activity');
             }
         }
@@ -56,7 +55,6 @@ class CustomLearningActivitiesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
      * @return \Illuminate\Http\Response
      */
     public function show(custom_learning_activities $custom_learning_activities)
@@ -67,7 +65,6 @@ class CustomLearningActivitiesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
      * @return \Illuminate\Http\Response
      */
     public function edit(custom_learning_activities $custom_learning_activities)
@@ -78,8 +75,6 @@ class CustomLearningActivitiesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, custom_learning_activities $custom_learning_activities)
@@ -90,7 +85,6 @@ class CustomLearningActivitiesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\custom_learning_activities  $custom_learning_activities
      * @return \Illuminate\Http\Response
      */
     public function destroy(custom_learning_activities $custom_learning_activities)

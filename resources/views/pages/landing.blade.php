@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <div class="row p-md-5 justify-content-center text-light bg-primary mt-3">
         <div class="col-md-12">
             <div class="container">
@@ -177,7 +176,7 @@
                     </p>
                     <br>
                     <p class="lead">
-                        Watch this demo for further guidance: <a href="https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/</a>.
+                        Watch <a href="https://bccampus.ca/event/curriculum-map-demo-for-instructors-and-professionals-in-higher-ed/" target="_blank" rel="noopener noreferrer">this demo</a> for further guidance.
                     </p>
                     
                 </div>

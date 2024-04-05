@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Role;
-use Gate;
-
 use App\Http\Controllers\Controller;
+use App\Models\Role;
+use App\Models\User;
+use Gate;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
@@ -24,49 +24,46 @@ class UsersController extends Controller
      */
     public function index()
     {
-        
-        if(Gate::denies('admin-privilege')){
+
+        if (Gate::denies('admin-privilege')) {
             return redirect(route('home'));
         }
 
         $users = User::all();
-        return view('admin.users.index')->with('users',$users);
+
+        return view('admin.users.index')->with('users', $users);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
     {
-        
-        if(Gate::denies('admin-privilege')){
+
+        if (Gate::denies('admin-privilege')) {
             return redirect(route('admin.users.index'));
         }
 
         $roles = Role::all();
+
         return view('admin.users.edit')->with('user', $user)->with('roles', $roles);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
         //
         $user->roles()->sync($request->roles);
         $user->name = $request->name;
         $user->email = $request->email;
 
-        if($user->save()){
+        if ($user->save()) {
             $request->session()->flash('success', $user->name.' has been updated');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error updating the user');
         }
 
@@ -75,22 +72,20 @@ class UsersController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user, Request $request)
+    public function destroy(User $user, Request $request): RedirectResponse
     {
-        
-        if(Gate::denies('admin-privilege')){
+
+        if (Gate::denies('admin-privilege')) {
             return redirect(route('admin.users.index'));
         }
 
-        if($user->delete()){
+        if ($user->delete()) {
             $request->session()->flash('success', $user->name.' has been deleted');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error deleting the user');
         }
+
         return redirect()->route('admin.users.index');
     }
 }

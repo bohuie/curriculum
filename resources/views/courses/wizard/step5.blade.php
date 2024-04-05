@@ -41,7 +41,7 @@
                         
                         <!-- list of programs this course belongs to -->
                         <div class="jumbotron">
-                            <form action="{{action('OutcomeMapController@store')}}" method="POST">
+                            <form action="{{action([\App\Http\Controllers\OutcomeMapController::class, 'store'])}}" method="POST">
                             @csrf
                             <input type="hidden" name="course_id" value="{{$course->course_id}}">
 
@@ -120,7 +120,7 @@
                                                                                     <!-- CLO accordion body -->
                                                                                     <div class="accordion-body">
 
-                                                                                        <!-- <form id="{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action('OutcomeMapController@store')}}" method="POST"> -->
+                                                                                        <!-- <form id="{{$courseProgram->program_id}}-{{$courseLearningOutcome->l_outcome_id}}" action="{{action([\App\Http\Controllers\OutcomeMapController::class, 'store'])}}" method="POST"> -->
                                                                                             <!-- @csrf -->
                                                                                             <input type="hidden" name="l_outcome_id" value="{{$courseLearningOutcome->l_outcome_id}}">
 

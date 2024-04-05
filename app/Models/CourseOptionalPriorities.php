@@ -11,8 +11,8 @@ class CourseOptionalPriorities extends Pivot
 {
     use HasFactory;
 
-    protected $primaryKey = ['op_id','course_id'];
-    
+    protected $primaryKey = ['op_id', 'course_id'];
+
     protected $table = 'course_optional_priorities';
 
     public $incrementing = false;

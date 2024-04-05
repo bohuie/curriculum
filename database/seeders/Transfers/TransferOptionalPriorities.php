@@ -11,10 +11,8 @@ class TransferOptionalPriorities extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
 
         $newOptionalPriorities = OptionalPriorities::all();
@@ -24,7 +22,7 @@ class TransferOptionalPriorities extends Seeder
             if ($index = array_search($oldOptionalPriority->custom_PLO, $newOptionalPriorities->pluck('old_optional_priority')->toArray())) {
                 CourseOptionalPriorities::create([
                     'op_id' => $newOptionalPriorities[$index]->op_id,
-                    'course_id' => $oldOptionalPriority->course_id,       
+                    'course_id' => $oldOptionalPriority->course_id,
                 ]);
             } else {
                 DB::table('optional_priorities_old')->where('id', $oldOptionalPriority->id)->update(['input_status' => 1]);

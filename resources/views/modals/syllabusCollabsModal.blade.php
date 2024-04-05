@@ -102,7 +102,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">Are you sure you want to leave {{$syllabus->course_title}} syllabus?</div>
-                                                    <form action="{{ action('SyllabusUserController@leave') }}" method="post" class="float-right">
+                                                    <form action="{{ action([\App\Http\Controllers\SyllabusUserController::class, 'leave']) }}" method="post" class="float-right">
                                                         @csrf
 
                                                         <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
@@ -121,7 +121,7 @@
 
                                                 <button type="input" class="btn btn-primary" data-toggle="modal" data-target="#transferSyllabusConfirmation{{$syllabus->id}}">Transfer Ownership</button>
                                                 <!--
-                                                <form style='display:inline' action="{{ action('SyllabusUserController@transferOwnership') }}">
+                                                <form style='display:inline' action="{{ action([\App\Http\Controllers\SyllabusUserController::class, 'transferOwnership']) }}">
                                                             @csrf
                                                             <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
                                                             <input type="hidden" class="form-check-input " name="newOwnerId" value={{$syllabusCollaborator->id}}>
@@ -146,7 +146,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">Are you sure you want to give ownership of the syllabus: {{$syllabus->course_title}} to the user: {{$syllabusCollaborator->name}}?</div>
-                                                        <form action="{{ action('SyllabusUserController@transferOwnership') }}" method="post">
+                                                        <form action="{{ action([\App\Http\Controllers\SyllabusUserController::class, 'transferOwnership']) }}" method="post">
                                                             @csrf
                                                             <input type="hidden" class="form-check-input " name="syllabus_id" value={{$syllabus->id}}>
                                                             <input type="hidden" class="form-check-input " name="newOwnerId" value={{$syllabusCollaborator->id}}>
@@ -172,7 +172,7 @@
                 @endif
             </div>
 
-            <form method="POST" id="saveSyllabusCollabChanges{{$syllabus->id}}" action="{{ action('SyllabusUserController@store', ['syllabusId' => $syllabus->id]) }}">
+            <form method="POST" id="saveSyllabusCollabChanges{{$syllabus->id}}" action="{{ action([\App\Http\Controllers\SyllabusUserController::class, 'store'], ['syllabusId' => $syllabus->id]) }}">
                 @csrf
                 <div class="modal-footer">
                     <button type="button" class="cancelSyllabusCollabChanges btn btn-secondary col-3" data-bs-dismiss="modal" data-syllabus_id="{{$syllabus->id}}">Cancel</button>

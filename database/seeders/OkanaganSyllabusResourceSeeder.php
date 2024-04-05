@@ -9,10 +9,8 @@ class OkanaganSyllabusResourceSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         OkanaganSyllabusResource::create([
             'id_name' => 'land',
@@ -76,9 +74,8 @@ class OkanaganSyllabusResourceSeeder extends Seeder
 
         OkanaganSyllabusResource::create([
             'id_name' => 'wellbeing',
-            'title' => 'UBC Okanagan Walk-In Well-Being Clinic',
+            'title' => 'Walk-In Well-Being Clinic',
         ]);
-
 
     }
 }

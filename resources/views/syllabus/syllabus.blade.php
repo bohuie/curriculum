@@ -15,8 +15,8 @@
     }
 </style>
 
-
 <div class="m-auto" style="max-width:860px;height:100%;">
+
     <div class="m-3">
         <h3 class="text-center lh-lg fw-bold mt-4">Syllabus Generator</h3>
 
@@ -112,7 +112,7 @@
     @endif
 
 
-    <form class="row gy-4 courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action('SyllabusController@save', $syllabus->id) : action('SyllabusController@save')}}">
+    <form class="row gy-4 courseInfo needs-validation" novalidate method="POST" id="sylabusGenerator" action="{{!empty($syllabus) ? action([\App\Http\Controllers\SyllabusController::class, 'save'], $syllabus->id) : action([\App\Http\Controllers\SyllabusController::class, 'save'])}}">
         @csrf
 
         <h5 class="fw-bold col-12 mt-5">Course Information</h5>
@@ -2347,7 +2347,7 @@
         var okanaganOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website.</a>
+                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners.
             </p>`;
 
          // list of vancouver syllabus resources
@@ -2580,7 +2580,7 @@
                     <div id="optionalSyllabusDesc"></div>
                 @else
                     <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website.</a>
+                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners.
                     </p>
                 @endif
             <div class="form-check m-4">

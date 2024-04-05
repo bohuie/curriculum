@@ -13,7 +13,7 @@ class OutcomeAssessment extends Pivot
 
     protected $table = 'outcome_assessments';
 
-    protected $primaryKey = ['l_outcome_id','a_method_id'];
+    protected $primaryKey = ['l_outcome_id', 'a_method_id'];
 
     public $incrementing = false;
 }

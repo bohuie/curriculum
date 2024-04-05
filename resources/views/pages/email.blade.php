@@ -10,7 +10,7 @@
             <p>
             The body field of this form accepts Markdown for email formatting. To generate Markdown for your email please use <a href="https://markdownlivepreview.com/" target="_blank" rel="noopener noreferrer">Markdown Live Preview</a>.
             </p>
-            <form method="POST" action="{{ action('AdminEmailController@send') }}">
+            <form method="POST" action="{{ action([\App\Http\Controllers\AdminEmailController::class, 'send']) }}">
                 @csrf
 
                 <div class="col-md-8">

@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CourseUser;
-use App\Models\Course;
-use App\Models\User;
-use Illuminate\Http\Request;
-
 use App\Mail\NotifyInstructorMail;
 use App\Mail\NotifyInstructorOwnerMail;
 use App\Mail\NotifyNewInstructorMail;
+use App\Models\Course;
+use App\Models\CourseUser;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class CourseUserController extends Controller
 {
@@ -25,7 +23,6 @@ class CourseUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
@@ -49,7 +46,6 @@ class CourseUserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $courseId)
@@ -65,8 +61,8 @@ class CourseUserController extends Controller
         $warningMessages = Collection::make();
 
         // if the current user is the owner, save the collaborators and their permissions
-        if ($currentUserPermission == 1 ) {
-            $currentPermissions = ($request->input('course_current_permissions')) ? $request->input('course_current_permissions') : array();
+        if ($currentUserPermission == 1) {
+            $currentPermissions = ($request->input('course_current_permissions')) ? $request->input('course_current_permissions') : [];
             $newCollabs = $request->input('course_new_collabs');
             $newPermissions = $request->input('course_new_permissions');
             // get the saved collaborators for this course, but not the owner
@@ -90,14 +86,14 @@ class CourseUserController extends Controller
                     $user = User::where('email', $newCollab)->first();
                     // if the user has registered with the tool, add the new collab
                     if ($user) {
-                        // make sure the new collab user isn't already collaborating on this course 
-                        if (!in_array($user->email, $course->users->pluck('email')->toArray())) {
+                        // make sure the new collab user isn't already collaborating on this course
+                        if (! in_array($user->email, $course->users->pluck('email')->toArray())) {
                             // get their given permission level
                             $permission = $newPermissions[$index];
                             // create a new collaborator
                             $courseUser = CourseUser::updateOrCreate(
                                 ['course_id' => $course->course_id, 'user_id' => $user->id],
-                                
+
                             );
 
                             $courseUser = CourseUser::where([['course_id', '=', $courseUser->course_id], ['user_id', '=', $courseUser->user_id]])->first();
@@ -105,13 +101,13 @@ class CourseUserController extends Controller
                             switch ($permission) {
                                 case 'edit':
                                     $courseUser->permission = 2;
-                                break;
+                                    break;
                                 case 'view':
                                     $courseUser->permission = 3;
-                                break;
+                                    break;
                             }
 
-                            if($courseUser->save()){
+                            if ($courseUser->save()) {
                                 // update courses 'updated_at' field
                                 $course = Course::find($courseId);
                                 $course->touch();
@@ -126,10 +122,10 @@ class CourseUserController extends Controller
                                 // email the owner letting them know they have added a new collaborator
                                 Mail::to($currentUser->email)->send(new NotifyInstructorOwnerMail($course->course_code, $course->course_num, $course->course_title, $user->name));
                             } else {
-                                $errorMessages->add('There was an error adding ' . '<b>' . $user->email . '</b>' . ' to course ' . $course->course_code . ' ' . $course->course_num);
+                                $errorMessages->add('There was an error adding '.'<b>'.$user->email.'</b>'.' to course '.$course->course_code.' '.$course->course_num);
                             }
                         } else {
-                            $warningMessages->add('<b>' . $user->email . '</b>' . ' is already collaborating on course ' . $course->course_code . ' ' . $course->course_num);
+                            $warningMessages->add('<b>'.$user->email.'</b>'.' is already collaborating on course '.$course->course_code.' '.$course->course_num);
                         }
                     } else {
                         $name = explode('@', $newCollab);
@@ -139,8 +135,8 @@ class CourseUserController extends Controller
                         $newUser->has_temp = 1;
                         // generate random password
                         $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-                        $pass = array(); 
-                        $combLen = strlen($comb) - 1; 
+                        $pass = [];
+                        $combLen = strlen($comb) - 1;
                         for ($i = 0; $i < 8; $i++) {
                             $n = rand(0, $combLen);
                             $pass[] = $comb[$n];
@@ -162,12 +158,12 @@ class CourseUserController extends Controller
                         switch ($permission) {
                             case 'edit':
                                 $courseUser->permission = 2;
-                            break;
+                                break;
                             case 'view':
                                 $courseUser->permission = 3;
-                            break;
+                                break;
                         }
-                        if($courseUser->save()){
+                        if ($courseUser->save()) {
                             // update courses 'updated_at' field
                             $course = Course::find($courseId);
                             $course->touch();
@@ -179,11 +175,11 @@ class CourseUserController extends Controller
 
                             // email user to be added
                             // Sends email with password
-                            Mail::to($newUser->email)->send(new NotifyNewInstructorMail($course->course_code, $course->course_num !== null ? " " : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $newUser->email));
+                            Mail::to($newUser->email)->send(new NotifyNewInstructorMail($course->course_code, $course->course_num !== null ? ' ' : $course->course_num, $course->course_title, $currentUser->name, implode($pass), $newUser->email));
                             // email the owner letting them know they have added a new collaborator
-                            Mail::to($currentUser->email)->send(new NotifyInstructorOwnerMail($course->course_code, $course->course_num, $course->course_title, $newUser->name));                         
+                            Mail::to($currentUser->email)->send(new NotifyInstructorOwnerMail($course->course_code, $course->course_num, $course->course_title, $newUser->name));
                         } else {
-                            $errorMessages->add('There was an error adding ' . '<b>' . $newUser->email . '</b>' . ' to course ' . $course->course_title);
+                            $errorMessages->add('There was an error adding '.'<b>'.$newUser->email.'</b>'.' to course '.$course->course_title);
                         }
                         // $errorMessages->add('<b>' . $newCollab . '</b>' . ' has not registered on this site. ' . "<a target='_blank' href=" . route('requestInvitation') . ">Invite $newCollab</a> and add them once they have registered.");
                     }
@@ -196,7 +192,7 @@ class CourseUserController extends Controller
 
         // if no errors or warnings, flash a success message
         if ($errorMessages->count() == 0 && $warningMessages->count() == 0) {
-            $request->session()->flash('success', 'Successfully updated collaborators on course ' . $course->course_code . ' ' . $course->course_num);
+            $request->session()->flash('success', 'Successfully updated collaborators on course '.$course->course_code.' '.$course->course_num);
         }
 
         // return to the previous page
@@ -206,7 +202,6 @@ class CourseUserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\CourseUser  $courseUser
      * @return \Illuminate\Http\Response
      */
     public function show(CourseUser $courseUser)
@@ -217,7 +212,6 @@ class CourseUserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\CourseUser  $courseUser
      * @return \Illuminate\Http\Response
      */
     public function edit(CourseUser $courseUser)
@@ -229,7 +223,6 @@ class CourseUserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CourseUser  $courseUser
      * @return \Illuminate\Http\Response
      */
     public function update(CourseUser $courseUser, $permissions)
@@ -238,20 +231,19 @@ class CourseUserController extends Controller
         switch ($permissions[$courseUser->user_id]) {
             case 'edit':
                 $courseUser->permission = 2;
-            break;
-            
+                break;
+
             case 'view':
                 $courseUser->permission = 3;
-            break;
+                break;
         }
-        
+
         $courseUser->save();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\CourseUser  $courseUser
      * @return \Illuminate\Http\Response
      */
     public function destroy(CourseUser $courseUser)
@@ -261,23 +253,26 @@ class CourseUserController extends Controller
         // get the current user permission
         $currentUserPermission = CourseUser::where([['course_id', $courseUser->course_id], ['user_id', $currentUser->id]])->first()->permission;
         // if the current user is the owner, delete the given course collaborator
-        if ($currentUserPermission == 1 ) {
+        if ($currentUserPermission == 1) {
             $courseUser->delete();
         }
     }
 
-    public function leave(Request $request) {
+    public function leave(Request $request): RedirectResponse
+    {
         $course = Course::find($request->input('course_id'));
         $courseUser = CourseUser::where('user_id', $request->input('courseCollaboratorId'))->where('course_id', $request->input('course_id'))->first();
         if ($courseUser->delete()) {
-            $request->session()->flash('success', 'Successfully left ' .$course->course_title);
+            $request->session()->flash('success', 'Successfully left '.$course->course_title);
         } else {
             $request->session()->flash('error', 'Failed to leave the course');
         }
+
         return redirect()->back();
     }
 
-    public function transferOwnership(Request $request) {
+    public function transferOwnership(Request $request): RedirectResponse
+    {
         $course = Course::find($request->input('course_id'));
         $oldCourseOwner = CourseUser::where('user_id', $request->input('oldOwnerId'))->where('course_id', $request->input('course_id'))->first();
         $newCourseOwner = CourseUser::where('user_id', $request->input('newOwnerId'))->where('course_id', $request->input('course_id'))->first();
@@ -288,14 +283,14 @@ class CourseUserController extends Controller
 
         if ($newCourseOwner->save()) {
             if ($oldCourseOwner->save()) {
-                $request->session()->flash('success', 'Successfully transferred ownership for the ' .$course->course_title. ' course.');
+                $request->session()->flash('success', 'Successfully transferred ownership for the '.$course->course_title.' course.');
             } else {
-                $request->session()->flash('error', 'Failed to transfer ownership of the ' .$course->course_title. ' course');
+                $request->session()->flash('error', 'Failed to transfer ownership of the '.$course->course_title.' course');
             }
         } else {
-            $request->session()->flash('error', 'Failed to transfer ownership of the ' .$course->course_title. ' course');
+            $request->session()->flash('error', 'Failed to transfer ownership of the '.$course->course_title.' course');
         }
-        
+
         return redirect()->back();
     }
 }

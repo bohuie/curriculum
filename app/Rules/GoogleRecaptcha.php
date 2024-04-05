@@ -2,7 +2,6 @@
 
 namespace App\Rules;
 
-
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Validation\Rule;
 
@@ -21,9 +20,7 @@ class GoogleRecaptcha implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
     public function passes($attribute, $value)
     {
@@ -34,20 +31,19 @@ class GoogleRecaptcha implements Rule
                 'form_params' => [
                     'secret' => env('GOOGLE_CAPTCHA_PRIVATE_KEY', false),
                     'remoteip' => request()->getClientIp(),
-                    'response' => $value
-                ]
+                    'response' => $value,
+                ],
             ]
         );
-        $body = json_decode((string)$response->getBody());
+        $body = json_decode((string) $response->getBody());
+
         return $body->success;
     }
 
     /**
      * Get the validation error message.
-     *
-     * @return string
      */
-    public function message()
+    public function message(): string
     {
         return 'Are you a robot?';
     }

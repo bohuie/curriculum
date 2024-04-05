@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CourseProgram;
 use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
@@ -21,8 +21,8 @@ class PLOCategoryController extends Controller
     {
         $this->middleware(['auth', 'verified']);
     }
-    
-    public function index()
+
+    public function index(): RedirectResponse
     {
         //
         return redirect()->back();
@@ -40,15 +40,12 @@ class PLOCategoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        // validate request data 
+        // validate request data
         $this->validate($request, [
-            'program_id'=> 'required',
+            'program_id' => 'required',
         ]);
 
         // try update PLO categories
@@ -59,9 +56,9 @@ class PLOCategoryController extends Controller
             // get the current plo categories
             $currentPLOCategories = $request->input('current_plo_categories');
             // get the new plo categories
-            $newPLOCategories = $request->input('new_plo_categories'); 
+            $newPLOCategories = $request->input('new_plo_categories');
             // case: delete all program learning outcome categories
-            if (!$currentPLOCategories && !$newPLOCategories) {
+            if (! $currentPLOCategories && ! $newPLOCategories) {
                 $program->ploCategories()->delete();
             }
             // get the saved PLO categories for this program
@@ -73,7 +70,7 @@ class PLOCategoryController extends Controller
                     $ploCategory->plo_category = $currentPLOCategories[$ploCategory->plo_category_id];
                     $ploCategory->save();
                 } else {
-                    // remove plo category from program 
+                    // remove plo category from program
                     // TODO: update plo category of plos
                     $ploCategory->delete();
                 }
@@ -93,9 +90,9 @@ class PLOCategoryController extends Controller
             // get users name for last_modified_user
             $user = User::find(Auth::id());
             $program->last_modified_user = $user->name;
-            $program->save();          
-            $request->session()->flash('success','Your PLO categories were updated successfully!');
-        
+            $program->save();
+            $request->session()->flash('success', 'Your PLO categories were updated successfully!');
+
         } catch (Throwable $exception) {
             $request->session()->flash('error', 'There was an error updating your PLO Categories');
         } finally {
@@ -106,7 +103,6 @@ class PLOCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PLOCategory  $pLOCategory
      * @return \Illuminate\Http\Response
      */
     public function show(PLOCategory $pLOCategory)
@@ -117,7 +113,6 @@ class PLOCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PLOCategory  $pLOCategory
      * @return \Illuminate\Http\Response
      */
     public function edit(PLOCategory $pLOCategory)
@@ -128,17 +123,15 @@ class PLOCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $plo_category_id)
+    public function update(Request $request, $plo_category_id): RedirectResponse
     {
         //
         $this->validate($request, [
-            
-            'category'=> 'required',
-            ]);
+
+            'category' => 'required',
+        ]);
 
         $c = PLOCategory::where('plo_category_id', $plo_category_id)->first();
         $c->plo_category = $request->input('category');
@@ -148,17 +141,17 @@ class PLOCategoryController extends Controller
         $user = User::find(Auth::id());
         $program->last_modified_user = $user->name;
         $program->save();
-        
-        if($c->save()){
+
+        if ($c->save()) {
             // update courses 'updated_at' field
             $program = Program::find($request->input('program_id'));
             $program->touch();
 
             $request->session()->flash('success', 'Plo cateogry updated');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error updating the plo category');
         }
-        
+
         return redirect()->route('programWizard.step1', $request->input('program_id'));
     }
 
@@ -166,9 +159,8 @@ class PLOCategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\PLOCategory  $pLOCategory
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $plo_category_id)
+    public function destroy(Request $request, $plo_category_id): RedirectResponse
     {
         //
         $c = PLOCategory::where('plo_category_id', $plo_category_id)->first();
@@ -178,19 +170,17 @@ class PLOCategoryController extends Controller
         $user = User::find(Auth::id());
         $program->last_modified_user = $user->name;
         $program->save();
-        
-        if($c->delete()){
+
+        if ($c->delete()) {
             // update courses 'updated_at' field
             $program = Program::find($request->input('program_id'));
             $program->touch();
-            
+
             $request->session()->flash('success', 'Plo cateogry deleted');
-        }else{
+        } else {
             $request->session()->flash('error', 'There was an error deleting the plo category');
         }
-        
+
         return redirect()->route('programWizard.step1', $request->input('program_id'));
     }
-
-    
 }

@@ -9,10 +9,8 @@ class StandardScaleCategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $sc = new StandardsScaleCategory;
         $sc->scale_category_id = 1;
