@@ -182,7 +182,7 @@
                             </ul>
                             <br>
                             <p class="lead">Inspired by and based on UCalgary’s tool <a href="https://taylorinstitute.ucalgary.ca/curriculum-links" target="_blank" rel="noopener noreferrer">Curriculum Links</a>.</p>
-                            <p class="lead"> If you have questions about the Curriculum MAP, please contact <a href="mailto:laura.prada@ubc.ca">laura.prada@ubc.ca</a> at the <a href="https://provost.ok.ubc.ca/" target="_blank" rel="noopener noreferrer">Office of the Provost and Vice-President Academic, UBC Okanagan campus</a>. </p>
+                            <p class="lead"> If you have questions about the Curriculum MAP, please contact <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a> at the <a href="https://ctl.ok.ubc.ca/" target="_blank" rel="noopener noreferrer">Centre for Teaching and Learning, UBC Okanagan campus</a>. </p>
                         </div>
                     </div>
                 </div>
