@@ -923,6 +923,14 @@
         </div>
         <br>
 
+        <!-- Policies and Regulations -->
+
+        <div class="col-12" id="policiesAndRegulations"></div>
+
+        <!-- Statement of UBC Values -->
+
+        <div class="col-12" id="statementUBCValues"></div>
+
         <!-- Optional Statements -->
         <div class="col-12" id="optionalStatements"></div>
         
@@ -2364,7 +2372,7 @@
         var okanaganOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners.
+                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners. Instructors may choose to add or edit this content as relevant.
             </p>`;
 
          // list of vancouver syllabus resources
@@ -2599,18 +2607,36 @@
 
          var optionalStatements =`
 
-         <h5  class="fw-bold">Student Service Resources</h5>
+         <h5  class="fw-bold">Resources to Support Student Success<span class="requiredBySenateOK"></span></h5>
                 @if(!empty($syllabus))
                     <div id="optionalSyllabusDesc"></div>
                 @else
                     <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners.
+                        <a href="https://senate.ubc.ca/okanagan/forms-resources/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners. Instructors may choose to add or edit this content as relevant.
                     </p>
                 @endif
             <div class="form-check m-4">
                 <div class="row" id="optionalSyllabus"></div>
             </div>
             `;
+            var statementUBCValues =`
+            
+            <label for="statementUBCValues"><h5 class="fw-bold">Statement of UBC Values</h5></label><span class="requiredBySenateOK"></span>
+            <br>
+            <div class="col-12">
+                <blockquote> UBC creates an exceptional learning environment that fosters global citizenship, advances a civil and sustainable society, and supports outstanding research to serve the people of British Columbia, Canada, and the world. UBC’s core values are excellence, integrity, respect, academic freedom, and accountability.</blockquote>
+            </div>
+            `;
+
+            var policiesAndRegulations =`
+            
+            <label for="policiesAndRegulations"><h5 class="fw-bold">Policies and Regulations</h5></label><span class="requiredBySenateOK"></span>
+            <br>
+            <div class="col-12">
+                <blockquote> Visit <a href="https://okanagan.calendar.ubc.ca/campus-wide-policies-and-regulations">UBC Okanagan's Academic Calendar</a> for a list of campus-wide regulations and policies, as well as term <a href="https://okanagan.calendar.ubc.ca/dates-and-deadlines">dates and deadlines</a>.</blockquote>
+            </div>
+            `;
+
         var courseSectionOK =  `
             <label for="endTime">Course Section</label>
             <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "courseSection" name = "courseSection" class ="form-control" type="text" placeholder="E.g. 001" value="{{ !empty($syllabus) ? $syllabus->course_section : ''}}" >`;
@@ -2651,6 +2677,8 @@
             $('#optionalStatements').empty();
             $('#courseSectionOK').empty();
             $('.requiredBySenateOK').empty();
+            $('#statementUBCValues').empty();
+            $('#policiesAndRegulations').empty();
             // update faculty dropdown
             setFaculties('Vancouver');
         }   
@@ -2666,6 +2694,8 @@
             $('#courseDesc').html(okanaganCourseDescription);
             $('#courseOverview').removeClass('m-0 p-0');
             $('#courseSectionOK').html(courseSectionOK);
+            $('#statementUBCValues').html(statementUBCValues);
+            $('#policiesAndRegulations').html(policiesAndRegulations);
             $('.requiredBySenateOK').html(requiredBySenateLabelOK);
 
             // remove data specific to vancouver campus
