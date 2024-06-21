@@ -97,7 +97,7 @@
     <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
         <div>
-            To assist faculty in preparing their syllabi, this generator follows the policies, guidelines and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/forms/">UBC Okanagan</a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver</a> senate. 
+            To assist faculty and instructors in preparing their syllabi, this generator follows the policies and templates provided by the <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/okanagan/policies/policy-o-130-content-and-distribution-of-course-syllabi-2/">UBC Okanagan</a> and <a target="_blank" rel="noopener noreferrer" href="https://senate.ubc.ca/policies-resources-support-student-success">UBC Vancouver</a> Senates. 
         </div>
     </div>
 
@@ -118,7 +118,7 @@
         <h5 class="fw-bold col-12 mt-5">Course Information</h5>
 
         <div class="col-6">
-            <label for="courseTitle" class="form-label">Course Title<span class="requiredField"> *</span></label>
+            <label for="courseTitle" class="form-label">Course Title<span class="requiredField"> *</span><span class="requiredBySenateOK"></span></label>
             <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "courseTitle" name = "courseTitle" class ="form-control" type="text" placeholder="E.g. Intro to Software development" required value="{{ !empty($syllabus) ? $syllabus->course_title : '' }}">
             <div class="invalid-tooltip">
                 Please enter the course title.
@@ -140,6 +140,8 @@
                 Please enter the course number.
             </div>
         </div>
+
+        
         
                <!--
              <input class="form-check-input " id="crossListed" type="checkbox" name="crossListed" value="1" checked>
@@ -202,8 +204,7 @@
                 <div id="crossListedCode" class="col-3"></div>
             <div id="crossListedNumber" class="col-3"></div>
                 @endif
-        
-
+    
         
         
         
@@ -254,6 +255,9 @@
         
         <div id="officeLocation" class="col-3"></div>
 
+                <!-- Okanagan Course Section -->
+                <div class="col-3"id="courseSectionOK"></div>
+                
         <div class="col-3">
             <label for="courseYear">Course Year <span class="requiredField">*</span></label>
             <select id="courseYear" class="form-select" name="courseYear" required>
@@ -289,7 +293,8 @@
             </div>
         </div>
 
-        <div id="courseSemesterOther" class="col-6">
+        
+        <div id="courseSemesterOther" class="col-3">
             @if (!empty($syllabus))
                 @if ($syllabus->course_term != 'W1' && $syllabus->course_term != 'W2' && $syllabus->course_term != 'S1' && $syllabus->course_term != 'S2')
                     <label class="form-label" for="courseSemesterOther">Other</label>
@@ -297,6 +302,7 @@
                 @endif
             @endif
         </div>
+
 
         <div class="col-3">
             <label for="deliveryModality">Mode of Delivery<span class="requiredField"> *</span></label>
@@ -345,11 +351,21 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-6">
+            <label for="endTime">Prerequisites</label><span class="requiredBySenateOK"></span>
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "prerequisites" name = "prerequisites" class ="form-control" type="text" value="{{ !empty($syllabus) ? $syllabus->prerequisites : ''}}" >
+        </div>
+        <div class="col-6">
+            <label for="endTime">Corequisites</label><span class="requiredBySenateOK"></span>
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="100" spellcheck="true" id = "corequisites" name = "corequisites" class ="form-control" type="text" value="{{ !empty($syllabus) ? $syllabus->corequisites : ''}}" >
+        </div>
+        
         <!-- Land Acknowledgement Statement -->
         <div class="col-12" id="landAcknowledgement"></div>
         
         <div class="col-12">
-            <label for="officeHour">Office Hours</label>
+            <label for="officeHour"> <h5 class="fw-bold">Office Hours</h5></label><span class="requiredBySenateOK"></span>
             <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['officeHours']}}"></i>
             <textarea oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="2500" spellcheck="true" id = "officeHour" name = "officeHour" class ="form-control" type="date" form="sylabusGenerator">{{ !empty($syllabus) ? $syllabus->office_hours : ''}}</textarea>
         </div>
@@ -359,8 +375,7 @@
         <div class="col-12" id="coursePrereqs"></div>
         <!-- Course Corequisites -->
         <div class="col-12" id="courseCoreqs"></div>
-        <h5 class="col-12 fw-bold">Course Instructor(s)</h5>
-
+        <div class="col-3"><label for="courseInstructors"><h5 class="fw-bold">Course Instructor(s)</h5></label></div><div class="col-9"><span class="requiredBySenateOK"></span></div>
 @if (!empty($syllabus) && $syllabusInstructors->count() > 0)
     @foreach ($syllabusInstructors as $syllabusInstructor)
         <div class="instructor row g-3 align-items-end m-0 p-0">
@@ -452,15 +467,21 @@
         <!-- course schedule table -->
         <div class="col mb-3">
             <label for="courseSchedule">
-                <h5 class="fw-bold">Schedule of Topics</h5>
+                <table>
+                    <tr>
+                        <td><div><h5 class="fw-bold">Schedule of Topics</h5></td>
+                        <td><span class="requiredBySenateOK"></span></td>
+                        <td><i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i></td>
+                    </tr>
+                </table>
             </label>
+            <br>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="Create Course Schedule Table">
                 <button @if (!empty($syllabus)) @if ($courseScheduleTblRowsCount> 0) hidden @endif @endif id="createTableBtn" type="button" class="btn btn-light rounded-pill m-2" data-bs-toggle="modal" data-bs-target="#createCourseScheduleTblModal" style="font-color:#002145">
                     <i class="bi bi-plus"></i>
                     <span class="iconify-inline" data-icon="fluent:table-48-filled"></span>
                 </button>
             </span>
-            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i>
 
         </div>
 
@@ -564,7 +585,7 @@
         </div>
 
         <div class="col-12">
-            <label for="learningOutcome"><h5 class="fw-bold">Learning Outcomes</h5></label>
+            <label for="learningOutcome"><h5 class="fw-bold">Learning Outcomes or Objectives</h5></label><span class="requiredBySenateOK"></span>
             <span class="requiredBySenate"></span>
             <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningOutcomes']}}"></i>
             <p class="inputFieldDescription"><i>Upon successful completion of this course, students will be able to ...</i></p>
@@ -575,7 +596,7 @@
         </div>
         
         <div class="col-12">
-            <label for="learningActivities"><h5 class="fw-bold">Learning Activities</h5></label>
+            <label for="learningActivities"><h5 class="fw-bold">Learning Activities</h5></label><span class="requiredBySenateOK"></span>
             <span class="requiredBySenate"></span>
             <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningActivities']}}"></i>
             <div id="formatActivities" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
@@ -585,7 +606,7 @@
         </div>
         <!-- Course Learning Materials -->
         <div class="col-12">
-            <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label>
+            <label for="learningMaterials"><h5 class="fw-bold">Learning Materials</h5></label><span class="requiredBySenateOK"></span>
             <span class="requiredBySenate"></span>
             <p class="inputFieldDescription">{!! $inputFieldDescriptions['learningMaterials'] !!}</p>
             <div id="formatLM" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
@@ -597,13 +618,10 @@
                 id="learningMaterials" name="learningMaterials" class="form-control" type="date" form="sylabusGenerator"
                 spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_materials : ''}}</textarea>
         </div>
-
-        <!-- learning analytics and learning resources OK -->
-        <div class="col-12" id="LROkanagan"></div>
         
     
         <div class="col-12">
-            <label for="learningAssessments"><h5 class="fw-bold">Assessments of Learning</h5></label>
+            <label for="learningAssessments"><h5 class="fw-bold">Methods of Assessment</h5></label><span class="requiredBySenateOK"></span>
             <span class="requiredBySenate"></span>
             <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningAssessments']}}"></i>
             <div id="formatAssessments" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
@@ -804,8 +822,22 @@
         @else 
             <div class="p-0 m-0" id="outcomeMapsDiv"></div>    
         @endif
-        <!--learning resources vancouver -->
-        <div class="col-12" id="LRVancouver"></div>
+
+        <!-- learning analytics and learning resources OK -->
+        <div class="col-12">
+                    <!-- Course Learning Resources -->
+                    <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
+            <span class="requiredBySenate"></span>
+            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
+            <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
+                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
+                    on a new line for the best formatting
+                    results.</span>
+                </div> 
+            <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
+                id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
+                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>
+        </div>
 
         <!-- University Policies -->
         <div class="col-12" id="uniPolicy"></div>
@@ -842,7 +874,7 @@
             <br>
             <!-- Course Missed Activity Policy -->
             <div class="col-12">
-                <label for="missingActivity"><h7 class="fw-bold">Missed Activity Policy</h7></label>
+                <label for="missingActivity"><h7 class="fw-bold">Missed Activity Policy</h7></label><span class="requiredBySenateOK"></span>
                 <p class="inputFieldDescription">{!! $inputFieldDescriptions['missedActivityPolicy'] !!}</p>
                 <div id="formatMAP" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                     <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
@@ -890,6 +922,14 @@
                         spellcheck="true" placeholder="Body Content of Custom Section">{{ !empty($syllabus) ? $syllabus->custom_resource : ''}}</textarea>
         </div>
         <br>
+
+        <!-- Policies and Regulations -->
+
+        <div class="col-12" id="policiesAndRegulations"></div>
+
+        <!-- Statement of UBC Values -->
+
+        <div class="col-12" id="statementUBCValues"></div>
 
         <!-- Optional Statements -->
         <div class="col-12" id="optionalStatements"></div>
@@ -2310,24 +2350,9 @@
 
        
         //different statements for each campus
-        var LearningResources_LearningAnalytics = `
-
-         <!-- Course Learning Resources -->
-            <label for="learningResources"><h5 class="fw-bold">Learning Resources</h5></label>
-            <span class="requiredBySenate"></span>
-            <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['learningResources']}}"></i>
-            <div id="formatLR" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
-                <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
-                    on a new line for the best formatting
-                    results.</span>
-                </div> 
-            <textarea data-formatnoteid="formatLR" style="height:125px" oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="30000"
-                id="learningResources" name="learningResources" class="form-control" form="sylabusGenerator"
-                spellcheck="true">{{ !empty($syllabus) ? $syllabus->learning_resources : ''}}</textarea>`
-        ;
         var okanaganCourseDescription = `
             
-                <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label>
+                <label for="courseDescription"><h5 class="fw-bold">Course Description</h5></label><span class="requiredBySenateOK"></span>
                 <p class="inputFieldDescription">{!! $inputFieldDescriptions['okanaganCourseDescription'] !!}</p>
                 <div id="formatDesc" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each paragraph
@@ -2347,7 +2372,7 @@
         var okanaganOptionalListDesc = `
             <p class="inputFieldDescription">
                 The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners.
+                <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners. Instructors may choose to add or edit this content as relevant.
             </p>`;
 
          // list of vancouver syllabus resources
@@ -2479,7 +2504,8 @@
                 <textarea data-formatnoteid="formatLAnal" style="height:125px" maxlength="7500" oninput="validateMaxlength()" onpaste="validateMaxlength()"  id="learningAnalytics" name = "learningAnalytics" class ="form-control" type="text" form="sylabusGenerator">{{isset($vancouverSyllabus) ? $vancouverSyllabus->learning_analytics : ''}}</textarea>
             `;
         var courseFormat = `
-                <label for="courseFormat"><h5 class="fw-bold">Course Format</h5></label>
+                <label for="courseFormat"><h5 class="fw-bold">Course Structure</h5></label><span class="requiredBySenateOK"></span>
+                <p class="inputFieldDescription">{!! $inputFieldDescriptions['courseStructureOK'] !!}</p>
                 <div id="formatFormat" class="collapsibleNotes btn-primary rounded-3" style="overflow:hidden;transition:height 0.3s ease-out;height:auto" data-collapsed="false">
                 <i class="bi bi-exclamation-triangle-fill fs-5 pl-2 pr-2 pb-1"></i> <span class="fs-6">Place each entry
                     on a new line for the best formatting
@@ -2499,6 +2525,12 @@
 
         var requiredBySenateLabel = `
             <span class="d-inline-block has-tooltip ml-2 mr-2" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus under Vancouver Senate policy V-130">
+                <button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button> 
+            </span>
+            `;
+
+        var requiredBySenateLabelOK = `
+            <span class="d-inline-block has-tooltip ml-2 mr-2" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" title="This section is required in your syllabus under Okanagan Senate policy">
                 <button type="button" class="btn btn-danger btn-sm mb-2 disabled" style="font-size:10px;">Required by policy</button> 
             </span>
             `;
@@ -2575,18 +2607,39 @@
 
          var optionalStatements =`
 
-         <h5  class="fw-bold">Student Service Resources</h5>
+         <h5  class="fw-bold">Resources to Support Student Success<span class="requiredBySenateOK"></span></h5>
                 @if(!empty($syllabus))
                     <div id="optionalSyllabusDesc"></div>
                 @else
                     <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                        <a href="https://senate.ubc.ca/okanagan/forms/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners.
+                        <a href="https://senate.ubc.ca/okanagan/forms-resources/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners. Instructors may choose to add or edit this content as relevant.
                     </p>
                 @endif
             <div class="form-check m-4">
                 <div class="row" id="optionalSyllabus"></div>
             </div>
             `;
+            var statementUBCValues =`
+            
+            <label for="statementUBCValues"><h5 class="fw-bold">Statement of UBC Values</h5></label><span class="requiredBySenateOK"></span>
+            <br>
+            <div class="col-12">
+                <blockquote> UBC creates an exceptional learning environment that fosters global citizenship, advances a civil and sustainable society, and supports outstanding research to serve the people of British Columbia, Canada, and the world. UBC’s core values are excellence, integrity, respect, academic freedom, and accountability.</blockquote>
+            </div>
+            `;
+
+            var policiesAndRegulations =`
+            
+            <label for="policiesAndRegulations"><h5 class="fw-bold">Policies and Regulations</h5></label><span class="requiredBySenateOK"></span>
+            <br>
+            <div class="col-12">
+                <blockquote> Visit <a href="https://okanagan.calendar.ubc.ca/campus-wide-policies-and-regulations">UBC Okanagan's Academic Calendar</a> for a list of campus-wide regulations and policies, as well as term <a href="https://okanagan.calendar.ubc.ca/dates-and-deadlines">dates and deadlines</a>.</blockquote>
+            </div>
+            `;
+
+        var courseSectionOK =  `
+            <label for="endTime">Course Section</label>
+            <input oninput="validateMaxlength()" onpaste="validateMaxlength()" maxlength="20" id = "courseSection" name = "courseSection" class ="form-control" type="text" placeholder="E.g. 001" value="{{ !empty($syllabus) ? $syllabus->course_section : ''}}" >`;
         
         // get campus select element
         var campus = $('#campus');
@@ -2609,7 +2662,6 @@
             $('#courseInstructorBio').removeClass('m-0 p-0');
             $('#courseDescription').html(courseDescription);
             $('#learningAnalytics').html(learningAnalytics);
-            $('#LRVancouver').html(LearningResources_LearningAnalytics);
             $('#uniPolicy').html(uniPolicyVan);
             //$('#crStatement').html(crStatement);
             $('#landAcknowledgement').html(landAcknowledgementV);
@@ -2622,8 +2674,11 @@
             $('#courseOverview').empty();
             $('#courseDesc').empty();
             $('#courseOverview').addClass('m-0 p-0');
-            $('#LROkanagan').empty();
             $('#optionalStatements').empty();
+            $('#courseSectionOK').empty();
+            $('.requiredBySenateOK').empty();
+            $('#statementUBCValues').empty();
+            $('#policiesAndRegulations').empty();
             // update faculty dropdown
             setFaculties('Vancouver');
         }   
@@ -2638,7 +2693,10 @@
             $('#courseOverview').html(courseOverview);
             $('#courseDesc').html(okanaganCourseDescription);
             $('#courseOverview').removeClass('m-0 p-0');
-            $('#LROkanagan').html(LearningResources_LearningAnalytics);
+            $('#courseSectionOK').html(courseSectionOK);
+            $('#statementUBCValues').html(statementUBCValues);
+            $('#policiesAndRegulations').html(policiesAndRegulations);
+            $('.requiredBySenateOK').html(requiredBySenateLabelOK);
 
             // remove data specific to vancouver campus
             $('#courseCredit').empty();
@@ -2656,7 +2714,6 @@
             $('#courseDescription').empty();
             $('#learningAnalytics').empty();
             $('.requiredBySenate').empty();
-            $('#LRVancouver').empty();
             $('#uniPolicy').empty();
             $('#crStatement').empty();
             $('#landAcknowledgement').html(landAcknowledgementO);
