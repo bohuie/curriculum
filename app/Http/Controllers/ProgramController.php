@@ -234,6 +234,7 @@ class ProgramController extends Controller
         $coursesByLevels['Other'] = collect();
 
         foreach ($program->courses as $course) {
+            if($course->course_num!=NULL){
             switch ($course->course_num[0]) {
                 case 1:
                     $coursesByLevels['100 Level']->push($course);
@@ -256,6 +257,7 @@ class ProgramController extends Controller
                 default:
                     $coursesByLevels['Other']->push($course);
             }
+        } else $coursesByLevels['Other']->push($course);
         }
 
         return $coursesByLevels;
