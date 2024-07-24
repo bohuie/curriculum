@@ -563,7 +563,11 @@ class CourseController extends Controller
             $standardOutcomeMap = [];
             foreach ($courseStandardOutcomes as $standardOutcome) {
                 if (StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course->course_id)->exists()) {
-                    $standardOutcomeMap[$standardOutcome->standard_id][$course->course_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]))->first();
+                                //dd(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]));
+                                $standardScale=StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]);
+                                //dd($standardScale->standard_scale_id);
+                                $standardOutcomeMap[$standardOutcome->standard_id][$course->course_id] = StandardScale::where('standard_scale_id',$standardScale->standard_scale_id)->first();
+                                //$standardOutcomeMap[$standardOutcome->standard_id][$course->course_id] = StandardScale::find(StandardsOutcomeMap::firstWhere([['standard_id', $standardOutcome->standard_id], ['course_id', $course->course_id]]))->first();
                 }
             }
 
