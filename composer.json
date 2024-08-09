@@ -17,7 +17,7 @@
         "google/recaptcha": "1.2.*",
         "guzzlehttp/guzzle": "^7.2",
         "laminas/laminas-escaper": "^2.11",
-        "laravel/framework": "^10.39",
+        "laravel/framework": "^10.48",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "maennchen/zipstream-php": "2.4.0",
