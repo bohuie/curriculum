@@ -56,8 +56,12 @@
                     <div class="row">
                         <div class="col text-left">
                             <div class="btn-group">
-                                <button class="btn btn-primary dropdown-toggle" type="button" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                                <button class="btn btn-primary dropdown-toggle me-2" type="button" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                                     Download <i class="bi bi-download"></i>
+                                </button>
+                                <!-- Download button for raw data function -->
+                                <button class="btn btn-primary" type="button" id="dataDownloadBtn" data-bs-auto-close="true" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal" aria-expanded="false">
+                                    Data Download <i class="bi bi-download"></i>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="downloadBtn">
                                     <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#setContentPDF"><i class="bi bi-file-pdf-fill text-danger"></i> PDF </button></li>
