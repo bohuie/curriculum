@@ -23,8 +23,8 @@ class UserSeeder extends Seeder
         $userRole = Role::where('role', 'user')->first();
         /* add you information here. Notice there is an ADMIN account and USER account. Make sure your email is different.*/
         $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@ubc.ca',
+            'name' => 'Mahi Gangal',
+            'email' => 'mahi.gangal@ubc.ca',
             'password' => Hash::make('password'), /*default local password is "password" */
         ]);
 
