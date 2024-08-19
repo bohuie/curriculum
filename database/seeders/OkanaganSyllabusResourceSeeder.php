@@ -14,20 +14,36 @@ class OkanaganSyllabusResourceSeeder extends Seeder
     {
     
 
-        
-
-        
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'copyright',
-            'title' => '© Copyright Statement',
-        ]);
 
         OkanaganSyllabusResource::create([
             'id_name' => 'safewalk',
             'title' => 'Safewalk',
         ]);
 
+        OkanaganSyllabusResource::create([
+            'id_name' => 'academic',
+            'title' => 'Academic Integrity',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'misconduct',
+            'title' => 'Academic Misconduct',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'support',
+            'title' => 'Student Supports, Resources & Campus Services',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'advising',
+            'title' => 'Advising Options',
+        ]);
+
+        OkanaganSyllabusResource::create([
+            'id_name' => 'wellbeing',
+            'title' => 'Walk-In Well-Being Clinic',
+        ]);
         
 
         OkanaganSyllabusResource::create([
