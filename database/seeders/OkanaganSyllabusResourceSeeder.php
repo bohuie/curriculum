@@ -29,21 +29,6 @@ class OkanaganSyllabusResourceSeeder extends Seeder
             'id_name' => 'misconduct',
             'title' => 'Academic Misconduct',
         ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'support',
-            'title' => 'Student Supports, Resources & Campus Services',
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'advising',
-            'title' => 'Advising Options',
-        ]);
-
-        OkanaganSyllabusResource::create([
-            'id_name' => 'wellbeing',
-            'title' => 'Walk-In Well-Being Clinic',
-        ]);
         
 
         OkanaganSyllabusResource::create([
