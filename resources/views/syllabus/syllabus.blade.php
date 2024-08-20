@@ -939,13 +939,6 @@
 
         <!-- Optional Statements -->
         <div class="col-12" id="optionalStatements"></div>
-        
-        <!-- UBC Academic Integrity Website -->
-        <div class="col-12">
-        <label for="academicIntegrityUBC"><h5 class="fw-bold">More language regarding GenAI or Academic Integrity</h5></label>
-            <br>
-            <p class="inputFieldDescription">For additional language you may consider for your syllabus visit <a href="https://academicintegrity.ubc.ca/generative-ai-syllabus/">UBC's Academic Integrity website.</a></p> 
-        </div>
 
         <!-- Copyright Statement -->
         <div class="col-12" id="crStatement"></div>
@@ -2613,12 +2606,12 @@
 
          var optionalStatements =`
 
-         <h5  class="fw-bold">Additional suggestions for syllabi language following best practices<span class="requiredBySenateOK"></span></h5>
+         <h5  class="fw-bold">Additional UBC language regarding academic integrity, academic misconduct, and use of generative artificial intelligence (GenAI)</h5>
                 @if(!empty($syllabus))
                     <div id="optionalSyllabusDesc"></div>
                 @else
-                    <p class="inputFieldDescription">The below are suggested sections to include in your syllabus which communicate various resources on campus that support student success.
-                        <a href="https://senate.ubc.ca/okanagan/forms-resources/" target="_blank" rel="noopener noreferrer">Language taken from the UBC Okanagan senate website</a> and other campus partners. Instructors may choose to add or edit this content as relevant.
+                    <p class="inputFieldDescription"> You may choose to add the below statements to your syllabi to clarify expectations in your course. For additional language available visit <a href="https://academicintegrity.ubc.ca/generative-ai-syllabus/">UBC's Academic Integrity website</a>.
+                        
                     </p>
                 @endif
             <div class="form-check m-4">
