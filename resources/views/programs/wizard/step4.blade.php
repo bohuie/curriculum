@@ -60,7 +60,7 @@
                                     Download <i class="bi bi-download"></i>
                                 </button>
                                 <!-- Download button for raw data function -->
-                                <button class="btn btn-primary" type="button" id="dataDownloadBtn" data-bs-auto-close="true" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal" aria-expanded="false">
+                                <button class="btn btn-primary" type="button" id="dataDownloadBtn" data-bs-route="{{ route('programs.spreadsheet', $program->program_id) }}" onclick="window.location.href=this.getAttribute('data-bs-route')" data-bs-auto-close="true" aria-expanded="false">
                                     Data Download <i class="bi bi-download"></i>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="downloadBtn">

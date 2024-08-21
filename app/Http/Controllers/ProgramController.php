@@ -957,7 +957,79 @@ class ProgramController extends Controller
         }
     }
     // Raw data download
+    public function dataSpreadsheet(Request $request, int $programId)
+    {
+        
+        // set the max time to generate a pdf summary as 5 mins/300 seconds
+        set_time_limit(300);
+        try {
+            $program = Program::find($programId);
+            // create the spreadsheet
+            $spreadsheet = new Spreadsheet();
+            // create array of column names
+            $columns = range('A', 'Z');
+            // create array of styles for spreadsheet
+            $styles = [
+                'primaryHeading' => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'C6E0F5'],
+                    ],
+                ],
+                'secondaryHeading' => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'ced4da'],
+                    ],
+                ],
+            ];
+            
+            // create each sheet in summary
+            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
+            $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
+            $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
 
+            // get array of urls to charts in this program
+            $charts = $this->getImagesOfCharts($programId, '.xlsx');
+            $this->makeChartSheets($spreadsheet, $programId, $charts);
+            // foreach sheet, set all possible columns in $columns to autosize
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet)
+            {
+                $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+                $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
+                $mapSheet->getColumnDimension($letter)->setAutoSize(true);
+            });
+           
+            // generate the spreadsheet
+            $writer = new Xlsx($spreadsheet);
+            // set the spreadsheets name
+            $spreadsheetName = 'summary-'.$program->program_id.'.xlsx';
+            // create absolute filename
+            $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+            // save the spreadsheet document
+            $writer->save($storagePath);
+            // delete charts
+            $this->deleteCharts($programId, $charts);
+            // get the url of the document
+            $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+
+            // return the location of the spreadsheet document on the server
+            //dd("hi");
+            return $url;
+            
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return -1;
+        }
+    }
     /**
      * Private helper function to create sheets with charts in the program summary spreadsheet
      *

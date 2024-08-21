@@ -91,9 +91,13 @@ Route::delete('/programs/{program}/delete', [ProgramController::class, 'destroy'
 // Program Summary PDF routes
 Route::get('/programs/{program}/pdf', [ProgramController::class, 'pdf'])->name('programs.pdf');
 Route::delete('/programs/{program}/pdf', [ProgramController::class, 'deletePDF'])->name('programs.delete.pdf');
+
 // Program Summary Spreadsheet routes
 Route::get('/programs/{program}/spreadsheet', [ProgramController::class, 'spreadsheet'])->name('programs.spreadsheet');
 Route::delete('/programs/{program}/spreadsheet', [ProgramController::class, 'delSpreadsheet'])->name('programs.delete.spreadsheet');
+
+// Program Summary raw data spreadsheet routes
+Route::get('/programs/{program}/dataSpreadsheet', [ProgramController::class, 'dataSpreadsheet'])->name('programs.dataSpreadsheet');
 
 Route::get('/programs/{program}/duplicate', [ProgramController::class, 'duplicate'])->name('programs.duplicate');
 
