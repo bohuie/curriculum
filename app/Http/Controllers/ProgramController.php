@@ -889,6 +889,9 @@ class ProgramController extends Controller
      */
     public function spreadsheet(Request $request, int $programId)
     {
+       // Log::Debug("$request");
+        //dd("hi");
+
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
@@ -956,9 +959,10 @@ class ProgramController extends Controller
             return -1;
         }
     }
-    // Raw data download
+    // Method for generating data excel in program level
     public function dataSpreadsheet(Request $request, int $programId)
     {
+        Log::Debug("hello dataSpreadshseet");
         
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
@@ -987,19 +991,24 @@ class ProgramController extends Controller
             ];
             
             // create each sheet in summary
+            //$programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
             $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
-            $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
-            $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+            $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
+            $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
+            $mapSheet=$this->makeOutcomeMapSheetData($spreadsheet, $programId, $styles, $columns);
+            //$mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
 
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $mapSheet, $mappingScalesSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet)
             {
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
+                $courseSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
+                //$programSheet->getColumnDimension($letter)->setAutoSize(true);
             });
            
             // generate the spreadsheet
@@ -1958,4 +1967,216 @@ class ProgramController extends Controller
 
         return redirect()->route('home');
     }
+
+    // Helper method to display mapping scales
+    private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+    {
+        try {
+            $program = Program::find($programId);
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle('Mapping Scale');
+            $mappingScaleLevels = $program->mappingScaleLevels;
+    
+            if ($mappingScaleLevels->count() > 0) {
+                // Update header row to exclude the 'Colour' column
+                $sheet->fromArray(['Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
+                $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+    
+                foreach ($mappingScaleLevels as $index => $level) {
+                    // Create array of scale values without the colour column
+                    $scaleArr = [$level->title, $level->abbreviation, $level->description];
+                    // Insert the array into the sheet starting from column A
+                    $sheet->fromArray($scaleArr, null, 'A'.strval($index + 2));
+                }
+            }
+    
+            return $sheet;
+    
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    // Helper method to display Course data for programs
+    private function makeCourseInfoSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+{
+    try {
+        // Find the program by ID
+        $program = Program::find($programId);
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Course Information');
+        // Get the program's courses
+        $courses = $program->courses;
+
+        if ($courses->count() > 0) {
+            // Update header row with the desired column names
+            $sheet->fromArray(['Course Title', 'Course Code','Course Number','Year', 'Term','Requirement', 'Mapped to program'], null, 'A1');
+            $sheet->getStyle('A1:G1')->applyFromArray($styles['primaryHeading']);
+
+            foreach ($courses as $index => $course) {
+                $mapped = ($course->pivot->map_status==0)? 'Yes': 'No';
+                $courseRequired = ($course->pivot->course_required==1)? 'Yes': 'No';
+                // Create array with course data
+                $courseData = [$course->course_title, $course->course_code, $course->course_num, $course->year, $course->semester,$courseRequired, $mapped]; // Assuming 'semester' is the term column
+                // Insert the array into the sheet starting from column A
+                $sheet->fromArray($courseData, null, 'A' . strval($index + 2));
+            }
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
+        Log::error($message . ' ...\n');
+        Log::error('Code - ' . $exception->getCode());
+        Log::error('File - ' . $exception->getFile());
+        Log::error('Line - ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function makeProgramInfoSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+{
+    try {
+        // Find the program by ID
+        $program = Program::find($programId);
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Program Information');
+        // Get the program's courses
+        $courses = $program->courses;
+
+        if ($courses->count() > 0) {
+            // Update header row with the desired column names
+            $sheet->fromArray(['Program Name', 'Campus','Faculty','Department', 'Level'], null, 'A1');
+            $sheet->getStyle('A1:E1')->applyFromArray($styles['primaryHeading']);
+
+            foreach ($courses as $index => $course) {
+                // Create array with course data
+                $courseData = [$program->program, $program->campus, $program->faculty, $program->department, $program->level]; 
+                // Insert the array into the sheet starting from column A
+                $sheet->fromArray($courseData, null, 'A' . strval($index + 2));
+            }
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
+        Log::error($message . ' ...\n');
+        Log::error('Code - ' . $exception->getCode());
+        Log::error('File - ' . $exception->getFile());
+        Log::error('Line - ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+
+private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+
+        // Create a new sheet for the outcome map
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Program MAP Table');
+
+        // Retrieve program data
+        $programLearningOutcomes = $program->programLearningOutcomes;
+        $mappingScaleLevels = $program->mappingScaleLevels;
+        $courses = $program->courses;
+
+        // If there are no PLOs or courses, return an empty sheet
+        if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
+            return $sheet;
+        }
+
+        // Set headers for the outcome map
+        $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        $sheet->mergeCells('B1:' . $columns[$program->programLearningOutcomes->count()] . '1');
+
+        // Create an array of courses to add to the outcome maps sheet
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code . ' ' . $course->course_num;
+        }
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+        $sheet->getStyle('A4:A' . strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+        // Fetch and prepare the PLO to course mappings without assigning colors
+        $coursesToCLOs = $this->getCoursesOutcomes([], $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
+        $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, []);
+        $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, []);
+        $PLOsToCoursesToOutcomeMap = $this->frequencyDistribution($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+        $PLOsToCoursesToOutcomeMap = $this->replaceIdsWithAbv($PLOsToCoursesToOutcomeMap, $programOutcomeMaps);
+
+        // Continue with the rest of the function logic to add categories and PLOs
+        $categoryColInMapSheet = 1;
+        foreach ($program->ploCategories as $category) {
+            if ($category->plos->count() > 0) {
+                $plosInCategory = $category->plos()->get();
+                $sheet->setCellValue($columns[$categoryColInMapSheet] . '2', $category->plo_category);
+                $sheet->getStyle($columns[$categoryColInMapSheet] . '2')->applyFromArray($styles['secondaryHeading']);
+                $sheet->mergeCells($columns[$categoryColInMapSheet] . '2:' . $columns[$categoryColInMapSheet + $plosInCategory->count() - 1] . '2');
+
+                $plosInCategoryArr = $plosInCategory->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                    $ploToCourseMapArr = [];
+                    foreach ($courses as $courseId => $courseCode) {
+                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                            array_push($ploToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
+                        } else {
+                            array_push($ploToCourseMapArr, '');
+                        }
+                    }
+                    $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index] . '4');
+
+                    return $plo->plo_shortphrase ?? $plo->pl_outcome;
+                })->toArray();
+
+                $sheet->fromArray($plosInCategoryArr, null, $columns[$categoryColInMapSheet] . '3');
+                $categoryColInMapSheet += $plosInCategory->count();
+            }
+        }
+
+        // Skip adding uncategorized PLOs and directly proceed with the rest of the logic
+        
+        $sheet->getStyle('B2:Z2')->getFont()->setBold(true);
+        $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
+
+        // Apply conditional formatting rules without colors
+        $wizardFactory = new Wizard('B4:Z50');
+        foreach ($mappingScaleLevels as $level) {
+            $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+            $wizard->equals($level->abbreviation); // No color styles applied
+            $conditionalStyles[] = $wizard->getConditional();
+            $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+        }
+
+        return $sheet;
+    } catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
+        Log::error($message . ' ...\n');
+        Log::error('Code - ' . $exception->getCode());
+        Log::error('File - ' . $exception->getFile());
+        Log::error('Line - ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
 }

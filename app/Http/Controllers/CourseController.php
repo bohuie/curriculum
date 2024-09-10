@@ -611,6 +611,12 @@ class CourseController extends Controller
         Storage::delete('public/course-'.$course_id.'.pdf');
     }
 
+    // Method for generating data excel in course level
+    public function dataSpreadsheet(Request $request, $course_id)
+    {
+
+    }
+
     // Removes the program id for a given course (Used In program wizard step 3).
     public function removeFromProgram(Request $request, $course_id): RedirectResponse
     {

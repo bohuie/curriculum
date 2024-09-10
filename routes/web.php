@@ -115,6 +115,9 @@ Route::post('/courses/{course}/amReorder', [CourseController::class, 'amReorder'
 Route::post('/courses/{course}/loReorder', [CourseController::class, 'loReorder'])->name('courses.loReorder');
 Route::post('/courses/{course}/tlaReorder', [CourseController::class, 'tlaReorder'])->name('courses.tlaReorder');
 Route::get('/courses/{course}/pdf', [CourseController::class, 'pdf'])->name('courses.pdf');
+// Route for spreadsheet download in course 
+Route::get('/courses/{course}/dataSpreadsheet', [CourseController::class, 'dataSpreadsheet'])->name('courses.dataSpreadsheet');
+
 Route::delete('/courses/{course}/pdf', [CourseController::class, 'deletePDF'])->name('courses.delete.pdf');
 Route::get('/courses/{course}/remove', [CourseController::class, 'removeFromProgram'])->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor', [CourseController::class, 'emailCourseInstructor'])->name('courses.emailCourseInstructor');

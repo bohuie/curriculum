@@ -40,6 +40,9 @@
         );
         $("#cancelDownloadBtn").click((e) =>
             abort(e.currentTarget)
+        );
+        $("#dataConfirmDownloadBtn").click((e) =>
+            downloadDataExcel(e.currentTarget)
         )
         
     });
@@ -82,7 +85,7 @@
         });     
     }
     function downloadExcel(trigger) {
-        var route = "{{route('programs.spreadsheet', $program->program_id)}}";
+        var route = "{{route('programs.dataSpreadsheet', $program->program_id)}}";
         xhr = $.ajax({
             type: "GET",
             url: route,
@@ -119,6 +122,46 @@
             },
         });     
     }
+    // Data Excel download function
+    function downloadDataExcel(trigger) {
+        var route = "{{route('programs.dataSpreadsheet', $program->program_id)}}";
+        xhr = $.ajax({
+            type: "GET",
+            url: route,
+            dataType: "text",
+            beforeSend: (jqXHR, settings) => {
+                // hide confirmation modal and show download modal
+                $('#dataConfirmDownloadModal').modal('hide');
+                $('#downloadProgressModal').modal('show');
+            },  
+            success: (data, textStatus, jqXHR) => {
+                // hide download modal
+                $('#downloadProgressModal').modal('hide');
+                // check if controller handled an error
+                if (data == -1) 
+                    showErrorToast()
+                else {
+                    // close error toast if open
+                    hideErrorToast();
+                    // Set href as a local object URL
+                    $('#save-file').attr('href', data);
+                    // trigger download
+                    $("#save-file")[0].click();
+                    // delete pdf summary after 15 sec/15,000 ms
+                    setTimeout(() => {deletePDF(route)}, 15000);
+                }
+            },
+            error: (jqXHR, textStatus, error) => {
+                // hide download modal
+                $('#downloadProgressModal').modal('hide');
+                if (textStatus != "abort") {
+                    // show error toast 
+                    showErrorToast();                
+                }
+            },
+        });     
+    }
+
     function abort(event) {
         if (xhr) {
             // abort XMLHttpRequest
