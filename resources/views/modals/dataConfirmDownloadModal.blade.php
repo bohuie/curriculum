@@ -13,12 +13,8 @@
                             </div> 
             
                             <div class="modal-body" style="height: auto;">
-                                <div class="alert alert-info d-flex align-items-center ml-3 mr-3" role="alert" style="text-align:justify">
-                                    <i class="bi bi-info-circle-fill pr-2 fs-1"></i>                        
-                                        <div> Google Chrome and Mozilla Firefox are strongly recommended for this feature.</div>
-                                        
-                                </div>
-                                This feature is not optimized for use with other web browsers and may perform unexpectedly. 
+                                
+                            The new data import feature enables users to seamlessly export raw datasets, providing a flexible foundation for in-depth analysis and customized insights.
                                             
                             </div>
                             <div class="modal-footer">
