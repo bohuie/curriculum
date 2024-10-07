@@ -415,6 +415,33 @@
                     </div>
                 </div>
             </div> 
+            
+            <div class="accordion" id="FAQAccordion18">
+                <div class="accordion-item mb-2">
+                    <!-- FAQ accordion header -->
+                    <h2 class="accordion-header fs-2" id="FAQAccordionHeader18">
+                        <button class="accordion-button collapsed program white-arrow" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQAccordion18" aria-expanded="false" aria-controls="collapseFAQAccordion18">
+                            <h5>How do completed curriculum maps look like? Can I see an example? </h5>                
+                        </button>
+                    </h2>
+                                                        
+                    <!-- FAQ Accordion body -->
+                    <div id="collapseFAQAccordion18" class="accordion-collapse collapse" aria-labelledby="FAQAccordionHeader18" data-bs-parent="FAQAccordion18">
+                        <div class="accordion-body lh-lg">
+                            <p>
+                            Yes, following are two examples of curriculum maps using this site:
+                            <br>
+                            <a href="https://ctl.ok.ubc.ca/wp-content/uploads/sites/186/2024/08/Curriculum-map-for-Psychology-major.pdf">Curriculum Map for Psychology Major (PDF)</a> or <a href="https://ctl.ok.ubc.ca/wp-content/uploads/sites/186/2024/08/CurriculumMAP_Psych_XC_2024.xlsx">Curriculum Map for Psychology Major (Excel)</a>
+                            <br>
+                            <a href="https://ctl.ok.ubc.ca/wp-content/uploads/sites/186/2024/08/Curriculum-map-for-CORH-Certificate.pdf">Curriculum Map for CORH Certificate (PDF)</a> or <a href="https://ctl.ok.ubc.ca/wp-content/uploads/sites/186/2024/08/CurriculumMAP_COHR_XC_2024.xlsx">Curriculum Map for CORH Certificate (Excel)</a></a>
+                            <br>
+                            <br>
+                            The Certificate used three categories for the program's learning outcomes (10 learning outcomes), while the B.A. in Psychology used five categories for the 19 program learning outcomes. Information on assessment methods and Ministry standards follow the curriculum map tables when information is made available. 
+                        </p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
         </div>
     </div>    
 </div>

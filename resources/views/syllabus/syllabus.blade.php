@@ -469,7 +469,7 @@
             <label for="courseSchedule">
                 <table>
                     <tr>
-                        <td><div><h5 class="fw-bold">Schedule of Topics</h5></td>
+                        <td><div><h5 class="fw-bold">Schedule of Topics and Assessments</h5></td>
                         <td><span class="requiredBySenateOK"></span></td>
                         <td><i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="right" title="{{$inputFieldDescriptions['courseSchedule']}}"></i></td>
                     </tr>
@@ -931,14 +931,20 @@
 
         <div class="col-12" id="statementUBCValues"></div>
 
+        
+        <!-- Statement of Student Support -->
+
+        <div class="col-12" id="statementStudentSupport"></div>
+
+
         <!-- Optional Statements -->
         <div class="col-12" id="optionalStatements"></div>
         
         <!-- UBC Academic Integrity Website -->
         <div class="col-12">
-        <label for="academicIntegrityUBC"><h5 class="fw-bold">UBC’s Academic Integrity Website</h5></label>
+        <label for="academicIntegrityUBC"><h5 class="fw-bold">More language regarding GenAI or Academic Integrity</h5></label>
             <br>
-            <p class="inputFieldDescription">For additional language you may consider adding to your syllabus regarding generative artificial intelligence, visit <a href="https://academicintegrity.ubc.ca/generative-ai-syllabus/">UBC's Academic Integrity website.</a></p> 
+            <p class="inputFieldDescription">For additional language you may consider for your syllabus visit <a href="https://academicintegrity.ubc.ca/generative-ai-syllabus/">UBC's Academic Integrity website.</a></p> 
         </div>
 
         <!-- Copyright Statement -->
@@ -2607,7 +2613,7 @@
 
          var optionalStatements =`
 
-         <h5  class="fw-bold">Resources to Support Student Success<span class="requiredBySenateOK"></span></h5>
+         <h5  class="fw-bold">Additional suggestions for syllabi language following best practices<span class="requiredBySenateOK"></span></h5>
                 @if(!empty($syllabus))
                     <div id="optionalSyllabusDesc"></div>
                 @else
@@ -2628,9 +2634,18 @@
             </div>
             `;
 
+            var statementStudentSupport =`
+            
+            <label for="statementStudentSupport"><h5 class="fw-bold">Statement regarding Resources to Support Student Success</h5></label><span class="requiredBySenateOK"></span>
+            <br>
+            <div class="col-12">
+                <blockquote> Visit <a href="https://students.ok.ubc.ca/support/"> the Student Support and Resources page</a> to find one-on-one help or explore resources to support your experience at UBC Okanagan, as well as many other campus services available to all students. </blockquote>
+            </div>
+            `;
+
             var policiesAndRegulations =`
             
-            <label for="policiesAndRegulations"><h5 class="fw-bold">Policies and Regulations</h5></label><span class="requiredBySenateOK"></span>
+            <label for="policiesAndRegulations"><h5 class="fw-bold">Statement on Policies and Regulations</h5></label><span class="requiredBySenateOK"></span>
             <br>
             <div class="col-12">
                 <blockquote> Visit <a href="https://okanagan.calendar.ubc.ca/campus-wide-policies-and-regulations">UBC Okanagan's Academic Calendar</a> for a list of campus-wide regulations and policies, as well as term <a href="https://okanagan.calendar.ubc.ca/dates-and-deadlines">dates and deadlines</a>.</blockquote>
@@ -2678,6 +2693,7 @@
             $('#courseSectionOK').empty();
             $('.requiredBySenateOK').empty();
             $('#statementUBCValues').empty();
+            $('#statementStudentSupport').empty();
             $('#policiesAndRegulations').empty();
             // update faculty dropdown
             setFaculties('Vancouver');
@@ -2695,6 +2711,7 @@
             $('#courseOverview').removeClass('m-0 p-0');
             $('#courseSectionOK').html(courseSectionOK);
             $('#statementUBCValues').html(statementUBCValues);
+            $('#statementStudentSupport').html(statementStudentSupport);
             $('#policiesAndRegulations').html(policiesAndRegulations);
             $('.requiredBySenateOK').html(requiredBySenateLabelOK);
 

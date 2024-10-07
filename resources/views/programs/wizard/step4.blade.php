@@ -55,14 +55,18 @@
                 <h3 class="card-header wizard">
                     <div class="row">
                         <div class="col text-left">
-                            <div class="btn-group">
-                                <button class="btn btn-primary dropdown-toggle" type="button" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-                                    Download <i class="bi bi-download"></i>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="downloadBtn">
-                                    <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#setContentPDF"><i class="bi bi-file-pdf-fill text-danger"></i> PDF </button></li>
-                                    <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel (Chrome and Firefox Only)</button></li>
-                                </ul>
+                        <div class="btn-group">
+                        <button class="btn btn-primary dropdown-toggle me-2" type="button" id="downloadBtn" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                            Download <i class="bi bi-download"></i>
+                        </button>
+                        <button class="btn btn-primary" type="button" id="datadownloadBtn" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal">
+                            Data Download <i class="bi bi-download"></i>
+                        </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="downloadBtn">
+                                <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#setContentPDF"><i class="bi bi-file-pdf-fill text-danger"></i> PDF </button></li>
+                                <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDownloadModal"><i class="bi bi-file-earmark-spreadsheet-fill text-success"></i> Excel (Chrome and Firefox Only)</button></li>
+                            </ul>
                                 
                             </div>
                         </div>
