@@ -889,8 +889,8 @@ class ProgramController extends Controller
      */
     public function spreadsheet(Request $request, int $programId)
     {
-       // Log::Debug("$request");
-        //dd("hi");
+        Log::Debug("Calling Old Spreadsheet");
+    
 
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
@@ -922,7 +922,6 @@ class ProgramController extends Controller
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
 
-            Log::Debug('abc');
             
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
@@ -964,7 +963,7 @@ class ProgramController extends Controller
     // Method for generating data excel in program level
     public function dataSpreadsheet(Request $request, int $programId)
     {
-        
+        Log::Debug("Calling Data Spreadsheet");
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {

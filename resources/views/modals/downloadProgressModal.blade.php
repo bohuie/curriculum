@@ -85,7 +85,7 @@
         });     
     }
     function downloadExcel(trigger) {
-        var route = "{{route('programs.dataSpreadsheet', $program->program_id)}}";
+        var route = "{{route('programs.spreadsheet', $program->program_id)}}";
         xhr = $.ajax({
             type: "GET",
             url: route,
