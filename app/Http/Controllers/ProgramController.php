@@ -922,6 +922,8 @@ class ProgramController extends Controller
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
 
+            Log::Debug('abc');
+            
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
@@ -962,7 +964,6 @@ class ProgramController extends Controller
     // Method for generating data excel in program level
     public function dataSpreadsheet(Request $request, int $programId)
     {
-        Log::Debug("hello dataSpreadshseet");
         
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
@@ -995,7 +996,7 @@ class ProgramController extends Controller
             $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
             $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
             $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
-            $mapSheet=$this->makeOutcomeMapSheetData($spreadsheet, $programId, $styles, $columns);
+            $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
             // get array of urls to charts in this program
@@ -1385,6 +1386,7 @@ class ProgramController extends Controller
      */
     private function makeOutcomeMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
     {
+        //Log::Debug("begining of makeOutcomeMapSheet");
         try {
             // find this program
             $program = Program::find($programId);
@@ -1729,6 +1731,7 @@ class ProgramController extends Controller
 
     public function frequencyDistribution($arr, $store)
     {
+       // Log::Debug($arr);
         //Initialize Array for Frequency Distribution
         $freq = [];
         foreach ($arr as $map) {
@@ -1812,6 +1815,107 @@ class ProgramController extends Controller
         return $store;
     }
 
+    /*
+    public function dominantMappingScale($arr, $store)
+    {
+        //Initialize Array for Frequency Distribution
+        $mappingScales = [];
+
+        //task 1 
+        // Need to identify which mapping scale is used in $arr before using switch
+        // using a switch you will need to repeat the below code foreach of the predefined mapping scale as well as custom 
+        // predefined order or creation order for custom
+
+        // Predefined dominance order (A > D > I)
+        $dominanceOrder = ['A' => 3, 'D' => 2, 'I' => 1];
+        
+        foreach ($arr as $map) {
+            $pl_outcome_id = $map['pl_outcome_id'];
+            $course_id = $map['course_id'];
+            $map_scale_id = $map['map_scale_id'];
+            $l_outcome_id=$map['l_outcome_id'];
+            //Initialize Array
+            $mappingScales[$pl_outcome_id][$course_id][$l_outcome_id] = $map_scale_id;
+        }
+        
+        //task 2 
+        // loop through the dominant array, find the most dominant mapping scale used on course learning outcomes for 1 course(e.g comparing all of the course learnng outcomes mapping to see which is highest)
+        // Goal is to have  $dominant[$pl_outcome_id][$course_id]= $map_scale_id; where $map_scale_id is whatever the most dominant scale was for that course 
+
+        // Store values in the frequency distribution array that was initialized to zero above
+        foreach ($arr as $map) {
+            $pl_outcome_id = $map['pl_outcome_id'];
+            $course_id = $map['course_id'];
+            $map_scale_id = $map['map_scale_id'];
+            // check if map_scale_value is in the frequency array and give it the value of 1
+            if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
+                $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
+            // if the value is found again, and is not zero, increment
+            } else {
+                $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
+            }
+        }
+        // loop through the frequencies of the mapping values
+        foreach ($freq as $plOutcomeId => $dist) {
+            foreach ($dist as $courseId => $d) {
+                $weight = 0;
+                $tieResults = [];
+                $id = null;
+                //count the number of times a mapping scales appears for a program learning outcome
+                foreach ($d as $ms_Id => $mapScaleWeight) {
+                    //check if the current ($mapScaleWeight) > than the previously stored value
+                    if ($weight < $mapScaleWeight) {
+                        $weight = $mapScaleWeight;
+                        $id = $ms_Id;
+                    }
+                }
+                // Check if the largest weighted value ties with another value
+                foreach ($d as $ms_Id => $mapScaleWeight) {
+                    if ($weight == $mapScaleWeight && $id != $ms_Id) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
+                        $tieResults = array_keys($d, $weight);
+                    }
+                }
+                // if A tie is found..
+                if ($tieResults != null) {
+                    $stringResults = '';
+                    $numItems = count($tieResults);
+                    $i = 0;
+                    // for each tie value append to a string
+                    foreach ($tieResults as $tieResult) {
+                        // appends '/' only if it's not at the last index in the array
+                        if (++$i !== $numItems) {
+                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation').' / ';
+                        } else {
+                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation');
+                        }
+                    }
+                    // Store the results array as the map_scale_value key
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_abv' => $stringResults,
+                    ];
+                    // Store a new array to be able to determine if the mapping scale value comes from the result of a tie
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_id_tie' => true,
+                    ];
+                    // Store the frequencies
+                    $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+                } else {
+                    // If no tie is present, store the strongest weighted map_scale_value
+                    $store[$plOutcomeId][$courseId] = [
+                        'map_scale_id' => array_search($weight, $d),
+                    ];
+                    $store[$plOutcomeId][$courseId] += [
+                        'map_scale_abv' => MappingScale::where('map_scale_id', array_search($weight, $d))->value('abbreviation'),
+                    ];
+                    // Store the frequencies
+                    $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+                }
+            }
+        }
+
+        return $store;
+    }
+    */
     public function replaceIdsWithAbv($store, $arr)
     {
         //Initialize Array for Frequency Distribution
@@ -2172,7 +2276,8 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
     }
 }
 
-private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+    // This is the new one with dominant algorithm
+private function makeOutcomeMapSheetDominant(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
     {
         try {
             // find this program
@@ -2336,5 +2441,32 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $programI
             return $exception;
         }
     }
+
+    public function dominantMappingScale($arr, $store)
+{
+    // Define the hierarchy of mapping scales
+    $scaleHierarchy = ['A' => 3, 'D' => 2, 'I' => 1];
+
+    foreach ($arr as $map) {
+        $pl_outcome_id = $map['pl_outcome_id'];
+        $course_id = $map['course_id'];
+        $map_scale_id = $map['map_scale_id'];
+        
+        // Get the abbreviation for the current map scale
+        $currentScale = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+        
+        // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+        if (!isset($store[$pl_outcome_id][$course_id]) || 
+            $scaleHierarchy[$currentScale] > $scaleHierarchy[$store[$pl_outcome_id][$course_id]['map_scale_abv']]) {
+            
+            $store[$pl_outcome_id][$course_id] = [
+                'map_scale_id' => $map_scale_id,
+                'map_scale_abv' => $currentScale
+            ];
+        }
+    }
+
+    return $store;
+}
 
 }
