@@ -996,19 +996,21 @@ class ProgramController extends Controller
             $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
             $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
             $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+            $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$programSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $programSheet)
             {
                 
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $courseSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
+                $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
                 $programSheet->getColumnDimension($letter)->setAutoSize(true);
             });
            
@@ -1550,6 +1552,183 @@ class ProgramController extends Controller
         }
     }
 
+    private function makeDominantMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+    {
+        //Log::Debug("begining of makeOutcomeMapSheet");
+        try {
+            // find this program
+            $program = Program::find($programId);
+            // create a sheet for outcome maps
+            $sheet = $spreadsheet->createSheet();
+            // set the sheet name
+            $sheet->setTitle('Program MAP Table');
+            // get this programs learning outcomes
+            $programLearningOutcomes = $program->programLearningOutcomes;
+            // get this programs mapping scales
+            $mappingScaleLevels = $program->mappingScaleLevels;
+            // get this programs courses
+            $courses = $program->courses;
+            // if there are no PLOs or courses in this program, return an empty sheet
+            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
+                return $sheet;
+            }
+
+            // add primary headings (courses and program learning outcomes) to program outcome map sheet
+            $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
+            // apply styling to the primary headings
+            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+            // span program learning outcomes header over the number of learning outcomes
+            $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            // create courses array to add to the outcome maps sheet
+            $courses = [];
+            foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+                $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+            }
+            // add courses to their column in the sheet
+            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+            // apply a secondary header style and
+            $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+            // make courses font bold
+            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+            // for each plo, get the outcome map from its course mapping $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$course->course_id] = map
+            $coursesToCLOs = $this->getCoursesOutcomes([], $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
+            $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, []);
+            /*
+            //Initialize array for each pl_outcome_id with the value of null
+            //$store[$ar['pl_outcome_id']][$ar['course_id']]['frequencies'] = [];
+            // then in the frequencyDistribution method it is used like this:$store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+            $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, []);
+
+            //returns $store array filled with frequencies of each learning outcome map
+            $PLOsToCoursesToOutcomeMap = $this->frequencyDistribution($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+            */
+            $PLOsToCoursesToOutcomeMap = $this->createDominantArray($programOutcomeMaps, []);
+            $PLOsToCoursesToOutcomeMap = $this->dominantMappingScale($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+
+            //$PLOsToCoursesToOutcomeMap = $this->replaceIdsWithAbv($PLOsToCoursesToOutcomeMap, $programOutcomeMaps);
+            //$PLOsToCoursesToOutcomeMap = $this->assignColours($PLOsToCoursesToOutcomeMap);
+
+            // $categoryColInMapSheet keeps track of which column to put each category in the program outcome map sheet. $alphabetUpper[1] = 'B'
+            $categoryColInMapSheet = 1;
+            foreach ($program->ploCategories as $category) {
+
+                if ($category->plos->count() > 0) {
+                    $plosInCategory = $category->plos()->get();
+                    // add category to outcome map sheet
+                    $sheet->setCellValue($columns[$categoryColInMapSheet].'2', $category->plo_category);
+                    // apply a secondary header style to category heading
+                    $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    // span category over the number of plos in the category
+                    $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $plosInCategory->count() - 1].'2');
+
+                    // create an array of plos in this category to add to the sheet under its category
+                    $plosInCategoryArr = $plosInCategory->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                        // create array of map scale abv
+                        $ploToCourseMapArr = [];
+                        // check if there is a map value for this plo and each course
+                        foreach ($courses as $courseId => $courseCode) {
+                            if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                                array_push($ploToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]);
+                            } else {
+                                array_push($ploToCourseMapArr, '');
+                            }
+                        }
+
+                        // add array of map scale abv to the plo entry
+                        $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                        // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                        if ($plo->plo_shortphrase) {
+                            return $plo->plo_shortphrase;
+                        } else {
+                            return $plo->pl_outcome;
+                        }
+
+                    })->toArray();
+
+                    // add plos in this category to the sheet
+                    $sheet->fromArray($plosInCategoryArr, null, $columns[$categoryColInMapSheet].'3');
+                    // update category position trackers for learning outcome sheet and outcome map sheet
+                    $categoryColInMapSheet = $categoryColInMapSheet + $plosInCategory->count();
+                }
+            }
+
+            // get uncategorized PLOs
+            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', null)->values();
+            if ($uncategorizedPLOs->count() > 0) {
+                // add uncategorized category to sheet
+                $sheet->setCellValue($columns[$categoryColInMapSheet].'2', 'Uncategorized');
+                // apply secondary heading to uncategorized header
+                $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                // span uncategorized header over the number of uncategorized plos
+                $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $uncategorizedPLOs->count() - 1].'2');
+
+                // create an array of uncategorized plos to add to the sheet under the uncategorized heading
+                $uncategorizedPLOsArr = $uncategorizedPLOs->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                    // create array of map scale abv
+                    $uncategorizedPLOsToCourseMapArr = [];
+                    // check if there is a map value for this plo and each course
+                    foreach ($courses as $courseId => $courseCode) {
+                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                            array_push($uncategorizedPLOsToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]);
+                        } else {
+                            array_push($uncategorizedPLOsToCourseMapArr, '');
+                        }
+                    }
+
+                    // add array of map scale abv to the plo entry
+                    $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                    // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                    if ($plo->plo_shortphrase) {
+                        return $plo->plo_shortphrase;
+                    } else {
+                        return $plo->pl_outcome;
+                    }
+
+                })->toArray();
+
+                // add plos in this category to the sheet
+                $sheet->fromArray($uncategorizedPLOsArr, null, $columns[$categoryColInMapSheet].'3');
+            }
+
+            // make the list of categories in the program outcome map sheet bold
+            $sheet->getStyle('B2:Z2')->getFont()->setBold(true);
+            // make the list of plos in the program outcome map sheet bold
+            $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
+
+            // create a wizard factory for creating new conditional formatting rules
+            $wizardFactory = new Wizard('B4:Z50');
+            foreach ($mappingScaleLevels as $level) {
+                // create a new conditional formatting rule based on the map scale level
+                $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                $levelStyle = new Style(false, true);
+                $levelStyle->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $levelStyle->getFill()
+                    ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                $conditionalStyles[] = $wizard->getConditional();
+                // add conditional formatting rule to the outcome maps sheet
+                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+            }
+
+            return $sheet;
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
     /**
      * Delete the the temporarily saved charts for this program overview.
      *
@@ -1807,114 +1986,14 @@ class ProgramController extends Controller
                     ];
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+                    
                 }
             }
         }
-
+        Log::Debug($store);
         return $store;
     }
 
-    /*
-    public function dominantMappingScale($arr, $store)
-    {
-        //Initialize Array for Frequency Distribution
-        $mappingScales = [];
-
-        //task 1 
-        // Need to identify which mapping scale is used in $arr before using switch
-        // using a switch you will need to repeat the below code foreach of the predefined mapping scale as well as custom 
-        // predefined order or creation order for custom
-
-        // Predefined dominance order (A > D > I)
-        $dominanceOrder = ['A' => 3, 'D' => 2, 'I' => 1];
-        
-        foreach ($arr as $map) {
-            $pl_outcome_id = $map['pl_outcome_id'];
-            $course_id = $map['course_id'];
-            $map_scale_id = $map['map_scale_id'];
-            $l_outcome_id=$map['l_outcome_id'];
-            //Initialize Array
-            $mappingScales[$pl_outcome_id][$course_id][$l_outcome_id] = $map_scale_id;
-        }
-        
-        //task 2 
-        // loop through the dominant array, find the most dominant mapping scale used on course learning outcomes for 1 course(e.g comparing all of the course learnng outcomes mapping to see which is highest)
-        // Goal is to have  $dominant[$pl_outcome_id][$course_id]= $map_scale_id; where $map_scale_id is whatever the most dominant scale was for that course 
-
-        // Store values in the frequency distribution array that was initialized to zero above
-        foreach ($arr as $map) {
-            $pl_outcome_id = $map['pl_outcome_id'];
-            $course_id = $map['course_id'];
-            $map_scale_id = $map['map_scale_id'];
-            // check if map_scale_value is in the frequency array and give it the value of 1
-            if ($freq[$pl_outcome_id][$course_id][$map_scale_id] == 0) {
-                $freq[$pl_outcome_id][$course_id][$map_scale_id] = 1;
-            // if the value is found again, and is not zero, increment
-            } else {
-                $freq[$pl_outcome_id][$course_id][$map_scale_id] += 1;
-            }
-        }
-        // loop through the frequencies of the mapping values
-        foreach ($freq as $plOutcomeId => $dist) {
-            foreach ($dist as $courseId => $d) {
-                $weight = 0;
-                $tieResults = [];
-                $id = null;
-                //count the number of times a mapping scales appears for a program learning outcome
-                foreach ($d as $ms_Id => $mapScaleWeight) {
-                    //check if the current ($mapScaleWeight) > than the previously stored value
-                    if ($weight < $mapScaleWeight) {
-                        $weight = $mapScaleWeight;
-                        $id = $ms_Id;
-                    }
-                }
-                // Check if the largest weighted value ties with another value
-                foreach ($d as $ms_Id => $mapScaleWeight) {
-                    if ($weight == $mapScaleWeight && $id != $ms_Id) {    // if a tie is found store the mapping scale values (I.e: I, A, D) in and array
-                        $tieResults = array_keys($d, $weight);
-                    }
-                }
-                // if A tie is found..
-                if ($tieResults != null) {
-                    $stringResults = '';
-                    $numItems = count($tieResults);
-                    $i = 0;
-                    // for each tie value append to a string
-                    foreach ($tieResults as $tieResult) {
-                        // appends '/' only if it's not at the last index in the array
-                        if (++$i !== $numItems) {
-                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation').' / ';
-                        } else {
-                            $stringResults .= ''.MappingScale::where('map_scale_id', $tieResult)->value('abbreviation');
-                        }
-                    }
-                    // Store the results array as the map_scale_value key
-                    $store[$plOutcomeId][$courseId] += [
-                        'map_scale_abv' => $stringResults,
-                    ];
-                    // Store a new array to be able to determine if the mapping scale value comes from the result of a tie
-                    $store[$plOutcomeId][$courseId] += [
-                        'map_scale_id_tie' => true,
-                    ];
-                    // Store the frequencies
-                    $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
-                } else {
-                    // If no tie is present, store the strongest weighted map_scale_value
-                    $store[$plOutcomeId][$courseId] = [
-                        'map_scale_id' => array_search($weight, $d),
-                    ];
-                    $store[$plOutcomeId][$courseId] += [
-                        'map_scale_abv' => MappingScale::where('map_scale_id', array_search($weight, $d))->value('abbreviation'),
-                    ];
-                    // Store the frequencies
-                    $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
-                }
-            }
-        }
-
-        return $store;
-    }
-    */
     public function replaceIdsWithAbv($store, $arr)
     {
         //Initialize Array for Frequency Distribution
@@ -2275,176 +2354,33 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
     }
 }
 
-    // This is the new one with dominant algorithm
-private function makeOutcomeMapSheetDominant(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+    public function createDominantArray($arr, $store)
     {
-        try {
-            // find this program
-            $program = Program::find($programId);
-            // create a sheet for outcome maps
-            $sheet = $spreadsheet->createSheet();
-            // set the sheet name
-            $sheet->setTitle('Program MAP Table');
-            // get this programs learning outcomes
-            $programLearningOutcomes = $program->programLearningOutcomes;
-            // get this programs mapping scales
-            $mappingScaleLevels = $program->mappingScaleLevels;
-            // get this programs courses
-            $courses = $program->courses;
-            // if there are no PLOs or courses in this program, return an empty sheet
-            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
-                return $sheet;
-            }
-
-            // add primary headings (courses and program learning outcomes) to program outcome map sheet
-            $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
-            // apply styling to the primary headings
-            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-            // span program learning outcomes header over the number of learning outcomes
-            $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
-            // create courses array to add to the outcome maps sheet
-            $courses = [];
-            foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
-                $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
-            }
-            // add courses to their column in the sheet
-            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
-            // apply a secondary header style and
-            $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
-            // make courses font bold
-            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
-
-            // for each plo, get the outcome map from its course mapping $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$course->course_id] = map
-            $coursesToCLOs = $this->getCoursesOutcomes([], $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
-            $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, []);
-            $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, []);
-            $PLOsToCoursesToOutcomeMap = $this->frequencyDistribution($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
-            $PLOsToCoursesToOutcomeMap = $this->replaceIdsWithAbv($PLOsToCoursesToOutcomeMap, $programOutcomeMaps);
-
-            // $categoryColInMapSheet keeps track of which column to put each category in the program outcome map sheet. $alphabetUpper[1] = 'B'
-            $categoryColInMapSheet = 1;
-            foreach ($program->ploCategories as $category) {
-
-                if ($category->plos->count() > 0) {
-                    $plosInCategory = $category->plos()->get();
-                    // add category to outcome map sheet
-                    $sheet->setCellValue($columns[$categoryColInMapSheet].'2', $category->plo_category);
-                    // apply a secondary header style to category heading
-                    $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
-                    // span category over the number of plos in the category
-                    $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $plosInCategory->count() - 1].'2');
-
-                    // create an array of plos in this category to add to the sheet under its category
-                    $plosInCategoryArr = $plosInCategory->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
-                        // create array of map scale abv
-                        $ploToCourseMapArr = [];
-                        // check if there is a map value for this plo and each course
-                        foreach ($courses as $courseId => $courseCode) {
-                            if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
-                                array_push($ploToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
-                            } else {
-                                array_push($ploToCourseMapArr, '');
-                            }
-                        }
-
-                        // add array of map scale abv to the plo entry
-                        $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
-
-                        // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
-                        if ($plo->plo_shortphrase) {
-                            return $plo->plo_shortphrase;
-                        } else {
-                            return $plo->pl_outcome;
-                        }
-
-                    })->toArray();
-
-                    // add plos in this category to the sheet
-                    $sheet->fromArray($plosInCategoryArr, null, $columns[$categoryColInMapSheet].'3');
-                    // update category position trackers for learning outcome sheet and outcome map sheet
-                    $categoryColInMapSheet = $categoryColInMapSheet + $plosInCategory->count();
-                }
-            }
-
-            // get uncategorized PLOs
-            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', null)->values();
-            if ($uncategorizedPLOs->count() > 0) {
-                // add uncategorized category to sheet
-                $sheet->setCellValue($columns[$categoryColInMapSheet].'2', 'Uncategorized');
-                // apply secondary heading to uncategorized header
-                $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
-                // span uncategorized header over the number of uncategorized plos
-                $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $uncategorizedPLOs->count() - 1].'2');
-
-                // create an array of uncategorized plos to add to the sheet under the uncategorized heading
-                $uncategorizedPLOsArr = $uncategorizedPLOs->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
-                    // create array of map scale abv
-                    $uncategorizedPLOsToCourseMapArr = [];
-                    // check if there is a map value for this plo and each course
-                    foreach ($courses as $courseId => $courseCode) {
-                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
-                            array_push($uncategorizedPLOsToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
-                        } else {
-                            array_push($uncategorizedPLOsToCourseMapArr, '');
-                        }
-                    }
-
-                    // add array of map scale abv to the plo entry
-                    $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
-
-                    // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
-                    if ($plo->plo_shortphrase) {
-                        return $plo->plo_shortphrase;
-                    } else {
-                        return $plo->pl_outcome;
-                    }
-
-                })->toArray();
-
-                // add plos in this category to the sheet
-                $sheet->fromArray($uncategorizedPLOsArr, null, $columns[$categoryColInMapSheet].'3');
-            }
-
-            // make the list of categories in the program outcome map sheet bold
-            $sheet->getStyle('B2:Z2')->getFont()->setBold(true);
-            // make the list of plos in the program outcome map sheet bold
-            $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
-
-            // create a wizard factory for creating new conditional formatting rules
-            $wizardFactory = new Wizard('B4:Z50');
-            foreach ($mappingScaleLevels as $level) {
-                // create a new conditional formatting rule based on the map scale level
-                $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
-                $levelStyle = new Style(false, true);
-                $levelStyle->getFill()
-                    ->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
-                $levelStyle->getFill()
-                    ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
-                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
-                $conditionalStyles[] = $wizard->getConditional();
-                // add conditional formatting rule to the outcome maps sheet
-                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
-            }
-
-            return $sheet;
-
-        } catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
-            Log::error($message.' ...\n');
-            Log::error('Code - '.$exception->getCode());
-            Log::error('File - '.$exception->getFile());
-            Log::error('Line - '.$exception->getLine());
-            Log::error($exception->getMessage());
-
-            return $exception;
+        // Initialize array for each pl_outcome_id with the value of null
+        foreach ($arr as $ar) {
+            $store[$ar['pl_outcome_id']] = null;
         }
+        // Initialize Array for Storing
+        foreach ($arr as $ar) {
+            if ($store[$ar['pl_outcome_id']] == null || $store[$ar['pl_outcome_id']] == $ar['pl_outcome_id']) {
+                $store[$ar['pl_outcome_id']] = [
+                    $ar['course_id'] => [
+                    ],
+                ];
+            } else {
+                $store[$ar['pl_outcome_id']][$ar['course_id']] = [];
+
+            }
+        }
+
+        return $store;
     }
 
     public function dominantMappingScale($arr, $store)
 {
     // Define the hierarchy of mapping scales
-    $scaleHierarchy = ['A' => 3, 'D' => 2, 'I' => 1];
+    $scaleHierarchy = [1 => 'A', 2 => 'D', 3 => 'I'];
+
 
     foreach ($arr as $map) {
         $pl_outcome_id = $map['pl_outcome_id'];
@@ -2455,16 +2391,15 @@ private function makeOutcomeMapSheetDominant(Spreadsheet $spreadsheet, int $prog
         $currentScale = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
         
         // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
-        if (!isset($store[$pl_outcome_id][$course_id]) || 
-            $scaleHierarchy[$currentScale] > $scaleHierarchy[$store[$pl_outcome_id][$course_id]['map_scale_abv']]) {
+        if (!isset($store[$pl_outcome_id][$course_id]) || $scaleHierarchy[$map_scale_id] >= $store[$pl_outcome_id][$course_id]) {
             
-            $store[$pl_outcome_id][$course_id] = [
-                'map_scale_id' => $map_scale_id,
-                'map_scale_abv' => $currentScale
-            ];
+            $store[$pl_outcome_id][$course_id] = $map_scale_id;
+            //this is a weird part because $scaleHierarchy[$map_scale_id] >= $store[$pl_outcome_id][$course_id] is comparing, so this only works now because I,D,A are set to 1, 2, 3
+            //will need to create two new arrays of scaleHierarchy and currentDominantScale, to compare values
+
         }
     }
-
+    Log::Debug($store);
     return $store;
 }
 
