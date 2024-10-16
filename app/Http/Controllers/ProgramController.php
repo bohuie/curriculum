@@ -1990,6 +1990,7 @@ class ProgramController extends Controller
                 }
             }
         }
+        Log::Debug("Store Used for Freq Dist");
         Log::Debug($store);
         return $store;
     }
@@ -2388,10 +2389,16 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
         $map_scale_id = $map['map_scale_id'];
         
         // Get the abbreviation for the current map scale
-        $currentScale = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+        
+        //get mapping scale ID
+        $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+        $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+        $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+        //get the current dominance value for current stored scale ID
+
         
         // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
-        if (!isset($store[$pl_outcome_id][$course_id]) || $scaleHierarchy[$map_scale_id] >= $store[$pl_outcome_id][$course_id]) {
+        if (!isset($store[$pl_outcome_id][$course_id]) || $scaleHierarchy[$map_scale_id] >= $currentStoredDominantScaleValue) {
             
             $store[$pl_outcome_id][$course_id] = $map_scale_id;
             //this is a weird part because $scaleHierarchy[$map_scale_id] >= $store[$pl_outcome_id][$course_id] is comparing, so this only works now because I,D,A are set to 1, 2, 3
@@ -2399,6 +2406,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
 
         }
     }
+    Log::Debug("Store Array Used for dominantMappingScale");
     Log::Debug($store);
     return $store;
 }
