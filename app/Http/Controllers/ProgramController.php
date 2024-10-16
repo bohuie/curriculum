@@ -2400,7 +2400,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
         // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
         if (!isset($store[$pl_outcome_id][$course_id]) || $scaleHierarchy[$map_scale_id] >= $currentStoredDominantScaleValue) {
             
-            $store[$pl_outcome_id][$course_id] = $map_scale_id;
+            $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
             //this is a weird part because $scaleHierarchy[$map_scale_id] >= $store[$pl_outcome_id][$course_id] is comparing, so this only works now because I,D,A are set to 1, 2, 3
             //will need to create two new arrays of scaleHierarchy and currentDominantScale, to compare values
 
