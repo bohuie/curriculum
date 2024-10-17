@@ -2547,7 +2547,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
 
             }
             
-            $scaleHierarchy = array_reverse($scaleHierarchy);
+            //$scaleHierarchy = array_reverse($scaleHierarchy);
 
 
             foreach ($arr as $map) {
