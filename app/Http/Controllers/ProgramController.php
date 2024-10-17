@@ -2377,14 +2377,14 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
     }
 
     public function dominantMappingScale($arr, $store){
-           
+
     $scaleCategoryId=null;
     //find out which Mapping scale group we are looking at (first one found) or if they are custom
     foreach($arr as $map){
         $map_scale_id = $map['map_scale_id'];
         //if mapping scale is found and it is not N/A
         if (isset($map['map_scale_id']) &&  $map_scale_id!=0){
-
+            Log::Debug($map_scale_id."what");
             $scaleCategoryId = StandardScale::where('standard_scale_id', (100+$map_scale_id))->value('scale_category_id');
             
             break;
@@ -2397,7 +2397,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
         $scaleCategoryId = 7;
     }
     
-    
+    Log::Debug("CategoryId = ".$scaleCategoryId);
     //different scaleHierarchies for each MappingScaleGroup using a switch
     switch($scaleCategoryId){
         case 1:
@@ -2430,6 +2430,150 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
                 }
             }
             
+        break;
+
+        case 2:
+                
+                // Define the hierarchy of mapping scales
+            $scaleHierarchy = [1 => 'Mi', 2 => 'Ma', 3 => 'S', 4 => 'P'];
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+            
+        break;
+
+        case 3:
+                
+                // Define the hierarchy of mapping scales
+            $scaleHierarchy = [1 => 'Y'];
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+        
+        break;
+
+        case 4:
+                
+                // Define the hierarchy of mapping scales
+            $scaleHierarchy = [1 => 'F', 2 => 'E'];
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+        
+        break;
+
+        case 7:
+            $customMappingScales=[];
+            $scaleHierarchy = [];
+            //loop through list, get all unique mapping scales
+            foreach ($arr as $map) {
+                $map_scale_id = $map['map_scale_id'];
+                if (!in_array($map_scale_id, $customMappingScales)){
+                    array_push($customMappingScales, $map_scale_id);
+                }
+            }
+            sort($customMappingScales);
+
+            foreach($customMappingScales as $customMappingScale){
+                $mappingScaleCustomAbv = MappingScale::where('map_scale_id', $customMappingScale)->value('abbreviation');
+                // Define the hierarchy of mapping scales
+                array_push($scaleHierarchy, $mappingScaleCustomAbv);
+
+            }
+            
+            $scaleHierarchy = array_reverse($scaleHierarchy);
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+        
         break;
     }
 
