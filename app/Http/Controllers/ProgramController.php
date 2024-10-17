@@ -2380,7 +2380,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
     public function dominantMappingScale($arr, $store)
 {
     // Define the hierarchy of mapping scales
-    $scaleHierarchy = [1 => 'A', 2 => 'D', 3 => 'I'];
+    $scaleHierarchy = [1 => 'I', 2 => 'D', 3 => 'A'];
 
 
     foreach ($arr as $map) {
@@ -2391,16 +2391,21 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
         // Get the abbreviation for the current map scale
         
         //get mapping scale ID
-        $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
-        $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
-        $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+        if(is_string($store[$pl_outcome_id][$course_id])){
+        $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+        } else {
+            $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+            $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+            $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+        }
         //get the current dominance value for current stored scale ID
-
-        
+        $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+        $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
         // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
-        if (!isset($store[$pl_outcome_id][$course_id]) || $scaleHierarchy[$map_scale_id] >= $currentStoredDominantScaleValue) {
-            
+        if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+            Log::Debug("Comparing".$currentViewedDominantScaleValue." is greater than or equal ".$currentStoredDominantScaleValue);
             $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+            Log::Debug($store[$pl_outcome_id][$course_id]);
             //this is a weird part because $scaleHierarchy[$map_scale_id] >= $store[$pl_outcome_id][$course_id] is comparing, so this only works now because I,D,A are set to 1, 2, 3
             //will need to create two new arrays of scaleHierarchy and currentDominantScale, to compare values
 
