@@ -996,6 +996,7 @@ class ProgramController extends Controller
             $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
             $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
             $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+            $assessmentMethod=$this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
             $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
@@ -1003,7 +1004,7 @@ class ProgramController extends Controller
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $programSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet,$assessmentMethod,$programSheet)
             {
                 
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -1012,6 +1013,7 @@ class ProgramController extends Controller
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
                 $programSheet->getColumnDimension($letter)->setAutoSize(true);
+                $assessmentMethod->getColumnDimension($letter)->setAutoSize(true);
             });
            
             // generate the spreadsheet
@@ -2384,7 +2386,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
         $map_scale_id = $map['map_scale_id'];
         //if mapping scale is found and it is not N/A
         if (isset($map['map_scale_id']) &&  $map_scale_id!=0){
-            Log::Debug($map_scale_id."what");
+            //Log::Debug($map_scale_id."what");
             $scaleCategoryId = StandardScale::where('standard_scale_id', (100+$map_scale_id))->value('scale_category_id');
             
             break;
@@ -2581,5 +2583,96 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
 
     return $store;
 }
+
+private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->value('course_id');
+        $assesmentMethodArray = [];
+        Log::Debug("Course IDs");
+        Log::Debug($courseIds);
+
+        if (!is_array($courseIds)){
+            $assessmentMethod = AssessmentMethod::where('course_id',$courseIds);
+            $assessmentMethodArray=[$assessmentMethod];
+            if(is_object($assessmentMethod)){
+                Log::Debug("yay found assessment method");
+            }else{
+                Log::Debug("nay");
+            }
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $assessmentMethod = AssesmentMethod::where('course_id',$courseId);
+                if(is_object($assessmentMethod)){
+                    Log::Debug("yay found assessment method (multiple)");
+                }else{
+                    Log::Debug("nay");
+                }
+                //create an array of objects for you to loop through and access attributes below
+                array_push($assessmentMethodArray, $assessmentMethod);
+            }
+
+        }
+        Log::Debug("assessmentMethodArray");
+        Log::Debug(count($assessmentMethodArray));
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Student Assessment Method');
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+        $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        foreach ($assesmentMethodArray as $assessmentMethod) {
+            // Add assessment method to the sheet under the appropriate column
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
+            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+            $assessmentWeightages = [];
+            foreach ($courses as $courseId => $courseCode) {
+                $weightage = $assessmentMethod->weightages()->where('course_id', $courseId)->value('weight');
+                array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
+            }
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'4');
+
+            $categoryColInSheet++;
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
 
 }
