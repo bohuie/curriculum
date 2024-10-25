@@ -890,7 +890,7 @@ class ProgramController extends Controller
      */
     public function spreadsheet(Request $request, int $programId)
     {
-        Log::Debug("Calling Old Spreadsheet");
+        //Log::Debug("Calling Old Spreadsheet");
     
 
         // set the max time to generate a pdf summary as 5 mins/300 seconds
@@ -964,7 +964,7 @@ class ProgramController extends Controller
     // Method for generating data excel in program level
     public function dataSpreadsheet(Request $request, int $programId)
     {
-        Log::Debug("Calling Data Spreadsheet");
+        //Log::Debug("Calling Data Spreadsheet");
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
@@ -2447,93 +2447,7 @@ private function makeProgramInfoSheetData(Spreadsheet $spreadsheet, int $program
     }
 }
 
-public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
-{
-    try {
-        // Find the program
-        $program = Program::find($programId);
-        // Create a new sheet for assessment methods map
-        $sheet = $spreadsheet->createSheet();
-        // Set the sheet name
-        $sheet->setTitle('Assessment Methods Map');
-        // Get the program's courses
-        $courses = $program->courses;
-        // Get all unique assessment methods across all courses
-        $allAssessmentMethods = AssessmentMethod::all();
 
-        // If there are no courses or assessment methods, return an empty sheet
-        if ($courses->count() < 1 || $allAssessmentMethods->count() < 1) {
-            return $sheet;
-        }
-
-        // Add primary headings: 'Courses' and 'Assessment Methods' to the sheet
-        $sheet->fromArray(['Courses', 'Assessment Methods'], null, 'A1');
-        // Apply styling to the primary headings
-        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        // Span assessment methods header across the number of methods
-        $sheet->mergeCells('B1:' . $columns[$allAssessmentMethods->count()] . '1');
-
-        // Initialize an array to store the courses
-        $courseArray = [];
-        foreach ($courses as $course) {
-            $courseArray[$course->course_id] = $course->course_code . ' ' . $course->course_num;
-        }
-
-        // Add courses to the first column
-        $sheet->fromArray(array_chunk($courseArray, 1), null, 'A4');
-        // Apply secondary header style to the course column
-        $sheet->getStyle('A4:A' . strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
-        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
-
-        // For each course, map it to assessment methods with weightage values
-        $assessmentMap = [];
-        foreach ($courses as $course) {
-            // Get the assessment methods for this course
-            $courseAssessments = AssessmentMethod::where('course_id', $course->course_id)->get();
-            // Map assessment method name to weightage
-            $assessmentWeightageMap = $courseAssessments->pluck('weightage', 'name')->toArray();
-
-            // Initialize an array to store weightages for each assessment method
-            $weightageRow = [];
-            foreach ($allAssessmentMethods as $method) {
-                if (isset($assessmentWeightageMap[$method->name])) {
-                    // Add the weightage value for this method
-                    array_push($weightageRow, $assessmentWeightageMap[$method->name]);
-                } else {
-                    // If no weightage, insert 0
-                    array_push($weightageRow, 0);
-                }
-            }
-
-            // Add the weightage row to the assessment map array
-            $assessmentMap[] = $weightageRow;
-        }
-
-        // Add the assessment weightages to the sheet
-        $sheet->fromArray($assessmentMap, null, 'B4');
-
-        // Now we apply conditional formatting based on weightage (if needed), or simply bold styling
-        // Make the list of assessment methods in the sheet bold
-        $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
-
-        // Adjust column widths
-        foreach (range('A', $columns[$allAssessmentMethods->count()]) as $column) {
-            $sheet->getColumnDimension($column)->setAutoSize(true);
-        }
-
-        return $sheet;
-
-    } catch (Throwable $exception) {
-        $message = 'There was an error downloading the assessment mapping sheet for: ' . $program->program;
-        Log::error($message);
-        Log::error('Code - ' . $exception->getCode());
-        Log::error('File - ' . $exception->getFile());
-        Log::error('Line - ' . $exception->getLine());
-        Log::error($exception->getMessage());
-
-        return $spreadsheet->getActiveSheet();
-    }
-}
 
     public function createDominantArray($arr, $store)
     {
@@ -2587,7 +2501,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
         $map_scale_id = $map['map_scale_id'];
         //if mapping scale is found and it is not N/A
         if (isset($map['map_scale_id']) &&  $map_scale_id!=0){
-            Log::Debug($map_scale_id."what");
+            //Log::Debug($map_scale_id."what");
             $scaleCategoryId = StandardScale::where('standard_scale_id', (100+$map_scale_id))->value('scale_category_id');
             
             break;
@@ -2600,7 +2514,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
         $scaleCategoryId = 7;
     }
     
-    Log::Debug("CategoryId = ".$scaleCategoryId);
+    //Log::Debug("CategoryId = ".$scaleCategoryId);
     //different scaleHierarchies for each MappingScaleGroup using a switch
     switch($scaleCategoryId){
         case 1:
@@ -2659,7 +2573,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
                 $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
                 // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
                 if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
-                    Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
                     $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
 
                 }
@@ -2691,7 +2605,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
                 $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
                 // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
                 if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
-                    Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
                     $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
 
                 }
@@ -2723,7 +2637,7 @@ public function makeAssessmentMapSheet(Spreadsheet $spreadsheet, int $programId,
                 $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
                 // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
                 if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
-                    Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
                     $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
 
                 }
@@ -2816,34 +2730,40 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
     try {
         // Find the program
         $program = Program::find($programId);
-        $courseIds = CourseProgram::where('program_id', $programId)->get();
-        $assesmentMethodArray = [];
-        Log::Debug("Course IDs");
-        Log::Debug($courseIds);
+        $courseIds = CourseProgram::where('program_id', $programId)->value("course_id");
+        $assessmentMethodArray = [];
 
-        if (!is_array($courseIds)){
-            $assessmentMethod = AssessmentMethod::where('course_id',$courseIds);
-            $assessmentMethodArray=[$assessmentMethod];
-            if(is_object($assessmentMethod)){
-                Log::Debug("yay found assessment method");
+        if (!is_array($courseIds)){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
+            
+            $assessmentMethods = AssessmentMethod::where('course_id',$courseIds)->get();
+            if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
+                array_push($assessmentMethodArray, $assessmentMethods);
             }else{
-                Log::Debug("nay");
+                if($assessmentMethods!=NULL){
+                    foreach($assessmentMethods as $assessmentMethod){
+                        array_push($assessmentMethodArray, $assessmentMethod);
+                    }
+                }
             }
+
         }else{
 
             foreach( $courseIds as $courseId){
-                $assessmentMethod = AssessmentMethod::where('course_id',$courseId);
-                if(is_object($assessmentMethod)){
-                    Log::Debug("yay found assessment method (multiple)");
+                $assessmentMethods = AssessmentMethod::where('course_id',$courseId)->get();
+
+                if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
+                    array_push($assessmentMethodArray, $assessmentMethods);
                 }else{
-                    Log::Debug("nay");
+                    if($assessmentMethods!=NULL){
+                        foreach($assessmentMethods as $assessmentMethod){
+                            array_push($assessmentMethodArray, $assessmentMethod);
+                        }
+                    }
                 }
-                //create an array of objects for you to loop through and access attributes below
-                array_push($assessmentMethodArray, $assessmentMethod);
             }
 
         }
-        Log::Debug("assessmentMethodArray");
+        Log::Debug("assessmentMethodArray Count Total");
         Log::Debug(count($assessmentMethodArray));
         // Create a new sheet for Student Assessment Methods
         $sheet = $spreadsheet->createSheet();
@@ -2861,13 +2781,13 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         }
         
         // Add course names to the first column
-        $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
-        $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
-        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A3');
+        $sheet->getStyle('A3:A'.strval(3 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A3:A100')->getFont()->setBold(true);
 
         // Retrieve and map Student Assessment Methods with their weightages
         $categoryColInSheet = 1;
-        foreach ($assesmentMethodArray as $assessmentMethod) {
+        foreach ($assessmentMethodArray as $assessmentMethod) {
             // Add assessment method to the sheet under the appropriate column
             Log::Debug($assessmentMethod);
             $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
@@ -2877,108 +2797,18 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
             // Add the weightage for each course
             $assessmentWeightages = [];
             foreach ($courses as $courseId => $courseCode) {
-                $weightage = $assessmentMethod->weightages()->where('course_id', $courseId)->value('weight');
+                $weightage = $assessmentMethod->weight;
                 array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
             }
 
             // Add weightage data to the respective column
-            $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'4');
+            $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'3');
 
             $categoryColInSheet++;
         }
 
         return $sheet;
  
-    } catch (Throwable $exception) {
-        // Log any errors
-        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
-        Log::error($message.' ...\n');
-        Log::error('Code - '.$exception->getCode());
-        Log::error('File - '.$exception->getFile());
-        Log::error('Line - '.$exception->getLine());
-        Log::error($exception->getMessage());
-
-        return $exception;
-    }
-}
-
-private function teachingAndLearningActivitySheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
-{
-    try {
-        // Find the program
-        $program = Program::find($programId);
-        $courseIds = CourseProgram::where('program_id', $programId)->value('course_id');
-        $learningActivityArray = [];
-        Log::Debug("Course IDs");
-        Log::Debug($courseIds);
-
-        if (!is_array($courseIds)){
-            $learningActivity = LearningActivity::where('course_id',$courseIds);
-            $learningActivityArray=[$learningActivity];
-            if(is_object($learningActivity)){
-                Log::Debug("yay found TandL Activity");
-            }else{
-                Log::Debug("nay");
-            }
-        }else{
-
-            foreach( $courseIds as $courseId){
-                $learningActivity = LearningActivity::where('course_id',$courseId);
-                if(is_object($learningActivity)){
-                    Log::Debug("yay found TandL Activity multi");
-                }else{
-                    Log::Debug("nay");
-                }
-                //create an array of objects for you to loop through and access attributes below
-                array_push($learningActivityArray, $learningActivity);
-            }
-
-        }
-        Log::Debug("learningActivityArray");
-        Log::Debug(count($assessmentMethodArray));
-        // Create a new sheet for Student Assessment Methods
-        $sheet = $spreadsheet->createSheet();
-        $sheet->setTitle('Student Assessment Method');
-        
-        // Add primary headings (Courses, Student Assessment Method) to the sheet
-        $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
-        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
-
-        // Retrieve all courses for the program
-        $courses = [];
-        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
-            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
-        }
-        
-        // Add course names to the first column
-        $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
-        $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
-        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
-
-        // Retrieve and map Student Assessment Methods with their weightages
-        $categoryColInSheet = 1;
-        foreach ($assesmentMethodArray as $assessmentMethod) {
-            // Add assessment method to the sheet under the appropriate column
-            $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
-            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
-            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
-
-            // Add the weightage for each course
-            $assessmentWeightages = [];
-            foreach ($courses as $courseId => $courseCode) {
-                $weightage = $assessmentMethod->weightages()->where('course_id', $courseId)->value('weight');
-                array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
-            }
-
-            // Add weightage data to the respective column
-            $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'4');
-
-            $categoryColInSheet++;
-        }
-
-        return $sheet;
-
     } catch (Throwable $exception) {
         // Log any errors
         $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
