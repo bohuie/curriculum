@@ -2838,16 +2838,28 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         $program = Program::find($programId);
         $courseIds = CourseProgram::where('program_id', $programId)->get();
         $learningActivityArray = [];
+        $learningActivityTitles=[];
+        $duplicateLearningActivities =[];
 
         if (count($courseIds)==1){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
             
             $learningActivities = LearningActivity::where('course_id',$courseIds->course_id)->get();
             if (count($learningActivities)==1 && $learningActivities!=NULL){
                 array_push($learningActivityArray, $learningActivities);
+                if (in_array($learningActivities[0]->l_activity, $learningActivityTitles)){
+                array_push($duplicateLearningActivities, $learningActivities[0]->l_activity);
+                } else {
+                    array_push($learningActivityTitles, $learningActivities[0]->l_activity);
+                }
             }else{
                 if($learningActivities!=NULL){
                     foreach($learningActivities as $learningActivity){
-                        array_push($learningActivityArray, $learningActivity);
+                        array_push($learningActivityTitles, $learningActivity->l_activity);
+                        if (in_array($learningActivity->l_activity, $learningActivityTitles)){
+                            array_push($duplicateLearningActivities, $learningActivity->l_activity);
+                            } else {
+                                array_push($learningActivityTitles, $learningActivity->l_activity);
+                            }
                     }
                 }
             }
@@ -2859,10 +2871,20 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
                 if (count($learningActivities)==1 && $learningActivities!=NULL){
                     array_push($learningActivityArray, $learningActivities);
+                    if (in_array($learningActivities[0]->l_activity, $learningActivityTitles)){
+                        array_push($duplicateLearningActivities, $learningActivities[0]->l_activity);
+                    } else {
+                        array_push($learningActivityTitles, $learningActivities[0]->l_activity);
+                    }
                 }else{
                     if($learningActivities!=NULL){
                         foreach($learningActivities as $learningActivity){
                             array_push($learningActivityArray, $learningActivity);
+                            if (in_array($learningActivity->l_activity, $learningActivityTitles)){
+                                array_push($duplicateLearningActivities, $learningActivity->l_activity);
+                                } else {
+                                    array_push($learningActivityTitles, $learningActivity->l_activity);
+                                }
                         }
                     }
                 }
@@ -2871,6 +2893,13 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         }
         Log::Debug("Learning Activity Count Total");
         Log::Debug(count($learningActivityArray));
+
+        Log::Debug("Learning Activity Titles");
+        Log::Debug(implode(',', $learningActivityTitles));
+
+        Log::Debug("Learning Activity Duplicates!");
+        Log::Debug(implode(',', $duplicateLearningActivities));
+
         // Create a new sheet for Student Assessment Methods
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('TLA');
@@ -2893,6 +2922,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
         // Retrieve and map Student Assessment Methods with their weightages
         $categoryColInSheet = 1;
+        $duplicateTLAsFound=[];
         foreach ($learningActivityArray as $learningActivity) {
             // Add assessment method to the sheet under the appropriate column
             $learningActivityTitle='';
@@ -2917,6 +2947,11 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
                     $TLAcourseID=$learningActivity[0]->course_id;
                 }
                 if ($TLAcourseID == $count){
+
+                //check if TLA is duplicated in array
+                //if it is present in array, put in used for this slot,
+                
+                
                 array_push($TLAusedInCourse, 'Used');
                 }else{
                     array_push($TLAusedInCourse, '');
