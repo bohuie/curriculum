@@ -1001,13 +1001,14 @@ class ProgramController extends Controller
             $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
             $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
             $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
+            $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $programSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
             {
                 
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -1017,6 +1018,7 @@ class ProgramController extends Controller
                 $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
                 $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
+                $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
                 $programSheet->getColumnDimension($letter)->setAutoSize(true);
                 
             });
@@ -2810,6 +2812,120 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
 
             // Add weightage data to the respective column
             $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'3');
+
+            $categoryColInSheet++;
+        }
+
+        return $sheet;
+ 
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->get();
+        $learningActivityArray = [];
+
+        if (count($courseIds)==1){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
+            
+            $learningActivities = LearningActivity::where('course_id',$courseIds->course_id)->get();
+            if (count($learningActivities)==1 && $learningActivities!=NULL){
+                array_push($learningActivityArray, $learningActivities);
+            }else{
+                if($learningActivities!=NULL){
+                    foreach($learningActivities as $learningActivity){
+                        array_push($learningActivityArray, $learningActivity);
+                    }
+                }
+            }
+
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $learningActivities = LearningActivity::where('course_id',$courseId->course_id)->get();
+
+                if (count($learningActivities)==1 && $learningActivities!=NULL){
+                    array_push($learningActivityArray, $learningActivities);
+                }else{
+                    if($learningActivities!=NULL){
+                        foreach($learningActivities as $learningActivity){
+                            array_push($learningActivityArray, $learningActivity);
+                        }
+                    }
+                }
+            }
+
+        }
+        Log::Debug("Learning Activity Count Total");
+        Log::Debug(count($learningActivityArray));
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('TLA');
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Teaching and Learning Activities'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)].'1');
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A3');
+        $sheet->getStyle('A3:A'.strval(3 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A3:A100')->getFont()->setBold(true);
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        foreach ($learningActivityArray as $learningActivity) {
+            // Add assessment method to the sheet under the appropriate column
+            $learningActivityTitle='';
+            if($learningActivity[0]==NULL){
+                $learningActivityTitle=$learningActivity->l_activity;
+            }else{
+                $learningActivityTitle=$learningActivity[0]->l_activity;
+            }
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $learningActivityTitle);
+            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+            $TLAusedInCourse = [];
+            $count=1;
+            foreach ($courses as $courseId => $course) {
+
+                $TLAcourseID=0;
+                if($learningActivity[0]==NULL){
+                    $TLAcourseID=$learningActivity->course_id;
+                }else{
+                    $TLAcourseID=$learningActivity[0]->course_id;
+                }
+                if ($TLAcourseID == $count){
+                array_push($TLAusedInCourse, 'Used');
+                }else{
+                    array_push($TLAusedInCourse, '');
+                }
+                $count+=1;
+            }
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($TLAusedInCourse, 1), null, $columns[$categoryColInSheet].'3');
 
             $categoryColInSheet++;
         }
