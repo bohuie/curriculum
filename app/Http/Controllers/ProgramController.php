@@ -999,13 +999,14 @@ class ProgramController extends Controller
             $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
             $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
+            $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet, $programSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $programSheet)
             {
                 
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -1014,6 +1015,7 @@ class ProgramController extends Controller
                 $mapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
                 $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
+                $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
                 $programSheet->getColumnDimension($letter)->setAutoSize(true);
                 
             });
@@ -2807,6 +2809,187 @@ public function fillCLOInfoArray($arr, $store){
 
 
     return $store;
+}
+
+private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->get();
+        $assesmentMethodArray = [];
+        Log::Debug("Course IDs");
+        Log::Debug($courseIds);
+
+        if (!is_array($courseIds)){
+            $assessmentMethod = AssessmentMethod::where('course_id',$courseIds);
+            $assessmentMethodArray=[$assessmentMethod];
+            if(is_object($assessmentMethod)){
+                Log::Debug("yay found assessment method");
+            }else{
+                Log::Debug("nay");
+            }
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $assessmentMethod = AssessmentMethod::where('course_id',$courseId);
+                if(is_object($assessmentMethod)){
+                    Log::Debug("yay found assessment method (multiple)");
+                }else{
+                    Log::Debug("nay");
+                }
+                //create an array of objects for you to loop through and access attributes below
+                array_push($assessmentMethodArray, $assessmentMethod);
+            }
+
+        }
+        Log::Debug("assessmentMethodArray");
+        Log::Debug(count($assessmentMethodArray));
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Student Assessment Method');
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+        $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        foreach ($assesmentMethodArray as $assessmentMethod) {
+            // Add assessment method to the sheet under the appropriate column
+            Log::Debug($assessmentMethod);
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
+            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+            $assessmentWeightages = [];
+            foreach ($courses as $courseId => $courseCode) {
+                $weightage = $assessmentMethod->weightages()->where('course_id', $courseId)->value('weight');
+                array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
+            }
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'4');
+
+            $categoryColInSheet++;
+        }
+
+        return $sheet;
+ 
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function teachingAndLearningActivitySheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->value('course_id');
+        $learningActivityArray = [];
+        Log::Debug("Course IDs");
+        Log::Debug($courseIds);
+
+        if (!is_array($courseIds)){
+            $learningActivity = LearningActivity::where('course_id',$courseIds);
+            $learningActivityArray=[$learningActivity];
+            if(is_object($learningActivity)){
+                Log::Debug("yay found TandL Activity");
+            }else{
+                Log::Debug("nay");
+            }
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $learningActivity = LearningActivity::where('course_id',$courseId);
+                if(is_object($learningActivity)){
+                    Log::Debug("yay found TandL Activity multi");
+                }else{
+                    Log::Debug("nay");
+                }
+                //create an array of objects for you to loop through and access attributes below
+                array_push($learningActivityArray, $learningActivity);
+            }
+
+        }
+        Log::Debug("learningActivityArray");
+        Log::Debug(count($assessmentMethodArray));
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Student Assessment Method');
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+        $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        foreach ($assesmentMethodArray as $assessmentMethod) {
+            // Add assessment method to the sheet under the appropriate column
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
+            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+            $assessmentWeightages = [];
+            foreach ($courses as $courseId => $courseCode) {
+                $weightage = $assessmentMethod->weightages()->where('course_id', $courseId)->value('weight');
+                array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
+            }
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'4');
+
+            $categoryColInSheet++;
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
 }
 
 }
