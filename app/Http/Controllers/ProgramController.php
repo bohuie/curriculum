@@ -2800,7 +2800,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
             $count=1;
             foreach ($courses as $courseId => $course) {
                 if ($assessmentMethod->course_id == $count){
-                $weightage = $assessmentMethod->weight;
+                $weightage = $assessmentMethod->weight.'%';
                 array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
                 }else{
                     array_push($assessmentWeightages, '');
