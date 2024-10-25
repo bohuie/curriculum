@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use League\CommonMark\Extension\SmartPunct\EllipsesParser;
 use PDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -2730,12 +2731,12 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
     try {
         // Find the program
         $program = Program::find($programId);
-        $courseIds = CourseProgram::where('program_id', $programId)->value("course_id");
+        $courseIds = CourseProgram::where('program_id', $programId)->get();
         $assessmentMethodArray = [];
 
-        if (!is_array($courseIds)){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
+        if (count($courseIds)==1){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
             
-            $assessmentMethods = AssessmentMethod::where('course_id',$courseIds)->get();
+            $assessmentMethods = AssessmentMethod::where('course_id',$courseIds->course_id)->get();
             if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
                 array_push($assessmentMethodArray, $assessmentMethods);
             }else{
@@ -2749,7 +2750,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         }else{
 
             foreach( $courseIds as $courseId){
-                $assessmentMethods = AssessmentMethod::where('course_id',$courseId)->get();
+                $assessmentMethods = AssessmentMethod::where('course_id',$courseId->course_id)->get();
 
                 if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
                     array_push($assessmentMethodArray, $assessmentMethods);
@@ -2796,9 +2797,15 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
 
             // Add the weightage for each course
             $assessmentWeightages = [];
-            foreach ($courses as $courseId => $courseCode) {
+            $count=1;
+            foreach ($courses as $courseId => $course) {
+                if ($assessmentMethod->course_id == $count){
                 $weightage = $assessmentMethod->weight;
                 array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
+                }else{
+                    array_push($assessmentWeightages, '');
+                }
+                $count+=1;
             }
 
             // Add weightage data to the respective column
