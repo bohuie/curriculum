@@ -997,6 +997,7 @@ class ProgramController extends Controller
             $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
             $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
             $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
+            $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
             $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
             $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
@@ -1004,15 +1005,16 @@ class ProgramController extends Controller
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
             // get array of urls to charts in this program
-            ///$charts = $this->getImagesOfCharts($programId, '.xlsx');
-           // $this->makeChartSheets($spreadsheet, $programId, $charts);
+            $charts = $this->getImagesOfCharts($programId, '.xlsx');
+            $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
             {
                 
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $courseSheet->getColumnDimension($letter)->setAutoSize(true);
+                $mapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
                 $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
@@ -1024,13 +1026,13 @@ class ProgramController extends Controller
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
             // set the spreadsheets name
-            $spreadsheetName = 'Data Summary-'.$program->program.'.xlsx';
+            $spreadsheetName = 'summary-'.$program->program_id.'.xlsx';
             // create absolute filename
             $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
             // save the spreadsheet document
             $writer->save($storagePath);
             // delete charts
-            //$this->deleteCharts($programId, $charts);
+            $this->deleteCharts($programId, $charts);
             // get the url of the document
             $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
 
@@ -1278,7 +1280,7 @@ class ProgramController extends Controller
         try {
             $program = Program::find($programId);
             $sheet = $spreadsheet->getActiveSheet();
-            $sheet->setTitle('Program Learning Outcomes');
+            $sheet->setTitle('Learning Outcomes');
             $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', null)->values();
 
             // keeps track of which row to put each category in the learning outcomes sheet
@@ -2900,7 +2902,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
         // Create a new sheet for Student Assessment Methods
         $sheet = $spreadsheet->createSheet();
-        $sheet->setTitle('Teaching & Learning Activities');
+        $sheet->setTitle('TLA');
         
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Teaching and Learning Activities'], null, 'A1');
