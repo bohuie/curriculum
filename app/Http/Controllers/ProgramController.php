@@ -1004,9 +1004,6 @@ class ProgramController extends Controller
             $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
-            // get array of urls to charts in this program
-            $charts = $this->getImagesOfCharts($programId, '.xlsx');
-            $this->makeChartSheets($spreadsheet, $programId, $charts);
             // foreach sheet, set all possible columns in $columns to autosize
             array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
             {
@@ -1026,13 +1023,11 @@ class ProgramController extends Controller
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
             // set the spreadsheets name
-            $spreadsheetName = 'summary-'.$program->program_id.'.xlsx';
+            $spreadsheetName = 'data-summary-'.$program->program_id.'.xlsx';
             // create absolute filename
             $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
             // save the spreadsheet document
             $writer->save($storagePath);
-            // delete charts
-            $this->deleteCharts($programId, $charts);
             // get the url of the document
             $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
 
@@ -2738,7 +2733,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
 
         if (count($courseIds)==1){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
             
-            $assessmentMethods = AssessmentMethod::where('course_id',$courseIds->course_id)->get();
+            $assessmentMethods = AssessmentMethod::where('course_id',$courseIds[0]->course_id)->get();
             if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
                 array_push($assessmentMethodArray, $assessmentMethods);
             }else{
@@ -2770,7 +2765,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         Log::Debug(count($assessmentMethodArray));
         // Create a new sheet for Student Assessment Methods
         $sheet = $spreadsheet->createSheet();
-        $sheet->setTitle('Student Assessment Method');
+        $sheet->setTitle('Assessment Methods');
         
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
@@ -2799,15 +2794,14 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
 
             // Add the weightage for each course
             $assessmentWeightages = [];
-            $count=1;
             foreach ($courses as $courseId => $course) {
-                if ($assessmentMethod->course_id == $count){
+                if ($assessmentMethod->course_id == array_search($course,$courses)){
                 $weightage = $assessmentMethod->weight.'%';
                 array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
                 }else{
                     array_push($assessmentWeightages, '');
                 }
-                $count+=1;
+                
             }
 
             // Add weightage data to the respective column
@@ -2843,7 +2837,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
         if (count($courseIds)==1){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
             
-            $learningActivities = LearningActivity::where('course_id',$courseIds->course_id)->get();
+            $learningActivities = LearningActivity::where('course_id',$courseIds[0]->course_id)->get();
             if (count($learningActivities)==1 && $learningActivities!=NULL){
                 array_push($learningActivityArray, $learningActivities);
                 if (in_array($learningActivities[0]->l_activity, $learningActivityTitles)){
@@ -2902,7 +2896,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
         // Create a new sheet for Student Assessment Methods
         $sheet = $spreadsheet->createSheet();
-        $sheet->setTitle('TLA');
+        $sheet->setTitle('Learning Activities');
         
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Teaching and Learning Activities'], null, 'A1');
@@ -2922,7 +2916,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
         // Retrieve and map Student Assessment Methods with their weightages
         $categoryColInSheet = 1;
-        $duplicateTLAsFound=[];
+        
         foreach ($learningActivityArray as $learningActivity) {
             // Add assessment method to the sheet under the appropriate column
             $learningActivityTitle='';
@@ -2937,7 +2931,6 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
             // Add the weightage for each course
             $TLAusedInCourse = [];
-            $count=1;
             foreach ($courses as $courseId => $course) {
 
                 $TLAcourseID=0;
@@ -2946,17 +2939,14 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
                 }else{
                     $TLAcourseID=$learningActivity[0]->course_id;
                 }
-                if ($TLAcourseID == $count){
+                if ($TLAcourseID == array_search($course,$courses)){
 
                 //check if TLA is duplicated in array
                 //if it is present in array, put in used for this slot,
-                
-                
                 array_push($TLAusedInCourse, 'Used');
                 }else{
                     array_push($TLAusedInCourse, '');
                 }
-                $count+=1;
             }
 
             // Add weightage data to the respective column
