@@ -2848,7 +2848,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
             }else{
                 if($learningActivities!=NULL){
                     foreach($learningActivities as $learningActivity){
-                        array_push($learningActivityTitles, $learningActivity->l_activity);
+                        array_push($learningActivityArray, $learningActivity);
                         if (in_array($learningActivity->l_activity, $learningActivityTitles)){
                             array_push($duplicateLearningActivities, $learningActivity->l_activity);
                             } else {
