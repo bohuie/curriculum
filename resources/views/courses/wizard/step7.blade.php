@@ -36,6 +36,9 @@
                             <button id="downloadPDFBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('courses.pdf', $course->course_id)}}">
                                 Download<i class="bi bi-download pl-2"></i>
                             </button>
+                            <button id="downloadDataBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadProgressModal" data-route="{{route('courses.dataSpreadsheet', $course->course_id)}}">
+                                Download Data<i class="bi bi-download pl-2"></i>
+                            </button>
                         </div>
                         <div class="col">
                             {{$course->course_code}} {{$course->course_num}}: Course Summary

@@ -614,8 +614,58 @@ class CourseController extends Controller
     // Method for generating data excel in course level
     public function dataSpreadsheet(Request $request, $course_id)
     {
+        // set the max time to generate a pdf summary as 5 mins/300 seconds
+        set_time_limit(300);
+        try {
+            $course = Course::find($courseId);
+            // create the spreadsheet
+            $spreadsheet = new Spreadsheet();
+            // create array of column names
+            $columns = range('A', 'Z');
+            // create array of styles for spreadsheet
+            $styles = [
+                'primaryHeading' => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'C6E0F5'],
+                    ],
+                ],
+                'secondaryHeading' => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'ced4da'],
+                    ],
+                ],
+            ];
 
+            // generate the spreadsheet
+            $writer = new Xlsx($spreadsheet);
+            // set the spreadsheets name
+            $spreadsheetName = 'data-summary-'.$course->course_id.'.xlsx';
+            // create absolute filename
+            $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+            // save the spreadsheet document
+            $writer->save($storagePath);
+            // get the url of the document
+            $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+
+            // return the location of the spreadsheet document on the server
+            return $url;
+        }
+        catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return -1;
+        }
     }
+
 
     // Removes the program id for a given course (Used In program wizard step 3).
     public function removeFromProgram(Request $request, $course_id): RedirectResponse
