@@ -2770,7 +2770,10 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+ 
+        if(count($assessmentMethodArray)!=0){
         $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+        }
 
         // Retrieve all courses for the program
         $courses = [];
@@ -2921,7 +2924,10 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Teaching and Learning Activities'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+   
+        if (count($learningActivityArray)!=0){
         $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)].'1');
+        }
 
         // Retrieve all courses for the program
         $courses = [];
