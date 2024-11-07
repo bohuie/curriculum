@@ -2788,21 +2788,41 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         foreach ($assessmentMethodArray as $assessmentMethod) {
             // Add assessment method to the sheet under the appropriate column
             Log::Debug($assessmentMethod);
-            $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
+            $assessmentMethodTitle='';
+            if($assessmentMethod[0]==NULL){
+                $assessmentMethodTitle=$assessmentMethod->a_method;
+            }else{
+                $assessmentMethodTitle=$assessmentMethod[0]->a_method;
+            }
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethodTitle);
             $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
             $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
 
             // Add the weightage for each course
             $assessmentWeightages = [];
             foreach ($courses as $courseId => $course) {
-                if ($assessmentMethod->course_id == array_search($course,$courses)){
-                $weightage = $assessmentMethod->weight.'%';
+                $AMcourseID=0;
+                if($assessmentMethod[0]==NULL){
+                    $AMcourseID=$assessmentMethod->course_id;
+                }else{
+                    $AMcourseID=$assessmentMethod[0]->course_id;
+                }
+                if ($AMcourseID == array_search($course,$courses)){
+                    $AMWeight=0;
+                    if($assessmentMethod[0]==NULL){
+                        $AMWeight=$assessmentMethod->weight;
+                    }else{
+                        $AMWeight=$assessmentMethod[0]->weight;
+                    }
+                $weightage = $AMWeight.'%';
                 array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
                 }else{
                     array_push($assessmentWeightages, '');
                 }
                 
             }
+
+            
 
             // Add weightage data to the respective column
             $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'3');
