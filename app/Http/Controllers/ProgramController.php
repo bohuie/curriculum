@@ -2706,15 +2706,19 @@ public function fillCLOInfoArray($arr, $store){
                 $course_id = $map['course_id'];
                 $l_outcome_id = $map['l_outcome_id'];
 
-                    if(strlen($store[$pl_outcome_id][$course_id])<3){
-                        if($map['map_scale_id']!=0){
-                            $store[$pl_outcome_id][$course_id]=LearningOutcome::where('l_outcome_id', $l_outcome_id)->value('l_outcome');
+                if(gettype($store[$pl_outcome_id][$course_id])=='string'){
+                        if(strlen($store[$pl_outcome_id][$course_id])<3){
+                            if($map['map_scale_id']!=0){
+                                $store[$pl_outcome_id][$course_id]=LearningOutcome::where('l_outcome_id', $l_outcome_id)->value('l_outcome');
+                            }
+                        }else{
+                            //need to add to list ONLY if mapped (not N/A)
+                            if($map['map_scale_id']!=0){
+                                $store[$pl_outcome_id][$course_id]=$store[$pl_outcome_id][$course_id].", ".LearningOutcome::where('l_outcome_id', $l_outcome_id)->value('l_outcome');
+                            }
                         }
                     }else{
-                        //need to add to list ONLY if mapped (not N/A)
-                        if($map['map_scale_id']!=0){
-                            $store[$pl_outcome_id][$course_id]=$store[$pl_outcome_id][$course_id].", ".LearningOutcome::where('l_outcome_id', $l_outcome_id)->value('l_outcome');
-                        }
+                        $store[$pl_outcome_id][$course_id]=LearningOutcome::where('l_outcome_id', $l_outcome_id)->value('l_outcome');
                     }
                 
             }
