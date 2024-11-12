@@ -974,6 +974,12 @@ class ProgramController extends Controller
             $spreadsheet = new Spreadsheet();
             // create array of column names
             $columns = range('A', 'Z');
+
+
+            //extending column array to >1000, otherwise it will throw an error if there are more than 25 entries
+            for ($i=0; $i<6; $i++){
+                $columns=array_merge($columns, $columns);
+            }
             // create array of styles for spreadsheet
             $styles = [
                 'primaryHeading' => [
@@ -1314,7 +1320,7 @@ class ProgramController extends Controller
                 $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles['secondaryHeading']);
 
                 // add secondary header titles to learning outcomes sheet after the category title
-                $sheet->fromArray(['Short Phrase', 'Learning Outcome'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
+                $sheet->fromArray(['Learning Outcome', 'Short Phrase'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
                 $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles['primaryHeading']);
 
                 foreach ($uncategorizedPLOs as $index => $plo) {
