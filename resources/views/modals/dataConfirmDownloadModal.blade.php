@@ -14,7 +14,7 @@
             
                             <div class="modal-body" style="height: auto;">
                                 
-                            The new data import feature enables users to seamlessly export raw datasets, providing a flexible foundation for in-depth analysis and customized insights.
+                            The new data download feature enables users to seamlessly export raw datasets, providing a flexible foundation for in-depth analysis and customized insights.
                                             
                             </div>
                             <div class="modal-footer">
