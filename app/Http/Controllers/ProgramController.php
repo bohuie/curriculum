@@ -2918,6 +2918,44 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
             }
 
         }
+        //create an array of arrays that matches the learningActivityArray
+        //Inner array contains ["title" (l_activity), [array of courseIds]
+        $learningActivityArraySharedCourses=[];
+        //need to check if this works with 0 TLAs ***
+        
+        if(count($learningActivityArray)==1){
+            foreach($learningActivityArray as $learningActivity){
+                Log::Debug("array is 2D");
+                array_push($learningActivityArraySharedCourses, [$learningActivity[0]->l_activity,[$learningActivity[0]->course_id]]);
+            }
+        }else{
+            foreach($learningActivityArray as $learningActivity){
+                Log::Debug("array is 1D");
+                Log::Debug($learningActivity);
+                if(is_array($learningActivity) && $learningActivity!=NULL){
+                    Log::Debug("is_array");
+                    array_push($learningActivityArraySharedCourses, [$learningActivity[0]->l_activity,[$learningActivity[0]->course_id]]);
+                    
+                }else{
+
+                    //If there is a second course the LAs get embedded one level lower, and PHP sees it as object so we need this try catch
+                    try{
+                        Log::Debug("tried");
+                        array_push($learningActivityArraySharedCourses, [$learningActivity->l_activity,[$learningActivity->course_id]]);
+                    } catch (Throwable $exception) {
+                        Log::Debug("caught");
+                        array_push($learningActivityArraySharedCourses, [$learningActivity[0]->l_activity,[$learningActivity[0]->course_id]]);
+                    }
+                    
+                    
+                }
+            }
+        }
+        
+        Log::Debug("Shared Course LA Array:");
+        Log::Debug($learningActivityArraySharedCourses);
+        //Then use this new multipleCourseIDArray in foreach loop below
+
         Log::Debug("Learning Activity Count Total");
         Log::Debug(count($learningActivityArray));
 
