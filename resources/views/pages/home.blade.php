@@ -7,7 +7,13 @@
 
     </div>
 </div>
-
+<div class="alert alert-warning">
+            <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
+            <button type="button" class="close" data-dismiss="alert">×</button>  
+            <div>
+            <p>You are currently using the Curriculum MAP staging website which is meant for testing purposes only. Please ensure you create an account on the <a target="_blank" rel="noopener noreferrer" href="https://curriculum.ok.ubc.ca/"> official public Curriculum MAP website</a> to avoid errors, and potential loss of work.</p>
+            </div>  
+        </div>
 <!-- Notification -->
 @if ($user->has_temp == 1)
     <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastPlacement" style="z-index: 11">
