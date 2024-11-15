@@ -2842,6 +2842,93 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
 
             $categoryColInSheet++;
         }
+        
+            //Combining duplicate cells and deleting columns
+
+            //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+            $row = $sheet->getRowIterator(2)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columnCoordinates=[];
+            $columnValues=[];
+
+            foreach ($cellIterator as $cell) {
+                array_push($columnCoordinates, $cell->getCoordinate());
+                array_push($columnValues, $cell->getValue());
+            }
+
+            $originalColumns=[];
+            $columnsToBeDeleted=[];
+            //Step 2: Loop through titles, find duplicate values and (...)
+            $countColumnCoord1=0;
+            foreach($columnValues as $columnValue){
+                //Looking at one column
+                $countColumnCoord2=0;
+                //Get first column letter
+                $columnLetter1= str_split($columnCoordinates[$countColumnCoord1]);
+                $columnLetter1=$columnLetter1[0];
+                array_push($originalColumns, $columnLetter1);
+
+                foreach($columnValues as $columnValue2){
+                
+                    if(strcmp($columnValue,$columnValue2) == 0 && $countColumnCoord2 != $countColumnCoord1){ //if the same title but not the same column
+                    
+                    $firstCellRow=3;
+                    $lastRow = $sheet->getHighestRow();
+                        //Step 3: Copy Cell values from later columns over to first found column
+                        $columnLetter2= str_split($columnCoordinates[$countColumnCoord2]);
+                        $columnLetter2=$columnLetter2[0];
+                        if(!in_array($columnLetter2, $originalColumns) && !in_array($columnLetter2, $columnsToBeDeleted)){ //checking if we have already looked at this column, if not add it to the delete list if not already there
+                            array_push($columnsToBeDeleted, $columnLetter2);
+                        }
+
+                        for ($row = $firstCellRow; $row <= $lastRow; $row++) {
+
+                            //Get Value of a cell in duplicate column
+                            $cell2 = $sheet->getCell($columnLetter2.$row);
+                            //Get Value of equivalent First column cell
+                            $cell1 = $sheet->getCell($columnLetter1.$row);
+                            Log::Debug("AM CELL Value");
+                            Log::Debug($cell1->getValue());
+                            if (is_null($cell1->getValue())){ //If the Value of first column is empty, replace it with value in second column
+                                $sheet->getCell($columnLetter1.$row)->setValue($cell2->getValue());
+                            }
+                            
+                        }
+
+                    }
+                $countColumnCoord2+=1;
+                }
+                $countColumnCoord1+=1;
+            }
+
+
+            //Finally, loop through and remove duplicate columns:
+            sort($columnsToBeDeleted);
+            $previouslyDeletedColumn='';
+            $deletedCount=0;
+            $chars = range('A', 'Z');
+        
+            foreach($columnsToBeDeleted as $deleteColumn){
+                
+                if($previouslyDeletedColumn!='' && strcmp($deleteColumn,$previouslyDeletedColumn)>0){ 
+
+                    //So checking if the deleted column comes after the previously deleted column, we need to reduce the current delete by 1 letter for each column deleted
+                    //strcmp if the first is lexicograpically greater than the second then a positive number will be returned.
+
+                    $charIndex=array_search($deleteColumn, $chars);
+                    $deleteColumn=$chars[$charIndex-$deletedCount];
+
+
+                }
+                
+                $sheet->removeColumn($deleteColumn);
+
+                $previouslyDeletedColumn=$deleteColumn;
+                $deletedCount++;
+            }
 
         return $sheet;
  
@@ -2989,7 +3076,96 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
             $sheet->fromArray(array_chunk($TLAusedInCourse, 1), null, $columns[$categoryColInSheet].'3');
 
             $categoryColInSheet++;
+
         }
+
+            //Combining duplicate cells and deleting columns
+
+            //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+            $row = $sheet->getRowIterator(2)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columnCoordinates=[];
+            $columnValues=[];
+
+            foreach ($cellIterator as $cell) {
+                array_push($columnCoordinates, $cell->getCoordinate());
+                array_push($columnValues, $cell->getValue());
+            }
+
+            $originalColumns=[];
+            $columnsToBeDeleted=[];
+            //Step 2: Loop through titles, find duplicate values and (...)
+            $countColumnCoord1=0;
+            foreach($columnValues as $columnValue){
+                //Looking at one column
+                $countColumnCoord2=0;
+                //Get first column letter
+                $columnLetter1= str_split($columnCoordinates[$countColumnCoord1]);
+                $columnLetter1=$columnLetter1[0];
+                array_push($originalColumns, $columnLetter1);
+
+                foreach($columnValues as $columnValue2){
+                
+                    if(strcmp($columnValue,$columnValue2) == 0 && $countColumnCoord2 != $countColumnCoord1){ //if the same title but not the same column
+                    
+                    $firstCellRow=3;
+                    $lastRow = $sheet->getHighestRow();
+                        //Step 3: Copy Cell values from later columns over to first found column
+                        $columnLetter2= str_split($columnCoordinates[$countColumnCoord2]);
+                        $columnLetter2=$columnLetter2[0];
+                        if(!in_array($columnLetter2, $originalColumns) && !in_array($columnLetter2, $columnsToBeDeleted)){ //checking if we have already looked at this column, if not add it to the delete list if not already there
+                            array_push($columnsToBeDeleted, $columnLetter2);
+                        }
+
+                        for ($row = $firstCellRow; $row <= $lastRow; $row++) {
+
+                            //Get Value of a cell in duplicate column
+                            $cell2 = $sheet->getCell($columnLetter2.$row);
+                            //Get Value of equivalent First column cell
+                            $cell1 = $sheet->getCell($columnLetter1.$row);
+
+                            if (strcmp($cell1->getValue(),"Used") != 0){ //If the Value of first column is not "Used", replace it with value in second column
+                                $sheet->getCell($columnLetter1.$row)->setValue($cell2->getValue());
+                            }
+                            
+                        }
+
+                    }
+                $countColumnCoord2+=1;
+                }
+                $countColumnCoord1+=1;
+            }
+
+
+            //Finally, loop through and remove duplicate columns:
+            sort($columnsToBeDeleted);
+            $previouslyDeletedColumn='';
+            $deletedCount=0;
+            $chars = range('A', 'Z');
+        
+            foreach($columnsToBeDeleted as $deleteColumn){
+                
+                if($previouslyDeletedColumn!='' && strcmp($deleteColumn,$previouslyDeletedColumn)>0){ 
+
+                    //So checking if the deleted column comes after the previously deleted column, we need to reduce the current delete by 1 letter for each column deleted
+                    //strcmp if the first is lexicograpically greater than the second then a positive number will be returned.
+
+                    $charIndex=array_search($deleteColumn, $chars);
+                    $deleteColumn=$chars[$charIndex-$deletedCount];
+
+
+                }
+                
+                $sheet->removeColumn($deleteColumn);
+
+                $previouslyDeletedColumn=$deleteColumn;
+                $deletedCount++;
+            }
+
+            
 
         return $sheet;
  
