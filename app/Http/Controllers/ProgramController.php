@@ -952,6 +952,7 @@ class ProgramController extends Controller
             return $url;
 
         } catch (Throwable $exception) {
+            
             $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
             Log::error($message.' ...\n');
             Log::error('Code - '.$exception->getCode());
@@ -1003,21 +1004,21 @@ class ProgramController extends Controller
             $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
             $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
             $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
-            $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+            //$mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
             $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
             $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
             $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
             $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
-
+            Log::Debug("Made all sheets");
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet, $dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
             {
                 
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                 $courseSheet->getColumnDimension($letter)->setAutoSize(true);
-                $mapSheet->getColumnDimension($letter)->setAutoSize(true);
+                //$mapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
                 $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
@@ -1421,7 +1422,9 @@ class ProgramController extends Controller
             // apply styling to the primary headings
             $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
             // span program learning outcomes header over the number of learning outcomes
+            if($programLearningOutcomes->count()>0){
             $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            }
             // create courses array to add to the outcome maps sheet
             $courses = [];
             foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
@@ -1588,7 +1591,9 @@ class ProgramController extends Controller
             // apply styling to the primary headings
             $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
             // span program learning outcomes header over the number of learning outcomes
+            if($programLearningOutcomes->count()>0){
             $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            }
             // create courses array to add to the outcome maps sheet
             $courses = [];
             foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
@@ -1763,7 +1768,9 @@ class ProgramController extends Controller
             // apply styling to the primary headings
             $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
             // span program learning outcomes header over the number of learning outcomes
+            if($programLearningOutcomes->count()>0){
             $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            }
             // create courses array to add to the outcome maps sheet
             $courses = [];
             foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
@@ -2423,8 +2430,9 @@ private function makeProgramInfoSheetData(Spreadsheet $spreadsheet, int $program
         if ($program !== null) {
             // Update header row with the desired column names
             $sheet->fromArray(['Program Name', 'Campus', 'Faculty', 'Department', 'Level'], null, 'A1');
+            Log::Debug("A1");
             $sheet->getStyle('A1:E1')->applyFromArray($styles['primaryHeading']);
-
+            Log::Debug("B1");
             // Insert the program data into the sheet
             $programData = [
                 $program->program,
@@ -2435,11 +2443,13 @@ private function makeProgramInfoSheetData(Spreadsheet $spreadsheet, int $program
             ];
             // Insert the array into the sheet starting from row 2, column A
             $sheet->fromArray($programData, null, 'A2');
+            Log::Debug("C1");
         }
 
         return $sheet;
 
     } catch (Throwable $exception) {
+        
         $message = 'There was an error downloading the spreadsheet overview for: ' . ($program ? $program->program : 'Unknown Program');
         Log::error($message . ' ...\n');
         Log::error('Code - ' . $exception->getCode());
@@ -2945,14 +2955,20 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
             $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
         }
         
+        Log::Debug("getStyle after this");
         // Add course names to the first column
         $sheet->fromArray(array_chunk($courses, 1), null, 'A3');
+        Log::Debug("A");
         $sheet->getStyle('A3:A'.strval(3 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        Log::Debug("B");
         $sheet->getStyle('A3:A100')->getFont()->setBold(true);
+        Log::Debug("C");
+
+
 
         // Retrieve and map Student Assessment Methods with their weightages
         $categoryColInSheet = 1;
-        
+        Log::Debug("D");
         foreach ($learningActivityArray as $learningActivity) {
             // Add assessment method to the sheet under the appropriate column
             $learningActivityTitle='';
@@ -2961,6 +2977,8 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
             }else{
                 $learningActivityTitle=$learningActivity[0]->l_activity;
             }
+
+            Log::Debug("Final merger cells afer this");
             $sheet->setCellValue($columns[$categoryColInSheet].'2', $learningActivityTitle);
             $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
             $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
@@ -2990,7 +3008,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
 
             $categoryColInSheet++;
         }
-
+        Log::Debug("returning LA Sheet");
         return $sheet;
  
     } catch (Throwable $exception) {
