@@ -15,7 +15,7 @@
             <div class="toast-body alert-danger">
                 We were unable to the download the program overview for {{$program->program}}. 
                 <div class="d-flex flex-row-reverse bd-highlight mt-2 pt-2">
-                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Program Overview&cc=matthew.penner@ubc.ca&body=There was an error downloading the program overview for {{$program->program}}">
+                    <a href="mailto:ctl.helpdesk@ubc.ca?subject=UBC Curriculum MAP: Error Generating Program Overview&body=There was an error downloading the program overview for {{$program->program}}">
                         <button type="button" class="btn btn-secondary btn-sm">Get Help</button>      
                     </a>      
                 </div>        

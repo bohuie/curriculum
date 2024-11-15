@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="alert alert-warning">
+            <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
+            <button type="button" class="close" data-dismiss="alert">×</button>  
+            <div>
+            <p>You are currently using the Curriculum MAP staging website which is meant for testing purposes only. Please ensure you create an account on the <a target="_blank" rel="noopener noreferrer" href="https://curriculum.ok.ubc.ca/"> official public Curriculum MAP website</a> to avoid errors, and potential loss of work.</p>
+            </div>  
+        </div>
     <div class="row p-md-5 justify-content-center text-light bg-primary mt-3">
         <div class="col-md-12">
             <div class="container">
