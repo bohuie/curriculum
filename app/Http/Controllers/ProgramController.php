@@ -2468,7 +2468,21 @@ class ProgramController extends Controller
             $sheet->getStyle('A1:G1')->applyFromArray($styles['primaryHeading']);
 
             foreach ($courses as $index => $course) {
+                
+
+                //Figure out if course is mapped or not
+                $courseLearningOutcomes=LearningOutcome::where('course_id', $course->course_id);
+                foreach($courseLearningOutcomes as $CLO){
+                    $CLOMapping=OutcomeMap::where(['l_outcome_id',$CLO->l_outcome_id,'pl_outcome_id' => $program->pl_outcome_id]);
+                    foreach($CLOMapping as $mapping){
+                        
+                    }
+                }
+                    
+
+
                 $mapped = ($course->pivot->map_status==0)? 'Yes': 'No';
+
                 $courseRequired = ($course->pivot->course_required==1)? 'Yes': 'No';
                 // Create array with course data
                 $courseData = [$course->course_title, $course->course_code, $course->course_num, $course->year, $course->semester,$courseRequired, $mapped]; // Assuming 'semester' is the term column
