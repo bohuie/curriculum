@@ -7,6 +7,15 @@ use App\Mail\NotifyNewCourseInstructorMail;
 use App\Mail\NotifyNewUserAndInstructorMail;
 use App\Models\AssessmentMethod;
 use App\Models\Course;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Conditional;
+use PhpOffice\PhpSpreadsheet\Style\ConditionalFormatting\Wizard;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Style;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\CourseOptionalPriorities;
 use App\Models\CourseProgram;
 use App\Models\CourseUser;
@@ -614,10 +623,12 @@ class CourseController extends Controller
     // Method for generating data excel in course level
     public function dataSpreadsheet(Request $request, $course_id)
     {
+        Log::Debug("Course id");
+        Log::Debug($course_id);
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
-            $course = Course::find($courseId);
+            $course = Course::where('course_id',$course_id)->first();
             // create the spreadsheet
             $spreadsheet = new Spreadsheet();
             // create array of column names
@@ -640,10 +651,32 @@ class CourseController extends Controller
                 ],
             ];
 
+            $courseSheet = $this->makeCourseInfoSheetData($spreadsheet, $course_id, $styles);
+            $programSheet= $this->makeProgramOutcomeSheetData($spreadsheet, $course_id, $styles);
+            $mappingScaleSheet=$this->makeMappingScalesSheetData($spreadsheet, $course_id, $styles);
+            $bcScaleSheet =$this->BcMappingScalesData($spreadsheet,$styles);
+            $outcomeSheet=$this->makeOutcomeMapSheetData($spreadsheet, $course_id, $styles, $columns);
+            $bcMappedSheet=$this->makeBcStandardMapSheetData($spreadsheet, $course_id, $styles);
+            $assessmentMethodSheet=$this->makeAssessmentMapSheetData($spreadsheet, $course_id, $styles, $columns);
+            $learningActivitySheet=$this->makeLearningActivityMapSheetData($spreadsheet, $course_id, $styles, $columns);
+
+
+            array_walk($columns, function ($letter, $index) use ($courseSheet,$programSheet, $mappingScaleSheet, $bcScaleSheet,$outcomeSheet, $bcMappedSheet,$assessmentMethodSheet, $learningActivitySheet)
+            {
+                $courseSheet->getColumnDimension($letter)->setAutoSize(true);
+                $programSheet->getColumnDimension($letter)->setAutoSize(true);
+                $mappingScaleSheet->getColumnDimension($letter)->setAutoSize(true);
+                $bcScaleSheet->getColumnDimension($letter)->setAutoSize(true);
+                $outcomeSheet->getColumnDimension($letter)->setAutoSize(true);
+                $bcMappedSheet->getColumnDimension($letter)->setAutoSize(true);
+                $assessmentMethodSheet->getColumnDimension($letter)->setAutoSize(true);
+                $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
+            });
+
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
             // set the spreadsheets name
-            $spreadsheetName = 'data-summary-'.$course->course_id.'.xlsx';
+            $spreadsheetName = 'data-summary-'.$course->course_title.'.xlsx';
             // create absolute filename
             $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
             // save the spreadsheet document
@@ -655,7 +688,7 @@ class CourseController extends Controller
             return $url;
         }
         catch (Throwable $exception) {
-            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            $message = 'There was an error downloading the spreadsheet overview for: '.$course->course;
             Log::error($message.' ...\n');
             Log::error('Code - '.$exception->getCode());
             Log::error('File - '.$exception->getFile());
@@ -875,4 +908,362 @@ class CourseController extends Controller
 
         return $course->programs;
     }
+
+    private function makeCourseInfoSheetData(Spreadsheet $spreadsheet, int $courseId, $styles): Worksheet
+{
+    try {
+        // Find the program by ID
+        $course = Course::find($courseId);
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Course Information');
+
+        if ($course !== null) {
+            // Update header row with the desired column names
+            $sheet->fromArray(['Course Code', 'Course Number', 'Course Title', 'Term', 'Year', 'Course Section', 'Mode of Delivery'], null, 'A1');
+            $sheet->getStyle('A1:G1')->applyFromArray($styles['primaryHeading']);
+
+            // Insert the program data into the sheet
+            $courseData = [
+                $course->course_code,
+                $course->course_num,
+                $course->course_title,
+                $course->semester,
+                $course->year,
+                $course->section,
+                $course->delivery_modality,
+            ];
+            // Insert the array into the sheet starting from row 2, column A
+            $sheet->fromArray($courseData, null, 'A2');
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: ' . ($course ? $course->course : 'Unknown Program');
+        Log::error($message . ' ...\n');
+        Log::error('Code - ' . $exception->getCode());
+        Log::error('File - ' . $exception->getFile());
+        Log::error('Line - ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function makeProgramOutcomeSheetData(Spreadsheet $spreadsheet, int $courseId, $styles): Worksheet
+{
+    try {
+        
+        $course = Course::find($courseId); 
+        $courseProgram = CourseProgram::find($courseId);
+        $programId = $courseProgram->program_id;
+        $program= Program::find($programId);
+        //log::Debug("Program id".$programId);
+        //log::Debug(($program));
+       // log::Debug("PLO count");
+        $plos = ProgramLearningOutcome::where('program_id', $programId)->get();
+        //log::Debug(count($plos));
+
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Program Outcomes');
+
+        $sheet->fromArray(['Program', 'PLO', 'PLO Category'], null, 'A1');
+        $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+
+        $row = 2; 
+        foreach ($plos as $plo) {
+            
+            $ploCategory = PlOCategory::find($plo->plo_category_id);
+
+            $sheet->fromArray(
+                [
+                    $program->program,  
+                    $plo->plo_shortphrase,     
+                    $ploCategory ? $ploCategory->category_name : 'Uncategorized' 
+                ],
+                null,
+                "A{$row}"
+            );
+
+            $row++; 
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        // Handle errors and log them
+        $message = "There was an error creating the Program Outcome sheet for Course ID: {$courseId}";
+        Log::error($message);
+        Log::error('Code: ' . $exception->getCode());
+        Log::error('File: ' . $exception->getFile());
+        Log::error('Line: ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+
+private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $courseId, $styles): Worksheet
+    {
+        try {
+            $courseProgram = CourseProgram::find($courseId);
+            $programId = $courseProgram->program_id;
+            $program= Program::find($programId);
+            //Log::Debug($program);
+            $course = Course::find($courseId);
+            $mappingScaleLevels = $program->mappingScaleLevels;
+
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle('Mapping Scale');
+    
+            if ($mappingScaleLevels->count() > 0) {
+                // Update header row to exclude the 'Colour' column
+                $sheet->fromArray(['Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
+                $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+    
+                foreach ($mappingScaleLevels as $index => $level) {
+                    // Create array of scale values without the colour column
+                    $scaleArr = [$level->title, $level->abbreviation, $level->description];
+                    // Insert the array into the sheet starting from column A
+                    $sheet->fromArray($scaleArr, null, 'A'.strval($index + 2));
+                }
+            }
+    
+            return $sheet;
+    
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$course->course_title;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    private function BcMappingScalesData(Spreadsheet $spreadsheet, $styles): Worksheet
+    {
+        $sheet = $spreadsheet->createSheet(); // Create a new sheet
+        $sheet->setTitle('BC Standards Map Scale'); // Set the sheet title
+
+        // Set up the header row
+        $sheet->fromArray(['Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
+
+        // Apply styles to the header row (optional)
+        $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+
+    // Add hardcoded entries
+        $data = [
+           ['Introduced', 'I', 'Key ideas, concepts or skills related to the learning outcome are demonstrated at an introductory level. Learning activities focus on basic knowledge, skills, and/or competencies and entry-level complexity.'],
+           ['Developing', 'D', 'Learning outcome is reinforced with feedback; students demonstrate the outcome at an increasing level of proficiency. Learning activities concentrate on enhancing and strengthening existing knowledge and skills as well as expanding complexity.'],
+           ['Advanced', 'A', 'Students demonstrate the learning outcomes with a high level of independence, expertise and sophistication expected upon graduation. Learning activities focus on and integrate the use of content or skills in multiple.']      
+        ];      
+
+         $sheet->fromArray($data, null, 'A2');
+
+         return $sheet;
+    }
+
+    private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId, $styles,$columns): Worksheet
+    {
+        try{
+
+            $courseProgram = CourseProgram::find($courseId);
+            $programId = $courseProgram->program_id;
+            $program= Program::find($programId);
+            $course = Course::find($courseId);
+
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle('CLO to PLO  MAP Table');
+
+            $programLearningOutcomes = $program->programLearningOutcomes;
+            Log::Debug("PLO");
+            Log::Debug($programLearningOutcomes);
+            $mappingScaleLevels = $program->mappingScaleLevels;
+            $courseLearningOutcomes = LearningOutcome::find($courseId);
+            $courseLearningOutcomeShortPhrases = $courseLearningOutcomes->pluck('clo_shortphrase')->toArray();
+            Log::Debug("CLO:");
+            Log::Debug($courseLearningOutcomes);
+
+            if ($programLearningOutcomes->count() < 1 && $program->count() < 1) {
+                return $sheet;
+            }
+
+            // add primary headings (course learning outcomes and program learning outcomes) to program outcome map sheet
+            $sheet->fromArray(['Course Learning Outcomes', 'Program Learning Outcomes'], null, 'A1');
+            // apply styling to the primary headings
+            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+            // span program learning outcomes header over the number of learning outcomes
+            $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            // create course learning outcome array to add to the outcome maps sheet
+        
+            // add courses to their column in the sheet
+            $sheet->fromArray(array_chunk($courseLearningOutcomeShortPhrases, 1), null, 'A4');
+            // apply a secondary header style and
+            $sheet->getStyle('A4:A'.strval(4 + count($courseLearningOutcomeShortPhrases) - 1))->applyFromArray($styles['secondaryHeading']);
+            // make courses font bold
+            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+
+            return $sheet;
+        }catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+private function makeBcStandardMapSheetData(Spreadsheet $spreadsheet, int $courseId, $styles): Worksheet
+{
+    try {
+        // Fetch the course details
+        $course = Course::find($courseId);
+
+        // Fetch all mappings for this course
+        $standardsOutcomeMap = StandardsOutcomeMap::where('course_id', $courseId)->get();
+
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('BC Degree Mapped');
+
+        if ($standardsOutcomeMap->count() > 0) {
+            // Add headers
+            $sheet->fromArray(['Standard Short Phrase', 'Mapping Scale'], null, 'A1');
+            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+
+            $rowIndex = 2; // Start from the second row
+            foreach ($standardsOutcomeMap as $record) {
+                // Fetch the corresponding standard and mapping scale
+                $standard = Standard::find($record->standard_id);
+               // Log::Debug('Standard');
+                //Log::Debug($standard);
+                $scale = StandardScale::find($record->standard_scale_id);
+                //Log::Debug('Scale');
+                //Log::Debug($scale);
+
+                // Prepare row data
+                $dataRow = [
+                    $standard->s_shortphrase ?? 'N/A', // Short phrase from Standard model
+                    $scale->abbreviation ?? 'N/A',     // Scale name from StandardScale model
+                ];
+
+                // Insert the row into the spreadsheet
+                $sheet->fromArray($dataRow, null, 'A' . $rowIndex);
+                $rowIndex++;
+            }
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: ' . ($course->course_title ?? 'Unknown Course');
+        Log::error($message . ' ...\n');
+        Log::error('Code - ' . $exception->getCode());
+        Log::error('File - ' . $exception->getFile());
+        Log::error('Line - ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $courseId, $styles,$columns): Worksheet
+{
+    try{
+
+        $course = Course::find($courseId);
+        $courseLearningOutcome = LearningOutcome::find($courseId);
+        $courseLearningOutcomeShortPhrases = $courseLearningOutcome->pluck('clo_shortphrase')->toArray();
+        Log::Debug("CLO:");
+        Log::Debug($courseLearningOutcome);
+        $assessmentMethod = AssessmentMethod::find($courseId);
+        Log::Debug("Assessment method:");
+        Log::Debug($assessmentMethod);
+
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('CLO to SAM  Mapping');
+
+        // add primary headings (course learning outcomes and program learning outcomes) to program outcome map sheet
+        $sheet->fromArray(['Course Learning Outcomes', 'Student Assessment Methods'], null, 'A1');
+        // apply styling to the primary headings
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        // span program learning outcomes header over the number of learning outcomes
+        $sheet->mergeCells('B1:'.$columns[$assessmentMethod->count()].'1');
+        // create course learning outcome array to add to the outcome maps sheet
+    
+        // add courses to their column in the sheet
+        $sheet->fromArray(array_chunk($courseLearningOutcomeShortPhrases, 1), null, 'A4');
+        // apply a secondary header style and
+        $sheet->getStyle('A4:A'.strval(4 + count($courseLearningOutcomeShortPhrases) - 1))->applyFromArray($styles['secondaryHeading']);
+        // make courses font bold
+        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+
+        return $sheet;
+    }catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: '.$course->course_title;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function makeLearningActivityMapSheetData(Spreadsheet $spreadsheet, int $courseId, $styles,$columns): Worksheet
+{
+    try{
+
+        $course = Course::find($courseId);
+        $courseLearningOutcome = LearningOutcome::find($courseId);
+        $courseLearningOutcomeShortPhrases = $courseLearningOutcome->pluck('clo_shortphrase')->toArray();
+        Log::Debug("CLO:");
+        Log::Debug($courseLearningOutcome);
+        $learningActivity = LearningActivity::find($courseId);
+        Log::Debug("LearningActivity:");
+        Log::Debug($learningActivity);
+
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('CLO to T&L Mapping');
+
+        // add primary headings (course learning outcomes and program learning outcomes) to program outcome map sheet
+        $sheet->fromArray(['Course Learning Outcomes', 'Teaching and Learning Activity'], null, 'A1');
+        // apply styling to the primary headings
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        // span program learning outcomes header over the number of learning outcomes
+        $sheet->mergeCells('B1:'.$columns[$learningActivity->count()].'1');
+        // create course learning outcome array to add to the outcome maps sheet
+    
+        // add courses to their column in the sheet
+        $sheet->fromArray(array_chunk($courseLearningOutcomeShortPhrases, 1), null, 'A4');
+        // apply a secondary header style and
+        $sheet->getStyle('A4:A'.strval(4 + count($courseLearningOutcomeShortPhrases) - 1))->applyFromArray($styles['secondaryHeading']);
+        // make courses font bold
+        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+
+        return $sheet;
+    }catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: '.$course->course_title;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+            
+
 }

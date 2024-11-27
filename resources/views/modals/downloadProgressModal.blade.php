@@ -35,6 +35,9 @@
         $("#downloadPDFBtn").click((e) =>
             downloadPDF(e.currentTarget)
         );
+        $("#downloadDataBtn").click((e) =>
+             downloadCourseExcel(e.currentTarget)
+        );
         $("#confirmDownloadBtn").click((e) =>
             downloadExcel(e.currentTarget)
         );
@@ -87,9 +90,8 @@
     }
 
     // Course level excel
-    /*
     function downloadCourseExcel(trigger) {
-        var route = "{{route('courses.dataSpreadsheet', $course->course_id)}}";
+        var route = $(trigger).data("route");
         xhr = $.ajax({
             type: "GET",
             url: route,
@@ -125,7 +127,7 @@
             },
         });     
     }
-        */
+        
 
     // Program Level excel with charts
     function downloadExcel(trigger) {
