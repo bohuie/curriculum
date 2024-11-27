@@ -1004,7 +1004,7 @@ class ProgramController extends Controller
             $plosSheet = $this->makeLearningOutcomesSheetData($spreadsheet, $programId, $styles);
             $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
             $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
-            //$mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+            $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
             $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
             $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
             $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
@@ -1012,13 +1012,13 @@ class ProgramController extends Controller
         
             Log::Debug("Made all sheets");
             // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet, $dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
+            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet, $mapSheet, $dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
             {
                 
                 $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                 $courseSheet->getColumnDimension($letter)->setAutoSize(true);
                 $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
-                //$mapSheet->getColumnDimension($letter)->setAutoSize(true);
+                $mapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
                 $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
                 $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
