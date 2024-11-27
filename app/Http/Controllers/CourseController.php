@@ -651,27 +651,52 @@ class CourseController extends Controller
                 ],
             ];
 
-            $courseSheet = $this->makeCourseInfoSheetData($spreadsheet, $course_id, $styles);
-            $programSheet= $this->makeProgramOutcomeSheetData($spreadsheet, $course_id, $styles);
-            $mappingScaleSheet=$this->makeMappingScalesSheetData($spreadsheet, $course_id, $styles);
-            $bcScaleSheet =$this->BcMappingScalesData($spreadsheet,$styles);
-            $outcomeSheet=$this->makeOutcomeMapSheetData($spreadsheet, $course_id, $styles, $columns);
-            $bcMappedSheet=$this->makeBcStandardMapSheetData($spreadsheet, $course_id, $styles);
-            $assessmentMethodSheet=$this->makeAssessmentMapSheetData($spreadsheet, $course_id, $styles, $columns);
-            $learningActivitySheet=$this->makeLearningActivityMapSheetData($spreadsheet, $course_id, $styles, $columns);
+            $courseProgram = CourseProgram::where('course_id', $course_id)->first();
+            if($courseProgram!=NULL){
+                
+                $courseSheet = $this->makeCourseInfoSheetData($spreadsheet, $course_id, $styles);
+                
+                $programSheet= $this->makeProgramOutcomeSheetData($spreadsheet, $course_id, $styles);
+                $mappingScaleSheet=$this->makeMappingScalesSheetData($spreadsheet, $course_id, $styles);
+                $bcScaleSheet =$this->BcMappingScalesData($spreadsheet,$styles);
+                $outcomeSheet=$this->makeOutcomeMapSheetData($spreadsheet, $course_id, $styles, $columns);
+                $bcMappedSheet=$this->makeBcStandardMapSheetData($spreadsheet, $course_id, $styles);
+                $assessmentMethodSheet=$this->makeAssessmentMapSheetData($spreadsheet, $course_id, $styles, $columns);
+                $learningActivitySheet=$this->makeLearningActivityMapSheetData($spreadsheet, $course_id, $styles, $columns);
 
 
-            array_walk($columns, function ($letter, $index) use ($courseSheet,$programSheet, $mappingScaleSheet, $bcScaleSheet,$outcomeSheet, $bcMappedSheet,$assessmentMethodSheet, $learningActivitySheet)
-            {
-                $courseSheet->getColumnDimension($letter)->setAutoSize(true);
-                $programSheet->getColumnDimension($letter)->setAutoSize(true);
-                $mappingScaleSheet->getColumnDimension($letter)->setAutoSize(true);
-                $bcScaleSheet->getColumnDimension($letter)->setAutoSize(true);
-                $outcomeSheet->getColumnDimension($letter)->setAutoSize(true);
-                $bcMappedSheet->getColumnDimension($letter)->setAutoSize(true);
-                $assessmentMethodSheet->getColumnDimension($letter)->setAutoSize(true);
-                $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
-            });
+                array_walk($columns, function ($letter, $index) use ($courseSheet,$programSheet, $mappingScaleSheet, $bcScaleSheet,$outcomeSheet, $bcMappedSheet,$assessmentMethodSheet, $learningActivitySheet)
+                {
+                    $courseSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $programSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $mappingScaleSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $bcScaleSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $outcomeSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $bcMappedSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $assessmentMethodSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
+                });
+
+            }else{
+
+                $courseSheet = $this->makeCourseInfoSheetData($spreadsheet, $course_id, $styles);
+                $bcScaleSheet =$this->BcMappingScalesData($spreadsheet,$styles);
+                $bcMappedSheet=$this->makeBcStandardMapSheetData($spreadsheet, $course_id, $styles);
+                $assessmentMethodSheet=$this->makeAssessmentMapSheetData($spreadsheet, $course_id, $styles, $columns);
+                $learningActivitySheet=$this->makeLearningActivityMapSheetData($spreadsheet, $course_id, $styles, $columns);
+    
+    
+                array_walk($columns, function ($letter, $index) use ($courseSheet, $bcScaleSheet, $bcMappedSheet,$assessmentMethodSheet, $learningActivitySheet)
+                {
+                    $courseSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $bcScaleSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $bcMappedSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $assessmentMethodSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
+                });
+    
+
+            }
 
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
@@ -1180,8 +1205,9 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
     try{
 
         $course = Course::find($courseId);
-        $courseLearningOutcome = LearningOutcome::find($courseId);
-        $courseLearningOutcomeShortPhrases = $courseLearningOutcome->pluck('clo_shortphrase')->toArray();
+        $courseLearningOutcome = LearningOutcome::where('course_id', $courseId)->value('clo_shortphrase');
+        //$courseLearningOutcomeShortPhrases = $courseLearningOutcome->pluck('clo_shortphrase')->toArray();
+        //StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course_old->course_id)->value('standard_scale_id');
         Log::Debug("CLO:");
         Log::Debug($courseLearningOutcome);
         $assessmentMethod = AssessmentMethod::find($courseId);
