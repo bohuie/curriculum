@@ -1210,9 +1210,20 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
         //StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course_old->course_id)->value('standard_scale_id');
         Log::Debug("CLO:");
         Log::Debug($courseLearningOutcome);
-        $assessmentMethod = AssessmentMethod::find($courseId);
+       // $assessmentMethods = AssessmentMethod::find($courseId);
+        $assessmentMethods = AssessmentMethod::where('course_id',$courseId)->get();
         Log::Debug("Assessment method:");
-        Log::Debug($assessmentMethod);
+        Log::Debug($assessmentMethods);
+        $assessmentMethodArray = [];
+
+        if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
+            array_push($assessmentMethodArray, $assessmentMethods);
+        }else{
+            if($assessmentMethods!=NULL){
+                foreach($assessmentMethods as $assessmentMethod){
+                    array_push($assessmentMethodArray, $assessmentMethod);
+                }
+            }}
 
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('CLO to SAM  Mapping');
@@ -1222,13 +1233,13 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
         // apply styling to the primary headings
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
         // span program learning outcomes header over the number of learning outcomes
-        $sheet->mergeCells('B1:'.$columns[$assessmentMethod->count()].'1');
+        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
         // create course learning outcome array to add to the outcome maps sheet
     
         // add courses to their column in the sheet
-        $sheet->fromArray(array_chunk($courseLearningOutcomeShortPhrases, 1), null, 'A4');
+        $sheet->fromArray(array_chunk($courseLearningOutcome, 1), null, 'A4');
         // apply a secondary header style and
-        $sheet->getStyle('A4:A'.strval(4 + count($courseLearningOutcomeShortPhrases) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A4:A'.strval(4 + count($courseLearningOutcome) - 1))->applyFromArray($styles['secondaryHeading']);
         // make courses font bold
         $sheet->getStyle('A4:A100')->getFont()->setBold(true);
 
@@ -1255,9 +1266,20 @@ private function makeLearningActivityMapSheetData(Spreadsheet $spreadsheet, int 
         $courseLearningOutcomeShortPhrases = $courseLearningOutcome->pluck('clo_shortphrase')->toArray();
         Log::Debug("CLO:");
         Log::Debug($courseLearningOutcome);
-        $learningActivity = LearningActivity::find($courseId);
+        //$learningActivity = LearningActivity::find($courseId);
+        $learningActivities = LearningActivity::where('course_id',$courseId)->get();
         Log::Debug("LearningActivity:");
-        Log::Debug($learningActivity);
+        Log::Debug($learningActivities);
+        $learningActivityArray = [];
+
+        if (count($learningActivities)==1 && $learningActivities!=NULL){
+            array_push($learningActivityArray, $learningActivities);
+        }else{
+            if($learningActivities!=NULL){
+                foreach($learningActivities as $learningActivity){
+                    array_push($learningActivityArray, $learningActivity);
+                }
+            }}
 
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('CLO to T&L Mapping');
@@ -1267,7 +1289,7 @@ private function makeLearningActivityMapSheetData(Spreadsheet $spreadsheet, int 
         // apply styling to the primary headings
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
         // span program learning outcomes header over the number of learning outcomes
-        $sheet->mergeCells('B1:'.$columns[$learningActivity->count()].'1');
+        $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)].'1');
         // create course learning outcome array to add to the outcome maps sheet
     
         // add courses to their column in the sheet
