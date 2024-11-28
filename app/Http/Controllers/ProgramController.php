@@ -2468,7 +2468,49 @@ class ProgramController extends Controller
             $sheet->getStyle('A1:G1')->applyFromArray($styles['primaryHeading']);
 
             foreach ($courses as $index => $course) {
-                $mapped = ($course->pivot->map_status==0)? 'Yes': 'No';
+
+                //Figure out if course is mapped or not
+
+                //Step 1: Gather all CLOs for course
+                $courseLearningOutcomes=LearningOutcome::where('course_id', $course->course_id)->get();
+
+                //Step 2: Gather all PLOs for Program
+                $programLearningOutcomes=ProgramLearningOutcome::where('program_id', $program->program_id)->get();
+
+                //Step 3: Gather all PLO to CLO Mapping for all PLOs (could have done all CLOs doesn't matter, as long as it is all of them)
+                $outcomeMapCLOIDs=[];
+
+                foreach($programLearningOutcomes as $PLO){
+                    $outcomeMappingCLOIDsTemp=OutcomeMap::where('pl_outcome_id', $PLO->pl_outcome_id)->pluck('l_outcome_id')->toArray();
+                    if(gettype($outcomeMappingCLOIDsTemp)=='array'){
+                        foreach($outcomeMappingCLOIDsTemp as $CLOId){
+                            array_push($outcomeMapCLOIDs,$CLOId);
+                        }
+                    }else{
+                        array_push($outcomeMapCLOIDs,$outcomeMappingCLOIDsTemp);
+                    }
+
+                }
+                //Step 4: Check for each CLO if a Mapping exists, if not then we make $mapped = no and break from the loop
+                $mapped='Yes';
+
+                if(count($courseLearningOutcomes)>0){
+
+                    foreach($courseLearningOutcomes as $CLO){
+                        if(!in_array($CLO->l_outcome_id, $outcomeMapCLOIDs)){
+                            $mapped='No';
+
+                            break;
+                        }else{
+                            $mapped='Yes';
+                        }
+                        
+                    }
+                }else{
+                    $mapped='No';
+                }
+
+                //$mapped = ($course->pivot->map_status==0)? 'Yes': 'No';
                 $courseRequired = ($course->pivot->course_required==1)? 'Yes': 'No';
                 // Create array with course data
                 $courseData = [$course->course_title, $course->course_code, $course->course_num, $course->year, $course->semester,$courseRequired, $mapped]; // Assuming 'semester' is the term column
@@ -2976,8 +3018,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
                             $cell2 = $sheet->getCell($columnLetter2.$row);
                             //Get Value of equivalent First column cell
                             $cell1 = $sheet->getCell($columnLetter1.$row);
-                            Log::Debug("AM CELL Value");
-                            Log::Debug($cell1->getValue());
+
                             if (is_null($cell1->getValue())){ //If the Value of first column is empty, replace it with value in second column
                                 $sheet->getCell($columnLetter1.$row)->setValue($cell2->getValue());
                             }
