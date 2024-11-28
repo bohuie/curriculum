@@ -1109,10 +1109,12 @@ private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $cours
             Log::Debug("PLO");
             Log::Debug($programLearningOutcomes);
             $mappingScaleLevels = $program->mappingScaleLevels;
-            $courseLearningOutcomes = LearningOutcome::find($courseId);
+ 
+            $courseLearningOutcomes = LearningOutcome::where('course_id', $courseId);
             $courseLearningOutcomeShortPhrases = $courseLearningOutcomes->pluck('clo_shortphrase')->toArray();
-            Log::Debug("CLO:");
-            Log::Debug($courseLearningOutcomes);
+
+            Log::Debug("CLO Short Phrases");
+            Log::Debug(gettype($courseLearningOutcomeShortPhrases));
 
             if ($programLearningOutcomes->count() < 1 && $program->count() < 1) {
                 return $sheet;
@@ -1205,16 +1207,21 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
     try{
 
         $course = Course::find($courseId);
-        $courseLearningOutcome = LearningOutcome::where('course_id', $courseId)->value('clo_shortphrase');
+        $courseLearningOutcomes = LearningOutcome::where('course_id', $courseId);
+        $courseLearningOutcomeShortPhrases = $courseLearningOutcomes->pluck('clo_shortphrase')->toArray();
+
+        Log::Debug("CLO Short Phrases");
+        Log::Debug(gettype($courseLearningOutcomeShortPhrases));
         //$courseLearningOutcomeShortPhrases = $courseLearningOutcome->pluck('clo_shortphrase')->toArray();
         //StandardsOutcomeMap::where('standard_id', $standardOutcome->standard_id)->where('course_id', $course_old->course_id)->value('standard_scale_id');
-        Log::Debug("CLO:");
-        Log::Debug($courseLearningOutcome);
+ 
        // $assessmentMethods = AssessmentMethod::find($courseId);
         $assessmentMethods = AssessmentMethod::where('course_id',$courseId)->get();
         Log::Debug("Assessment method:");
         Log::Debug($assessmentMethods);
         $assessmentMethodArray = [];
+
+        
 
         if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
             array_push($assessmentMethodArray, $assessmentMethods);
@@ -1237,9 +1244,9 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
         // create course learning outcome array to add to the outcome maps sheet
     
         // add courses to their column in the sheet
-        $sheet->fromArray(array_chunk($courseLearningOutcome, 1), null, 'A4');
+        $sheet->fromArray(array_chunk($courseLearningOutcomeShortPhrases, 1), null, 'A4');
         // apply a secondary header style and
-        $sheet->getStyle('A4:A'.strval(4 + count($courseLearningOutcome) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A4:A'.strval(4 + count($courseLearningOutcomeShortPhrases) - 1))->applyFromArray($styles['secondaryHeading']);
         // make courses font bold
         $sheet->getStyle('A4:A100')->getFont()->setBold(true);
 
@@ -1262,10 +1269,13 @@ private function makeLearningActivityMapSheetData(Spreadsheet $spreadsheet, int 
     try{
 
         $course = Course::find($courseId);
-        $courseLearningOutcome = LearningOutcome::find($courseId);
-        $courseLearningOutcomeShortPhrases = $courseLearningOutcome->pluck('clo_shortphrase')->toArray();
-        Log::Debug("CLO:");
-        Log::Debug($courseLearningOutcome);
+
+        $courseLearningOutcomes = LearningOutcome::where('course_id', $courseId);
+        $courseLearningOutcomeShortPhrases = $courseLearningOutcomes->pluck('clo_shortphrase')->toArray();
+
+        Log::Debug("CLO Short Phrases");
+        Log::Debug(gettype($courseLearningOutcomeShortPhrases));
+
         //$learningActivity = LearningActivity::find($courseId);
         $learningActivities = LearningActivity::where('course_id',$courseId)->get();
         Log::Debug("LearningActivity:");
