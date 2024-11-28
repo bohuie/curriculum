@@ -2481,42 +2481,32 @@ class ProgramController extends Controller
                 $outcomeMapCLOIDs=[];
 
                 foreach($programLearningOutcomes as $PLO){
-                    $outcomeMappingCLOIDsTemp=OutcomeMap::where('pl_outcome_id', $PLO->pl_outcome_id)->value('l_outcome_id');
+                    $outcomeMappingCLOIDsTemp=OutcomeMap::where('pl_outcome_id', $PLO->pl_outcome_id)->pluck('l_outcome_id')->toArray();
                     if(gettype($outcomeMappingCLOIDsTemp)=='array'){
-                        Log::Debug("isArray Mapping Bruh");
                         foreach($outcomeMappingCLOIDsTemp as $CLOId){
                             array_push($outcomeMapCLOIDs,$CLOId);
                         }
                     }else{
-                        Log::Debug("isNotArray Mapping Bruh");
                         array_push($outcomeMapCLOIDs,$outcomeMappingCLOIDsTemp);
                     }
 
                 }
                 //Step 4: Check for each CLO if a Mapping exists, if not then we make $mapped = no and break from the loop
                 $mapped='Yes';
-                Log::Debug("CLO MAP Array As It Exist:");
-                Log::Debug($outcomeMapCLOIDs);
 
                 if(count($courseLearningOutcomes)>0){
 
                     foreach($courseLearningOutcomes as $CLO){
                         if(!in_array($CLO->l_outcome_id, $outcomeMapCLOIDs)){
-                            Log::Debug("CLO Outcome ID");
-                            Log::Debug($CLO->l_outcome_id);
                             $mapped='No';
-                            Log::Debug("No Mapping, setting to No");
+
                             break;
                         }else{
-                            Log::Debug("CLO Outcome ID");
-                            Log::Debug($CLO->l_outcome_id);
                             $mapped='Yes';
-                            Log::Debug("Found Mapping, setting to Yes");
                         }
                         
                     }
                 }else{
-                    Log::Debug("No CLOs for the course! Setting to not mapped");
                     $mapped='No';
                 }
 
