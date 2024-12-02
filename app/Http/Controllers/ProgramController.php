@@ -2770,7 +2770,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)+1].'1');
 
         // Retrieve all courses for the program
         $courses = [];
@@ -2788,20 +2788,39 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         foreach ($assessmentMethodArray as $assessmentMethod) {
             // Add assessment method to the sheet under the appropriate column
             Log::Debug($assessmentMethod);
+            //Need to also add fix for when there are 0 AMs
+            if(count($assessmentMethodArray)==1){
+                $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod[0]->a_method);
+            }else{
             $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
+            }
             $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
             $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
 
             // Add the weightage for each course
+
             $assessmentWeightages = [];
-            foreach ($courses as $courseId => $course) {
-                if ($assessmentMethod->course_id == array_search($course,$courses)){
-                $weightage = $assessmentMethod->weight.'%';
-                array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
-                }else{
-                    array_push($assessmentWeightages, '');
+
+            if(count($assessmentMethodArray)==1){
+                foreach ($courses as $courseId => $course) {
+                    if ($assessmentMethod[0]->course_id == array_search($course,$courses)){
+                    $weightage = $assessmentMethod[0]->weight.'%';
+                    array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
+                    }else{
+                        array_push($assessmentWeightages, '');
+                    }
+                    
                 }
-                
+            }else{
+                foreach ($courses as $courseId => $course) {
+                    if ($assessmentMethod->course_id == array_search($course,$courses)){
+                    $weightage = $assessmentMethod->weight.'%';
+                    array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
+                    }else{
+                        array_push($assessmentWeightages, '');
+                    }
+                    
+                }
             }
 
             // Add weightage data to the respective column
@@ -2901,7 +2920,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Teaching and Learning Activities'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)].'1');
+        $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)+1].'1');
 
         // Retrieve all courses for the program
         $courses = [];
