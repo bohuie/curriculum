@@ -655,14 +655,21 @@ class CourseController extends Controller
             if($courseProgram!=NULL){
                 
                 $courseSheet = $this->makeCourseInfoSheetData($spreadsheet, $course_id, $styles);
-                
+                Log::Debug("Course Data (CourseInfoSheetData) Sheet");
                 $programSheet= $this->makeProgramOutcomeSheetData($spreadsheet, $course_id, $styles);
+                Log::Debug("Course Data (programSheet) Sheet");
                 $mappingScaleSheet=$this->makeMappingScalesSheetData($spreadsheet, $course_id, $styles);
+                Log::Debug("Course Data (mappingScaleSheet) Sheet");
                 $bcScaleSheet =$this->BcMappingScalesData($spreadsheet,$styles);
+                Log::Debug("Course Data (bcScaleSheet) Sheet");
                 $outcomeSheet=$this->makeOutcomeMapSheetData($spreadsheet, $course_id, $styles, $columns);
+                Log::Debug("Course Data (outcomeSheet) Sheet");
                 $bcMappedSheet=$this->makeBcStandardMapSheetData($spreadsheet, $course_id, $styles);
+                Log::Debug("Course Data (bcMappedSheet) Sheet");
                 $assessmentMethodSheet=$this->makeAssessmentMapSheetData($spreadsheet, $course_id, $styles, $columns);
+                Log::Debug("Course Data (AM) Sheet");
                 $learningActivitySheet=$this->makeLearningActivityMapSheetData($spreadsheet, $course_id, $styles, $columns);
+                Log::Debug("Course Data (LA) Sheet");
 
 
                 array_walk($columns, function ($letter, $index) use ($courseSheet,$programSheet, $mappingScaleSheet, $bcScaleSheet,$outcomeSheet, $bcMappedSheet,$assessmentMethodSheet, $learningActivitySheet)
@@ -1174,7 +1181,7 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Course Learning Outcomes', 'Student Assessment Methods'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)+1].'1');
 
         
         // Add CLOs to first column
@@ -1187,7 +1194,11 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
         foreach ($assessmentMethodArray as $assessmentMethod) {
 
             // Add assessment method to the sheet under the appropriate column
+            if(count($assessmentMethodArray)==1){
+                $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod[0]->a_method);
+            }else{
             $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
+            }
             $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
             $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
 
@@ -1196,13 +1207,22 @@ private function makeAssessmentMapSheetData(Spreadsheet $spreadsheet, int $cours
             foreach ($courseLearningOutcomes as $CLO) {
                 $CLOtoAssessmentMapping = OutcomeAssessment::where('l_outcome_id', $CLO->l_outcome_id)->get();
                 $CLOtoAssessmentsIDs = $CLOtoAssessmentMapping->pluck('a_method_id')->toArray();
-
-                if (in_array($assessmentMethod->a_method_id, $CLOtoAssessmentsIDs)){ //check if Assessment Method is mapped to CLO
-                $weightage = $assessmentMethod->weight.'%';
+            
+            if(count($assessmentMethodArray)==1){
+                if (in_array($assessmentMethod[0]->a_method_id, $CLOtoAssessmentsIDs)){ //check if Assessment Method is mapped to CLO
+                $weightage = $assessmentMethod[0]->weight.'%';
                 array_push($assessmentWeightages, $weightage.'(Mapped)' ?: '(Mapped)'); // Empty if no weightage
                 }else{
                     array_push($assessmentWeightages, '(Not Mapped)');
                 }
+            }else{
+                if (in_array($assessmentMethod->a_method_id, $CLOtoAssessmentsIDs)){ //check if Assessment Method is mapped to CLO
+                    $weightage = $assessmentMethod->weight.'%';
+                    array_push($assessmentWeightages, $weightage.'(Mapped)' ?: '(Mapped)'); // Empty if no weightage
+                    }else{
+                        array_push($assessmentWeightages, '(Not Mapped)');
+                    }
+            }
                 
             }
 
@@ -1254,7 +1274,7 @@ private function makeLearningActivityMapSheetData(Spreadsheet $spreadsheet, int 
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Course Learning Outcomes', 'Teaching and Learning Activities'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)].'1');
+        $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)+1].'1');
 
         
         // Add CLOs to first column
