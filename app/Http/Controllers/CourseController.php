@@ -1022,7 +1022,8 @@ private function makeProgramOutcomeSheetData(Spreadsheet $spreadsheet, int $cour
     try {
         
         $course = Course::find($courseId); 
-        $courseProgram = CourseProgram::find($courseId);
+        
+        $courseProgram = CourseProgram::where('course_id', $courseId)->first();
         $programId = $courseProgram->program_id;
         $program= Program::find($programId);
         //log::Debug("Program id".$programId);
