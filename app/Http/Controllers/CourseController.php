@@ -1327,7 +1327,7 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
         }
 
         Log::Debug("Successfully made PLO array");
-        Log::Debug($programLearningOutcomes);
+        //Log::Debug($programLearningOutcomes);
 
         /*
         $courseLearningOutcomes = [];
@@ -1360,21 +1360,47 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
 
         
         // Add CLOs to first column
-        $sheet->fromArray(array_chunk($courseLearningOutcomeShortPhrases, 1), null, 'A3');
-        $sheet->getStyle('A3:A'.strval(3 + count($courseLearningOutcomeShortPhrases) - 1))->applyFromArray($styles['secondaryHeading']);
-        $sheet->getStyle('A3:A100')->getFont()->setBold(true);
+        //Changing to A4 to accomodate adding PLO categories
+        $sheet->fromArray(array_chunk($courseLearningOutcomeShortPhrases, 1), null, 'A4');
+        $sheet->getStyle('A4:A'.strval(count($courseLearningOutcomeShortPhrases) + 3))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+        //Sort programLearningOutcomes by Category (plo_category_id)
+
+        if(count($programLearningOutcomes)>1){
+        usort($programLearningOutcomes, function($a, $b)
+        {
+            return strcmp($a[1]->plo_category_id, $b[1]->plo_category_id);
+        });
+        }
 
         // Retrieve and map Student Assessment Methods with their weightages
         $categoryColInSheet = 1;
         foreach ($programLearningOutcomes as $PLO) {
 
-            // Add assessment method to the sheet under the appropriate column
-            
-            $sheet->setCellValue($columns[$categoryColInSheet].'2', $PLO[1]->pl_outcome);
-            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
-            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+            // Adding CLO to PLO mapping to the sheet under the appropriate column
 
-            // Add the weightage for each course
+            //Adding PLO Categories
+                        
+            $ploCategory = PLOCategory::where('plo_category_id', $PLO[1]->plo_category_id)->first();
+            if($ploCategory!=NULL){
+                $sheet->setCellValue($columns[$categoryColInSheet].'2', $ploCategory->plo_category);
+                $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                Log::Debug("Merging PLO Categories");
+                $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+            } else {
+                $sheet->setCellValue($columns[$categoryColInSheet].'2', "Uncategorized");
+                $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+            }
+            
+            
+            //Changing all column headers to start from 3 to accomodate PLO categories
+            $sheet->setCellValue($columns[$categoryColInSheet].'3', $PLO[1]->pl_outcome);
+            $sheet->getStyle($columns[$categoryColInSheet].'3')->getFont()->setBold(true);
+            $sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
+
+            // Outcome Mapping for each CLO
             $outcomeMappings = [];
             foreach ($courseLearningOutcomes as $CLO) {
                 $CLOtoPLOMapping = OutcomeMap::where('l_outcome_id', $CLO->l_outcome_id)->where('pl_outcome_id', $PLO[1]->pl_outcome_id)->first();
@@ -1390,7 +1416,8 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
             }
 
             // Add weightage data to the respective column
-            $sheet->fromArray(array_chunk($outcomeMappings, 1), null, $columns[$categoryColInSheet].'3');
+            //Changing all cell values to start from 4 to accomodate PLO categories
+            $sheet->fromArray(array_chunk($outcomeMappings, 1), null, $columns[$categoryColInSheet].'4');
 
             $categoryColInSheet++;
         }
@@ -1414,6 +1441,51 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
                         // add conditional formatting rule to the outcome maps sheet
                         $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
                     }
+
+        //Time to combine duplicate PLO categories
+        /*
+            //Combining duplicate cells
+
+            //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+            $row = $sheet->getRowIterator(2)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columnCoordinates=[];
+            $columnValues=[];
+
+            foreach ($cellIterator as $cell) {
+                array_push($columnCoordinates, $cell->getCoordinate());
+                array_push($columnValues, $cell->getValue());
+            }
+
+            $originalColumns=[];
+            $columnsToBeDeleted=[];
+            //Step 2: Loop through titles, if current matches previous, "lock" previous and keep going until we find a new value, then merge previous to current
+            $countColumnCoord1=0;
+            $firstDuplicateColumnValue="";
+            $firstDuplicateColumnCoord=1;
+            $CurrentColumnCoord=1;
+            $foundDuplicates=false;
+            foreach($columnValues as $columnValue){
+                if($CurrentColumnCoord<2){ //do nothing until we reach categories
+                    $CurrentColumnCoord++;
+                }else{
+                        if ($columnValue == $firstDuplicateColumnValue){
+                            $foundDuplicates=true; //found duplicate continue
+                            
+                        }else{
+                            $foundDuplicates=false; //found non-duplicate, stop and merge
+                            //merge $firstColumnCoord
+
+                        }
+                    $CurrentColumnCoord++;
+                }
+            }
+
+        */
+
         return $sheet;
  
     } catch (Throwable $exception) {
