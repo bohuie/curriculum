@@ -178,10 +178,10 @@ class ProgramLearningOutcomeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, ProgramLearningOutcome $programLearningOutcome): RedirectResponse
+    public function destroy(Request $request, ProgramLearningOutcome $programId): RedirectResponse
     {
         //
-        $plo = ProgramLearningOutcome::where('pl_outcome_id', $programLearningOutcome);
+        $plo = ProgramLearningOutcome::where('pl_outcome_id', $programId);
 
         $program = Program::find($request->input('program_id'));
         // get users name for last_modified_user

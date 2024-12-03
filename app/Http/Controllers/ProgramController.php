@@ -993,32 +993,62 @@ class ProgramController extends Controller
             ];
             
             // create each sheet in summary
-            
-            $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
-            $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
-            $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
-            $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
-            $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
-            $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
-            $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
-            $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
-            $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
+            $programLearningOutcomes = ProgramLearningOutcome::where('program_id', $programId)->get();
+            if(count($programLearningOutcomes)>0){
+                $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
+                $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
+                $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
+                $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+                $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
+                $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
+                $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
+                $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
+                $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
-            // foreach sheet, set all possible columns in $columns to autosize
-            array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
-            {
-                
-                $plosSheet->getColumnDimension($letter)->setAutoSize(true);
-                $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
-                $courseSheet->getColumnDimension($letter)->setAutoSize(true);
-                $mapSheet->getColumnDimension($letter)->setAutoSize(true);
-                $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
-                $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
-                $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
-                $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
-                $programSheet->getColumnDimension($letter)->setAutoSize(true);
-                
-            });
+                // foreach sheet, set all possible columns in $columns to autosize
+                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
+                {
+                    
+                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $courseSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $mapSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
+                    $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
+                    $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
+                    $programSheet->getColumnDimension($letter)->setAutoSize(true);
+                    
+                });
+
+            }else{
+                $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
+                $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
+                $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
+                //$mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
+                //$dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
+                //$infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
+                $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
+                $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
+                $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
+
+                // foreach sheet, set all possible columns in $columns to autosize
+                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet, $studentAssessment, $learningActivitySheet, $programSheet)
+                {
+                    
+                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+                    //$mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $courseSheet->getColumnDimension($letter)->setAutoSize(true);
+                    //$mapSheet->getColumnDimension($letter)->setAutoSize(true);
+                    //$dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
+                    //$infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
+                    $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
+                    $programSheet->getColumnDimension($letter)->setAutoSize(true);
+                    
+                });
+
+            }
            
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
@@ -2938,13 +2968,12 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         
         foreach ($learningActivityArray as $learningActivity) {
             // Add assessment method to the sheet under the appropriate column
-            $learningActivityTitle='';
-            if($learningActivity[0]==NULL){
-                $learningActivityTitle=$learningActivity->l_activity;
+  
+            if(count($learningActivityArray)==1){
+                $sheet->setCellValue($columns[$categoryColInSheet].'2', $learningActivity[0]->l_activity);
             }else{
-                $learningActivityTitle=$learningActivity[0]->l_activity;
+                $sheet->setCellValue($columns[$categoryColInSheet].'2', $learningActivity->l_activity);
             }
-            $sheet->setCellValue($columns[$categoryColInSheet].'2', $learningActivityTitle);
             $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
             $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
 
