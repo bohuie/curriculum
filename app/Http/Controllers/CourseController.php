@@ -1075,7 +1075,7 @@ private function makeProgramOutcomeSheetData(Spreadsheet $spreadsheet, int $cour
 private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $courseId, $styles): Worksheet
     {
         try {
-            $courseProgram = CourseProgram::find($courseId);
+            $courseProgram = CourseProgram::where('course_id',$courseId)->first();
             $programId = $courseProgram->program_id;
             $program= Program::find($programId);
             //Log::Debug($program);
