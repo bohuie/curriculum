@@ -967,6 +967,7 @@ class ProgramController extends Controller
     {
         //Log::Debug("Calling Data Spreadsheet");
         // set the max time to generate a pdf summary as 5 mins/300 seconds
+
         set_time_limit(300);
         try {
             $program = Program::find($programId);
@@ -995,7 +996,7 @@ class ProgramController extends Controller
             // create each sheet in summary
             //$programLearningOutcomes = ProgramLearningOutcome::where('program_id', $programId)->get();
             
-                $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
+               // $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
                 $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
                 $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
                 $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
@@ -1006,10 +1007,10 @@ class ProgramController extends Controller
                 $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
 
                 // foreach sheet, set all possible columns in $columns to autosize
-                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment, $learningActivitySheet, $programSheet)
+                array_walk($columns, function ($letter, $index) use ($courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment,$learningActivitySheet,$programSheet)
                 {
                     
-                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+                   // $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                     $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                     $courseSheet->getColumnDimension($letter)->setAutoSize(true);
                     $mapSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -1406,10 +1407,14 @@ class ProgramController extends Controller
             $mappingScaleLevels = $program->mappingScaleLevels;
             // get this programs courses
             $courses = $program->courses;
+
             // if there are no PLOs or courses in this program, return an empty sheet
-            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
+
+            // To Fix the no plo program download error changed && to ||
+            if ($programLearningOutcomes->count() < 1 || $courses->count() < 1) {
                 return $sheet;
             }
+
 
             // add primary headings (courses and program learning outcomes) to program outcome map sheet
             $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
@@ -1573,8 +1578,9 @@ class ProgramController extends Controller
             $mappingScaleLevels = $program->mappingScaleLevels;
             // get this programs courses
             $courses = $program->courses;
+
             // if there are no PLOs or courses in this program, return an empty sheet
-            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
+            if ($programLearningOutcomes->count() < 1 || $courses->count() < 1) {
                 return $sheet;
             }
 
@@ -1748,8 +1754,9 @@ class ProgramController extends Controller
             $mappingScaleLevels = $program->mappingScaleLevels;
             // get this programs courses
             $courses = $program->courses;
+
             // if there are no PLOs or courses in this program, return an empty sheet
-            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
+            if ($programLearningOutcomes->count() < 1 || $courses->count() < 1) {
                 return $sheet;
             }
 
