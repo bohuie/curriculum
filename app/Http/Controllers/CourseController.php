@@ -1023,14 +1023,33 @@ private function makeProgramOutcomeSheetData(Spreadsheet $spreadsheet, int $cour
         
         $course = Course::find($courseId); 
         
-        $courseProgram = CourseProgram::where('course_id', $courseId)->first();
-        $programId = $courseProgram->program_id;
+        $courseProgram = CourseProgram::where('course_id', $courseId)->get();
+        $PLOs=[];
+        foreach($courseProgram as $courseP){
+            $programId = $courseP->program_id;
+            $program= Program::find($programId);
+            $plosTemp = ProgramLearningOutcome::where('program_id', $programId)->get();
+            foreach($plosTemp as $plo){
+                //bruh
+                $PLOCategory=PLOCategory::where('plo_category_id', $plo->plo_category_id)->value('plo_category');
+                if($PLOCategory==NULL){
+                    $PLOCategory="Uncategorized";
+                }
+                array_push($PLOs,                 [
+                    $program->program,  
+                    $plo->plo_shortphrase,     
+                    $PLOCategory 
+                ]);
+            }
+        }
+        Log::Debug("PLO Array so Far");
+        Log::Debug($PLOs);
+
+
+        $programId = $courseProgram[0]->program_id;
         $program= Program::find($programId);
-        //log::Debug("Program id".$programId);
-        //log::Debug(($program));
-       // log::Debug("PLO count");
+        
         $plos = ProgramLearningOutcome::where('program_id', $programId)->get();
-        //log::Debug(count($plos));
 
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('Program Outcomes');
@@ -1039,15 +1058,14 @@ private function makeProgramOutcomeSheetData(Spreadsheet $spreadsheet, int $cour
         $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
 
         $row = 2; 
-        foreach ($plos as $plo) {
-            
-            $ploCategory = PlOCategory::find($plo->plo_category_id);
+        foreach ($PLOs as $plo) {
+
 
             $sheet->fromArray(
                 [
-                    $program->program,  
-                    $plo->plo_shortphrase,     
-                    $ploCategory ? $ploCategory->category_name : 'Uncategorized' 
+                    $plo[0],  
+                    $plo[1],     
+                    $plo[2] 
                 ],
                 null,
                 "A{$row}"
