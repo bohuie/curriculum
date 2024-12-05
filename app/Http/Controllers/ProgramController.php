@@ -1840,10 +1840,7 @@ class ProgramController extends Controller
            
 
             }
-            Log::Debug("CLO Array");
-            Log::Debug($courseLearningOutcomes);
-            Log::Debug("PLO Array");
-            Log::Debug($programLearningOutcomes);
+
 
             $courses=[];
             //Get a list of courses for each CLO
@@ -3225,6 +3222,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
             
             $learningActivities = LearningActivity::where('course_id',$courseIds[0]->course_id)->get();
             if (count($learningActivities)==1 && $learningActivities!=NULL){
+                
                 array_push($learningActivityArray, $learningActivities[0]);
                 if (in_array($learningActivities[0]->l_activity, $learningActivityTitles)){
                 array_push($duplicateLearningActivities, $learningActivities[0]->l_activity);
@@ -3232,9 +3230,11 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
                     array_push($learningActivityTitles, $learningActivities[0]->l_activity);
                 }
             }else{
+                
                 if($learningActivities!=NULL){
+                    
                     foreach($learningActivities as $learningActivity){
-                        array_push($learningActivityTitles, $learningActivity->l_activity);
+                        array_push($learningActivityArray, $learningActivity);
                         if (in_array($learningActivity->l_activity, $learningActivityTitles)){
                             array_push($duplicateLearningActivities, $learningActivity->l_activity);
                             } else {
@@ -3250,6 +3250,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
                 $learningActivities = LearningActivity::where('course_id',$courseId->course_id)->get();
 
                 if (count($learningActivities)==1 && $learningActivities!=NULL){
+                    
                     array_push($learningActivityArray, $learningActivities[0]);
                     if (in_array($learningActivities[0]->l_activity, $learningActivityTitles)){
                         array_push($duplicateLearningActivities, $learningActivities[0]->l_activity);
@@ -3257,7 +3258,9 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
                         array_push($learningActivityTitles, $learningActivities[0]->l_activity);
                     }
                 }else{
+                    
                     if($learningActivities!=NULL){
+        
                         foreach($learningActivities as $learningActivity){
                             array_push($learningActivityArray, $learningActivity);
                             if (in_array($learningActivity->l_activity, $learningActivityTitles)){
