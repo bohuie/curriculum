@@ -996,21 +996,22 @@ class ProgramController extends Controller
             // create each sheet in summary
             //$programLearningOutcomes = ProgramLearningOutcome::where('program_id', $programId)->get();
             
-               // $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
-                $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
+                $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
+                $plosSheet = $this->makeLearningOutcomesSheetData($spreadsheet, $programId, $styles);
                 $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
+                $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
                 $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
                 $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
                 $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
                 $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
                 $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
-                $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
+                
 
                 // foreach sheet, set all possible columns in $columns to autosize
-                array_walk($columns, function ($letter, $index) use ($courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment,$learningActivitySheet,$programSheet)
+                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment,$learningActivitySheet,$programSheet)
                 {
                     
-                   // $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
                     $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
                     $courseSheet->getColumnDimension($letter)->setAutoSize(true);
                     $mapSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -1277,6 +1278,75 @@ class ProgramController extends Controller
         try {
             $program = Program::find($programId);
             $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setTitle('Learning Outcomes');
+            $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', null)->values();
+
+            // keeps track of which row to put each category in the learning outcomes sheet
+            $categoryRowInPLOsSheet = 1;
+            foreach ($program->ploCategories as $index => $category) {
+                if ($plosInCategory = $category->plos()->get()) {
+                    // add category title to learning outcomes sheet
+                    $sheet->setCellValue('A'.strval($categoryRowInPLOsSheet), $category->plo_category);
+                    // span category title over secondary headings
+                    $sheet->mergeCells('A'.strval($categoryRowInPLOsSheet).':B'.strval($categoryRowInPLOsSheet));
+                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles['secondaryHeading']);
+
+                    // add secondary header titles to learning outcomes sheet after the category title
+                    $sheet->fromArray(['Learning Outcome', 'Short Phrase'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
+                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles['primaryHeading']);
+
+                    foreach ($plosInCategory as $index => $plo) {
+                        // create row to add to learning outcomes sheet with shortphrase and outcome
+                        $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
+                        // add plo row to learning outcome sheets under secondary headings
+                        $sheet->fromArray($ploArr, null, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
+                    }
+
+                    // if it's not the last increment position of next category heading by the number of plos in the current category
+                    if ($index != $program->ploCategories->count() - 1) {
+                        $categoryRowInPLOsSheet = $categoryRowInPLOsSheet + $category->plos->count() + 3;
+                    }
+                }
+            }
+
+            if ($uncategorizedPLOs->count() > 0) {
+                // add uncategorized category title to learning outcomes sheet
+                $sheet->setCellValue('A'.strval($categoryRowInPLOsSheet), 'Uncategorized');
+                // span uncategorized category title over secondary headings
+                $sheet->mergeCells('A'.strval($categoryRowInPLOsSheet).':B'.strval($categoryRowInPLOsSheet));
+                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles['secondaryHeading']);
+
+                // add secondary header titles to learning outcomes sheet after the category title
+                $sheet->fromArray(['Short Phrase', 'Learning Outcome'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
+                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles['primaryHeading']);
+
+                foreach ($uncategorizedPLOs as $index => $plo) {
+                    // create row to add to learning outcomes sheet with shortphrase and outcome
+                    $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
+                    // add plo row to learning outcome sheets under secondary headings
+                    $sheet->fromArray($ploArr, null, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
+                }
+            }
+
+            return $sheet;
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    private function makeLearningOutcomesSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+    {
+        try {
+            $program = Program::find($programId);
+            $sheet = $spreadsheet->createSheet();
             $sheet->setTitle('Learning Outcomes');
             $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', null)->values();
 
@@ -2419,7 +2489,8 @@ private function makeProgramInfoSheetData(Spreadsheet $spreadsheet, int $program
     try {
         // Find the program by ID
         $program = Program::find($programId);
-        $sheet = $spreadsheet->createSheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
         $sheet->setTitle('Program Information');
 
         if ($program !== null) {
