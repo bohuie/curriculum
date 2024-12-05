@@ -993,8 +993,8 @@ class ProgramController extends Controller
             ];
             
             // create each sheet in summary
-            $programLearningOutcomes = ProgramLearningOutcome::where('program_id', $programId)->get();
-            if(count($programLearningOutcomes)>0){
+            //$programLearningOutcomes = ProgramLearningOutcome::where('program_id', $programId)->get();
+            
                 $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
                 $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
                 $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
@@ -1020,35 +1020,6 @@ class ProgramController extends Controller
                     $programSheet->getColumnDimension($letter)->setAutoSize(true);
                     
                 });
-
-            }else{
-                $plosSheet = $this->makeLearningOutcomesSheet($spreadsheet, $programId, $styles);
-                $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
-                $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
-                //$mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
-                //$dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
-                //$infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
-                $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
-                $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
-                $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
-
-                // foreach sheet, set all possible columns in $columns to autosize
-                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet, $studentAssessment, $learningActivitySheet, $programSheet)
-                {
-                    
-                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
-                    //$mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
-                    $courseSheet->getColumnDimension($letter)->setAutoSize(true);
-                    //$mapSheet->getColumnDimension($letter)->setAutoSize(true);
-                    //$dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
-                    //$infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
-                    $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
-                    $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
-                    $programSheet->getColumnDimension($letter)->setAutoSize(true);
-                    
-                });
-
-            }
            
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
@@ -2800,7 +2771,11 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)+1].'1');
+        if(count($assessmentMethodArray)==0){
+            $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)+1].'1');
+        }else{
+            $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+        }
 
         // Retrieve all courses for the program
         $courses = [];
@@ -2950,7 +2925,11 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         // Add primary headings (Courses, Student Assessment Method) to the sheet
         $sheet->fromArray(['Courses', 'Teaching and Learning Activities'], null, 'A1');
         $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
-        $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)+1].'1');
+        if(count($learningActivityArray)==0){
+            $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)+1].'1');
+        }else{
+            $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)].'1');
+        }
 
         // Retrieve all courses for the program
         $courses = [];
