@@ -1860,7 +1860,11 @@ class ProgramController extends Controller
             // Add primary headings (Courses, Student Assessment Method) to the sheet
             $sheet->fromArray(['Courses','Course Learning Outcomes', 'Program Learning Outcomes'], null, 'A1');
             $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+            if(count($programLearningOutcomes)==0){
+            $sheet->mergeCells('C1:C1');
+            }else{
             $sheet->mergeCells('C1:'.$columns[count($programLearningOutcomes)+1].'1');
+            }
 
             //Add courses to first column
 
