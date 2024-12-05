@@ -891,7 +891,7 @@ class ProgramController extends Controller
      */
     public function spreadsheet(Request $request, int $programId)
     {
-        //Log::Debug("Calling Old Spreadsheet");
+        
     
 
         // set the max time to generate a pdf summary as 5 mins/300 seconds
@@ -965,7 +965,7 @@ class ProgramController extends Controller
     // Method for generating data excel in program level
     public function dataSpreadsheet(Request $request, int $programId)
     {
-        //Log::Debug("Calling Data Spreadsheet");
+        
         // set the max time to generate a pdf summary as 5 mins/300 seconds
 
         set_time_limit(300);
@@ -1001,7 +1001,7 @@ class ProgramController extends Controller
                 $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
                 $mapSheet=$this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
                 $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
-                $infoMapSheet= $this -> makeInfoMapSheet($spreadsheet, $programId, $styles, $columns);
+                $infoMapSheet= $this -> makeInfoMapSheet2($spreadsheet, $programId, $styles, $columns);
                 $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
                 $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
                 $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
@@ -1393,7 +1393,7 @@ class ProgramController extends Controller
      */
     private function makeOutcomeMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
     {
-        //Log::Debug("begining of makeOutcomeMapSheet");
+        
         try {
             // find this program
             $program = Program::find($programId);
@@ -1730,6 +1730,204 @@ class ProgramController extends Controller
 
         } catch (Throwable $exception) {
             $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    
+    private function makeInfoMapSheet2(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet{
+        try {
+             //Find all PLOs for each program
+            $programLearningOutcomes=[];
+            $courseLearningOutcomes=[];
+            $courseLearningOutcomeTitles=[];
+             
+            $PLOs=ProgramLearningOutcome::where('program_id', $programId)->get();
+            foreach($PLOs as $PLO){
+            array_push($programLearningOutcomes, [$programId, $PLO]); //Storing PLOs in array, with the first entry noting the program ID
+            }
+             
+ 
+            $coursePrograms=CourseProgram::where('program_id',$programId)->get();
+            $courseProgramCIDs = $coursePrograms->pluck('course_id')->toArray();
+
+            foreach($courseProgramCIDs as $CID){
+            $course = Course::find($CID);
+            $courseLearningOutcomesTemp = LearningOutcome::where('course_id', $CID)->get();
+            $courseLearningOutcomeTitlesTemp = $courseLearningOutcomesTemp->pluck('l_outcome')->toArray();
+            foreach($courseLearningOutcomesTemp as $clo){
+                array_push($courseLearningOutcomes, $clo);
+            }
+            foreach($courseLearningOutcomeTitlesTemp as $CLOShortPhrases){
+                array_push($courseLearningOutcomeTitles, $CLOShortPhrases);
+            }
+           
+
+            }
+            Log::Debug("CLO Array");
+            Log::Debug($courseLearningOutcomes);
+            Log::Debug("PLO Array");
+            Log::Debug($programLearningOutcomes);
+
+            $courses=[];
+            //Get a list of courses for each CLO
+            foreach($courseLearningOutcomes as $CLO){
+                $course=Course::where('course_id',$CLO->course_id)->first();
+                array_push($courses, $course->course_code." ".$course->course_num);
+            }
+            Log::Debug("Courses Array");
+            Log::Debug($courses);
+            // Create a new sheet for Student Assessment Methods
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle('Program MAP Info Table');
+            
+            // Add primary headings (Courses, Student Assessment Method) to the sheet
+            $sheet->fromArray(['Courses','Course Learning Outcomes', 'Program Learning Outcomes'], null, 'A1');
+            $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+            $sheet->mergeCells('C1:'.$columns[count($programLearningOutcomes)+1].'1');
+
+            //Add courses to first column
+
+            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+            $sheet->getStyle('A4:A'.strval(count($courses) + 3))->applyFromArray($styles['secondaryHeading']);
+            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+            
+            // Add CLOs to second column
+            //Changing to A4 to accomodate adding PLO categories
+            $sheet->fromArray(array_chunk($courseLearningOutcomeTitles, 1), null, 'B4');
+            //$sheet->getStyle('B4:B'.strval(count($courseLearningOutcomeShortPhrases) + 3))->applyFromArray($styles['secondaryHeading']);
+            $sheet->getStyle('B4:B100')->getFont()->setBold(true);
+
+            //Sort programLearningOutcomes by Category (plo_category_id)
+
+            if(count($programLearningOutcomes)>1){
+            usort($programLearningOutcomes, function($a, $b)
+            {
+                return strcmp($a[1]->plo_category_id, $b[1]->plo_category_id);
+            });
+            }
+
+            // Retrieve and map Student Assessment Methods with their weightages
+            $categoryColInSheet = 2;
+            foreach ($programLearningOutcomes as $PLO) {
+
+                // Adding CLO to PLO mapping to the sheet under the appropriate column
+
+                //Adding PLO Categories
+                            
+                $ploCategory = PLOCategory::where('plo_category_id', $PLO[1]->plo_category_id)->first();
+                if($ploCategory!=NULL){
+                    $sheet->setCellValue($columns[$categoryColInSheet].'2', $ploCategory->plo_category);
+                    $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+                } else {
+                    $sheet->setCellValue($columns[$categoryColInSheet].'2', "Uncategorized");
+                    $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+                }
+                
+                
+                //Changing all column headers to start from 3 to accomodate PLO categories
+                $sheet->setCellValue($columns[$categoryColInSheet].'3', $PLO[1]->pl_outcome);
+                $sheet->getStyle($columns[$categoryColInSheet].'3')->getFont()->setBold(true);
+                $sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
+
+                // Outcome Mapping for each CLO
+                $outcomeMappings = [];
+                foreach ($courseLearningOutcomes as $CLO) {
+                    $CLOtoPLOMapping = OutcomeMap::where('l_outcome_id', $CLO->l_outcome_id)->where('pl_outcome_id', $PLO[1]->pl_outcome_id)->first();
+                    if($CLOtoPLOMapping!=NULL){
+                        $mappingScale=MappingScale::where('map_scale_id', $CLOtoPLOMapping->map_scale_id)->first();
+                        array_push($outcomeMappings, $mappingScale->abbreviation);
+                    }else{
+                        array_push($outcomeMappings, ' ');
+                    }
+                    
+                }
+
+                // Add weightage data to the respective column
+                //Changing all cell values to start from 4 to accomodate PLO categories
+                $sheet->fromArray(array_chunk($outcomeMappings, 1), null, $columns[$categoryColInSheet].'4');
+
+                $categoryColInSheet++;
+            }
+
+            $program = Program::find($programId);
+            // get this programs mapping scales
+            $mappingScaleLevels = $program->mappingScaleLevels;
+                        // create a wizard factory for creating new conditional formatting rules
+                        $wizardFactory = new Wizard('B3:Z50');
+                        foreach ($mappingScaleLevels as $level) {
+                            // create a new conditional formatting rule based on the map scale level
+                            $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                            $levelStyle = new Style(false, true);
+                            $levelStyle->getFill()
+                                ->setFillType(Fill::FILL_SOLID)
+                                ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                            $levelStyle->getFill()
+                                ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                            $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                            $conditionalStyles[] = $wizard->getConditional();
+                            // add conditional formatting rule to the outcome maps sheet
+                            $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+                        }
+
+            //Time to combine duplicate PLO categories
+            /*
+                //Combining duplicate cells
+
+                //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+                $row = $sheet->getRowIterator(2)->current();
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $columnCoordinates=[];
+                $columnValues=[];
+
+                foreach ($cellIterator as $cell) {
+                    array_push($columnCoordinates, $cell->getCoordinate());
+                    array_push($columnValues, $cell->getValue());
+                }
+
+                $originalColumns=[];
+                $columnsToBeDeleted=[];
+                //Step 2: Loop through titles, if current matches previous, "lock" previous and keep going until we find a new value, then merge previous to current
+                $countColumnCoord1=0;
+                $firstDuplicateColumnValue="";
+                $firstDuplicateColumnCoord=1;
+                $CurrentColumnCoord=1;
+                $foundDuplicates=false;
+                foreach($columnValues as $columnValue){
+                    if($CurrentColumnCoord<2){ //do nothing until we reach categories
+                        $CurrentColumnCoord++;
+                    }else{
+                            if ($columnValue == $firstDuplicateColumnValue){
+                                $foundDuplicates=true; //found duplicate continue
+                                
+                            }else{
+                                $foundDuplicates=false; //found non-duplicate, stop and merge
+                                //merge $firstColumnCoord
+
+                            }
+                        $CurrentColumnCoord++;
+                    }
+                }
+
+            */
+            Log::Debug("Success!");
+            return $sheet;
+    
+        } catch (Throwable $exception) {
+            // Log any errors
+            $message = 'There was an error downloading the spreadsheet overview for: '.$course->course;
             Log::error($message.' ...\n');
             Log::error('Code - '.$exception->getCode());
             Log::error('File - '.$exception->getFile());
@@ -2769,8 +2967,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
             }
 
         }
-        Log::Debug("assessmentMethodArray Count Total");
-        Log::Debug(count($assessmentMethodArray));
+
         // Create a new sheet for Student Assessment Methods
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('Assessment Methods');
@@ -2799,7 +2996,7 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
         $categoryColInSheet = 1;
         foreach ($assessmentMethodArray as $assessmentMethod) {
             // Add assessment method to the sheet under the appropriate column
-            Log::Debug($assessmentMethod);
+
             //Need to also add fix for when there are 0 AMs
 
             $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method);
@@ -3037,8 +3234,7 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         
         foreach ($learningActivityArray as $learningActivity) {
             // Add assessment method to the sheet under the appropriate column
-            Log::Debug("LA");
-            Log::Debug($learningActivityArray);
+
 
             $sheet->setCellValue($columns[$categoryColInSheet].'2', $learningActivity->l_activity);
                 
