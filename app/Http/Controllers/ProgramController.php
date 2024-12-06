@@ -2617,14 +2617,21 @@ class ProgramController extends Controller
     
             if ($mappingScaleLevels->count() > 0) {
                 // Update header row to exclude the 'Colour' column
-                $sheet->fromArray(['Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
-                $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+                $sheet->fromArray(['Colour','Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
+                $sheet->getStyle('A1:D1')->applyFromArray($styles['primaryHeading']);
     
                 foreach ($mappingScaleLevels as $index => $level) {
                     // Create array of scale values without the colour column
-                    $scaleArr = [$level->title, $level->abbreviation, $level->description];
+                    $scaleArr = [null, $level->title, $level->abbreviation, $level->description];
                     // Insert the array into the sheet starting from column A
                     $sheet->fromArray($scaleArr, null, 'A'.strval($index + 2));
+                    // add the color for the map scale to the mapping scales sheet
+                    $sheet->getStyle('A'.strval($index + 2))->getFill()
+                        ->setFillType(Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                    $sheet->getStyle('A'.strval($index + 2))->getFill()
+                        ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+
                 }
             }
     
