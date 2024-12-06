@@ -1026,7 +1026,7 @@ class ProgramController extends Controller
             // generate the spreadsheet
             $writer = new Xlsx($spreadsheet);
             // set the spreadsheets name
-            $spreadsheetName = 'data-summary-'.$program->program_id.'.xlsx';
+            $spreadsheetName = 'data-summary-'.$program->program.'.xlsx';
             // create absolute filename
             $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
             // save the spreadsheet document
@@ -3119,27 +3119,17 @@ private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $pro
 
             $assessmentWeightages = [];
 
-            if(count($assessmentMethodArray)==1){
-                foreach ($courses as $courseId => $course) {
-                    if ($assessmentMethod[0]->course_id == array_search($course,$courses)){
-                    $weightage = $assessmentMethod[0]->weight.'%';
-                    array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
-                    }else{
-                        array_push($assessmentWeightages, '');
-                    }
-                    
+
+            foreach ($courses as $courseId => $course) {
+                if ($assessmentMethod->course_id == array_search($course,$courses)){
+                $weightage = $assessmentMethod->weight.'%';
+                array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
+                }else{
+                    array_push($assessmentWeightages, '');
                 }
-            }else{
-                foreach ($courses as $courseId => $course) {
-                    if ($assessmentMethod->course_id == array_search($course,$courses)){
-                    $weightage = $assessmentMethod->weight.'%';
-                    array_push($assessmentWeightages, $weightage ?: ''); // Empty if no weightage
-                    }else{
-                        array_push($assessmentWeightages, '');
-                    }
                     
-                }
             }
+            
 
             // Add weightage data to the respective column
             $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'3');
