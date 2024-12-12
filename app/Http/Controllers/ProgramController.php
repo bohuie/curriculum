@@ -612,12 +612,32 @@ class ProgramController extends Controller
         // create curl resource for POST request
         $ch = curl_init();
         // set URL and other appropriate options for POST
+        $header=[];
+        $header[0] = "Accept: text/xml,application/xml,application/xhtml+xml,";
+
+        $header[0] .= "text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
+      
+        $header[] = "Cache-Control: max-age=0";
+      
+        $header[] = "Connection: keep-alive";
+      
+        $header[] = "Keep-Alive: 300";
+      
+        $header[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+      
+        $header[] = "Accept-Language: en-us,en;q=0.5";
+      
+        $header[] = "Pragma: "; // browsers keep this blank.
+
+
         $options = [
             // endpoint is the highcharts export server
             CURLOPT_URL => 'https://export.highcharts.com/',
-            CURLOPT_HEADER => false,
+            CURLOPT_HTTPHEADER => $header,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
             // return the transfer as a string
-            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_REFERER => 'https://export.highcharts.com/',
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => ['type' => 'image/jpeg', 'width' => 600, 'options' => $config],
 
@@ -625,6 +645,7 @@ class ProgramController extends Controller
         curl_setopt_array($ch, $options);
         // $output contains the output string
         $output = curl_exec($ch);
+
         // save the image to the storage/public/charts directory which is accessible via public folder due to a symbolic link
         Storage::put('public'.DIRECTORY_SEPARATOR.'charts'.DIRECTORY_SEPARATOR.$filename, $output);
         // close curl resource to free up system resources

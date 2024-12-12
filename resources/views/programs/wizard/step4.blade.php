@@ -45,13 +45,7 @@
             @include('programs.wizard.header')
 
             <!-- TEST CARD FOR NEW LAYOUT -->
-            <div class="alert alert-warning">
-            <!-- <i class="bi bi-info-circle-fill pr-2 fs-3"></i> -->
-            <button type="button" class="close" data-dismiss="alert">×</button>  
-            <div>
-            <p> There is currently an issue with the images of charts provided in the Excel and PDF Program Summaries. We are currently working on a solution. Please contact <a href="mailto:ctl.helpdesk@ubc.ca">ctl.helpdesk@ubc.ca</a> with any questions. In the meantime you can click on the <i class="bi bi-list"></i> icon in the top right of any of the charts below to download them individually.</p>
-            </div>  
-        </div>
+
 
             <div class="card">
                 <!-- Include download progress subview for PDF -->
