@@ -1536,6 +1536,7 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
 
             $originalColumns=[];
             $columnsToBeDeleted=[];
+
             //Step 2: Loop through titles, if current matches previous, "lock" previous and keep going until we find a new value, then merge previous to current
             $countColumnCoord1=0;
             $firstDuplicateColumnValue="";
@@ -1557,8 +1558,69 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
                     $CurrentColumnCoord++;
                 }
             }
+            */
+        // Loop through each header and get titles and coordinates
+$row = $sheet->getRowIterator(2)->current();
+$cellIterator = $row->getCellIterator();
+$cellIterator->setIterateOnlyExistingCells(false);
 
-        */
+$columnCoordinates = [];
+$columnValues = [];
+
+foreach ($cellIterator as $cell) {
+    array_push($columnCoordinates, $cell->getCoordinate());
+    array_push($columnValues, $cell->getValue());
+}
+
+// Variables for tracking duplicates
+$firstDuplicateColumnValue = null;
+$firstDuplicateColumnCoord = null;
+$foundDuplicates = false;
+
+// Loop through titles to find duplicates
+foreach ($columnValues as $index => $columnValue) {
+    if ($index == 0) {
+        // Skip the first column (if required)
+        continue;
+    }
+
+    if ($columnValue === $firstDuplicateColumnValue) {
+        $foundDuplicates = true; // Found a duplicate
+    } else {
+        if ($foundDuplicates && $firstDuplicateColumnCoord !== null) {
+            // Merge cells from $firstDuplicateColumnCoord to $columnCoordinates[$index - 1]
+            //$sheet->mergeCells("{$firstDuplicateColumnCoord}:{$columnCoordinates[$index - 1]}");
+            $mergeRange = "{$firstDuplicateColumnCoord}:{$columnCoordinates[$index - 1]}";
+
+    // Check if range is already merged
+    if (!$sheet->isMergedCell($mergeRange)) {
+        $sheet->mergeCells($mergeRange);}
+
+            // Clear merged column values (optional)
+            for ($i = array_search($firstDuplicateColumnCoord, $columnCoordinates) + 1; $i < $index; $i++) {
+                $sheet->setCellValue($columnCoordinates[$i], null);
+            }
+        }
+
+        // Reset tracking variables
+        $foundDuplicates = false;
+        $firstDuplicateColumnValue = $columnValue;
+        $firstDuplicateColumnCoord = $columnCoordinates[$index];
+    }
+}
+
+// Handle the last set of duplicates (if any)
+if ($foundDuplicates && $firstDuplicateColumnCoord !== null) {
+    $sheet->mergeCells("{$firstDuplicateColumnCoord}:{$columnCoordinates[count($columnCoordinates) - 1]}");
+
+    // Clear merged column values (optional)
+    for ($i = array_search($firstDuplicateColumnCoord, $columnCoordinates) + 1; $i < count($columnValues); $i++) {
+        $sheet->setCellValue($columnCoordinates[$i], null);
+    }
+}
+
+        
+        
 
         return $sheet;
  
