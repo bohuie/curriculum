@@ -13,6 +13,8 @@ use App\Models\PLOCategory;
 use App\Models\Program;
 use App\Models\LearningOutcome;
 use App\Models\ProgramLearningOutcome;
+use App\Models\CourseOptionalPriorities;
+use App\Models\OptionalPriorities;
 use App\Models\ProgramUser;
 use App\Models\StandardCategory;
 use App\Models\StandardScale;
@@ -1005,10 +1007,11 @@ class ProgramController extends Controller
                 $infoMapSheet= $this -> makeInfoMapSheet2($spreadsheet, $programId, $styles, $columns);
                 $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
                 $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
+                $strategicPrioritiesSheet= $this->strategicPrioritiesSheet($spreadsheet, $programId, $styles, $columns);
                 
 
                 // foreach sheet, set all possible columns in $columns to autosize
-                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment,$learningActivitySheet,$programSheet)
+                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment,$learningActivitySheet,$programSheet, $strategicPrioritiesSheet)
                 {
                     
                     $plosSheet->getColumnDimension($letter)->setAutoSize(true);
@@ -1020,6 +1023,7 @@ class ProgramController extends Controller
                     $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
                     $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
                     $programSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $strategicPrioritiesSheet->getColumnDimension($letter)->setAutoSize(true);
                     
                 });
            
@@ -3569,6 +3573,228 @@ private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId,
         }
 
                     //Combining duplicate cells and deleting columns
+
+            //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+            $row = $sheet->getRowIterator(2)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columnCoordinates=[];
+            $columnValues=[];
+
+            foreach ($cellIterator as $cell) {
+                array_push($columnCoordinates, $cell->getCoordinate());
+                array_push($columnValues, $cell->getValue());
+            }
+
+            $originalColumns=[];
+            $columnsToBeDeleted=[];
+            //Step 2: Loop through titles, find duplicate values and (...)
+            $countColumnCoord1=0;
+            foreach($columnValues as $columnValue){
+                //Looking at one column
+                $countColumnCoord2=0;
+                //Get first column letter
+                $columnLetter1= str_split($columnCoordinates[$countColumnCoord1]);
+                $columnLetter1=$columnLetter1[0];
+                array_push($originalColumns, $columnLetter1);
+
+                foreach($columnValues as $columnValue2){
+                
+                    if(strcmp($columnValue,$columnValue2) == 0 && $countColumnCoord2 != $countColumnCoord1){ //if the same title but not the same column
+                    
+                    $firstCellRow=3;
+                    $lastRow = $sheet->getHighestRow();
+                        //Step 3: Copy Cell values from later columns over to first found column
+                        $columnLetter2= str_split($columnCoordinates[$countColumnCoord2]);
+                        $columnLetter2=$columnLetter2[0];
+                        if(!in_array($columnLetter2, $originalColumns) && !in_array($columnLetter2, $columnsToBeDeleted)){ //checking if we have already looked at this column, if not add it to the delete list if not already there
+                            array_push($columnsToBeDeleted, $columnLetter2);
+                        }
+
+                        for ($row = $firstCellRow; $row <= $lastRow; $row++) {
+
+                            //Get Value of a cell in duplicate column
+                            $cell2 = $sheet->getCell($columnLetter2.$row);
+                            //Get Value of equivalent First column cell
+                            $cell1 = $sheet->getCell($columnLetter1.$row);
+
+                            if (is_null($cell1->getValue())){ //If the Value of first column is empty, replace it with value in second column
+                                $sheet->getCell($columnLetter1.$row)->setValue($cell2->getValue());
+                            }
+                            
+                        }
+
+                    }
+                $countColumnCoord2+=1;
+                }
+                $countColumnCoord1+=1;
+            }
+
+
+            //Finally, loop through and remove duplicate columns:
+            sort($columnsToBeDeleted);
+            $previouslyDeletedColumn='';
+            $deletedCount=0;
+            $chars = range('A', 'Z');
+        
+            foreach($columnsToBeDeleted as $deleteColumn){
+                
+                if($previouslyDeletedColumn!='' && strcmp($deleteColumn,$previouslyDeletedColumn)>0){ 
+
+                    //So checking if the deleted column comes after the previously deleted column, we need to reduce the current delete by 1 letter for each column deleted
+                    //strcmp if the first is lexicograpically greater than the second then a positive number will be returned.
+
+                    $charIndex=array_search($deleteColumn, $chars);
+                    $deleteColumn=$chars[$charIndex-$deletedCount];
+
+
+                }
+                
+                $sheet->removeColumn($deleteColumn);
+
+                $previouslyDeletedColumn=$deleteColumn;
+                $deletedCount++;
+            }
+
+        return $sheet;
+ 
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function strategicPrioritiesSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->get();
+        $strategicPrioritiesArray = [];
+
+        Log::Debug("Before we get the COPs");
+        if (count($courseIds)==1){ 
+            
+            $courseOptionalPriorities = CourseOptionalPriorities::where('course_id',$courseIds[0]->course_id)->get();
+            if (count($courseOptionalPriorities)==1 && $courseOptionalPriorities!=NULL){
+                $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriorities[0]->op_id)->value('optional_priority');
+                array_push($strategicPrioritiesArray, [$optionalPriority, $courseIds[0]->course_id]);
+            }else{
+                
+                if($courseOptionalPriorities!=NULL){
+                    
+                    foreach($courseOptionalPriorities as $courseOptionalPriority){
+                        $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriority->op_id)->value('optional_priority');
+                        array_push($strategicPrioritiesArray, [$optionalPriority, $courseIds[0]->course_id]);
+
+                    }
+                }
+            }
+
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $courseOptionalPriorities = CourseOptionalPriorities::where('course_id',$courseId->course_id)->get();
+                if (count($courseOptionalPriorities)==1 && $courseOptionalPriorities!=NULL){
+                    $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriorities[0]->op_id)->value('optional_priority');
+                    array_push($strategicPrioritiesArray, [$optionalPriority, $courseId->course_id]);
+                }else{
+                    
+                    if($courseOptionalPriorities!=NULL){
+                        
+                        foreach($courseOptionalPriorities as $courseOptionalPriority){
+                            $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriority->op_id)->value('optional_priority');
+                            array_push($strategicPrioritiesArray, [$optionalPriority, $courseId->course_id]);
+    
+                        }
+                    }
+                }
+            }
+
+        }
+
+        Log::Debug("After we get the COPs");
+        Log::Debug($strategicPrioritiesArray);
+
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Strategic Priorities');
+        Log::Debug("After we set title");
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Strategic Priorities'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        if(count($strategicPrioritiesArray)==0){
+            $sheet->mergeCells('B1:'.$columns[count($strategicPrioritiesArray)+1].'1');
+        }else{
+            $sheet->mergeCells('B1:'.$columns[count($strategicPrioritiesArray)].'1');
+        }
+
+        Log::Debug("After we set headings and merge");
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        Log::Debug("After we set course codes");
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A3');
+        $sheet->getStyle('A3:A'.strval(3 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A3:A100')->getFont()->setBold(true);
+
+        Log::Debug("After we set course names to first column");
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        
+        foreach ($strategicPrioritiesArray as $strategicPriority) {
+            // Add assessment method to the sheet under the appropriate column
+            Log::Debug("Setting Cell value");
+            Log::Debug($strategicPriority);
+
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $strategicPriority[0]);
+                
+            
+            //$sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+            $SPusedInCourse = [];
+            foreach ($courses as $courseId => $course) {
+                Log::Debug('Attempting to Map:');
+                Log::Debug($strategicPriority[1]);
+                Log::Debug('vs');
+                Log::Debug(array_search($course,$courses));
+                if ($strategicPriority[1] == array_search($course,$courses)){
+
+                
+                //if it is present in array, put in used for this slot,
+                array_push($SPusedInCourse, '1');
+                }else{
+                    array_push($SPusedInCourse, '');
+                }
+            }
+            
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($SPusedInCourse, 1), null, $columns[$categoryColInSheet].'3');
+
+            $categoryColInSheet++;
+        }
+        Log::Debug("After we fill the sheet");
+
+                           //Combining duplicate cells and deleting columns
 
             //Step 1: Loop through each header and get the titles and coordinates in two arrays
 
