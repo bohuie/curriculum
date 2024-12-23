@@ -91,9 +91,14 @@ Route::delete('/programs/{program}/delete', [ProgramController::class, 'destroy'
 // Program Summary PDF routes
 Route::get('/programs/{program}/pdf', [ProgramController::class, 'pdf'])->name('programs.pdf');
 Route::delete('/programs/{program}/pdf', [ProgramController::class, 'deletePDF'])->name('programs.delete.pdf');
+
 // Program Summary Spreadsheet routes
 Route::get('/programs/{program}/spreadsheet', [ProgramController::class, 'spreadsheet'])->name('programs.spreadsheet');
 Route::delete('/programs/{program}/spreadsheet', [ProgramController::class, 'delSpreadsheet'])->name('programs.delete.spreadsheet');
+Route::get('/programs/{program}/downloadUserGuide', [ProgramController::class, 'downloadUserGuide'])->name('programs.downloadUserGuide');
+
+// Program Summary raw data spreadsheet routes
+Route::get('/programs/{program}/dataSpreadsheet', [ProgramController::class, 'dataSpreadsheet'])->name('programs.dataSpreadsheet');
 
 Route::get('/programs/{program}/duplicate', [ProgramController::class, 'duplicate'])->name('programs.duplicate');
 
@@ -111,6 +116,10 @@ Route::post('/courses/{course}/amReorder', [CourseController::class, 'amReorder'
 Route::post('/courses/{course}/loReorder', [CourseController::class, 'loReorder'])->name('courses.loReorder');
 Route::post('/courses/{course}/tlaReorder', [CourseController::class, 'tlaReorder'])->name('courses.tlaReorder');
 Route::get('/courses/{course}/pdf', [CourseController::class, 'pdf'])->name('courses.pdf');
+
+// Route for spreadsheet download in course 
+Route::get('/courses/{course}/dataSpreadsheet', [CourseController::class, 'dataSpreadsheet'])->name('courses.dataSpreadsheet');
+
 Route::delete('/courses/{course}/pdf', [CourseController::class, 'deletePDF'])->name('courses.delete.pdf');
 Route::get('/courses/{course}/remove', [CourseController::class, 'removeFromProgram'])->name('courses.remove');
 Route::get('/courses/{course}/emailCourseInstructor', [CourseController::class, 'emailCourseInstructor'])->name('courses.emailCourseInstructor');
@@ -121,6 +130,7 @@ Route::delete('/courses/{course}/destroy', [CourseController::class, 'destroy'])
 Route::resource('/lo', LearningOutcomeController::class);
 Route::post('/import/clos', [LearningOutcomeController::class, 'import'])->name('courses.outcomes.import');
 Route::post('/store/clos', [LearningOutcomeController::class, 'store'])->name('courses.outcomes.store');
+
 
 Route::resource('/plo', ProgramLearningOutcomeController::class);
 Route::post('/plo/store', [ProgramLearningOutcomeController::class, 'store'])->name('program.outcomes.store');

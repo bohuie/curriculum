@@ -11,7 +11,10 @@ use App\Models\MappingScaleProgram;
 use App\Models\OutcomeMap;
 use App\Models\PLOCategory;
 use App\Models\Program;
+use App\Models\LearningOutcome;
 use App\Models\ProgramLearningOutcome;
+use App\Models\CourseOptionalPriorities;
+use App\Models\OptionalPriorities;
 use App\Models\ProgramUser;
 use App\Models\StandardCategory;
 use App\Models\StandardScale;
@@ -24,6 +27,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use League\CommonMark\Extension\SmartPunct\EllipsesParser;
 use PDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -910,6 +914,9 @@ class ProgramController extends Controller
      */
     public function spreadsheet(Request $request, int $programId)
     {
+        
+    
+
         // set the max time to generate a pdf summary as 5 mins/300 seconds
         set_time_limit(300);
         try {
@@ -940,6 +947,7 @@ class ProgramController extends Controller
             $mappingScalesSheet = $this->makeMappingScalesSheet($spreadsheet, $programId, $styles);
             $mapSheet = $this->makeOutcomeMapSheet($spreadsheet, $programId, $styles, $columns);
 
+            
             // get array of urls to charts in this program
             $charts = $this->getImagesOfCharts($programId, '.xlsx');
             $this->makeChartSheets($spreadsheet, $programId, $charts);
@@ -977,7 +985,94 @@ class ProgramController extends Controller
             return -1;
         }
     }
+    // Method for generating data excel in program level
+    public function dataSpreadsheet(Request $request, int $programId)
+    {
+        
+        // set the max time to generate a pdf summary as 5 mins/300 seconds
 
+        set_time_limit(300);
+        try {
+            $program = Program::find($programId);
+            // create the spreadsheet
+            $spreadsheet = new Spreadsheet();
+            // create array of column names
+            $columns = range('A', 'Z');
+            // create array of styles for spreadsheet
+            $styles = [
+                'primaryHeading' => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'C6E0F5'],
+                    ],
+                ],
+                'secondaryHeading' => [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'ced4da'],
+                    ],
+                ],
+            ];
+            
+            // create each sheet in summary
+            //$programLearningOutcomes = ProgramLearningOutcome::where('program_id', $programId)->get();
+            
+                $programSheet = $this->makeProgramInfoSheetData($spreadsheet, $programId, $styles);
+                $plosSheet = $this->makeLearningOutcomesSheetData($spreadsheet, $programId, $styles);
+                $courseSheet=$this->makeCourseInfoSheetData($spreadsheet, $programId, $styles, $columns);
+                $mappingScalesSheet = $this->makeMappingScalesSheetData($spreadsheet, $programId, $styles);
+                $mapSheet=$this->makeOutcomeMapSheetData($spreadsheet, $programId, $styles, $columns);
+                $dominantMapSheet= $this -> makeDominantMapSheet($spreadsheet, $programId, $styles, $columns);
+                $infoMapSheet= $this -> makeInfoMapSheet2($spreadsheet, $programId, $styles, $columns);
+                $studentAssessment= $this->studentAssessmentMethodSheet($spreadsheet, $programId, $styles, $columns);
+                $learningActivitySheet= $this->learningActivitySheet($spreadsheet, $programId, $styles, $columns);
+                $strategicPrioritiesSheet= $this->strategicPrioritiesSheet($spreadsheet, $programId, $styles, $columns);
+                
+
+                // foreach sheet, set all possible columns in $columns to autosize
+                array_walk($columns, function ($letter, $index) use ($plosSheet, $courseSheet, $mappingScalesSheet,$mapSheet,$dominantMapSheet, $infoMapSheet,$studentAssessment,$learningActivitySheet,$programSheet, $strategicPrioritiesSheet)
+                {
+                    
+                    $plosSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $mappingScalesSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $courseSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $mapSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $dominantMapSheet-> getColumnDimension($letter)->setAutoSize(true);
+                    $infoMapSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $studentAssessment->getColumnDimension($letter)->setAutoSize(true);
+                    $learningActivitySheet->getColumnDimension($letter)->setAutoSize(true);
+                    $programSheet->getColumnDimension($letter)->setAutoSize(true);
+                    $strategicPrioritiesSheet->getColumnDimension($letter)->setAutoSize(true);
+                    
+                });
+           
+            // generate the spreadsheet
+            $writer = new Xlsx($spreadsheet);
+            // set the spreadsheets name
+            $spreadsheetName = 'data-summary-'.$program->program.'.xlsx';
+            // create absolute filename
+            $storagePath = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+            // save the spreadsheet document
+            $writer->save($storagePath);
+            // get the url of the document
+            $url = Storage::url('spreadsheets'.DIRECTORY_SEPARATOR.$spreadsheetName);
+
+            // return the location of the spreadsheet document on the server
+            return $url;
+            
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return -1;
+        }
+    }
     /**
      * Private helper function to create sheets with charts in the program summary spreadsheet
      *
@@ -1272,6 +1367,75 @@ class ProgramController extends Controller
         }
     }
 
+    private function makeLearningOutcomesSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+    {
+        try {
+            $program = Program::find($programId);
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle('Learning Outcomes');
+            $uncategorizedPLOs = $program->programLearningOutcomes->where('plo_category_id', null)->values();
+
+            // keeps track of which row to put each category in the learning outcomes sheet
+            $categoryRowInPLOsSheet = 1;
+            foreach ($program->ploCategories as $index => $category) {
+                if ($plosInCategory = $category->plos()->get()) {
+                    // add category title to learning outcomes sheet
+                    $sheet->setCellValue('A'.strval($categoryRowInPLOsSheet), $category->plo_category);
+                    // span category title over secondary headings
+                    $sheet->mergeCells('A'.strval($categoryRowInPLOsSheet).':B'.strval($categoryRowInPLOsSheet));
+                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles['secondaryHeading']);
+
+                    // add secondary header titles to learning outcomes sheet after the category title
+                    $sheet->fromArray(['Learning Outcome', 'Short Phrase'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
+                    $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles['primaryHeading']);
+
+                    foreach ($plosInCategory as $index => $plo) {
+                                                // create row to add to learning outcomes sheet with shortphrase and outcome
+                        $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
+                        // add plo row to learning outcome sheets under secondary headings
+                        $sheet->fromArray($ploArr, null, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
+                    }
+
+                    // if it's not the last increment position of next category heading by the number of plos in the current category
+                    if ($index != $program->ploCategories->count() - 1) {
+                        $categoryRowInPLOsSheet = $categoryRowInPLOsSheet + $category->plos->count() + 3;
+                    }
+                }
+            }
+
+            if ($uncategorizedPLOs->count() > 0) {
+                // add uncategorized category title to learning outcomes sheet
+                $sheet->setCellValue('A'.strval($categoryRowInPLOsSheet), 'Uncategorized');
+                // span uncategorized category title over secondary headings
+                $sheet->mergeCells('A'.strval($categoryRowInPLOsSheet).':B'.strval($categoryRowInPLOsSheet));
+                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet))->applyFromArray($styles['secondaryHeading']);
+
+                // add secondary header titles to learning outcomes sheet after the category title
+                $sheet->fromArray(['Short Phrase', 'Learning Outcome'], null, 'A'.strval($categoryRowInPLOsSheet + 1));
+                $sheet->getStyle('A'.strval($categoryRowInPLOsSheet + 1).':B'.strval($categoryRowInPLOsSheet + 1))->applyFromArray($styles['primaryHeading']);
+
+                foreach ($uncategorizedPLOs as $index => $plo) {
+                    // create row to add to learning outcomes sheet with shortphrase and outcome
+                    $ploArr = [$plo->pl_outcome, $plo->plo_shortphrase];
+                    // add plo row to learning outcome sheets under secondary headings
+                    $sheet->fromArray($ploArr, null, 'A'.strval($categoryRowInPLOsSheet + 2 + $index));
+                }
+            }
+
+            return $sheet;
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
     /**
      * Private helper function to create the mapping scales sheet in the program summary spreadsheet
      *
@@ -1324,6 +1488,7 @@ class ProgramController extends Controller
      */
     private function makeOutcomeMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
     {
+        
         try {
             // find this program
             $program = Program::find($programId);
@@ -1337,10 +1502,14 @@ class ProgramController extends Controller
             $mappingScaleLevels = $program->mappingScaleLevels;
             // get this programs courses
             $courses = $program->courses;
+
             // if there are no PLOs or courses in this program, return an empty sheet
-            if ($programLearningOutcomes->count() < 1 && $courses->count() < 1) {
+
+            // To Fix the no plo program download error changed && to ||
+            if ($programLearningOutcomes->count() < 1 || $courses->count() < 1) {
                 return $sheet;
             }
+
 
             // add primary headings (courses and program learning outcomes) to program outcome map sheet
             $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
@@ -1431,6 +1600,802 @@ class ProgramController extends Controller
                     foreach ($courses as $courseId => $courseCode) {
                         if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
                             array_push($uncategorizedPLOsToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
+                        } else {
+                            array_push($uncategorizedPLOsToCourseMapArr, '');
+                        }
+                    }
+
+                    // add array of map scale abv to the plo entry
+                    $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                    // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                    if ($plo->plo_shortphrase) {
+                        return $plo->plo_shortphrase;
+                    } else {
+                        return $plo->pl_outcome;
+                    }
+
+                })->toArray();
+
+                // add plos in this category to the sheet
+                $sheet->fromArray($uncategorizedPLOsArr, null, $columns[$categoryColInMapSheet].'3');
+            }
+
+            // make the list of categories in the program outcome map sheet bold
+            $sheet->getStyle('B2:Z2')->getFont()->setBold(true);
+            // make the list of plos in the program outcome map sheet bold
+            $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
+
+            // create a wizard factory for creating new conditional formatting rules
+            $wizardFactory = new Wizard('B4:Z50');
+            foreach ($mappingScaleLevels as $level) {
+                // create a new conditional formatting rule based on the map scale level
+                $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                $levelStyle = new Style(false, true);
+                $levelStyle->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $levelStyle->getFill()
+                    ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                $conditionalStyles[] = $wizard->getConditional();
+                // add conditional formatting rule to the outcome maps sheet
+                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+            }
+
+            return $sheet;
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+    {
+        
+        try {
+            // find this program
+            $program = Program::find($programId);
+            // create a sheet for outcome maps
+            $sheet = $spreadsheet->createSheet();
+            // set the sheet name
+            $sheet->setTitle('Mapping Frequency');
+            // get this programs learning outcomes
+            $programLearningOutcomes = $program->programLearningOutcomes;
+            // get this programs mapping scales
+            $mappingScaleLevels = $program->mappingScaleLevels;
+            // get this programs courses
+            $courses = $program->courses;
+
+            // if there are no PLOs or courses in this program, return an empty sheet
+
+            // To Fix the no plo program download error changed && to ||
+            if ($programLearningOutcomes->count() < 1 || $courses->count() < 1) {
+                return $sheet;
+            }
+
+
+            // add primary headings (courses and program learning outcomes) to program outcome map sheet
+            $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
+            // apply styling to the primary headings
+            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+            // span program learning outcomes header over the number of learning outcomes
+            $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            // create courses array to add to the outcome maps sheet
+            $courses = [];
+            foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+                $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+            }
+            // add courses to their column in the sheet
+            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+            // apply a secondary header style and
+            $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+            // make courses font bold
+            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+            // for each plo, get the outcome map from its course mapping $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$course->course_id] = map
+            $coursesToCLOs = $this->getCoursesOutcomes([], $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
+            $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, []);
+            $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, []);
+            $PLOsToCoursesToOutcomeMap = $this->frequencyDistribution($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+            $PLOsToCoursesToOutcomeMap = $this->replaceIdsWithAbv($PLOsToCoursesToOutcomeMap, $programOutcomeMaps);
+            $PLOsToCoursesToOutcomeMap = $this->assignColours($PLOsToCoursesToOutcomeMap);
+
+            // $categoryColInMapSheet keeps track of which column to put each category in the program outcome map sheet. $alphabetUpper[1] = 'B'
+            $categoryColInMapSheet = 1;
+            foreach ($program->ploCategories as $category) {
+
+                if ($category->plos->count() > 0) {
+                    $plosInCategory = $category->plos()->get();
+                    // add category to outcome map sheet
+                    $sheet->setCellValue($columns[$categoryColInMapSheet].'2', $category->plo_category);
+                    // apply a secondary header style to category heading
+                    $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    // span category over the number of plos in the category
+                    $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $plosInCategory->count() - 1].'2');
+
+                    // create an array of plos in this category to add to the sheet under its category
+                    $plosInCategoryArr = $plosInCategory->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                        // create array of map scale abv
+                        $ploToCourseMapArr = [];
+                        // check if there is a map value for this plo and each course
+                        foreach ($courses as $courseId => $courseCode) {
+                            if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                                array_push($ploToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
+                            } else {
+                                array_push($ploToCourseMapArr, '');
+                            }
+                        }
+
+                        // add array of map scale abv to the plo entry
+                        $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                        // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                        if ($plo->plo_shortphrase) {
+                            return $plo->plo_shortphrase;
+                        } else {
+                            return $plo->pl_outcome;
+                        }
+
+                    })->toArray();
+
+                    // add plos in this category to the sheet
+                    $sheet->fromArray($plosInCategoryArr, null, $columns[$categoryColInMapSheet].'3');
+                    // update category position trackers for learning outcome sheet and outcome map sheet
+                    $categoryColInMapSheet = $categoryColInMapSheet + $plosInCategory->count();
+                }
+            }
+
+            // get uncategorized PLOs
+            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', null)->values();
+            if ($uncategorizedPLOs->count() > 0) {
+                // add uncategorized category to sheet
+                $sheet->setCellValue($columns[$categoryColInMapSheet].'2', 'Uncategorized');
+                // apply secondary heading to uncategorized header
+                $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                // span uncategorized header over the number of uncategorized plos
+                $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $uncategorizedPLOs->count() - 1].'2');
+
+                // create an array of uncategorized plos to add to the sheet under the uncategorized heading
+                $uncategorizedPLOsArr = $uncategorizedPLOs->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                    // create array of map scale abv
+                    $uncategorizedPLOsToCourseMapArr = [];
+                    // check if there is a map value for this plo and each course
+                    foreach ($courses as $courseId => $courseCode) {
+                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                            array_push($uncategorizedPLOsToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]['map_scale_abv']);
+                        } else {
+                            array_push($uncategorizedPLOsToCourseMapArr, '');
+                        }
+                    }
+
+                    // add array of map scale abv to the plo entry
+                    $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                    // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                    if ($plo->plo_shortphrase) {
+                        return $plo->plo_shortphrase;
+                    } else {
+                        return $plo->pl_outcome;
+                    }
+
+                })->toArray();
+
+                // add plos in this category to the sheet
+                $sheet->fromArray($uncategorizedPLOsArr, null, $columns[$categoryColInMapSheet].'3');
+            }
+
+            // make the list of categories in the program outcome map sheet bold
+            $sheet->getStyle('B2:Z2')->getFont()->setBold(true);
+            // make the list of plos in the program outcome map sheet bold
+            $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
+
+            // create a wizard factory for creating new conditional formatting rules
+            $wizardFactory = new Wizard('B4:Z50');
+            foreach ($mappingScaleLevels as $level) {
+                // create a new conditional formatting rule based on the map scale level
+                $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                $levelStyle = new Style(false, true);
+                $levelStyle->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $levelStyle->getFill()
+                    ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                $conditionalStyles[] = $wizard->getConditional();
+                // add conditional formatting rule to the outcome maps sheet
+                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+            }
+
+            return $sheet;
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    private function makeDominantMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+    {
+        //Log::Debug("begining of makeOutcomeMapSheet");
+        try {
+            // find this program
+            $program = Program::find($programId);
+            // create a sheet for outcome maps
+            $sheet = $spreadsheet->createSheet();
+            // set the sheet name
+            $sheet->setTitle('Mapping Dominance');
+            // get this programs learning outcomes
+            $programLearningOutcomes = $program->programLearningOutcomes;
+            // get this programs mapping scales
+            $mappingScaleLevels = $program->mappingScaleLevels;
+            // get this programs courses
+            $courses = $program->courses;
+
+            // if there are no PLOs or courses in this program, return an empty sheet
+            if ($programLearningOutcomes->count() < 1 || $courses->count() < 1) {
+                return $sheet;
+            }
+
+            // add primary headings (courses and program learning outcomes) to program outcome map sheet
+            $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
+            // apply styling to the primary headings
+            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+            // span program learning outcomes header over the number of learning outcomes
+            $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            // create courses array to add to the outcome maps sheet
+            $courses = [];
+            foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+                $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+            }
+            // add courses to their column in the sheet
+            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+            // apply a secondary header style and
+            $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+            // make courses font bold
+            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+            // for each plo, get the outcome map from its course mapping $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$course->course_id] = map
+            $coursesToCLOs = $this->getCoursesOutcomes([], $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
+            $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, []);
+            /*
+            //Initialize array for each pl_outcome_id with the value of null
+            //$store[$ar['pl_outcome_id']][$ar['course_id']]['frequencies'] = [];
+            // then in the frequencyDistribution method it is used like this:$store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+            $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, []);
+
+            //returns $store array filled with frequencies of each learning outcome map
+            $PLOsToCoursesToOutcomeMap = $this->frequencyDistribution($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+            */
+            $PLOsToCoursesToOutcomeMap = $this->createDominantArray($programOutcomeMaps, []);
+            $PLOsToCoursesToOutcomeMap = $this->dominantMappingScale($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+
+            //$PLOsToCoursesToOutcomeMap = $this->replaceIdsWithAbv($PLOsToCoursesToOutcomeMap, $programOutcomeMaps);
+            //$PLOsToCoursesToOutcomeMap = $this->assignColours($PLOsToCoursesToOutcomeMap);
+
+            // $categoryColInMapSheet keeps track of which column to put each category in the program outcome map sheet. $alphabetUpper[1] = 'B'
+            $categoryColInMapSheet = 1;
+            foreach ($program->ploCategories as $category) {
+
+                if ($category->plos->count() > 0) {
+                    $plosInCategory = $category->plos()->get();
+                    // add category to outcome map sheet
+                    $sheet->setCellValue($columns[$categoryColInMapSheet].'2', $category->plo_category);
+                    // apply a secondary header style to category heading
+                    $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    // span category over the number of plos in the category
+                    $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $plosInCategory->count() - 1].'2');
+
+                    // create an array of plos in this category to add to the sheet under its category
+                    $plosInCategoryArr = $plosInCategory->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                        // create array of map scale abv
+                        $ploToCourseMapArr = [];
+                        // check if there is a map value for this plo and each course
+                        foreach ($courses as $courseId => $courseCode) {
+                            if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                                array_push($ploToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]);
+                            } else {
+                                array_push($ploToCourseMapArr, '');
+                            }
+                        }
+
+                        // add array of map scale abv to the plo entry
+                        $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                        // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                        if ($plo->plo_shortphrase) {
+                            return $plo->plo_shortphrase;
+                        } else {
+                            return $plo->pl_outcome;
+                        }
+
+                    })->toArray();
+
+                    // add plos in this category to the sheet
+                    $sheet->fromArray($plosInCategoryArr, null, $columns[$categoryColInMapSheet].'3');
+                    // update category position trackers for learning outcome sheet and outcome map sheet
+                    $categoryColInMapSheet = $categoryColInMapSheet + $plosInCategory->count();
+                }
+            }
+
+            // get uncategorized PLOs
+            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', null)->values();
+            if ($uncategorizedPLOs->count() > 0) {
+                // add uncategorized category to sheet
+                $sheet->setCellValue($columns[$categoryColInMapSheet].'2', 'Uncategorized');
+                // apply secondary heading to uncategorized header
+                $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                // span uncategorized header over the number of uncategorized plos
+                $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $uncategorizedPLOs->count() - 1].'2');
+
+                // create an array of uncategorized plos to add to the sheet under the uncategorized heading
+                $uncategorizedPLOsArr = $uncategorizedPLOs->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                    // create array of map scale abv
+                    $uncategorizedPLOsToCourseMapArr = [];
+                    // check if there is a map value for this plo and each course
+                    foreach ($courses as $courseId => $courseCode) {
+                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                            array_push($uncategorizedPLOsToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]);
+                        } else {
+                            array_push($uncategorizedPLOsToCourseMapArr, '');
+                        }
+                    }
+
+                    // add array of map scale abv to the plo entry
+                    $sheet->fromArray(array_chunk($uncategorizedPLOsToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                    // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                    if ($plo->plo_shortphrase) {
+                        return $plo->plo_shortphrase;
+                    } else {
+                        return $plo->pl_outcome;
+                    }
+
+                })->toArray();
+
+                // add plos in this category to the sheet
+                $sheet->fromArray($uncategorizedPLOsArr, null, $columns[$categoryColInMapSheet].'3');
+            }
+
+            // make the list of categories in the program outcome map sheet bold
+            $sheet->getStyle('B2:Z2')->getFont()->setBold(true);
+            // make the list of plos in the program outcome map sheet bold
+            $sheet->getStyle('B3:Z3')->getFont()->setBold(true);
+
+            // create a wizard factory for creating new conditional formatting rules
+            $wizardFactory = new Wizard('B4:Z50');
+            foreach ($mappingScaleLevels as $level) {
+                // create a new conditional formatting rule based on the map scale level
+                $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                $levelStyle = new Style(false, true);
+                $levelStyle->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $levelStyle->getFill()
+                    ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                $conditionalStyles[] = $wizard->getConditional();
+                // add conditional formatting rule to the outcome maps sheet
+                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+            }
+
+            return $sheet;
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    
+    private function makeInfoMapSheet2(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet{
+        try {
+             //Find all PLOs for each program
+            $programLearningOutcomes=[];
+            $courseLearningOutcomes=[];
+            $courseLearningOutcomeTitles=[];
+             
+            $PLOs=ProgramLearningOutcome::where('program_id', $programId)->get();
+            foreach($PLOs as $PLO){
+            array_push($programLearningOutcomes, [$programId, $PLO]); //Storing PLOs in array, with the first entry noting the program ID
+            }
+             
+ 
+            $coursePrograms=CourseProgram::where('program_id',$programId)->get();
+            $courseProgramCIDs = $coursePrograms->pluck('course_id')->toArray();
+
+            foreach($courseProgramCIDs as $CID){
+            $course = Course::find($CID);
+            $courseLearningOutcomesTemp = LearningOutcome::where('course_id', $CID)->get();
+            $courseLearningOutcomeTitlesTemp = $courseLearningOutcomesTemp->pluck('l_outcome')->toArray();
+            foreach($courseLearningOutcomesTemp as $clo){
+                array_push($courseLearningOutcomes, $clo);
+            }
+            foreach($courseLearningOutcomeTitlesTemp as $CLOShortPhrases){
+                array_push($courseLearningOutcomeTitles, $CLOShortPhrases);
+            }
+           
+
+            }
+
+
+            $courses=[];
+            //Get a list of courses for each CLO
+            foreach($courseLearningOutcomes as $CLO){
+                $course=Course::where('course_id',$CLO->course_id)->first();
+                array_push($courses, $course->course_code." ".$course->course_num);
+            }
+            Log::Debug("Courses Array");
+            Log::Debug($courses);
+            // Create a new sheet for Student Assessment Methods
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle('Program MAP Info Table');
+            
+            // Add primary headings (Courses, Student Assessment Method) to the sheet
+            $sheet->fromArray(['Courses','Course Learning Outcomes', 'Program Learning Outcomes'], null, 'A1');
+            $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+            if(count($programLearningOutcomes)==0){
+            $sheet->mergeCells('C1:C1');
+            }else{
+            $sheet->mergeCells('C1:'.$columns[count($programLearningOutcomes)+1].'1');
+            }
+
+            //Add courses to first column
+
+            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+            $sheet->getStyle('A4:A'.strval(count($courses) + 3))->applyFromArray($styles['secondaryHeading']);
+            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+            
+            // Add CLOs to second column
+            //Changing to A4 to accomodate adding PLO categories
+            $sheet->fromArray(array_chunk($courseLearningOutcomeTitles, 1), null, 'B4');
+            //$sheet->getStyle('B4:B'.strval(count($courseLearningOutcomeShortPhrases) + 3))->applyFromArray($styles['secondaryHeading']);
+            $sheet->getStyle('B4:B100')->getFont()->setBold(true);
+
+            //Sort programLearningOutcomes by Category (plo_category_id)
+
+            if(count($programLearningOutcomes)>1){
+            usort($programLearningOutcomes, function($a, $b)
+            {
+                return strcmp($a[1]->plo_category_id, $b[1]->plo_category_id);
+            });
+            }
+
+            // Retrieve and map Student Assessment Methods with their weightages
+            $categoryColInSheet = 2;
+            foreach ($programLearningOutcomes as $PLO) {
+
+                // Adding CLO to PLO mapping to the sheet under the appropriate column
+
+                //Adding PLO Categories
+                            
+                $ploCategory = PLOCategory::where('plo_category_id', $PLO[1]->plo_category_id)->first();
+                if($ploCategory!=NULL){
+                    $sheet->setCellValue($columns[$categoryColInSheet].'2', $ploCategory->plo_category);
+                    $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    //$sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+                } else {
+                    $sheet->setCellValue($columns[$categoryColInSheet].'2', "Uncategorized");
+                    $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    //$sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+                }
+                
+                
+                //Changing all column headers to start from 3 to accomodate PLO categories
+                $sheet->setCellValue($columns[$categoryColInSheet].'3', $PLO[1]->pl_outcome);
+                $sheet->getStyle($columns[$categoryColInSheet].'3')->getFont()->setBold(true);
+                //$sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
+
+                // Outcome Mapping for each CLO
+                $outcomeMappings = [];
+                foreach ($courseLearningOutcomes as $CLO) {
+                    $CLOtoPLOMapping = OutcomeMap::where('l_outcome_id', $CLO->l_outcome_id)->where('pl_outcome_id', $PLO[1]->pl_outcome_id)->first();
+                    if($CLOtoPLOMapping!=NULL){
+                        $mappingScale=MappingScale::where('map_scale_id', $CLOtoPLOMapping->map_scale_id)->first();
+                        array_push($outcomeMappings, $mappingScale->abbreviation);
+                    }else{
+                        array_push($outcomeMappings, ' ');
+                    }
+                    
+                }
+
+                // Add weightage data to the respective column
+                //Changing all cell values to start from 4 to accomodate PLO categories
+                $sheet->fromArray(array_chunk($outcomeMappings, 1), null, $columns[$categoryColInSheet].'4');
+
+                $categoryColInSheet++;
+            }
+
+            //Combining Duplicate Cells in Headers
+            $headerRows=[2];
+            foreach($headerRows as $row){
+                $row = $sheet->getRowIterator($row)->current();
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $CurrentColumnCoord=1;
+                $firstDuplicateColumnValue="";
+                $firstDuplicateColumnCoord="";
+                $lastValue="";
+                $lastCoord="";
+                $duplicateFoundPreviously=false;
+                
+                $cellValues=[];
+                $cellCoords=[];
+                foreach ($cellIterator as $cell) {
+                    array_push($cellValues,$cell->getValue());
+                    array_push($cellCoords,$cell->getCoordinate());
+                }
+
+                $count=0;
+                foreach($cellValues as $value){
+                    if($count<1){ //do nothing until we reach categories
+                        
+                    }else{
+
+                        if ($cellValues[$count]==$lastValue){
+                            //Duplicate found, do nothing
+                            $duplicateFoundPreviously=true;
+                        //If duplicate was found, but the firstDuplicateColumnValue is blank, then set it to mark beginning of merge (whipe after merge)
+                            if ($firstDuplicateColumnValue==""){
+                                $firstDuplicateColumnValue=$lastValue;
+                                $firstDuplicateColumnCoord=$lastCoord;
+                            }
+
+                            //If duplicate found and we are at last cell in row
+                            if ($count==(count($cellValues)-1)){
+                                //Merge from First Duplicate to Current
+                                $sheet->mergeCells($firstDuplicateColumnCoord.':'.$cellCoords[$count]);
+                                $sheet->getStyle($firstDuplicateColumnCoord)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                                
+                                //Reset where we found first dupe
+                                $firstDuplicateColumnValue="";
+                                $firstDuplicateColumnCoord="";
+                                $duplicateFoundPreviously=false;
+                                break;
+                            }
+                            
+                        }else{
+                            if($duplicateFoundPreviously){
+                                //Merge from First Duplicate to Current
+                                $sheet->mergeCells($firstDuplicateColumnCoord.':'.$lastCoord);
+                                $sheet->getStyle($firstDuplicateColumnCoord)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                                
+                                //Reset where we found first dupe
+                                $firstDuplicateColumnValue="";
+                                $firstDuplicateColumnCoord="";
+                                $duplicateFoundPreviously=false;
+                            }
+
+                        }
+                    $CurrentColumnCoord++;
+                    }
+
+                    $lastValue=$cellValues[$count];
+                    $lastCoord=$cellCoords[$count];
+
+                    $count++;
+                }
+            }   
+
+            $program = Program::find($programId);
+            // get this programs mapping scales
+            $mappingScaleLevels = $program->mappingScaleLevels;
+                        // create a wizard factory for creating new conditional formatting rules
+                        $wizardFactory = new Wizard('B3:Z50');
+                        foreach ($mappingScaleLevels as $level) {
+                            // create a new conditional formatting rule based on the map scale level
+                            $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                            $levelStyle = new Style(false, true);
+                            $levelStyle->getFill()
+                                ->setFillType(Fill::FILL_SOLID)
+                                ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                            $levelStyle->getFill()
+                                ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                            $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                            $conditionalStyles[] = $wizard->getConditional();
+                            // add conditional formatting rule to the outcome maps sheet
+                            $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+                        }
+
+            //Time to combine duplicate PLO categories
+            /*
+                //Combining duplicate cells
+
+                //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+                $row = $sheet->getRowIterator(2)->current();
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $columnCoordinates=[];
+                $columnValues=[];
+
+                foreach ($cellIterator as $cell) {
+                    array_push($columnCoordinates, $cell->getCoordinate());
+                    array_push($columnValues, $cell->getValue());
+                }
+
+                $originalColumns=[];
+                $columnsToBeDeleted=[];
+                //Step 2: Loop through titles, if current matches previous, "lock" previous and keep going until we find a new value, then merge previous to current
+                $countColumnCoord1=0;
+                $firstDuplicateColumnValue="";
+                $firstDuplicateColumnCoord=1;
+                $CurrentColumnCoord=1;
+                $foundDuplicates=false;
+                foreach($columnValues as $columnValue){
+                    if($CurrentColumnCoord<2){ //do nothing until we reach categories
+                        $CurrentColumnCoord++;
+                    }else{
+                            if ($columnValue == $firstDuplicateColumnValue){
+                                $foundDuplicates=true; //found duplicate continue
+                                
+                            }else{
+                                $foundDuplicates=false; //found non-duplicate, stop and merge
+                                //merge $firstColumnCoord
+
+                            }
+                        $CurrentColumnCoord++;
+                    }
+                }
+
+            */
+            Log::Debug("Success!");
+            return $sheet;
+    
+        } catch (Throwable $exception) {
+            // Log any errors
+            $message = 'There was an error downloading the spreadsheet overview for: '.$course->course;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    private function makeInfoMapSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet{
+        try {
+            // find this program
+            $program = Program::find($programId);
+            // create a sheet for outcome maps
+            $sheet = $spreadsheet->createSheet();
+            // set the sheet name
+            $sheet->setTitle('Program MAP Info Table');
+            // get this programs learning outcomes
+            $programLearningOutcomes = $program->programLearningOutcomes;
+            // get this programs mapping scales
+            $mappingScaleLevels = $program->mappingScaleLevels;
+            // get this programs courses
+            $courses = $program->courses;
+
+            // if there are no PLOs or courses in this program, return an empty sheet
+            if ($programLearningOutcomes->count() < 1 || $courses->count() < 1) {
+                return $sheet;
+            }
+
+            // add primary headings (courses and program learning outcomes) to program outcome map sheet
+            $sheet->fromArray(['Courses', 'Program Learning Outcomes'], null, 'A1');
+            // apply styling to the primary headings
+            $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+            // span program learning outcomes header over the number of learning outcomes
+            $sheet->mergeCells('B1:'.$columns[$program->programLearningOutcomes->count()].'1');
+            // create courses array to add to the outcome maps sheet
+            $courses = [];
+            foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+                $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+            }
+            // add courses to their column in the sheet
+            $sheet->fromArray(array_chunk($courses, 1), null, 'A4');
+            // apply a secondary header style and
+            $sheet->getStyle('A4:A'.strval(4 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+            // make courses font bold
+            $sheet->getStyle('A4:A100')->getFont()->setBold(true);
+
+            // for each plo, get the outcome map from its course mapping $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$course->course_id] = map
+            $coursesToCLOs = $this->getCoursesOutcomes([], $program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get());
+            $programOutcomeMaps = $this->getOutcomeMaps($program->programLearningOutcomes, $coursesToCLOs, []);
+            /*
+            //Initialize array for each pl_outcome_id with the value of null
+            //$store[$ar['pl_outcome_id']][$ar['course_id']]['frequencies'] = [];
+            // then in the frequencyDistribution method it is used like this:$store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+            $PLOsToCoursesToOutcomeMap = $this->createCDFArray($programOutcomeMaps, []);
+
+            //returns $store array filled with frequencies of each learning outcome map
+            $PLOsToCoursesToOutcomeMap = $this->frequencyDistribution($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+            */
+            $PLOsToCoursesToOutcomeMap = $this->createInfoArray($programOutcomeMaps, []);
+            $PLOsToCoursesToOutcomeMap = $this->fillCLOInfoArray($programOutcomeMaps, $PLOsToCoursesToOutcomeMap);
+
+            //$PLOsToCoursesToOutcomeMap = $this->replaceIdsWithAbv($PLOsToCoursesToOutcomeMap, $programOutcomeMaps);
+            //$PLOsToCoursesToOutcomeMap = $this->assignColours($PLOsToCoursesToOutcomeMap);
+
+            // $categoryColInMapSheet keeps track of which column to put each category in the program outcome map sheet. $alphabetUpper[1] = 'B'
+            $categoryColInMapSheet = 1;
+            foreach ($program->ploCategories as $category) {
+
+                if ($category->plos->count() > 0) {
+                    $plosInCategory = $category->plos()->get();
+                    // add category to outcome map sheet
+                    $sheet->setCellValue($columns[$categoryColInMapSheet].'2', $category->plo_category);
+                    // apply a secondary header style to category heading
+                    $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                    // span category over the number of plos in the category
+                    $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $plosInCategory->count() - 1].'2');
+
+                    // create an array of plos in this category to add to the sheet under its category
+                    $plosInCategoryArr = $plosInCategory->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                        // create array of map scale abv
+                        $ploToCourseMapArr = [];
+                        // check if there is a map value for this plo and each course
+                        foreach ($courses as $courseId => $courseCode) {
+                            if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                                array_push($ploToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]);
+                            } else {
+                                array_push($ploToCourseMapArr, '');
+                            }
+                        }
+
+                        // add array of map scale abv to the plo entry
+                        $sheet->fromArray(array_chunk($ploToCourseMapArr, 1), null, $columns[$categoryColInMapSheet + $index].'4');
+
+                        // if the plo has a shortphrase use it in the plo header, otherwise use the full outcome
+                        if ($plo->plo_shortphrase) {
+                            return $plo->plo_shortphrase;
+                        } else {
+                            return $plo->pl_outcome;
+                        }
+
+                    })->toArray();
+
+                    // add plos in this category to the sheet
+                    $sheet->fromArray($plosInCategoryArr, null, $columns[$categoryColInMapSheet].'3');
+                    // update category position trackers for learning outcome sheet and outcome map sheet
+                    $categoryColInMapSheet = $categoryColInMapSheet + $plosInCategory->count();
+                }
+            }
+
+            // get uncategorized PLOs
+            $uncategorizedPLOs = $programLearningOutcomes->where('plo_category_id', null)->values();
+            if ($uncategorizedPLOs->count() > 0) {
+                // add uncategorized category to sheet
+                $sheet->setCellValue($columns[$categoryColInMapSheet].'2', 'Uncategorized');
+                // apply secondary heading to uncategorized header
+                $sheet->getStyle($columns[$categoryColInMapSheet].'2')->applyFromArray($styles['secondaryHeading']);
+                // span uncategorized header over the number of uncategorized plos
+                $sheet->mergeCells($columns[$categoryColInMapSheet].'2:'.$columns[$categoryColInMapSheet + $uncategorizedPLOs->count() - 1].'2');
+
+                // create an array of uncategorized plos to add to the sheet under the uncategorized heading
+                $uncategorizedPLOsArr = $uncategorizedPLOs->map(function ($plo, $index) use ($PLOsToCoursesToOutcomeMap, $courses, $sheet, $columns, $categoryColInMapSheet) {
+                    // create array of map scale abv
+                    $uncategorizedPLOsToCourseMapArr = [];
+                    // check if there is a map value for this plo and each course
+                    foreach ($courses as $courseId => $courseCode) {
+                        if (isset($PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId])) {
+                            array_push($uncategorizedPLOsToCourseMapArr, $PLOsToCoursesToOutcomeMap[$plo->pl_outcome_id][$courseId]);
                         } else {
                             array_push($uncategorizedPLOsToCourseMapArr, '');
                         }
@@ -1668,6 +2633,7 @@ class ProgramController extends Controller
 
     public function frequencyDistribution($arr, $store)
     {
+       // Log::Debug($arr);
         //Initialize Array for Frequency Distribution
         $freq = [];
         foreach ($arr as $map) {
@@ -1744,6 +2710,7 @@ class ProgramController extends Controller
                     ];
                     // Store the frequencies
                     $store[$plOutcomeId][$courseId]['frequencies'] = $freq[$plOutcomeId][$courseId];
+                    
                 }
             }
         }
@@ -1906,4 +2873,1149 @@ class ProgramController extends Controller
 
         return redirect()->route('home');
     }
+
+    // Helper method to display mapping scales
+    private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+    {
+        try {
+            $program = Program::find($programId);
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle('Mapping Scale');
+            $mappingScaleLevels = $program->mappingScaleLevels;
+    
+            if ($mappingScaleLevels->count() > 0) {
+                // Update header row to exclude the 'Colour' column
+                $sheet->fromArray(['Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
+                $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+    
+                foreach ($mappingScaleLevels as $index => $level) {
+                    // Create array of scale values without the colour column
+                    $scaleArr = [$level->title, $level->abbreviation, $level->description];
+                    // Insert the array into the sheet starting from column A
+                    $sheet->fromArray($scaleArr, null, 'A'.strval($index + 2));
+                }
+            }
+
+
+            // create a wizard factory for creating new conditional formatting rules
+            $wizardFactory = new Wizard('B2:Z50');
+            foreach ($mappingScaleLevels as $level) {
+                // create a new conditional formatting rule based on the map scale level
+                $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                $levelStyle = new Style(false, true);
+                $levelStyle->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $levelStyle->getFill()
+                    ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                $conditionalStyles[] = $wizard->getConditional();
+                // add conditional formatting rule to the outcome maps sheet
+                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+            }
+                
+    
+            return $sheet;
+    
+
+        } catch (Throwable $exception) {
+            $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+            Log::error($message.' ...\n');
+            Log::error('Code - '.$exception->getCode());
+            Log::error('File - '.$exception->getFile());
+            Log::error('Line - '.$exception->getLine());
+            Log::error($exception->getMessage());
+
+            return $exception;
+        }
+    }
+
+    // Helper method to display Course data for programs
+    private function makeCourseInfoSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+{
+    try {
+        // Find the program by ID
+        $program = Program::find($programId);
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Course Information');
+        // Get the program's courses
+        $courses = $program->courses;
+
+        if ($courses->count() > 0) {
+            // Update header row with the desired column names
+            $sheet->fromArray(['Course Title', 'Course Code','Course Number','Year', 'Term','Requirement', 'Mapped to program'], null, 'A1');
+            $sheet->getStyle('A1:G1')->applyFromArray($styles['primaryHeading']);
+
+            foreach ($courses as $index => $course) {
+                //Figure out if course is mapped or not
+
+                //Step 1: Gather all CLOs for course
+                $courseLearningOutcomes=LearningOutcome::where('course_id', $course->course_id)->get();
+
+                //Step 2: Gather all PLOs for Program
+                $programLearningOutcomes=ProgramLearningOutcome::where('program_id', $program->program_id)->get();
+
+                //Step 3: Gather all PLO to CLO Mapping for all PLOs (could have done all CLOs doesn't matter, as long as it is all of them)
+                $outcomeMapCLOIDs=[];
+
+                foreach($programLearningOutcomes as $PLO){
+                    $outcomeMappingCLOIDsTemp=OutcomeMap::where('pl_outcome_id', $PLO->pl_outcome_id)->pluck('l_outcome_id')->toArray();
+                    if(gettype($outcomeMappingCLOIDsTemp)=='array'){
+                        foreach($outcomeMappingCLOIDsTemp as $CLOId){
+                            array_push($outcomeMapCLOIDs,$CLOId);
+                        }
+                    }else{
+                        array_push($outcomeMapCLOIDs,$outcomeMappingCLOIDsTemp);
+                    }
+
+                }
+                //Step 4: Check for each CLO if a Mapping exists, if not then we make $mapped = no and break from the loop
+                $mapped='Yes';
+
+                if(count($courseLearningOutcomes)>0){
+
+                    foreach($courseLearningOutcomes as $CLO){
+                        if(!in_array($CLO->l_outcome_id, $outcomeMapCLOIDs)){
+                            $mapped='No';
+
+                            break;
+                        }else{
+                            $mapped='Yes';
+                        }
+                        
+                    }
+                }else{
+                    $mapped='No';
+                }
+                //$mapped = ($course->pivot->map_status==0)? 'Yes': 'No';
+                $courseRequired = ($course->pivot->course_required==1)? 'Yes': 'No';
+                // Create array with course data
+                $courseData = [$course->course_title, $course->course_code, $course->course_num, $course->year, $course->semester,$courseRequired, $mapped]; // Assuming 'semester' is the term column
+                // Insert the array into the sheet starting from column A
+                $sheet->fromArray($courseData, null, 'A' . strval($index + 2));
+            }
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: ' . $program->program;
+        Log::error($message . ' ...\n');
+        Log::error('Code - ' . $exception->getCode());
+        Log::error('File - ' . $exception->getFile());
+        Log::error('Line - ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function makeProgramInfoSheetData(Spreadsheet $spreadsheet, int $programId, $styles): Worksheet
+{
+    try {
+        // Find the program by ID
+        $program = Program::find($programId);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setTitle('Program Information');
+
+        if ($program !== null) {
+            // Update header row with the desired column names
+            $sheet->fromArray(['Program Name', 'Campus', 'Faculty', 'Department', 'Level'], null, 'A1');
+            $sheet->getStyle('A1:E1')->applyFromArray($styles['primaryHeading']);
+
+            // Insert the program data into the sheet
+            $programData = [
+                $program->program,
+                $program->campus,
+                $program->faculty,
+                $program->department,
+                $program->level
+            ];
+            // Insert the array into the sheet starting from row 2, column A
+            $sheet->fromArray($programData, null, 'A2');
+        }
+
+        return $sheet;
+
+    } catch (Throwable $exception) {
+        $message = 'There was an error downloading the spreadsheet overview for: ' . ($program ? $program->program : 'Unknown Program');
+        Log::error($message . ' ...\n');
+        Log::error('Code - ' . $exception->getCode());
+        Log::error('File - ' . $exception->getFile());
+        Log::error('Line - ' . $exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+
+
+    public function createDominantArray($arr, $store)
+    {
+        // Initialize array for each pl_outcome_id with the value of null
+        foreach ($arr as $ar) {
+            $store[$ar['pl_outcome_id']] = null;
+        }
+        // Initialize Array for Storing
+        foreach ($arr as $ar) {
+            if ($store[$ar['pl_outcome_id']] == null || $store[$ar['pl_outcome_id']] == $ar['pl_outcome_id']) {
+                $store[$ar['pl_outcome_id']] = [
+                    $ar['course_id'] => [
+                    ],
+                ];
+            } else {
+                $store[$ar['pl_outcome_id']][$ar['course_id']] = [];
+
+            }
+        }
+
+        return $store;
+    }
+
+    public function createInfoArray($arr, $store)
+    {
+        // Initialize array for each pl_outcome_id with the value of null
+        foreach ($arr as $ar) {
+            $store[$ar['pl_outcome_id']] = null;
+        }
+        // Initialize Array for Storing
+        foreach ($arr as $ar) {
+            if ($store[$ar['pl_outcome_id']] == null || $store[$ar['pl_outcome_id']] == $ar['pl_outcome_id']) {
+                $store[$ar['pl_outcome_id']] = [
+                    $ar['course_id'] => [
+                    ],
+                ];
+            } else {
+                $store[$ar['pl_outcome_id']][$ar['course_id']] = "";
+
+            }
+        }
+
+        return $store;
+    }
+
+    public function dominantMappingScale($arr, $store){
+
+    $scaleCategoryId=null;
+    //find out which Mapping scale group we are looking at (first one found) or if they are custom
+    foreach($arr as $map){
+        $map_scale_id = $map['map_scale_id'];
+        //if mapping scale is found and it is not N/A
+        if (isset($map['map_scale_id']) &&  $map_scale_id!=0){
+            //this is the problem, need to just build a switch
+            $mappingScale=MappingScale::where('map_scale_id', $map_scale_id)->first();
+
+            if($mappingScale!=NULL){
+                if($mappingScale->abbreviation == 'I' || $mappingScale->abbreviation == 'D' || $mappingScale->abbreviation == 'A'){
+                    $scaleCategoryId=1;
+                    break;
+                }
+                if($mappingScale->abbreviation == 'P' || $mappingScale->abbreviation == 'S' || $mappingScale->abbreviation == 'Ma'|| $mappingScale->abbreviation == 'Mi'){
+                    $scaleCategoryId=2;
+                    break;
+                }
+                
+                if($mappingScale->abbreviation == 'Y'){
+                    $scaleCategoryId=3;
+                    break;
+                }
+                if($mappingScale->abbreviation == 'F' || $mappingScale->abbreviation == 'E'){
+                    $scaleCategoryId=4;
+                    break;
+                }
+            }
+            
+            break;
+        }
+    }
+
+
+    //check if the mapping scale exists in the standard_scales table, otherwise custom (using arbitrary value 7 for switch)
+    if (!isset($scaleCategoryId)){
+        $scaleCategoryId = 7;
+    }
+    
+    //Log::Debug("CategoryId = ".$scaleCategoryId);
+    //different scaleHierarchies for each MappingScaleGroup using a switch
+    switch($scaleCategoryId){
+        case 1:
+                
+                // Define the hierarchy of mapping scales
+            $scaleHierarchy = [1 => 'I', 2 => 'D', 3 => 'A'];
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+            
+        break;
+
+        case 2:
+                
+                // Define the hierarchy of mapping scales
+            $scaleHierarchy = [1 => 'Mi', 2 => 'Ma', 3 => 'S', 4 => 'P'];
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                    
+                }
+            }
+            
+        break;
+
+        case 3:
+                
+                // Define the hierarchy of mapping scales
+            $scaleHierarchy = [1 => 'Y'];
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+        
+        break;
+
+        case 4:
+                
+                // Define the hierarchy of mapping scales
+            $scaleHierarchy = [1 => 'F', 2 => 'E'];
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+        
+        break;
+
+        case 7:
+            $customMappingScales=[];
+            $scaleHierarchy = [];
+            //loop through list, get all unique mapping scales
+            foreach ($arr as $map) {
+                $map_scale_id = $map['map_scale_id'];
+                if (!in_array($map_scale_id, $customMappingScales)){
+                    array_push($customMappingScales, $map_scale_id);
+                }
+            }
+            sort($customMappingScales);
+
+            foreach($customMappingScales as $customMappingScale){
+                $mappingScaleCustomAbv = MappingScale::where('map_scale_id', $customMappingScale)->value('abbreviation');
+                // Define the hierarchy of mapping scales
+                array_push($scaleHierarchy, $mappingScaleCustomAbv);
+
+            }
+            
+            //$scaleHierarchy = array_reverse($scaleHierarchy);
+
+
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $map_scale_id = $map['map_scale_id'];
+                // Get the abbreviation for the current map scale
+                //get mapping scale ID
+                if(is_string($store[$pl_outcome_id][$course_id])){
+                $currentStoredDominantScaleValue=array_search($store[$pl_outcome_id][$course_id], $scaleHierarchy);
+                } else {
+                    $currentStoredDominantScaleID=$store[$pl_outcome_id][$course_id];
+                    $currentStoredDominantScaleAbv = MappingScale::where('map_scale_id', $currentStoredDominantScaleID)->value('abbreviation');
+                    $currentStoredDominantScaleValue=array_search($currentStoredDominantScaleAbv, $scaleHierarchy);
+                }
+                //get the current dominance value for current stored scale ID
+                $currentViewedDominantScaleAbv = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+                $currentViewedDominantScaleValue=array_search($currentViewedDominantScaleAbv, $scaleHierarchy);
+                // If this PLO and course combination hasn't been processed yet, or if the current scale is more dominant
+                if (!isset($store[$pl_outcome_id][$course_id]) || $currentViewedDominantScaleValue >= $currentStoredDominantScaleValue) {
+                    //Log::Debug("comparing ".$currentViewedDominantScaleValue."is >= ".$currentStoredDominantScaleValue);
+                    $store[$pl_outcome_id][$course_id] = MappingScale::where('map_scale_id', $map_scale_id)->value('abbreviation');
+
+                }
+            }
+        
+        break;
+    }
+
+    
+
+    return $store;
+}
+
+public function fillCLOInfoArray($arr, $store){
+
+            $pl_outcome_id = 0;
+            $course_id = 0;
+            foreach ($arr as $map) {
+                $pl_outcome_id = $map['pl_outcome_id'];
+                $course_id = $map['course_id'];
+                $l_outcome_id = $map['l_outcome_id'];
+
+                    if(strlen($store[$pl_outcome_id][$course_id])<3){
+                        if($map['map_scale_id']!=0){
+                            $store[$pl_outcome_id][$course_id]=LearningOutcome::where('l_outcome_id', $l_outcome_id)->value('l_outcome');
+                        }
+                    }else{
+                        //need to add to list ONLY if mapped (not N/A)
+                        if($map['map_scale_id']!=0){
+                            $store[$pl_outcome_id][$course_id]=$store[$pl_outcome_id][$course_id].", ".LearningOutcome::where('l_outcome_id', $l_outcome_id)->value('l_outcome');
+                        }
+                    }
+                
+            }
+
+
+    return $store;
+}
+
+private function studentAssessmentMethodSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->get();
+        $assessmentMethodArray = [];
+
+        if (count($courseIds)==1){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
+            
+            $assessmentMethods = AssessmentMethod::where('course_id',$courseIds[0]->course_id)->get();
+            if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
+                array_push($assessmentMethodArray, $assessmentMethods[0]);
+            }else{
+                if($assessmentMethods!=NULL){
+                    foreach($assessmentMethods as $assessmentMethod){
+                        array_push($assessmentMethodArray, $assessmentMethod);
+                    }
+                }
+            }
+
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $assessmentMethods = AssessmentMethod::where('course_id',$courseId->course_id)->get();
+
+                if (count($assessmentMethods)==1 && $assessmentMethods!=NULL){
+                    array_push($assessmentMethodArray, $assessmentMethods[0]);
+                }else{
+                    if($assessmentMethods!=NULL){
+                        foreach($assessmentMethods as $assessmentMethod){
+                            array_push($assessmentMethodArray, $assessmentMethod);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Assessment Methods');
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Student Assessment Methods'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        if(count($assessmentMethodArray)==0){
+            $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)+1].'1');
+        }else{
+            $sheet->mergeCells('B1:'.$columns[count($assessmentMethodArray)].'1');
+        }
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A3');
+        $sheet->getStyle('A3:A'.strval(3 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A3:A100')->getFont()->setBold(true);
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        foreach ($assessmentMethodArray as $assessmentMethod) {
+            // Add assessment method to the sheet under the appropriate column
+
+
+            //Need to also add fix for when there are 0 AMs
+
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $assessmentMethod->a_method.' ('.$assessmentMethod->weight.'%)');
+            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+
+            $assessmentWeightages = [];
+
+
+            foreach ($courses as $courseId => $course) {
+                if ($assessmentMethod->course_id == array_search($course,$courses)){
+    
+                array_push($assessmentWeightages, '1'); // Empty if no weightage
+                }else{
+                    array_push($assessmentWeightages, '');
+                }
+                    
+            }
+            
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($assessmentWeightages, 1), null, $columns[$categoryColInSheet].'3');
+
+            $categoryColInSheet++;
+        }
+
+                    //Combining duplicate cells and deleting columns
+
+            //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+            $row = $sheet->getRowIterator(2)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columnCoordinates=[];
+            $columnValues=[];
+
+            foreach ($cellIterator as $cell) {
+                array_push($columnCoordinates, $cell->getCoordinate());
+                array_push($columnValues, $cell->getValue());
+            }
+
+            $originalColumns=[];
+            $columnsToBeDeleted=[];
+            //Step 2: Loop through titles, find duplicate values and (...)
+            $countColumnCoord1=0;
+            foreach($columnValues as $columnValue){
+                //Looking at one column
+                $countColumnCoord2=0;
+                //Get first column letter
+                $columnLetter1= str_split($columnCoordinates[$countColumnCoord1]);
+                $columnLetter1=$columnLetter1[0];
+                array_push($originalColumns, $columnLetter1);
+
+                foreach($columnValues as $columnValue2){
+                
+                    if(strcmp($columnValue,$columnValue2) == 0 && $countColumnCoord2 != $countColumnCoord1){ //if the same title but not the same column
+                    
+                    $firstCellRow=3;
+                    $lastRow = $sheet->getHighestRow();
+                        //Step 3: Copy Cell values from later columns over to first found column
+                        $columnLetter2= str_split($columnCoordinates[$countColumnCoord2]);
+                        $columnLetter2=$columnLetter2[0];
+                        if(!in_array($columnLetter2, $originalColumns) && !in_array($columnLetter2, $columnsToBeDeleted)){ //checking if we have already looked at this column, if not add it to the delete list if not already there
+                            array_push($columnsToBeDeleted, $columnLetter2);
+                        }
+
+                        for ($row = $firstCellRow; $row <= $lastRow; $row++) {
+
+                            //Get Value of a cell in duplicate column
+                            $cell2 = $sheet->getCell($columnLetter2.$row);
+                            //Get Value of equivalent First column cell
+                            $cell1 = $sheet->getCell($columnLetter1.$row);
+
+                            if (is_null($cell1->getValue())){ //If the Value of first column is empty, replace it with value in second column
+                                $sheet->getCell($columnLetter1.$row)->setValue($cell2->getValue());
+                            }
+                            
+                        }
+
+                    }
+                $countColumnCoord2+=1;
+                }
+                $countColumnCoord1+=1;
+            }
+
+
+            //Finally, loop through and remove duplicate columns:
+            sort($columnsToBeDeleted);
+            $previouslyDeletedColumn='';
+            $deletedCount=0;
+            $chars = range('A', 'Z');
+        
+            foreach($columnsToBeDeleted as $deleteColumn){
+                
+                if($previouslyDeletedColumn!='' && strcmp($deleteColumn,$previouslyDeletedColumn)>0){ 
+
+                    //So checking if the deleted column comes after the previously deleted column, we need to reduce the current delete by 1 letter for each column deleted
+                    //strcmp if the first is lexicograpically greater than the second then a positive number will be returned.
+
+                    $charIndex=array_search($deleteColumn, $chars);
+                    $deleteColumn=$chars[$charIndex-$deletedCount];
+
+
+                }
+                
+                $sheet->removeColumn($deleteColumn);
+
+                $previouslyDeletedColumn=$deleteColumn;
+                $deletedCount++;
+            }
+
+        return $sheet;
+ 
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function learningActivitySheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->get();
+        $learningActivityArray = [];
+        $learningActivityTitles=[];
+        $duplicateLearningActivities =[];
+
+        if (count($courseIds)==1){ //check with multiple courses if this is actually working, for assessmentMethods it was always saying it was always not an array
+            
+            $learningActivities = LearningActivity::where('course_id',$courseIds[0]->course_id)->get();
+            if (count($learningActivities)==1 && $learningActivities!=NULL){
+                
+                array_push($learningActivityArray, $learningActivities[0]);
+                if (in_array($learningActivities[0]->l_activity, $learningActivityTitles)){
+                array_push($duplicateLearningActivities, $learningActivities[0]->l_activity);
+                } else {
+                    array_push($learningActivityTitles, $learningActivities[0]->l_activity);
+                }
+            }else{
+                
+                if($learningActivities!=NULL){
+                    
+                    foreach($learningActivities as $learningActivity){
+                        array_push($learningActivityArray, $learningActivity);
+                        if (in_array($learningActivity->l_activity, $learningActivityTitles)){
+                            array_push($duplicateLearningActivities, $learningActivity->l_activity);
+                            } else {
+                                array_push($learningActivityTitles, $learningActivity->l_activity);
+                            }
+                    }
+                }
+            }
+
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $learningActivities = LearningActivity::where('course_id',$courseId->course_id)->get();
+
+                if (count($learningActivities)==1 && $learningActivities!=NULL){
+                    
+                    array_push($learningActivityArray, $learningActivities[0]);
+                    if (in_array($learningActivities[0]->l_activity, $learningActivityTitles)){
+                        array_push($duplicateLearningActivities, $learningActivities[0]->l_activity);
+                    } else {
+                        array_push($learningActivityTitles, $learningActivities[0]->l_activity);
+                    }
+                }else{
+                    
+                    if($learningActivities!=NULL){
+        
+                        foreach($learningActivities as $learningActivity){
+                            array_push($learningActivityArray, $learningActivity);
+                            if (in_array($learningActivity->l_activity, $learningActivityTitles)){
+                                array_push($duplicateLearningActivities, $learningActivity->l_activity);
+                                } else {
+                                    array_push($learningActivityTitles, $learningActivity->l_activity);
+                                }
+                        }
+                    }
+                }
+            }
+
+        }
+        Log::Debug("Learning Activity Count Total");
+        Log::Debug(count($learningActivityArray));
+
+        Log::Debug("Learning Activity Titles");
+        Log::Debug(implode(',', $learningActivityTitles));
+
+        Log::Debug("Learning Activity Duplicates!");
+        Log::Debug(implode(',', $duplicateLearningActivities));
+
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Learning Activities');
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Teaching and Learning Activities'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        if(count($learningActivityArray)==0){
+            $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)+1].'1');
+        }else{
+            $sheet->mergeCells('B1:'.$columns[count($learningActivityArray)].'1');
+        }
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A3');
+        $sheet->getStyle('A3:A'.strval(3 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A3:A100')->getFont()->setBold(true);
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        
+        foreach ($learningActivityArray as $learningActivity) {
+            // Add assessment method to the sheet under the appropriate column
+
+
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $learningActivity->l_activity);
+                
+            
+            $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+            $TLAusedInCourse = [];
+            foreach ($courses as $courseId => $course) {
+
+                $TLAcourseID=0;
+                if($learningActivity[0]==NULL){
+                    $TLAcourseID=$learningActivity->course_id;
+                }else{
+                    $TLAcourseID=$learningActivity[0]->course_id;
+                }
+                if ($TLAcourseID == array_search($course,$courses)){
+
+                //check if TLA is duplicated in array
+                //if it is present in array, put in used for this slot,
+                array_push($TLAusedInCourse, '1');
+                }else{
+                    array_push($TLAusedInCourse, '');
+                }
+            }
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($TLAusedInCourse, 1), null, $columns[$categoryColInSheet].'3');
+
+            $categoryColInSheet++;
+        }
+
+                    //Combining duplicate cells and deleting columns
+
+            //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+            $row = $sheet->getRowIterator(2)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columnCoordinates=[];
+            $columnValues=[];
+
+            foreach ($cellIterator as $cell) {
+                array_push($columnCoordinates, $cell->getCoordinate());
+                array_push($columnValues, $cell->getValue());
+            }
+
+            $originalColumns=[];
+            $columnsToBeDeleted=[];
+            //Step 2: Loop through titles, find duplicate values and (...)
+            $countColumnCoord1=0;
+            foreach($columnValues as $columnValue){
+                //Looking at one column
+                $countColumnCoord2=0;
+                //Get first column letter
+                $columnLetter1= str_split($columnCoordinates[$countColumnCoord1]);
+                $columnLetter1=$columnLetter1[0];
+                array_push($originalColumns, $columnLetter1);
+
+                foreach($columnValues as $columnValue2){
+                
+                    if(strcmp($columnValue,$columnValue2) == 0 && $countColumnCoord2 != $countColumnCoord1){ //if the same title but not the same column
+                    
+                    $firstCellRow=3;
+                    $lastRow = $sheet->getHighestRow();
+                        //Step 3: Copy Cell values from later columns over to first found column
+                        $columnLetter2= str_split($columnCoordinates[$countColumnCoord2]);
+                        $columnLetter2=$columnLetter2[0];
+                        if(!in_array($columnLetter2, $originalColumns) && !in_array($columnLetter2, $columnsToBeDeleted)){ //checking if we have already looked at this column, if not add it to the delete list if not already there
+                            array_push($columnsToBeDeleted, $columnLetter2);
+                        }
+
+                        for ($row = $firstCellRow; $row <= $lastRow; $row++) {
+
+                            //Get Value of a cell in duplicate column
+                            $cell2 = $sheet->getCell($columnLetter2.$row);
+                            //Get Value of equivalent First column cell
+                            $cell1 = $sheet->getCell($columnLetter1.$row);
+
+                            if (is_null($cell1->getValue())){ //If the Value of first column is empty, replace it with value in second column
+                                $sheet->getCell($columnLetter1.$row)->setValue($cell2->getValue());
+                            }
+                            
+                        }
+
+                    }
+                $countColumnCoord2+=1;
+                }
+                $countColumnCoord1+=1;
+            }
+
+
+            //Finally, loop through and remove duplicate columns:
+            sort($columnsToBeDeleted);
+            $previouslyDeletedColumn='';
+            $deletedCount=0;
+            $chars = range('A', 'Z');
+        
+            foreach($columnsToBeDeleted as $deleteColumn){
+                
+                if($previouslyDeletedColumn!='' && strcmp($deleteColumn,$previouslyDeletedColumn)>0){ 
+
+                    //So checking if the deleted column comes after the previously deleted column, we need to reduce the current delete by 1 letter for each column deleted
+                    //strcmp if the first is lexicograpically greater than the second then a positive number will be returned.
+
+                    $charIndex=array_search($deleteColumn, $chars);
+                    $deleteColumn=$chars[$charIndex-$deletedCount];
+
+
+                }
+                
+                $sheet->removeColumn($deleteColumn);
+
+                $previouslyDeletedColumn=$deleteColumn;
+                $deletedCount++;
+            }
+
+        return $sheet;
+ 
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+private function strategicPrioritiesSheet(Spreadsheet $spreadsheet, int $programId, $styles, $columns): Worksheet
+{
+    try {
+        // Find the program
+        $program = Program::find($programId);
+        $courseIds = CourseProgram::where('program_id', $programId)->get();
+        $strategicPrioritiesArray = [];
+
+        Log::Debug("Before we get the COPs");
+        if (count($courseIds)==1){ 
+            
+            $courseOptionalPriorities = CourseOptionalPriorities::where('course_id',$courseIds[0]->course_id)->get();
+            if (count($courseOptionalPriorities)==1 && $courseOptionalPriorities!=NULL){
+                $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriorities[0]->op_id)->value('optional_priority');
+                array_push($strategicPrioritiesArray, [$optionalPriority, $courseIds[0]->course_id]);
+            }else{
+                
+                if($courseOptionalPriorities!=NULL){
+                    
+                    foreach($courseOptionalPriorities as $courseOptionalPriority){
+                        $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriority->op_id)->value('optional_priority');
+                        array_push($strategicPrioritiesArray, [$optionalPriority, $courseIds[0]->course_id]);
+
+                    }
+                }
+            }
+
+        }else{
+
+            foreach( $courseIds as $courseId){
+                $courseOptionalPriorities = CourseOptionalPriorities::where('course_id',$courseId->course_id)->get();
+                if (count($courseOptionalPriorities)==1 && $courseOptionalPriorities!=NULL){
+                    $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriorities[0]->op_id)->value('optional_priority');
+                    array_push($strategicPrioritiesArray, [$optionalPriority, $courseId->course_id]);
+                }else{
+                    
+                    if($courseOptionalPriorities!=NULL){
+                        
+                        foreach($courseOptionalPriorities as $courseOptionalPriority){
+                            $optionalPriority=OptionalPriorities::where('op_id', $courseOptionalPriority->op_id)->value('optional_priority');
+                            array_push($strategicPrioritiesArray, [$optionalPriority, $courseId->course_id]);
+    
+                        }
+                    }
+                }
+            }
+
+        }
+
+        Log::Debug("After we get the COPs");
+        Log::Debug($strategicPrioritiesArray);
+
+        // Create a new sheet for Student Assessment Methods
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Strategic Priorities');
+        Log::Debug("After we set title");
+        
+        // Add primary headings (Courses, Student Assessment Method) to the sheet
+        $sheet->fromArray(['Courses', 'Strategic Priorities'], null, 'A1');
+        $sheet->getStyle('A1:B1')->applyFromArray($styles['primaryHeading']);
+        if(count($strategicPrioritiesArray)==0){
+            $sheet->mergeCells('B1:'.$columns[count($strategicPrioritiesArray)+1].'1');
+        }else{
+            $sheet->mergeCells('B1:'.$columns[count($strategicPrioritiesArray)].'1');
+        }
+
+        Log::Debug("After we set headings and merge");
+
+        // Retrieve all courses for the program
+        $courses = [];
+        foreach ($program->courses()->orderBy('course_code', 'asc')->orderBy('course_num', 'asc')->get() as $course) {
+            $courses[$course->course_id] = $course->course_code.' '.$course->course_num;
+        }
+        
+        Log::Debug("After we set course codes");
+        // Add course names to the first column
+        $sheet->fromArray(array_chunk($courses, 1), null, 'A3');
+        $sheet->getStyle('A3:A'.strval(3 + count($courses) - 1))->applyFromArray($styles['secondaryHeading']);
+        $sheet->getStyle('A3:A100')->getFont()->setBold(true);
+
+        Log::Debug("After we set course names to first column");
+
+        // Retrieve and map Student Assessment Methods with their weightages
+        $categoryColInSheet = 1;
+        
+        foreach ($strategicPrioritiesArray as $strategicPriority) {
+            // Add assessment method to the sheet under the appropriate column
+            Log::Debug("Setting Cell value");
+            Log::Debug($strategicPriority);
+
+            $sheet->setCellValue($columns[$categoryColInSheet].'2', $strategicPriority[0]);
+                
+            
+            //$sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
+            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+
+            // Add the weightage for each course
+            $SPusedInCourse = [];
+            foreach ($courses as $courseId => $course) {
+                Log::Debug('Attempting to Map:');
+                Log::Debug($strategicPriority[1]);
+                Log::Debug('vs');
+                Log::Debug(array_search($course,$courses));
+                if ($strategicPriority[1] == array_search($course,$courses)){
+
+                
+                //if it is present in array, put in used for this slot,
+                array_push($SPusedInCourse, '1');
+                }else{
+                    array_push($SPusedInCourse, '');
+                }
+            }
+            
+
+            // Add weightage data to the respective column
+            $sheet->fromArray(array_chunk($SPusedInCourse, 1), null, $columns[$categoryColInSheet].'3');
+
+            $categoryColInSheet++;
+        }
+        Log::Debug("After we fill the sheet");
+
+                           //Combining duplicate cells and deleting columns
+
+            //Step 1: Loop through each header and get the titles and coordinates in two arrays
+
+            $row = $sheet->getRowIterator(2)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columnCoordinates=[];
+            $columnValues=[];
+
+            foreach ($cellIterator as $cell) {
+                array_push($columnCoordinates, $cell->getCoordinate());
+                array_push($columnValues, $cell->getValue());
+            }
+
+            $originalColumns=[];
+            $columnsToBeDeleted=[];
+            //Step 2: Loop through titles, find duplicate values and (...)
+            $countColumnCoord1=0;
+            foreach($columnValues as $columnValue){
+                //Looking at one column
+                $countColumnCoord2=0;
+                //Get first column letter
+                $columnLetter1= str_split($columnCoordinates[$countColumnCoord1]);
+                $columnLetter1=$columnLetter1[0];
+                array_push($originalColumns, $columnLetter1);
+
+                foreach($columnValues as $columnValue2){
+                
+                    if(strcmp($columnValue,$columnValue2) == 0 && $countColumnCoord2 != $countColumnCoord1){ //if the same title but not the same column
+                    
+                    $firstCellRow=3;
+                    $lastRow = $sheet->getHighestRow();
+                        //Step 3: Copy Cell values from later columns over to first found column
+                        $columnLetter2= str_split($columnCoordinates[$countColumnCoord2]);
+                        $columnLetter2=$columnLetter2[0];
+                        if(!in_array($columnLetter2, $originalColumns) && !in_array($columnLetter2, $columnsToBeDeleted)){ //checking if we have already looked at this column, if not add it to the delete list if not already there
+                            array_push($columnsToBeDeleted, $columnLetter2);
+                        }
+
+                        for ($row = $firstCellRow; $row <= $lastRow; $row++) {
+
+                            //Get Value of a cell in duplicate column
+                            $cell2 = $sheet->getCell($columnLetter2.$row);
+                            //Get Value of equivalent First column cell
+                            $cell1 = $sheet->getCell($columnLetter1.$row);
+
+                            if (is_null($cell1->getValue())){ //If the Value of first column is empty, replace it with value in second column
+                                $sheet->getCell($columnLetter1.$row)->setValue($cell2->getValue());
+                            }
+                            
+                        }
+
+                    }
+                $countColumnCoord2+=1;
+                }
+                $countColumnCoord1+=1;
+            }
+
+
+            //Finally, loop through and remove duplicate columns:
+            sort($columnsToBeDeleted);
+            $previouslyDeletedColumn='';
+            $deletedCount=0;
+            $chars = range('A', 'Z');
+        
+            foreach($columnsToBeDeleted as $deleteColumn){
+                
+                if($previouslyDeletedColumn!='' && strcmp($deleteColumn,$previouslyDeletedColumn)>0){ 
+
+                    //So checking if the deleted column comes after the previously deleted column, we need to reduce the current delete by 1 letter for each column deleted
+                    //strcmp if the first is lexicograpically greater than the second then a positive number will be returned.
+
+                    $charIndex=array_search($deleteColumn, $chars);
+                    $deleteColumn=$chars[$charIndex-$deletedCount];
+
+
+                }
+                
+                $sheet->removeColumn($deleteColumn);
+
+                $previouslyDeletedColumn=$deleteColumn;
+                $deletedCount++;
+            }
+
+        return $sheet;
+ 
+    } catch (Throwable $exception) {
+        // Log any errors
+        $message = 'There was an error downloading the spreadsheet overview for: '.$program->program;
+        Log::error($message.' ...\n');
+        Log::error('Code - '.$exception->getCode());
+        Log::error('File - '.$exception->getFile());
+        Log::error('Line - '.$exception->getLine());
+        Log::error($exception->getMessage());
+
+        return $exception;
+    }
+}
+
+public function downloadUserGuide(){
+    Log::Debug("Made it to method");
+
+
+    $url = Storage::url('userguide'.DIRECTORY_SEPARATOR.'tfa.pdf');
+
+    // return the location of the spreadsheet document on the server
+    return $url;
+    
+}
+
 }
