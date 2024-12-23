@@ -13,6 +13,7 @@
             </div>  
             <div class="modal-body">
                 <p class="mb-2">This may take up to 5 minutes.</p>
+                <p class="mb-2">If this message does not go away automatically within 5 minutes or less, please close the window and check your Downloads folder.</p>
                 <p class="mb-2">Please stay on this page while we prepare your summary.</p>
                 <div class="progress">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
@@ -46,6 +47,9 @@
         );
         $("#dataConfirmDownloadBtn").click((e) =>
             downloadDataExcel(e.currentTarget)
+        )
+        $("#downloadUserGuideBtn").click((e) =>
+            downloadUserGuide(e.currentTarget)
         )
         
     });
@@ -172,6 +176,46 @@
     // Program Level Data Excel 
     function downloadDataExcel(trigger) {
         var route = "{{route('programs.dataSpreadsheet', $program->program_id)}}";
+        xhr = $.ajax({
+            type: "GET",
+            url: route,
+            dataType: "text",
+            beforeSend: (jqXHR, settings) => {
+                // hide confirmation modal and show download modal
+                $('#dataConfirmDownloadModal').modal('hide');
+                $('#downloadProgressModal').modal('show');
+            },  
+            success: (data, textStatus, jqXHR) => {
+                // hide download modal
+                $('#downloadProgressModal').modal('hide');
+                // check if controller handled an error
+                if (data == -1) 
+                    showErrorToast()
+                else {
+                    // close error toast if open
+                    hideErrorToast();
+                    // Set href as a local object URL
+                    $('#save-file').attr('href', data);
+                    // trigger download
+                    $("#save-file")[0].click();
+                    // delete pdf summary after 15 sec/15,000 ms
+                    setTimeout(() => {deletePDF(route)}, 15000);
+                }
+            },
+            error: (jqXHR, textStatus, error) => {
+                // hide download modal
+                $('#downloadProgressModal').modal('hide');
+                if (textStatus != "abort") {
+                    // show error toast 
+                    showErrorToast();                
+                }
+            },
+        });     
+    }
+
+        // Download User Guide
+        function downloadUserGuide(trigger) {
+        var route = "{{route('programs.downloadUserGuide', $program->program_id)}}";
         xhr = $.ajax({
             type: "GET",
             url: route,
