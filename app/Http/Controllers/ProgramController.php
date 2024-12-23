@@ -4011,7 +4011,7 @@ public function downloadUserGuide(){
     Log::Debug("Made it to method");
 
 
-    $url = Storage::url('userguide'.DIRECTORY_SEPARATOR.'tfa.pdf');
+    $url = Storage::url('userguide'.DIRECTORY_SEPARATOR.'CMAP Data Download User Guide.docx');
 
     // return the location of the spreadsheet document on the server
     return $url;
