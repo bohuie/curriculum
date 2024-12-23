@@ -38,6 +38,7 @@
 </div>
 
 
+
 <div>
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -51,6 +52,7 @@
                 @include('modals.confirmDownloadModal', ['program' => $program])
                 @include('modals.setContentPDF', ['program' => $program])
                 @include('modals.downloadProgressModal', ['program' => $program])
+
                 @include('modals.dataConfirmDownloadModal', ['program' => $program])
     
                 <h3 class="card-header wizard">
@@ -76,6 +78,7 @@
 </td>
                                 </tr>
                                 </table>
+
                             </div>
                         </div>
 
