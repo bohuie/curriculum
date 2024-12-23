@@ -95,6 +95,7 @@ Route::delete('/programs/{program}/pdf', [ProgramController::class, 'deletePDF']
 // Program Summary Spreadsheet routes
 Route::get('/programs/{program}/spreadsheet', [ProgramController::class, 'spreadsheet'])->name('programs.spreadsheet');
 Route::delete('/programs/{program}/spreadsheet', [ProgramController::class, 'delSpreadsheet'])->name('programs.delete.spreadsheet');
+Route::get('/programs/{program}/downloadUserGuide', [ProgramController::class, 'downloadUserGuide'])->name('programs.downloadUserGuide');
 
 // Program Summary raw data spreadsheet routes
 Route::get('/programs/{program}/dataSpreadsheet', [ProgramController::class, 'dataSpreadsheet'])->name('programs.dataSpreadsheet');
@@ -129,6 +130,7 @@ Route::delete('/courses/{course}/destroy', [CourseController::class, 'destroy'])
 Route::resource('/lo', LearningOutcomeController::class);
 Route::post('/import/clos', [LearningOutcomeController::class, 'import'])->name('courses.outcomes.import');
 Route::post('/store/clos', [LearningOutcomeController::class, 'store'])->name('courses.outcomes.store');
+
 
 Route::resource('/plo', ProgramLearningOutcomeController::class);
 Route::post('/plo/store', [ProgramLearningOutcomeController::class, 'store'])->name('program.outcomes.store');

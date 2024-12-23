@@ -13,12 +13,18 @@
                             </div> 
             
                             <div class="modal-body" style="height: auto;">
-                                
-                            The new data import feature enables users to seamlessly export raw datasets, providing a flexible foundation for in-depth analysis and customized insights.
-                                            
+                                The new data import feature enables users to seamlessly export raw datasets, providing a flexible foundation for in-depth analysis and insights. Please checkout our User Guide for more information which can be downloaded here:
+                                <br>
+                                </n>
+                                <div style="text-align: center;"> 
+                                <div><button id="downloadUserGuideBtn"  data-bs-route="{{route('programs.downloadUserGuide', $program->program_id)}}" class="btn btn-primary btn-sm">Download User Guide</button></div>
+                                </div>
                             </div>
+                            
                             <div class="modal-footer">
+                            
                                 <button style="width:60px" type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    
                                 <button id="dataConfirmDownloadBtn"  data-bs-route="{{route('programs.dataSpreadsheet', $program->program_id)}}" class="btn btn-primary">Confirm and Download</button>
                             </div>
 

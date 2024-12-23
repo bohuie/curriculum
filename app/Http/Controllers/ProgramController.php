@@ -2072,18 +2072,18 @@ class ProgramController extends Controller
                 if($ploCategory!=NULL){
                     $sheet->setCellValue($columns[$categoryColInSheet].'2', $ploCategory->plo_category);
                     $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
-                    $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+                    //$sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
                 } else {
                     $sheet->setCellValue($columns[$categoryColInSheet].'2', "Uncategorized");
                     $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
-                    $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+                    //$sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
                 }
                 
                 
                 //Changing all column headers to start from 3 to accomodate PLO categories
                 $sheet->setCellValue($columns[$categoryColInSheet].'3', $PLO[1]->pl_outcome);
                 $sheet->getStyle($columns[$categoryColInSheet].'3')->getFont()->setBold(true);
-                $sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
+                //$sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
 
                 // Outcome Mapping for each CLO
                 $outcomeMappings = [];
@@ -2104,6 +2104,78 @@ class ProgramController extends Controller
 
                 $categoryColInSheet++;
             }
+
+            //Combining Duplicate Cells in Headers
+            $headerRows=[2];
+            foreach($headerRows as $row){
+                $row = $sheet->getRowIterator($row)->current();
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $CurrentColumnCoord=1;
+                $firstDuplicateColumnValue="";
+                $firstDuplicateColumnCoord="";
+                $lastValue="";
+                $lastCoord="";
+                $duplicateFoundPreviously=false;
+                
+                $cellValues=[];
+                $cellCoords=[];
+                foreach ($cellIterator as $cell) {
+                    array_push($cellValues,$cell->getValue());
+                    array_push($cellCoords,$cell->getCoordinate());
+                }
+
+                $count=0;
+                foreach($cellValues as $value){
+                    if($count<1){ //do nothing until we reach categories
+                        
+                    }else{
+
+                        if ($cellValues[$count]==$lastValue){
+                            //Duplicate found, do nothing
+                            $duplicateFoundPreviously=true;
+                        //If duplicate was found, but the firstDuplicateColumnValue is blank, then set it to mark beginning of merge (whipe after merge)
+                            if ($firstDuplicateColumnValue==""){
+                                $firstDuplicateColumnValue=$lastValue;
+                                $firstDuplicateColumnCoord=$lastCoord;
+                            }
+
+                            //If duplicate found and we are at last cell in row
+                            if ($count==(count($cellValues)-1)){
+                                //Merge from First Duplicate to Current
+                                $sheet->mergeCells($firstDuplicateColumnCoord.':'.$cellCoords[$count]);
+                                $sheet->getStyle($firstDuplicateColumnCoord)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                                
+                                //Reset where we found first dupe
+                                $firstDuplicateColumnValue="";
+                                $firstDuplicateColumnCoord="";
+                                $duplicateFoundPreviously=false;
+                                break;
+                            }
+                            
+                        }else{
+                            if($duplicateFoundPreviously){
+                                //Merge from First Duplicate to Current
+                                $sheet->mergeCells($firstDuplicateColumnCoord.':'.$lastCoord);
+                                $sheet->getStyle($firstDuplicateColumnCoord)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                                
+                                //Reset where we found first dupe
+                                $firstDuplicateColumnValue="";
+                                $firstDuplicateColumnCoord="";
+                                $duplicateFoundPreviously=false;
+                            }
+
+                        }
+                    $CurrentColumnCoord++;
+                    }
+
+                    $lastValue=$cellValues[$count];
+                    $lastCoord=$cellCoords[$count];
+
+                    $count++;
+                }
+            }   
 
             $program = Program::find($programId);
             // get this programs mapping scales
@@ -2802,6 +2874,25 @@ class ProgramController extends Controller
                     $sheet->fromArray($scaleArr, null, 'A'.strval($index + 2));
                 }
             }
+
+
+            // create a wizard factory for creating new conditional formatting rules
+            $wizardFactory = new Wizard('B2:Z50');
+            foreach ($mappingScaleLevels as $level) {
+                // create a new conditional formatting rule based on the map scale level
+                $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+                $levelStyle = new Style(false, true);
+                $levelStyle->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $levelStyle->getFill()
+                    ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+                $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+                $conditionalStyles[] = $wizard->getConditional();
+                // add conditional formatting rule to the outcome maps sheet
+                $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+            }
+                
     
             return $sheet;
     
@@ -3893,6 +3984,17 @@ private function strategicPrioritiesSheet(Spreadsheet $spreadsheet, int $program
 
         return $exception;
     }
+}
+
+public function downloadUserGuide(){
+    Log::Debug("Made it to method");
+
+
+    $url = Storage::url('userguide'.DIRECTORY_SEPARATOR.'tfa.pdf');
+
+    // return the location of the spreadsheet document on the server
+    return $url;
+    
 }
 
 }

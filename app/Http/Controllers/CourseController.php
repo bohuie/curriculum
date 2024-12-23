@@ -1030,7 +1030,7 @@ private function makeProgramOutcomeSheetData(Spreadsheet $spreadsheet, int $cour
             $program= Program::find($programId);
             $plosTemp = ProgramLearningOutcome::where('program_id', $programId)->get();
             foreach($plosTemp as $plo){
-                //bruh
+                
                 $PLOCategory=PLOCategory::where('plo_category_id', $plo->plo_category_id)->value('plo_category');
                 if($PLOCategory==NULL){
                     $PLOCategory="Uncategorized";
@@ -1127,7 +1127,7 @@ private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $cours
 
             $sheet = $spreadsheet->createSheet();
             $sheet->setTitle('Mapping Scale');
-
+            //bruh
             // create a wizard factory for creating new conditional formatting rules
             $wizardFactory = new Wizard('B2:Z50');
             foreach ($mappingScaleLevels as $level) {
@@ -1144,7 +1144,7 @@ private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $cours
                 // add conditional formatting rule to the outcome maps sheet
                 $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
             }
-    
+            
             if (count($mappingScaleLevels) > 0) {
                 // Update header row to exclude the 'Colour' column
                 $sheet->fromArray(['Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
@@ -1186,15 +1186,44 @@ private function makeMappingScalesSheetData(Spreadsheet $spreadsheet, int $cours
         // Apply styles to the header row (optional)
         $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
 
-    // Add hardcoded entries
-        $data = [
-           ['Introduced', 'I', 'Key ideas, concepts or skills related to the learning outcome are demonstrated at an introductory level. Learning activities focus on basic knowledge, skills, and/or competencies and entry-level complexity.'],
-           ['Developing', 'D', 'Learning outcome is reinforced with feedback; students demonstrate the outcome at an increasing level of proficiency. Learning activities concentrate on enhancing and strengthening existing knowledge and skills as well as expanding complexity.'],
-           ['Advanced', 'A', 'Students demonstrate the learning outcomes with a high level of independence, expertise and sophistication expected upon graduation. Learning activities focus on and integrate the use of content or skills in multiple.']      
-        ];      
-        
+        $mappingScales=[];
+        for($i=1;$i<=3;$i++){
+            $mappingScale=MappingScale::where('map_scale_id', $i)->first();
+            array_push($mappingScales, $mappingScale);
+        }
 
-         $sheet->fromArray($data, null, 'A2');
+        //bruh
+        // create a wizard factory for creating new conditional formatting rules
+        $wizardFactory = new Wizard('B2:Z50');
+        foreach ($mappingScales as $level) {
+            // create a new conditional formatting rule based on the map scale level
+            $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+            $levelStyle = new Style(false, true);
+            $levelStyle->getFill()
+                ->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+            $levelStyle->getFill()
+                ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+            $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+            $conditionalStyles[] = $wizard->getConditional();
+            // add conditional formatting rule to the outcome maps sheet
+            $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
+        }
+
+        if (count($mappingScales) > 0) {
+            // Update header row to exclude the 'Colour' column
+            $sheet->fromArray(['Mapping Scale', 'Abbreviation', 'Description'], null, 'A1');
+            $sheet->getStyle('A1:C1')->applyFromArray($styles['primaryHeading']);
+
+            foreach ($mappingScales as $index => $level) {
+                // Create array of scale values without the colour column
+                $scaleArr = [$level->title, $level->abbreviation, $level->description];
+                // Insert the array into the sheet starting from column A
+                $sheet->fromArray($scaleArr, null, 'A'.strval($index + 2));
+            }
+        }
+
+         //$sheet->fromArray($mappingScales, null, 'A2');
 
          return $sheet;
     }
@@ -1237,6 +1266,29 @@ private function makeBcStandardMapSheetData(Spreadsheet $spreadsheet, int $cours
                 $sheet->fromArray($dataRow, null, 'A' . $rowIndex);
                 $rowIndex++;
             }
+        }
+
+        //bruh
+        $mappingScales=[];
+        for($i=1;$i<=3;$i++){
+            $mappingScale=MappingScale::where('map_scale_id', $i)->first();
+            array_push($mappingScales, $mappingScale);
+        }
+        // create a wizard factory for creating new conditional formatting rules
+        $wizardFactory = new Wizard('B2:Z50');
+        foreach ($mappingScales as $level) {
+            // create a new conditional formatting rule based on the map scale level
+            $wizard = $wizardFactory->newRule(Wizard::CELL_VALUE);
+            $levelStyle = new Style(false, true);
+            $levelStyle->getFill()
+                ->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+            $levelStyle->getFill()
+                ->getEndColor()->setRGB(strtoupper(ltrim($level->colour, '#')));
+            $wizard->equals($level->abbreviation)->setStyle($levelStyle);
+            $conditionalStyles[] = $wizard->getConditional();
+            // add conditional formatting rule to the outcome maps sheet
+            $sheet->getStyle($wizard->getCellRange())->setConditionalStyles($conditionalStyles);
         }
 
         return $sheet;
@@ -1518,7 +1570,7 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
             $program = Program::where('program_id', $PLO[1]->program_id)->first();
             $sheet->setCellValue($columns[$categoryColInSheet].'2', $program->program);
             $sheet->getStyle($columns[$categoryColInSheet].'2')->applyFromArray($styles['secondaryHeading']);
-            $sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
+            //$sheet->mergeCells($columns[$categoryColInSheet].'2:'.$columns[$categoryColInSheet].'2');
  
             //Adding PLO Categories
                         
@@ -1527,18 +1579,18 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
                 $sheet->setCellValue($columns[$categoryColInSheet].'3', $ploCategory->plo_category);
                 $sheet->getStyle($columns[$categoryColInSheet].'3')->applyFromArray($styles['secondaryHeading']);
                 Log::Debug("Merging PLO Categories");
-                $sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
+                //$sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
             } else {
                 $sheet->setCellValue($columns[$categoryColInSheet].'3', "Uncategorized");
                 $sheet->getStyle($columns[$categoryColInSheet].'3')->applyFromArray($styles['secondaryHeading']);
-                $sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
+               // $sheet->mergeCells($columns[$categoryColInSheet].'3:'.$columns[$categoryColInSheet].'3');
             }
             
             
             //Changing all column headers to start from 3 to accomodate PLO categories
             $sheet->setCellValue($columns[$categoryColInSheet].'4', $PLO[1]->pl_outcome);
             $sheet->getStyle($columns[$categoryColInSheet].'4')->getFont()->setBold(true);
-            $sheet->mergeCells($columns[$categoryColInSheet].'4:'.$columns[$categoryColInSheet].'4');
+            //$sheet->mergeCells($columns[$categoryColInSheet].'4:'.$columns[$categoryColInSheet].'4');
 
             
             // Outcome Mapping for each CLO
@@ -1564,6 +1616,80 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
             $categoryColInSheet++;
         }
 
+        //Combining Duplicate Cells in Headers
+        $headerRows=[2,3];
+        foreach($headerRows as $row){
+            $row = $sheet->getRowIterator($row)->current();
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $CurrentColumnCoord=1;
+            $firstDuplicateColumnValue="";
+            $firstDuplicateColumnCoord="";
+            $lastValue="";
+            $lastCoord="";
+            $duplicateFoundPreviously=false;
+            
+            $cellValues=[];
+            $cellCoords=[];
+            foreach ($cellIterator as $cell) {
+                array_push($cellValues,$cell->getValue());
+                array_push($cellCoords,$cell->getCoordinate());
+            }
+
+            $count=0;
+            foreach($cellValues as $value){
+                if($count<1){ //do nothing until we reach categories
+                    
+                }else{
+
+                    if ($cellValues[$count]==$lastValue){
+                        //Duplicate found, do nothing
+                        $duplicateFoundPreviously=true;
+                    //If duplicate was found, but the firstDuplicateColumnValue is blank, then set it to mark beginning of merge (whipe after merge)
+                        if ($firstDuplicateColumnValue==""){
+                            $firstDuplicateColumnValue=$lastValue;
+                            $firstDuplicateColumnCoord=$lastCoord;
+                        }
+
+                        //If duplicate found and we are at last cell in row
+                        if ($count==(count($cellValues)-1)){
+                            //Merge from First Duplicate to Current
+                            $sheet->mergeCells($firstDuplicateColumnCoord.':'.$cellCoords[$count]);
+                            $sheet->getStyle($firstDuplicateColumnCoord)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            
+                            //Reset where we found first dupe
+                            $firstDuplicateColumnValue="";
+                            $firstDuplicateColumnCoord="";
+                            $duplicateFoundPreviously=false;
+                            break;
+                        }
+                        
+                    }else{
+                        if($duplicateFoundPreviously){
+                            //Merge from First Duplicate to Current
+                            $sheet->mergeCells($firstDuplicateColumnCoord.':'.$lastCoord);
+                            $sheet->getStyle($firstDuplicateColumnCoord)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            
+                            //Reset where we found first dupe
+                            $firstDuplicateColumnValue="";
+                            $firstDuplicateColumnCoord="";
+                            $duplicateFoundPreviously=false;
+                        }
+
+                    }
+                $CurrentColumnCoord++;
+                }
+
+                $lastValue=$cellValues[$count];
+                $lastCoord=$cellCoords[$count];
+
+                $count++;
+            }
+        }   
+
+
+        
         foreach($courseProgramPIDs as $cPID){
         $program = Program::find($cPID);
         // get this programs mapping scales
@@ -1586,49 +1712,6 @@ private function makeOutcomeMapSheetData(Spreadsheet $spreadsheet, int $courseId
                     }
         }
 
-        //Time to combine duplicate PLO categories
-        /*
-            //Combining duplicate cells
-
-            //Step 1: Loop through each header and get the titles and coordinates in two arrays
-
-            $row = $sheet->getRowIterator(2)->current();
-            $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(false);
-
-            $columnCoordinates=[];
-            $columnValues=[];
-
-            foreach ($cellIterator as $cell) {
-                array_push($columnCoordinates, $cell->getCoordinate());
-                array_push($columnValues, $cell->getValue());
-            }
-
-            $originalColumns=[];
-            $columnsToBeDeleted=[];
-            //Step 2: Loop through titles, if current matches previous, "lock" previous and keep going until we find a new value, then merge previous to current
-            $countColumnCoord1=0;
-            $firstDuplicateColumnValue="";
-            $firstDuplicateColumnCoord=1;
-            $CurrentColumnCoord=1;
-            $foundDuplicates=false;
-            foreach($columnValues as $columnValue){
-                if($CurrentColumnCoord<2){ //do nothing until we reach categories
-                    $CurrentColumnCoord++;
-                }else{
-                        if ($columnValue == $firstDuplicateColumnValue){
-                            $foundDuplicates=true; //found duplicate continue
-                            
-                        }else{
-                            $foundDuplicates=false; //found non-duplicate, stop and merge
-                            //merge $firstColumnCoord
-
-                        }
-                    $CurrentColumnCoord++;
-                }
-            }
-
-        */
 
         return $sheet;
  

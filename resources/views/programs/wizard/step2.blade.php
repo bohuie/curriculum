@@ -27,7 +27,7 @@
                     <div class="alert alert-primary d-flex align-items-center" role="alert" style="text-align:justify">
                         <i class="bi bi-info-circle-fill pr-2 fs-3"></i>                        
                         <div>
-                            The mapping scale is the scale that will be used to indicate the degree to which a program-level learning outcome is addressed by a course outcome, or the degree of alignment between the course outcome and program-level learning outcome.
+                            The mapping scale is the scale that will be used to indicate the degree to which a program-level learning outcome is addressed by a course outcome, or the degree of alignment between the course outcome and program-level learning outcome. Please note that when using custom mapping scales the Data Download will use creation order to indicate dominance, with the first created scale being the highest degree of alignment.
                         </div>
                     </div>
 
